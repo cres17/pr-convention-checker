@@ -1,0 +1,107 @@
+name: PR Convention Checker
+description: >
+  Checks if your PR follows the conventions documented in CLAUDE.md, SKILLS.md,
+  or any team guideline file. Uses Claude AI to analyze the diff against your rules.
+
+branding:
+  icon: check-circle
+  color: purple
+
+inputs:
+  anthropic_api_key:
+    description: Anthropic API key (required for Claude)
+    required: true
+  github_token:
+    description: GitHub token for posting PR comments
+    required: true
+    default: ${{ github.token }}
+  convention_files:
+    description: Comma-separated list of convention file paths (defaults to .convention-checker.yml)
+    required: false
+    default: ""
+  model:
+    description: Claude model ID to use
+    required: false
+    default: "claude-opus-4-6"
+  post_comment:
+    description: Whether to post the result as a PR comment (true/false)
+    required: false
+    default: "true"
+  fail_on_blocker:
+    description: Exit 1 when BLOCKER findings are present
+    required: false
+    default: "true"
+
+outputs:
+  result:
+    description: Check result summary (pass / warn / fail)
+    value: ${{ steps.check.outputs.result }}
+  blocker_count:
+    description: Number of BLOCKER findings
+    value: ${{ steps.check.outputs.blocker_count }}
+  comment_url:
+    description: URL of the posted PR comment
+    value: ${{ steps.post.outputs.comment_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Run convention check
+      id: check
+      shell: bash
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic_api_key }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        CONVENTION_FILES: ${{ inputs.convention_files }}
+        MODEL: ${{ inputs.model }}
+      run: ${{ github.action_path }}/github-action/entrypoint.sh
+
+    - name: Post PR comment
+      id: post
+      if: inputs.post_comment == 'true' && github.event.pull_request.number != ''
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        REPO: ${{ github.repository }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        COMMENT_MARKER: "<!-- convention-checker-v1 -->"
+      run: |
+        REPORT_FILE="${RUNNER_TEMP}/convention_report.md"
+        if [ ! -f "$REPORT_FILE" ]; then
+          echo "report file not found, skipping comment"
+          exit 0
+        fi
+
+        BODY=$(cat "$REPORT_FILE")
+
+        EXISTING_ID=$(gh api \
+          "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+          --jq ".[] | select(.body | startswith(\"${COMMENT_MARKER}\")) | .id" \
+          | head -1)
+
+        if [ -n "$EXISTING_ID" ]; then
+          COMMENT_URL=$(gh api \
+            -X PATCH \
+            "repos/${REPO}/issues/comments/${EXISTING_ID}" \
+            -f body="$BODY" \
+            --jq ".html_url")
+        else
+          COMMENT_URL=$(gh api \
+            -X POST \
+            "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+            -f body="$BODY" \
+            --jq ".html_url")
+        fi
+
+        echo "comment_url=${COMMENT_URL}" >> "$GITHUB_OUTPUT"
+
+    - name: Fail on blocker
+      if: inputs.fail_on_blocker == 'true' && steps.check.outputs.result == 'fail'
+      shell: bash
+      run: |
+        echo "::error::Convention check failed — ${{ steps.check.outputs.blocker_count }} BLOCKER(s) found"
+        exit 1
