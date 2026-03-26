@@ -1,0 +1,77 @@
+# PR Convention Checker 설정 파일
+# 이 파일을 레포 루트에 복사하여 사용하세요.
+# 모든 항목은 선택 사항입니다. 없으면 기본값이 사용됩니다.
+
+# ─── 컨벤션 파일 경로 ────────────────────────────────────────────────────────
+# 체크 기준으로 사용할 문서 파일 목록 (존재하지 않는 파일은 무시됩니다)
+convention_files:
+  - CLAUDE.md
+  - SKILLS.md
+  - .claude/instructions.md
+  # - docs/api-guidelines.md    # 추가 문서가 있으면 주석 해제
+  # - docs/architecture.md
+
+# ─── 분석 제외 경로 ──────────────────────────────────────────────────────────
+# 이 glob 패턴에 매칭되는 파일은 분석에서 제외됩니다.
+exclude_paths:
+  # 테스트 파일
+  - "**/*.test.ts"
+  - "**/*.test.js"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.js"
+  - "**/*.snap"
+  # 생성/빌드 산출물
+  - "dist/**"
+  - "build/**"
+  - ".next/**"
+  - "out/**"
+  - "node_modules/**"
+  # 잠금 파일
+  - "**/*.lock"
+  - "**/*-lock.json"
+  - "**/*-lock.yaml"
+  # CI/CD 설정 (직접 수정할 일이 없는 경우)
+  # - ".github/**"
+  # 축소 파일
+  - "**/*.min.js"
+  - "**/*.min.css"
+
+# ─── 심각도 키워드 매핑 ──────────────────────────────────────────────────────
+# 컨벤션 문서에서 각 심각도를 판별하는 키워드 목록입니다.
+# Claude가 컨벤션 규칙 원문에서 이 키워드를 발견하면 해당 심각도로 분류합니다.
+severity_map:
+  blocker:
+    - "must"
+    - "반드시"
+    - "절대"
+    - "금지"
+    - "never"
+    - "always"
+    - "항상"
+    - "required"
+    - "필수"
+  major:
+    - "should"
+    - "권장"
+    - "필요"
+    - "해야"
+    - "해야 한다"
+  minor:
+    - "consider"
+    - "recommended"
+    - "권고"
+  nit:
+    - "prefer"
+    - "가급적"
+    - "optional"
+    - "선호"
+
+# ─── GitHub Actions 설정 ─────────────────────────────────────────────────────
+actions:
+  # BLOCKER 발견 시 워크플로우를 실패(exit 1)로 처리할지 여부
+  fail_on_blocker: true
+  # PR 코멘트를 자동 게시할지 여부
+  post_comment: true
+  # 사용할 Claude 모델
+  model: "claude-opus-4-6"

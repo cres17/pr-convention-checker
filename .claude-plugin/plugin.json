@@ -1,0 +1,28 @@
+{
+  "name": "pr-convention-checker",
+  "version": "0.1.0",
+  "description": "CLAUDE.md / SKILLS.md 등 팀 컨벤션 문서를 기준으로 PR이 규칙을 지키는지 자동 분석하는 Claude Code 플러그인",
+  "author": "",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "check-conventions",
+      "path": "commands/check-conventions.md",
+      "description": "현재 브랜치 또는 PR의 변경사항이 팀 컨벤션 문서(CLAUDE.md, SKILLS.md 등)를 준수하는지 분석"
+    }
+  ],
+  "skills": [
+    {
+      "name": "convention-check",
+      "path": "skills/convention-check.md",
+      "description": "컨벤션 파일과 diff를 받아 위반 항목을 심각도별로 분류·출력하는 분석 로직"
+    }
+  ],
+  "mcpServers": ".mcp.json",
+  "install": {
+    "copyTo": {
+      "commands": ".claude/commands/",
+      "skills": ".claude/commands/"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+# .github/workflows/convention-check.yml
+#
+# 이 파일을 레포의 .github/workflows/convention-check.yml 에 복사하여 사용하세요.
+# GitHub Secrets에 ANTHROPIC_API_KEY를 추가해야 합니다.
+
+name: Convention Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Fork PR 보안: write 권한은 pull_request_target에서만 부여
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-conventions:
+    name: Check PR Conventions
+    runs-on: ubuntu-latest
+    # Fork PR 처리: 시크릿이 없는 fork PR은 건너뜁니다
+    if: |
+      github.event.pull_request.head.repo.full_name == github.repository ||
+      github.event_name == 'pull_request_target'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 전체 히스토리 필요 (git diff 폴백용)
+
+      - name: Run convention check
+        uses: ./pr-convention-checker/github-action  # 로컬 액션
+        # 외부 릴리스 버전을 쓰는 경우:
+        # uses: your-org/pr-convention-checker/github-action@v0.1.0
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_blocker: "true"
+          post_comment: "true"
+          model: "claude-opus-4-6"
+
+      # 선택: 결과를 Step Summary에도 출력
+      - name: Write job summary
+        if: always()
+        run: |
+          if [ -f "${RUNNER_TEMP}/convention_report.md" ]; then
+            cat "${RUNNER_TEMP}/convention_report.md" >> "$GITHUB_STEP_SUMMARY"
+          fi

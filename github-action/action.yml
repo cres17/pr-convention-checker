@@ -1,0 +1,106 @@
+name: PR Convention Checker
+description: >
+  CLAUDE.md / SKILLS.md 등 팀 컨벤션 문서를 기준으로 PR의 변경사항이
+  정의된 규칙을 준수하는지 Claude API로 자동 분석하고 PR 코멘트를 게시합니다.
+
+inputs:
+  anthropic_api_key:
+    description: Anthropic API 키 (Claude 호출용)
+    required: true
+  github_token:
+    description: GitHub 토큰 (PR 코멘트 게시용)
+    required: true
+    default: ${{ github.token }}
+  convention_files:
+    description: 쉼표로 구분된 컨벤션 파일 경로 목록 (기본값은 .convention-checker.yml 참조)
+    required: false
+    default: ""
+  model:
+    description: 사용할 Claude 모델 ID
+    required: false
+    default: "claude-opus-4-6"
+  post_comment:
+    description: PR 코멘트를 게시할지 여부 (true/false)
+    required: false
+    default: "true"
+  fail_on_blocker:
+    description: BLOCKER 발견 시 exit 1로 워크플로우를 실패시킬지 여부
+    required: false
+    default: "true"
+
+outputs:
+  result:
+    description: 체크 결과 요약 (pass / warn / fail)
+    value: ${{ steps.check.outputs.result }}
+  blocker_count:
+    description: BLOCKER 항목 수
+    value: ${{ steps.check.outputs.blocker_count }}
+  comment_url:
+    description: 게시된 PR 코멘트 URL
+    value: ${{ steps.post.outputs.comment_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Run convention check
+      id: check
+      shell: bash
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic_api_key }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        CONVENTION_FILES: ${{ inputs.convention_files }}
+        MODEL: ${{ inputs.model }}
+      run: ${{ github.action_path }}/entrypoint.sh
+
+    - name: Post PR comment
+      id: post
+      if: inputs.post_comment == 'true' && github.event.pull_request.number != ''
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        REPO: ${{ github.repository }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        COMMENT_MARKER: "<!-- convention-checker-v1 -->"
+      run: |
+        REPORT_FILE="${RUNNER_TEMP}/convention_report.md"
+        if [ ! -f "$REPORT_FILE" ]; then
+          echo "report file not found, skipping comment"
+          exit 0
+        fi
+
+        BODY=$(cat "$REPORT_FILE")
+
+        # 기존 봇 코멘트 찾기
+        EXISTING_ID=$(gh api \
+          "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+          --jq ".[] | select(.body | startswith(\"${COMMENT_MARKER}\")) | .id" \
+          | head -1)
+
+        if [ -n "$EXISTING_ID" ]; then
+          # 기존 코멘트 업데이트 (PATCH)
+          COMMENT_URL=$(gh api \
+            -X PATCH \
+            "repos/${REPO}/issues/comments/${EXISTING_ID}" \
+            -f body="$BODY" \
+            --jq ".html_url")
+        else
+          # 새 코멘트 생성 (POST)
+          COMMENT_URL=$(gh api \
+            -X POST \
+            "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+            -f body="$BODY" \
+            --jq ".html_url")
+        fi
+
+        echo "comment_url=${COMMENT_URL}" >> "$GITHUB_OUTPUT"
+
+    - name: Fail on blocker
+      if: inputs.fail_on_blocker == 'true' && steps.check.outputs.result == 'fail'
+      shell: bash
+      run: |
+        echo "::error::PR 컨벤션 체크 실패 — BLOCKER ${{ steps.check.outputs.blocker_count }}개 발견"
+        exit 1
