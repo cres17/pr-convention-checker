@@ -1,7 +1,5 @@
 name: PR Convention Checker
-description: >
-  Checks if your PR follows the conventions documented in CLAUDE.md, SKILLS.md,
-  or any team guideline file. Uses Claude AI to analyze the diff against your rules.
+description: "Claude-powered PR checker that enforces your team's own conventions from CLAUDE.md / SKILLS.md."
 
 branding:
   icon: check-circle
