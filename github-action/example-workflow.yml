@@ -1,49 +1,53 @@
-# .github/workflows/convention-check.yml
+# .github/workflows/drift-gate.yml
 #
-# 이 파일을 레포의 .github/workflows/convention-check.yml 에 복사하여 사용하세요.
+# 이 파일을 레포의 .github/workflows/drift-gate.yml 에 복사하여 사용하세요.
 # GitHub Secrets에 ANTHROPIC_API_KEY를 추가해야 합니다.
+# 레포 루트에 .drift-gate.yml 정책 파일이 있어야 동작합니다.
 
-name: Convention Check
+name: Drift Gate
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-# Fork PR 보안: write 권한은 pull_request_target에서만 부여
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
-  check-conventions:
-    name: Check PR Conventions
+  drift-gate:
+    name: Contract Drift Check
     runs-on: ubuntu-latest
-    # Fork PR 처리: 시크릿이 없는 fork PR은 건너뜁니다
-    if: |
-      github.event.pull_request.head.repo.full_name == github.repository ||
-      github.event_name == 'pull_request_target'
+    # 포크 PR은 시크릿 접근 불가 — 보안상 스킵
+    if: github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 전체 히스토리 필요 (git diff 폴백용)
+          fetch-depth: 0  # git diff 폴백 대비 전체 히스토리
 
-      - name: Run convention check
-        uses: ./pr-convention-checker/github-action  # 로컬 액션
-        # 외부 릴리스 버전을 쓰는 경우:
-        # uses: your-org/pr-convention-checker/github-action@v0.1.0
+      - name: Run Drift Gate
+        id: drift
+        uses: cres17/pr-convention-checker@v1
+        # 로컬 액션 사용 시:
+        # uses: ./
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          fail_on_blocker: "true"
-          post_comment: "true"
-          model: "claude-opus-4-6"
+          # policy_file: .drift-gate.yml   # 기본값. 경로가 다르면 명시
+          # model: claude-opus-4-6         # 기본값
+          # fail_on_blocker: "true"        # 기본값
+          # post_comment: "true"           # 기본값
 
-      # 선택: 결과를 Step Summary에도 출력
+      # 선택: Job Summary에 리포트 출력
       - name: Write job summary
         if: always()
         run: |
-          if [ -f "${RUNNER_TEMP}/convention_report.md" ]; then
-            cat "${RUNNER_TEMP}/convention_report.md" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f "${RUNNER_TEMP}/drift_gate_report.md" ]; then
+            cat "${RUNNER_TEMP}/drift_gate_report.md" >> "$GITHUB_STEP_SUMMARY"
           fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| 결과 | BLOCKER | MAJOR | 전체 위반 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|------|---------|-------|-----------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| ${{ steps.drift.outputs.result }} | ${{ steps.drift.outputs.blocker_count }} | ${{ steps.drift.outputs.major_count }} | ${{ steps.drift.outputs.violation_count }} |" >> "$GITHUB_STEP_SUMMARY"

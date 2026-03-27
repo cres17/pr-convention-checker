@@ -1,42 +1,48 @@
-name: PR Convention Checker
-description: "Claude-powered PR checker that enforces your team's own conventions from CLAUDE.md / SKILLS.md."
+name: Spec/Contract Drift Gate
+description: "Checks if code changes are in sync with your team's contract docs (spec/runbook/CHANGELOG). Blocks merge when contract docs are missing."
 
 branding:
-  icon: check-circle
+  icon: shield
   color: purple
 
 inputs:
   anthropic_api_key:
-    description: Anthropic API key (required for Claude)
+    description: Anthropic API key (required for Claude checklist generation)
     required: true
   github_token:
     description: GitHub token for posting PR comments
     required: true
     default: ${{ github.token }}
-  convention_files:
-    description: Comma-separated list of convention file paths (defaults to .convention-checker.yml)
+  policy_file:
+    description: Path to drift gate policy file
     required: false
-    default: ""
+    default: ".drift-gate.yml"
   model:
-    description: Claude model ID to use
+    description: Claude model ID to use for checklist generation
     required: false
     default: "claude-opus-4-6"
   post_comment:
-    description: Whether to post the result as a PR comment (true/false)
+    description: Post result as PR comment (true/false)
     required: false
     default: "true"
   fail_on_blocker:
-    description: Exit 1 when BLOCKER findings are present
+    description: Exit 1 when BLOCKER violations are found
     required: false
     default: "true"
 
 outputs:
   result:
-    description: Check result summary (pass / warn / fail)
+    description: Gate result (pass / warn / fail / skip)
     value: ${{ steps.check.outputs.result }}
   blocker_count:
-    description: Number of BLOCKER findings
+    description: Number of BLOCKER violations
     value: ${{ steps.check.outputs.blocker_count }}
+  major_count:
+    description: Number of MAJOR violations
+    value: ${{ steps.check.outputs.major_count }}
+  violation_count:
+    description: Total number of violations
+    value: ${{ steps.check.outputs.violation_count }}
   comment_url:
     description: URL of the posted PR comment
     value: ${{ steps.post.outputs.comment_url }}
@@ -44,7 +50,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Run convention check
+    - name: Run drift gate evaluation
       id: check
       shell: bash
       env:
@@ -54,8 +60,8 @@ runs:
         REPO: ${{ github.repository }}
         BASE_SHA: ${{ github.event.pull_request.base.sha }}
         HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        CONVENTION_FILES: ${{ inputs.convention_files }}
         MODEL: ${{ inputs.model }}
+        POLICY_FILE: ${{ inputs.policy_file }}
       run: ${{ github.action_path }}/github-action/entrypoint.sh
 
     - name: Post PR comment
@@ -66,9 +72,9 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         REPO: ${{ github.repository }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
-        COMMENT_MARKER: "<!-- convention-checker-v1 -->"
+        COMMENT_MARKER: "<!-- drift-gate-v1 -->"
       run: |
-        REPORT_FILE="${RUNNER_TEMP}/convention_report.md"
+        REPORT_FILE="${RUNNER_TEMP}/drift_gate_report.md"
         if [ ! -f "$REPORT_FILE" ]; then
           echo "report file not found, skipping comment"
           exit 0
@@ -101,5 +107,5 @@ runs:
       if: inputs.fail_on_blocker == 'true' && steps.check.outputs.result == 'fail'
       shell: bash
       run: |
-        echo "::error::Convention check failed — ${{ steps.check.outputs.blocker_count }} BLOCKER(s) found"
+        echo "::error::Drift Gate FAIL — ${{ steps.check.outputs.blocker_count }} BLOCKER(s) found. Sync your contract docs before merging."
         exit 1

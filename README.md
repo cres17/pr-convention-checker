@@ -1,77 +1,98 @@
-# pr-convention-checker
+# Spec/Contract Drift Gate
 
-> Automatically checks if your PR follows the conventions documented in `CLAUDE.md`, `SKILLS.md`, or any team guideline file.
+> Automatically checks if your PR's code changes are in sync with your team's contract documents — spec, runbook, CHANGELOG, .env.example, and more.
 
 ![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-plugin-6C47FF)
 ![GitHub Action](https://img.shields.io/badge/GitHub_Actions-ready-2088FF?logo=github-actions)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-Unlike generic AI reviewers (CodeRabbit, Qodo), this tool checks only **your team's own documented rules** — not general best practices. Your `CLAUDE.md` is the rulebook. Change the doc, change the check.
+Unlike AI code reviewers (CodeRabbit, Qodo), this tool is not about code quality.
+It's a **doc-code consistency policy engine** — it enforces that your contract documents stay in sync with your code changes.
 
 ---
 
 ## How it works
 
 ```
-PR opened / /check-conventions invoked
+PR opened / /drift-gate:review invoked
         │
         ▼
-Read convention files (CLAUDE.md, SKILLS.md, ...)
+Load .drift-gate.yml policy
         │
         ▼
-Fetch PR diff (GitHub MCP or gh CLI or git diff)
+Collect changed files (GitHub API or git)
         │
         ▼
-Claude: "Does this diff violate any documented rule?"
+Classify change types: api-surface / db-schema / env-config / workflow-ci / auth-permission
+        │
+        ▼  docs-only or test-only? → skip (pass)
+Evaluate rules: when → require.groups (all groups must be satisfied)
         │
         ▼
-Output findings grouped by severity
+Parse drift-ignore from PR description
+        │
+        ▼
+Claude: generate "why needed" + checklist per violation
+        │
+        ▼
+Output: Markdown report + JSON result
 
-  BLOCKER → merge blocked
+  BLOCKER → merge blocked (CI fails)
   MAJOR   → team discussion needed
-  MINOR   → fix or follow-up issue
-  NIT     → style preference, non-blocking
+  MINOR   → PR comment only, non-blocking
+  NIT     → informational
 ```
+
+---
+
+## Problems it solves
+
+- API changed but OpenAPI spec / CHANGELOG not updated
+- DB schema migrated but no runbook or rollback plan
+- `.env` changed but `.env.example` still outdated
+- GitHub Actions / infra changed but ops docs missing
+- Auth rules changed but security docs not updated
 
 ---
 
 ## Installation
 
-### Option A — Claude Code plugin (no API key needed)
+### Option A — Claude Code plugin (local preflight)
 
-Uses your existing Claude subscription. Run manually before pushing.
+Run before pushing. Uses your existing Claude subscription.
 
 ```bash
-# In your project root
-git clone https://github.com/cres17/pr-convention-checker .claude-plugins/pr-convention-checker
+git clone https://github.com/cres17/pr-convention-checker .claude-plugins/drift-gate
 ```
 
 Then invoke:
 ```
-/check-conventions
-/check-conventions main        # compare against main
-/check-conventions 42          # review PR #42
+/drift-gate:review
+/drift-gate:review main        # compare against main
+/drift-gate:review 42          # check PR #42
+/drift-gate:review 42 --json   # JSON output
 ```
 
 ### Option B — GitHub Actions (automatic on every PR)
 
-Requires an `ANTHROPIC_API_KEY` secret. Runs automatically on every PR.
+Requires an `ANTHROPIC_API_KEY` secret. Blocks merge on BLOCKER violations.
 
 ```yaml
-# .github/workflows/convention-check.yml
-name: Convention Check
+# .github/workflows/drift-gate.yml
+name: Drift Gate
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 permissions:
-  pull-requests: write
   contents: read
+  pull-requests: write
 
 jobs:
-  check:
+  drift-gate:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
       - uses: cres17/pr-convention-checker@v1
@@ -85,76 +106,130 @@ Add the secret: `Settings → Secrets → Actions → ANTHROPIC_API_KEY`
 
 ## Configuration
 
-Create `.convention-checker.yml` in your repo root to customize behavior:
+Create `.drift-gate.yml` in your repo root:
 
 ```yaml
-convention_files:
-  - CLAUDE.md
-  - SKILLS.md
-  - docs/api-guidelines.md   # add any file
+rules:
+  - id: api-contract-sync
+    when:
+      any_changed:
+        - "src/routes/**"
+        - "openapi/**"
+    require:
+      groups:
+        - name: "API 계약 문서"
+          any_changed:
+            - "docs/spec.md"
+            - "docs/api/**"
+        - name: "릴리즈 공지"
+          all_changed:
+            - "CHANGELOG.md"
+    severity: blocker
+    message: "API surface changed without synced contract/docs"
 
-exclude_paths:
-  - "**/*.test.ts"
-  - "**/*.spec.ts"
-  - ".github/**"
-  - "dist/**"
+  - id: schema-migration-proof
+    when:
+      any_changed:
+        - "db/migrations/**"
+        - "prisma/schema.prisma"
+    require:
+      groups:
+        - name: "운영 문서"
+          any_changed:
+            - "docs/runbook/**"
+        - name: "검증 흔적"
+          any_changed:
+            - "tests/integration/**"
+    severity: major
+    message: "DB schema changed without migration note or integration test"
 
-severity_map:
-  blocker: ["must", "반드시", "never", "always"]
-  major:   ["should", "required", "권장"]
-  nit:     ["prefer", "가급적"]
+gate:
+  fail_on_blocker: true
+  fail_on_major_count: 2
+
+ignore_paths:
+  - "src/internal/**"
 ```
 
-Without this file, defaults apply (CLAUDE.md + SKILLS.md, test files excluded).
+### Policy fields
+
+| Field | Description |
+|-------|-------------|
+| `id` | Rule identifier. Use in `drift-ignore: <id>` to suppress |
+| `when.any_changed` | Rule activates when any of these paths are changed |
+| `require.groups` | List of requirement groups — **all** must be satisfied |
+| `require.groups[].name` | Group name shown in PR comment |
+| `require.groups[].any_changed` | Group satisfied if any path in list is changed |
+| `require.groups[].all_changed` | Group satisfied only if all paths in list are changed |
+| `severity` | `blocker` / `major` / `minor` / `nit` |
+| `message` | Description shown in PR comment |
+| `gate.fail_on_blocker` | Exit 1 when any BLOCKER found |
+| `gate.fail_on_major_count` | Exit 1 when MAJOR count ≥ N |
+| `ignore_paths` | Paths excluded from rule evaluation |
 
 ### Action inputs
 
 | Input | Default | Description |
-|---|---|---|
+|-------|---------|-------------|
 | `anthropic_api_key` | — | **Required.** Anthropic API key |
-| `model` | `claude-opus-4-6` | Claude model to use |
-| `convention_files` | _(from config)_ | Comma-separated file paths |
+| `github_token` | `github.token` | GitHub token for PR comments |
+| `policy_file` | `.drift-gate.yml` | Path to policy file |
+| `model` | `claude-opus-4-6` | Claude model for checklist generation |
 | `fail_on_blocker` | `true` | Exit 1 when BLOCKER found |
 | `post_comment` | `true` | Post result as PR comment |
+
+### Action outputs
+
+| Output | Description |
+|--------|-------------|
+| `result` | `pass` / `warn` / `fail` / `skip` |
+| `blocker_count` | Number of BLOCKER violations |
+| `major_count` | Number of MAJOR violations |
+| `violation_count` | Total violations |
+| `comment_url` | URL of posted PR comment |
 
 ---
 
 ## Suppressing false positives
 
-Add an inline comment to skip a specific line:
+Add to PR description to skip a specific rule:
 
-```typescript
-const route = '/users/create'  // convention-ignore: legacy endpoint, tracked in #123
+```
+drift-ignore: api-contract-sync
+reason: internal refactor only, no externally visible contract change
 ```
 
-To skip a block:
-```typescript
-// convention-ignore-start
-function legacyHandler() { ... }
-// convention-ignore-end
+`reason:` is optional but recommended for audit trails.
+
+Add to `.drift-gate.yml` to exclude paths globally:
+
+```yaml
+ignore_paths:
+  - "src/internal/**"
+  - "scripts/dev/**"
 ```
 
 ---
 
-## Security
+## Severity levels
 
-| Concern | How it's handled |
-|---|---|
-| API key | GitHub encrypted secret — never in logs |
-| Code sent to Anthropic | Same as any Claude-based review tool |
-| Fork PRs | GitHub does not expose secrets to fork workflows by default |
-| Sensitive lines | `password`, `secret`, `token` values are redacted before sending |
+| Level | Meaning | CI behavior |
+|-------|---------|-------------|
+| BLOCKER | Contract out of sync. Must fix before merge | CI fails |
+| MAJOR | Docs missing or not updated. Team review needed | CI fails if ≥ N (default 2) |
+| MINOR | Minor omission. PR comment only | Non-blocking |
+| NIT | Informational suggestion | Non-blocking |
 
 ---
 
 ## Comparison
 
-| | ESLint / Prettier | CodeRabbit / Qodo | **pr-convention-checker** |
+| | ESLint / Prettier | CodeRabbit / Qodo | **Drift Gate** |
 |---|---|---|---|
-| What it checks | Syntax & format | General code quality | **Your documented conventions** |
-| Rulebook | Config files | Built-in heuristics | `CLAUDE.md` / `SKILLS.md` |
-| Custom rules | Code required | Limited | Edit your markdown doc |
-| Understands design patterns | No | Partially | Yes |
+| What it checks | Syntax & format | General code quality | **Contract doc sync** |
+| Rulebook | Config files | Built-in heuristics | `.drift-gate.yml` |
+| Blocks merge | Yes (lint errors) | No | Yes (BLOCKER) |
+| Custom team rules | Code required | Limited | Edit YAML policy |
 
 ---
 

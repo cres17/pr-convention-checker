@@ -1,40 +1,46 @@
-name: PR Convention Checker
+name: Spec/Contract Drift Gate
 description: >
-  CLAUDE.md / SKILLS.md 등 팀 컨벤션 문서를 기준으로 PR의 변경사항이
-  정의된 규칙을 준수하는지 Claude API로 자동 분석하고 PR 코멘트를 게시합니다.
+  PR 변경분을 분석해 코드 변경이 팀의 계약 문서(spec/runbook/CHANGELOG 등)와
+  어긋났는지 자동 점검하고, 누락 문서 발견 시 CI를 실패시키는 정책 집행형 GitHub Action.
 
 inputs:
   anthropic_api_key:
-    description: Anthropic API 키 (Claude 호출용)
+    description: Anthropic API 키 (체크리스트 생성용 Claude 호출)
     required: true
   github_token:
     description: GitHub 토큰 (PR 코멘트 게시용)
     required: true
     default: ${{ github.token }}
-  convention_files:
-    description: 쉼표로 구분된 컨벤션 파일 경로 목록 (기본값은 .convention-checker.yml 참조)
+  policy_file:
+    description: drift gate 정책 파일 경로
     required: false
-    default: ""
+    default: ".drift-gate.yml"
   model:
     description: 사용할 Claude 모델 ID
     required: false
     default: "claude-opus-4-6"
   post_comment:
-    description: PR 코멘트를 게시할지 여부 (true/false)
+    description: PR 코멘트 게시 여부 (true/false)
     required: false
     default: "true"
   fail_on_blocker:
-    description: BLOCKER 발견 시 exit 1로 워크플로우를 실패시킬지 여부
+    description: BLOCKER 위반 발견 시 exit 1로 CI 실패 여부
     required: false
     default: "true"
 
 outputs:
   result:
-    description: 체크 결과 요약 (pass / warn / fail)
+    description: 게이트 결과 (pass / warn / fail / skip)
     value: ${{ steps.check.outputs.result }}
   blocker_count:
-    description: BLOCKER 항목 수
+    description: BLOCKER 위반 수
     value: ${{ steps.check.outputs.blocker_count }}
+  major_count:
+    description: MAJOR 위반 수
+    value: ${{ steps.check.outputs.major_count }}
+  violation_count:
+    description: 전체 위반 수
+    value: ${{ steps.check.outputs.violation_count }}
   comment_url:
     description: 게시된 PR 코멘트 URL
     value: ${{ steps.post.outputs.comment_url }}
@@ -42,7 +48,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Run convention check
+    - name: Drift Gate 평가 실행
       id: check
       shell: bash
       env:
@@ -52,11 +58,11 @@ runs:
         REPO: ${{ github.repository }}
         BASE_SHA: ${{ github.event.pull_request.base.sha }}
         HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        CONVENTION_FILES: ${{ inputs.convention_files }}
         MODEL: ${{ inputs.model }}
+        POLICY_FILE: ${{ inputs.policy_file }}
       run: ${{ github.action_path }}/entrypoint.sh
 
-    - name: Post PR comment
+    - name: PR 코멘트 게시
       id: post
       if: inputs.post_comment == 'true' && github.event.pull_request.number != ''
       shell: bash
@@ -64,31 +70,29 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         REPO: ${{ github.repository }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
-        COMMENT_MARKER: "<!-- convention-checker-v1 -->"
+        COMMENT_MARKER: "<!-- drift-gate-v1 -->"
       run: |
-        REPORT_FILE="${RUNNER_TEMP}/convention_report.md"
+        REPORT_FILE="${RUNNER_TEMP}/drift_gate_report.md"
         if [ ! -f "$REPORT_FILE" ]; then
-          echo "report file not found, skipping comment"
+          echo "report file not found, skipping"
           exit 0
         fi
 
         BODY=$(cat "$REPORT_FILE")
 
-        # 기존 봇 코멘트 찾기
+        # 기존 drift-gate 코멘트 찾아 업데이트 (없으면 새로 생성)
         EXISTING_ID=$(gh api \
           "repos/${REPO}/issues/${PR_NUMBER}/comments" \
           --jq ".[] | select(.body | startswith(\"${COMMENT_MARKER}\")) | .id" \
           | head -1)
 
         if [ -n "$EXISTING_ID" ]; then
-          # 기존 코멘트 업데이트 (PATCH)
           COMMENT_URL=$(gh api \
             -X PATCH \
             "repos/${REPO}/issues/comments/${EXISTING_ID}" \
             -f body="$BODY" \
             --jq ".html_url")
         else
-          # 새 코멘트 생성 (POST)
           COMMENT_URL=$(gh api \
             -X POST \
             "repos/${REPO}/issues/${PR_NUMBER}/comments" \
@@ -98,9 +102,9 @@ runs:
 
         echo "comment_url=${COMMENT_URL}" >> "$GITHUB_OUTPUT"
 
-    - name: Fail on blocker
+    - name: BLOCKER 발견 시 CI 실패
       if: inputs.fail_on_blocker == 'true' && steps.check.outputs.result == 'fail'
       shell: bash
       run: |
-        echo "::error::PR 컨벤션 체크 실패 — BLOCKER ${{ steps.check.outputs.blocker_count }}개 발견"
+        echo "::error::Drift Gate FAIL — BLOCKER ${{ steps.check.outputs.blocker_count }}개 발견. 계약 문서를 동기화한 후 머지하세요."
         exit 1

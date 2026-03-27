@@ -1,334 +1,453 @@
 #!/usr/bin/env bash
-# PR Convention Checker — GitHub Actions 진입점
-# 환경변수: ANTHROPIC_API_KEY, GITHUB_TOKEN, PR_NUMBER, REPO,
-#            BASE_SHA, HEAD_SHA, CONVENTION_FILES, MODEL
+# Spec/Contract Drift Gate — GitHub Actions 진입점
+#
+# 환경변수:
+#   ANTHROPIC_API_KEY  — Claude API 키 (필수)
+#   GITHUB_TOKEN       — PR 코멘트 게시용 토큰 (필수)
+#   PR_NUMBER          — PR 번호
+#   REPO               — owner/repo 형식
+#   BASE_SHA           — base commit SHA (폴백용)
+#   HEAD_SHA           — head commit SHA (폴백용)
+#   MODEL              — Claude 모델 ID (기본: claude-opus-4-6)
+#   POLICY_FILE        — 정책 파일 경로 (기본: .drift-gate.yml)
 set -euo pipefail
 
-REPORT_FILE="${RUNNER_TEMP:-/tmp}/convention_report.md"
-MARKER="<!-- convention-checker-v1 -->"
+REPORT_MD="${RUNNER_TEMP:-/tmp}/drift_gate_report.md"
+REPORT_JSON="${RUNNER_TEMP:-/tmp}/drift_gate_report.json"
+MARKER="<!-- drift-gate-v1 -->"
 MODEL="${MODEL:-claude-opus-4-6}"
+POLICY_FILE="${POLICY_FILE:-.drift-gate.yml}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ─── 유틸 함수 ───────────────────────────────────────────────────────────────
 
-log() { echo "[convention-checker] $*" >&2; }
+log()  { echo "[drift-gate] $*" >&2; }
 fail() { log "ERROR: $*"; exit 1; }
+require_cmd() { command -v "$1" >/dev/null 2>&1 || fail "'$1' 명령어가 필요합니다."; }
 
-require_cmd() {
-  command -v "$1" >/dev/null 2>&1 || fail "'$1' 명령어가 필요합니다."
+output() {
+  local key="$1" val="$2"
+  echo "${key}=${val}" >> "${GITHUB_OUTPUT:-/dev/null}"
 }
 
 # ─── 사전 요건 확인 ───────────────────────────────────────────────────────────
 
 require_cmd curl
 require_cmd jq
+require_cmd python3
 [ -n "${ANTHROPIC_API_KEY:-}" ] || fail "ANTHROPIC_API_KEY가 설정되지 않았습니다."
 
-# ─── Step 1: 설정 파일 로드 ───────────────────────────────────────────────────
+# pyyaml 확인 (없으면 설치)
+python3 -c "import yaml" 2>/dev/null || {
+  log "pyyaml 설치 중..."
+  pip3 install --quiet pyyaml || fail "pyyaml 설치 실패"
+}
 
-log "설정 파일 로드 중..."
+# ─── Step 1: 변경 파일 수집 ──────────────────────────────────────────────────
 
-CONFIG_FILE=".convention-checker.yml"
-EXCLUDE_PATTERNS=('*.test.ts' '*.test.js' '*.spec.ts' '*.spec.js' '*.snap' '.github/*' 'dist/*' 'build/*' 'node_modules/*' '*.lock' '*-lock.json')
+log "변경 파일 수집 중..."
 
-# CONVENTION_FILES 환경변수 > 설정 파일 > 기본값
-if [ -n "${CONVENTION_FILES:-}" ]; then
-  IFS=',' read -ra CONV_FILE_LIST <<< "$CONVENTION_FILES"
-else
-  CONV_FILE_LIST=("CLAUDE.md" "SKILLS.md" ".claude/instructions.md" "docs/conventions.md")
-fi
-
-# ─── Step 2: 컨벤션 파일 수집 ────────────────────────────────────────────────
-
-log "컨벤션 파일 수집 중..."
-
-CONVENTION_CONTENT=""
-LOADED_FILES=()
-
-for f in "${CONV_FILE_LIST[@]}"; do
-  f=$(echo "$f" | xargs)  # trim
-  if [ -f "$f" ]; then
-    CONVENTION_CONTENT+=$'\n\n'"<!-- source: ${f} -->"$'\n'
-    CONVENTION_CONTENT+=$(cat "$f")
-    LOADED_FILES+=("$f")
-    log "  로드: $f"
-  else
-    log "  건너뜀 (없음): $f"
-  fi
-done
-
-if [ -z "$CONVENTION_CONTENT" ]; then
-  log "WARNING: 컨벤션 파일을 하나도 찾지 못했습니다."
-  cat > "$REPORT_FILE" <<EOF
-${MARKER}
-## 🔍 PR 컨벤션 체크 결과
-
-⚠️ **컨벤션 파일을 찾을 수 없습니다.**
-
-레포 루트에 \`CLAUDE.md\` 또는 \`SKILLS.md\`를 작성하거나,
-\`.convention-checker.yml\`의 \`convention_files\` 경로를 확인하세요.
-EOF
-  echo "result=skip" >> "${GITHUB_OUTPUT:-/dev/null}"
-  echo "blocker_count=0" >> "${GITHUB_OUTPUT:-/dev/null}"
-  exit 0
-fi
-
-# 컨벤션 텍스트 크기 제한 (약 16,000자)
-MAX_CONV_CHARS=16000
-if [ ${#CONVENTION_CONTENT} -gt $MAX_CONV_CHARS ]; then
-  log "컨벤션 파일이 큽니다. 압축 중 (${#CONVENTION_CONTENT}자 → ${MAX_CONV_CHARS}자)..."
-  CONVENTION_CONTENT="${CONVENTION_CONTENT:0:$MAX_CONV_CHARS}"$'\n\n[... 이후 내용 생략됨 ...]'
-fi
-
-# ─── Step 3: PR Diff 수집 ─────────────────────────────────────────────────────
-
-log "PR diff 수집 중..."
+PR_BODY=""
+CHANGED_FILES_JSON="[]"
 
 if [ -n "${PR_NUMBER:-}" ] && [ -n "${REPO:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
-  # GitHub API로 diff 가져오기
-  RAW_DIFF=$(curl -sf \
-    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-    -H "Accept: application/vnd.github.v3.diff" \
-    "https://api.github.com/repos/${REPO}/pulls/${PR_NUMBER}/files?per_page=100" \
-    2>/dev/null || true)
-
-  # files API로 파일 목록 가져오기 (JSON)
-  PR_FILES_JSON=$(curl -sf \
+  # GitHub API로 변경 파일 목록 수집 (status, patch 포함)
+  API_FILES=$(curl -sf \
     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
     -H "Accept: application/vnd.github.v3+json" \
     "https://api.github.com/repos/${REPO}/pulls/${PR_NUMBER}/files?per_page=100" \
-    2>/dev/null || echo "[]")
+    2>/dev/null) || API_FILES="[]"
 
-  # patch 필드에서 diff 재구성
-  RAW_DIFF=$(echo "$PR_FILES_JSON" | jq -r '
-    .[] |
-    "diff --git a/\(.filename) b/\(.filename)\n" +
-    (if .patch then .patch else "(binary or no changes)" end)
-  ')
+  CHANGED_FILES_JSON=$(echo "$API_FILES" | jq '[.[] | {
+    path: .filename,
+    status: .status,
+    previous_path: (.previous_filename // null),
+    patch: (.patch // "")
+  }]')
 
-  CHANGED_FILES=$(echo "$PR_FILES_JSON" | jq -r '.[].filename')
-  TOTAL_FILES=$(echo "$PR_FILES_JSON" | jq 'length')
-elif [ -n "${BASE_SHA:-}" ] && [ -n "${HEAD_SHA:-}" ]; then
-  # git diff 폴백
-  RAW_DIFF=$(git diff "${BASE_SHA}...${HEAD_SHA}" 2>/dev/null || git diff HEAD~1 2>/dev/null || true)
-  CHANGED_FILES=$(git diff --name-only "${BASE_SHA}...${HEAD_SHA}" 2>/dev/null || true)
-  TOTAL_FILES=$(echo "$CHANGED_FILES" | grep -c . || true)
+  # PR body — drift-ignore 파싱용
+  PR_BODY=$(curl -sf \
+    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+    -H "Accept: application/vnd.github.v3+json" \
+    "https://api.github.com/repos/${REPO}/pulls/${PR_NUMBER}" \
+    2>/dev/null | jq -r '.body // ""') || PR_BODY=""
 else
-  RAW_DIFF=$(git diff HEAD~1 2>/dev/null || true)
-  CHANGED_FILES=$(git diff --name-only HEAD~1 2>/dev/null || true)
-  TOTAL_FILES=$(echo "$CHANGED_FILES" | grep -c . || true)
+  log "GitHub API 환경변수 미설정. git 폴백 사용..."
+  BASE="${BASE_SHA:-HEAD~1}"
+
+  GIT_STATUS=$(git diff --name-status "${BASE}...HEAD" 2>/dev/null \
+    || git diff --name-status HEAD~1 2>/dev/null \
+    || true)
+
+  CHANGED_FILES_JSON=$(python3 - <<'PYEOF'
+import sys, json
+
+lines = """${GIT_STATUS}""".strip().splitlines()
+files = []
+STATUS_MAP = {"A": "added", "M": "modified", "D": "deleted"}
+
+for line in lines:
+    if not line.strip():
+        continue
+    parts = line.split("\t")
+    if parts[0].startswith("R"):
+        files.append({"path": parts[2], "status": "renamed",
+                      "previous_path": parts[1], "patch": ""})
+    elif len(parts) >= 2:
+        files.append({"path": parts[1],
+                      "status": STATUS_MAP.get(parts[0], "modified"),
+                      "previous_path": None, "patch": ""})
+
+print(json.dumps(files))
+PYEOF
+  )
 fi
 
-if [ -z "$RAW_DIFF" ]; then
-  log "분석할 diff가 없습니다."
-  echo "result=skip" >> "${GITHUB_OUTPUT:-/dev/null}"
-  echo "blocker_count=0" >> "${GITHUB_OUTPUT:-/dev/null}"
+FILE_COUNT=$(echo "$CHANGED_FILES_JSON" | jq 'length')
+log "변경 파일: ${FILE_COUNT}개"
+
+if [ "$FILE_COUNT" -eq 0 ]; then
+  log "변경 파일이 없습니다."
+  output result skip
+  output blocker_count 0
+  output major_count 0
+  output violation_count 0
   exit 0
 fi
 
-# ─── Step 4: Diff 전처리 ─────────────────────────────────────────────────────
+# ─── Step 2: drift-ignore 파싱 ───────────────────────────────────────────────
 
-log "Diff 전처리 중..."
+log "PR body에서 drift-ignore 파싱 중..."
 
-# 제외할 파일 패턴 필터링
-FILTERED_DIFF=""
-EXCLUDED_COUNT=0
-CURRENT_FILE=""
-SKIP_CURRENT=false
-INCLUDED_COUNT=0
-
-while IFS= read -r line; do
-  # 파일 헤더 감지
-  if [[ "$line" =~ ^diff\ --git\ a/(.+)\ b/(.+)$ ]]; then
-    CURRENT_FILE="${BASH_REMATCH[2]}"
-    SKIP_CURRENT=false
-
-    # 제외 패턴 확인
-    for pat in "${EXCLUDE_PATTERNS[@]}"; do
-      if [[ "$CURRENT_FILE" == $pat ]]; then
-        SKIP_CURRENT=true
-        ((EXCLUDED_COUNT++)) || true
-        break
-      fi
-    done
-
-    # 민감 파일 제외
-    if [[ "$CURRENT_FILE" == *.env* ]] || [[ "$CURRENT_FILE" == *secret* ]] || [[ "$CURRENT_FILE" == *credential* ]]; then
-      SKIP_CURRENT=true
-      ((EXCLUDED_COUNT++)) || true
-    fi
-
-    if [ "$SKIP_CURRENT" = false ]; then
-      FILTERED_DIFF+="${line}"$'\n'
-      ((INCLUDED_COUNT++)) || true
-    fi
-    continue
-  fi
-
-  if [ "$SKIP_CURRENT" = false ]; then
-    # 민감 정보 마스킹
-    if echo "$line" | grep -qiE '(password|secret|api_key|apikey|token)\s*[=:]\s*[^\s]'; then
-      line=$(echo "$line" | sed -E 's/(password|secret|api_key|apikey|token)(\s*[=:]\s*).*/\1\2[REDACTED]/gi')
-    fi
-    FILTERED_DIFF+="${line}"$'\n'
-  fi
-done <<< "$RAW_DIFF"
-
-# Diff 크기 제한 (약 20,000자)
-MAX_DIFF_CHARS=20000
-if [ ${#FILTERED_DIFF} -gt $MAX_DIFF_CHARS ]; then
-  log "Diff가 큽니다. 잘라냄 (${#FILTERED_DIFF}자 → ${MAX_DIFF_CHARS}자)..."
-  FILTERED_DIFF="${FILTERED_DIFF:0:$MAX_DIFF_CHARS}"$'\n\n[... diff 이후 생략됨 ...]'
-fi
-
-if [ -z "$FILTERED_DIFF" ]; then
-  log "필터링 후 분석할 내용이 없습니다."
-  echo "result=skip" >> "${GITHUB_OUTPUT:-/dev/null}"
-  echo "blocker_count=0" >> "${GITHUB_OUTPUT:-/dev/null}"
-  exit 0
-fi
-
-# convention-ignore 블록 처리
-PROCESSED_DIFF=""
-IN_IGNORE_BLOCK=false
-IGNORED_LINES=0
-
-while IFS= read -r line; do
-  if echo "$line" | grep -q 'convention-ignore-start'; then
-    IN_IGNORE_BLOCK=true
-    continue
-  fi
-  if echo "$line" | grep -q 'convention-ignore-end'; then
-    IN_IGNORE_BLOCK=false
-    continue
-  fi
-  if [ "$IN_IGNORE_BLOCK" = true ]; then
-    ((IGNORED_LINES++)) || true
-    continue
-  fi
-  if echo "$line" | grep -q 'convention-ignore'; then
-    ((IGNORED_LINES++)) || true
-    continue
-  fi
-  PROCESSED_DIFF+="${line}"$'\n'
-done <<< "$FILTERED_DIFF"
-
-log "전처리 완료: 포함 ${INCLUDED_COUNT}개, 제외 ${EXCLUDED_COUNT}개, convention-ignore ${IGNORED_LINES}줄"
-
-# ─── Step 5: Claude API 호출 ─────────────────────────────────────────────────
-
-log "Claude API 호출 중 (모델: ${MODEL})..."
-
-LOADED_FILES_STR=$(IFS=', '; echo "${LOADED_FILES[*]}")
-
-PROMPT=$(cat <<PROMPT
-당신은 팀 컨벤션 준수 여부를 체크하는 PR 리뷰어입니다.
-
-아래 "컨벤션 문서"와 "PR diff"를 대조하여, diff에서 추가(+)된 코드가
-컨벤션 문서에 명시된 규칙을 위반하는지 분석하세요.
-
-## 분석 원칙
-- 컨벤션 문서에 명시적으로 기술된 규칙만 체크합니다.
-- 범용 코드 품질 조언은 하지 않습니다.
-- 삭제(-) 줄은 분석하지 않습니다.
-- 규칙 적용 범위가 불명확하면 [추정] 라벨을 붙이고 신뢰도를 low로 표시합니다.
-
-## 심각도 기준
-- BLOCKER: "must", "반드시", "절대", "금지", "never", "always" 등 강제 규칙 위반
-- MAJOR: "should", "권장", "필요", "required" 등 권고 규칙 위반
-- MINOR: 명확한 위반이지만 경미, 또는 개선 여지
-- NIT: "prefer", "가급적" 등 선호 표현의 미준수
-
-## 출력 형식 (GitHub Markdown)
-
-결과를 아래 형식으로 출력하세요. 위반이 없으면 "위반 없음" 섹션만 출력합니다.
-
-${MARKER}
-## 🔍 PR 컨벤션 체크 결과
-
-> 분석 기준: \`${LOADED_FILES_STR}\` | 분석한 파일: ${INCLUDED_COUNT}개
-
-[위반이 있으면 심각도별 섹션과 항목을 출력]
-[위반이 없으면: ✅ **컨벤션 이슈 없음** — 모든 규칙을 준수합니다.]
-
----
-📊 요약: BLOCKER N개 · MAJOR N개 · MINOR N개 · NIT N개
-
-<details>
-<summary>ℹ️ 이 체크에 대해</summary>
-이 코멘트는 팀 컨벤션 문서를 기준으로 자동 생성됩니다.
-특정 지적이 잘못되었다면 해당 줄에 \`// convention-ignore\` 주석을 추가하세요.
-</details>
-
----
-
-## 컨벤션 문서
-
-${CONVENTION_CONTENT}
-
----
-
-## PR Diff
-
-${PROCESSED_DIFF}
-PROMPT
+IGNORED_RULES_JSON=$(python3 - <<PYEOF
+import sys, json, re
+body = ${PR_BODY@Q}
+ignored = [m.group(1) for m in re.finditer(r'drift-ignore:\s*(\S+)', body)]
+print(json.dumps(ignored))
+PYEOF
 )
 
-# Claude API 호출
-API_RESPONSE=$(curl -sf \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: ${ANTHROPIC_API_KEY}" \
-  -H "anthropic-version: 2023-06-01" \
-  "https://api.anthropic.com/v1/messages" \
-  -d "$(jq -n \
-    --arg model "$MODEL" \
-    --arg prompt "$PROMPT" \
-    '{
-      model: $model,
-      max_tokens: 4096,
-      messages: [{ role: "user", content: $prompt }]
-    }'
-  )"
-) || fail "Claude API 호출 실패"
+IGNORED_COUNT=$(echo "$IGNORED_RULES_JSON" | jq 'length')
+if [ "$IGNORED_COUNT" -gt 0 ]; then
+  IGNORED_LIST=$(echo "$IGNORED_RULES_JSON" | jq -r '.[]' | tr '\n' ' ')
+  log "drift-ignore 규칙: ${IGNORED_LIST}"
 
-# 응답 파싱
-REPORT=$(echo "$API_RESPONSE" | jq -r '.content[0].text // empty')
+  # reason 없는 drift-ignore 경고
+  python3 - <<PYEOF
+import re, sys
+body = ${PR_BODY@Q}
+for m in re.finditer(r'drift-ignore:\s*(\S+)', body):
+    rule_id = m.group(1)
+    after = body[m.end():]
+    if not re.search(r'reason\s*:', after.split('\n')[0] + '\n' + (after.split('\n')[1] if len(after.split('\n')) > 1 else '')):
+        print(f"[drift-gate] WARNING: drift-ignore '{rule_id}' — reason 없음. 감사 추적을 위해 reason 추가를 권장합니다.", file=sys.stderr)
+PYEOF
 
-if [ -z "$REPORT" ]; then
-  fail "Claude API 응답을 파싱할 수 없습니다: $(echo "$API_RESPONSE" | head -c 500)"
 fi
 
-# ─── Step 6: 결과 저장 및 출력 ───────────────────────────────────────────────
+# ─── Step 3: 정책 평가 ───────────────────────────────────────────────────────
 
-echo "$REPORT" > "$REPORT_FILE"
-log "리포트 저장: $REPORT_FILE"
+log "정책 평가 중 (${POLICY_FILE})..."
 
-# BLOCKER 수 계산
-BLOCKER_COUNT=$(echo "$REPORT" | grep -c '\[BLOCKER\]' || true)
+EVAL_RESULT=$(python3 "${SCRIPT_DIR}/evaluate.py" \
+  "$POLICY_FILE" \
+  "$CHANGED_FILES_JSON" \
+  "$IGNORED_RULES_JSON" 2>&1) || {
+  EXIT_CODE=$?
+  if [ $EXIT_CODE -eq 2 ]; then
+    fail "$(echo "$EVAL_RESULT" | grep 'ERROR:' | head -1)"
+  fi
+  fail "정책 평가 실패: ${EVAL_RESULT}"
+}
 
-if [ "$BLOCKER_COUNT" -gt 0 ]; then
-  RESULT="fail"
-else
-  MAJOR_COUNT=$(echo "$REPORT" | grep -c '\[MAJOR\]' || true)
-  if [ "$MAJOR_COUNT" -gt 0 ]; then
-    RESULT="warn"
-  else
-    RESULT="pass"
+# 정책 파일 없음
+if echo "$EVAL_RESULT" | jq -e '.no_policy' >/dev/null 2>&1; then
+  log "WARNING: ${POLICY_FILE}이 없습니다."
+  cat > "$REPORT_MD" <<EOF
+${MARKER}
+## ⚙️ Drift Gate
+
+⚠️ **\`.drift-gate.yml\`이 없습니다.**
+
+레포 루트에 정책 파일을 추가하면 팀 규칙 기반 drift 검사를 시작할 수 있습니다.
+
+\`\`\`yaml
+rules:
+  - id: api-contract-sync
+    when:
+      any_changed:
+        - "src/routes/**"
+        - "openapi/**"
+    require:
+      groups:
+        - name: "API 계약 문서"
+          any_changed:
+            - "docs/spec.md"
+            - "docs/api/**"
+        - name: "릴리즈 공지"
+          all_changed:
+            - "CHANGELOG.md"
+    severity: blocker
+    message: "API surface changed without synced contract/docs"
+gate:
+  fail_on_blocker: true
+  fail_on_major_count: 2
+\`\`\`
+EOF
+  output result skip
+  output blocker_count 0
+  output major_count 0
+  output violation_count 0
+  exit 0
+fi
+
+# docs-only / test-only 스킵
+if echo "$EVAL_RESULT" | jq -e '.skip' >/dev/null 2>&1; then
+  SKIP_REASON=$(echo "$EVAL_RESULT" | jq -r '.reason')
+  log "드리프트 평가 건너뜀: ${SKIP_REASON}"
+  cat > "$REPORT_MD" <<EOF
+${MARKER}
+## 🔍 Drift Gate 분석 결과
+
+✅ **드리프트 평가 건너뜀** — \`${SKIP_REASON}\` PR입니다.
+계약 문서 동기화 점검이 필요하지 않습니다.
+EOF
+  output result pass
+  output blocker_count 0
+  output major_count 0
+  output violation_count 0
+  exit 0
+fi
+
+CHANGE_TYPES=$(echo "$EVAL_RESULT" | jq -r '.change_types | join(", ")')
+VIOLATIONS=$(echo "$EVAL_RESULT" | jq '.violations')
+VIOLATION_COUNT=$(echo "$VIOLATIONS" | jq 'length')
+GATE=$(echo "$EVAL_RESULT" | jq '.gate')
+
+BLOCKER_COUNT=$(echo "$VIOLATIONS" | jq '[.[] | select(.severity == "BLOCKER")] | length')
+MAJOR_COUNT=$(echo "$VIOLATIONS"   | jq '[.[] | select(.severity == "MAJOR")]   | length')
+MINOR_COUNT=$(echo "$VIOLATIONS"   | jq '[.[] | select(.severity == "MINOR")]   | length')
+NIT_COUNT=$(echo "$VIOLATIONS"     | jq '[.[] | select(.severity == "NIT")]     | length')
+
+log "변경 유형: ${CHANGE_TYPES}"
+log "위반: BLOCKER=${BLOCKER_COUNT} MAJOR=${MAJOR_COUNT} MINOR=${MINOR_COUNT} NIT=${NIT_COUNT}"
+
+# ─── Step 4: Claude API — 근거 및 체크리스트 생성 ────────────────────────────
+
+CLAUDE_ENRICHMENT=""
+
+if [ "$VIOLATION_COUNT" -gt 0 ]; then
+  log "Claude API 호출 중 (모델: ${MODEL})..."
+
+  VIOLATIONS_SUMMARY=$(echo "$VIOLATIONS" | jq -r '.[] |
+    "[" + .severity + "] " + .rule_id + "\n" +
+    "  메시지: " + .message + "\n" +
+    "  트리거 파일: " + ([.trigger_files[].path] | join(", ")) + "\n" +
+    "  불충족 묶음: " + (
+      [.unsatisfied_groups[] |
+        .name + " — " + .type + "(" + (.required | join(", ")) + ")"
+      ] | join("; ")
+    ) + "\n"
+  ')
+
+  PROMPT="당신은 팀 계약 문서(spec/runbook/CHANGELOG 등)와 코드 변경의 정합성을 점검하는 분석가입니다.
+
+아래 \"정책 위반 목록\"을 검토하고, 각 항목에 대해 다음 두 가지를 작성하세요:
+1. 왜 필요한가: 해당 문서나 산출물이 이 변경에서 왜 중요한지 1-2문장으로 설명
+2. 체크리스트: 개발자가 수행해야 할 구체적 액션 3-5개 (마크다운 체크박스 형식)
+
+각 항목을 아래 형식으로 출력하세요:
+
+### [SEVERITY] rule-id
+왜 필요한가: <설명>
+
+체크리스트:
+- [ ] <액션 1>
+- [ ] <액션 2>
+- [ ] <액션 3>
+
+---
+
+## 정책 위반 목록
+
+${VIOLATIONS_SUMMARY}"
+
+  API_RESPONSE=$(curl -sf \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "x-api-key: ${ANTHROPIC_API_KEY}" \
+    -H "anthropic-version: 2023-06-01" \
+    "https://api.anthropic.com/v1/messages" \
+    -d "$(jq -n \
+      --arg model "$MODEL" \
+      --arg prompt "$PROMPT" \
+      '{model: $model, max_tokens: 2048, messages: [{role: "user", content: $prompt}]}'
+    )") || { log "WARNING: Claude API 호출 실패. 기본 메시지로 대체."; API_RESPONSE=""; }
+
+  if [ -n "$API_RESPONSE" ]; then
+    CLAUDE_ENRICHMENT=$(echo "$API_RESPONSE" | jq -r '.content[0].text // ""')
   fi
 fi
 
-log "체크 완료: ${RESULT} (BLOCKER: ${BLOCKER_COUNT})"
+# ─── Step 5: Markdown 리포트 생성 ────────────────────────────────────────────
 
-# GitHub Actions 출력
+log "리포트 생성 중..."
+
+FAIL_ON_BLOCKER=$(echo "$GATE" | jq -r '.fail_on_blocker // true')
+FAIL_ON_MAJOR=$(echo "$GATE" | jq -r '.fail_on_major_count // 2')
+
+if [ "$BLOCKER_COUNT" -gt 0 ] && [ "$FAIL_ON_BLOCKER" = "true" ]; then
+  RESULT="fail"
+elif [ "$MAJOR_COUNT" -ge "$FAIL_ON_MAJOR" ]; then
+  RESULT="fail"
+elif [ "$MAJOR_COUNT" -gt 0 ] || [ "$MINOR_COUNT" -gt 0 ]; then
+  RESULT="warn"
+else
+  RESULT="pass"
+fi
+
 {
-  echo "result=${RESULT}"
-  echo "blocker_count=${BLOCKER_COUNT}"
-} >> "${GITHUB_OUTPUT:-/dev/null}"
+  echo "${MARKER}"
+  echo "## 🔍 Drift Gate 분석 결과"
+  echo ""
+  echo "> 정책: \`${POLICY_FILE}\` | 변경 파일: ${FILE_COUNT}개 | 유형: ${CHANGE_TYPES}"
+  echo ""
 
-# 터미널에도 출력
+  if [ "$VIOLATION_COUNT" -eq 0 ]; then
+    echo "✅ **계약 문서 동기화 완료** — 모든 정책 규칙을 통과합니다."
+  else
+    if [ "$RESULT" = "fail" ]; then
+      echo "🚫 **머지 전 수정 필요** — BLOCKER ${BLOCKER_COUNT}개 · MAJOR ${MAJOR_COUNT}개"
+    else
+      echo "⚠️ **문서 동기화 권장** — MAJOR ${MAJOR_COUNT}개 · MINOR ${MINOR_COUNT}개"
+    fi
+    echo ""
+
+    for severity in BLOCKER MAJOR MINOR NIT; do
+      SEV_VIOLATIONS=$(echo "$VIOLATIONS" | jq --arg s "$severity" '[.[] | select(.severity == $s)]')
+      SEV_COUNT=$(echo "$SEV_VIOLATIONS" | jq 'length')
+      [ "$SEV_COUNT" -eq 0 ] && continue
+
+      case "$severity" in
+        BLOCKER) echo "### 🚫 BLOCKER (${SEV_COUNT})" ;;
+        MAJOR)   echo "### ⚠️ MAJOR (${SEV_COUNT})" ;;
+        MINOR)   echo "### 💬 MINOR (${SEV_COUNT})" ;;
+        NIT)     echo "### 🔧 NIT (${SEV_COUNT})" ;;
+      esac
+      echo ""
+
+      while IFS= read -r violation; do
+        RULE_ID=$(echo "$violation" | jq -r '.rule_id')
+        MESSAGE=$(echo "$violation" | jq -r '.message')
+
+        echo "**[\`${RULE_ID}\`]** ${MESSAGE}"
+        echo ""
+
+        # 트리거 파일
+        echo "**트리거 파일:**"
+        echo "$violation" | jq -r '.trigger_files[] | "- `" + .path + "` (" + .status + ")"'
+        echo ""
+
+        # 불충족 묶음
+        echo "**불충족 묶음:**"
+        echo "$violation" | jq -r '
+          .unsatisfied_groups[] |
+          "- **" + .name + "** (`" + (.required | join("`, `")) + "` " + .type + " — 없음)"
+        '
+        echo ""
+
+        # Claude 근거 + 체크리스트 (rule_id 섹션 추출)
+        if [ -n "$CLAUDE_ENRICHMENT" ]; then
+          ENRICHMENT=$(python3 - <<PYEOF
+import re, sys
+content = """${CLAUDE_ENRICHMENT}"""
+rule_id = "${RULE_ID}"
+pattern = r'###[^\n]*' + re.escape(rule_id) + r'[^\n]*\n(.*?)(?=###|\Z)'
+m = re.search(pattern, content, re.DOTALL)
+if m:
+    print(m.group(1).strip())
+PYEOF
+          )
+          if [ -n "$ENRICHMENT" ]; then
+            echo "$ENRICHMENT"
+            echo ""
+          fi
+        fi
+
+        echo "> 무시하려면 PR description에 추가: \`drift-ignore: ${RULE_ID}\`"
+        echo ""
+        echo "---"
+        echo ""
+      done < <(echo "$SEV_VIOLATIONS" | jq -c '.[]')
+    done
+  fi
+
+  # 요약 및 안내
+  echo "<details>"
+  echo "<summary>📊 요약 · ℹ️ 이 체크에 대해</summary>"
+  echo ""
+  echo "| 심각도 | 수 |"
+  echo "|--------|-----|"
+  echo "| 🚫 BLOCKER | ${BLOCKER_COUNT} |"
+  echo "| ⚠️ MAJOR | ${MAJOR_COUNT} |"
+  echo "| 💬 MINOR | ${MINOR_COUNT} |"
+  echo "| 🔧 NIT | ${NIT_COUNT} |"
+  echo ""
+  echo "**CI 판정:** $([ "$RESULT" = "fail" ] && echo "FAIL ❌" || ([ "$RESULT" = "warn" ] && echo "WARN ⚠️" || echo "PASS ✅"))"
+  if [ "$IGNORED_COUNT" -gt 0 ]; then
+    echo ""
+    echo "**건너뛴 규칙:** $(echo "$IGNORED_RULES_JSON" | jq -r '.[]' | tr '\n' ' ')"
+  fi
+  echo ""
+  echo "이 코멘트는 \`.drift-gate.yml\` 기반으로 팀 계약 문서와 코드 변경의 정합성을 점검합니다."
+  echo "규칙을 무시하려면 PR description에 아래를 추가하세요:"
+  echo ""
+  echo "\`\`\`"
+  echo "drift-ignore: <rule-id>"
+  echo "reason: <이유>"
+  echo "\`\`\`"
+  echo ""
+  echo "</details>"
+} > "$REPORT_MD"
+
+# ─── Step 6: JSON 리포트 생성 ────────────────────────────────────────────────
+
+jq -n \
+  --argjson violations "$VIOLATIONS" \
+  --argjson blocker "$BLOCKER_COUNT" \
+  --argjson major "$MAJOR_COUNT" \
+  --argjson minor "$MINOR_COUNT" \
+  --argjson nit "$NIT_COUNT" \
+  --argjson change_types "$(echo "$EVAL_RESULT" | jq '.change_types')" \
+  --argjson gate "$GATE" \
+  --argjson ignored "$IGNORED_RULES_JSON" \
+  --arg result "$RESULT" \
+  --arg policy "$POLICY_FILE" \
+  '{
+    summary: {
+      blocker: $blocker, major: $major, minor: $minor, nit: $nit,
+      passed: ($result == "pass")
+    },
+    result: $result,
+    change_types: $change_types,
+    violations: $violations,
+    ignored_rules: $ignored,
+    gate: $gate,
+    policy_file: $policy
+  }' > "$REPORT_JSON"
+
+log "리포트 저장: ${REPORT_MD} | ${REPORT_JSON}"
+
+# ─── Step 7: 출력 ────────────────────────────────────────────────────────────
+
+output result         "$RESULT"
+output blocker_count  "$BLOCKER_COUNT"
+output major_count    "$MAJOR_COUNT"
+output violation_count "$VIOLATION_COUNT"
+
 echo ""
 echo "========================================"
-echo "PR Convention Checker 결과"
+echo " Drift Gate 분석 결과"
 echo "========================================"
-cat "$REPORT_FILE"
+cat "$REPORT_MD"
 echo ""
