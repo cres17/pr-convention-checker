@@ -148,6 +148,8 @@ reason: <이유>
 
 ### JSON 결과 형식
 
+`drift_gate_report.json`으로 저장되며 다음 스키마를 따릅니다.
+
 ```json
 {
   "summary": {
@@ -157,15 +159,17 @@ reason: <이유>
     "nit": 0,
     "passed": false
   },
+  "result": "fail",
   "change_types": ["api-surface", "db-schema"],
   "violations": [
     {
       "rule_id": "api-contract-sync",
-      "severity": "blocker",
+      "severity": "BLOCKER",
       "confidence": "high",
-      "change_type": "api-surface",
+      "change_types": ["api-surface"],
+      "message": "API surface changed without synced contract/docs",
       "trigger_files": [
-        { "path": "src/routes/users.ts", "status": "modified" }
+        { "path": "src/routes/users.ts", "status": "modified", "previous_path": null, "patch": "..." }
       ],
       "unsatisfied_groups": [
         {
@@ -179,17 +183,32 @@ reason: <이유>
           "type": "all_changed"
         }
       ],
-      "message": "API surface changed without synced contract/docs",
-      "checklist": [
-        "docs/spec.md에 엔드포인트 변경 내용 반영",
-        "CHANGELOG.md에 항목 추가"
-      ],
+      "checklist": [],
       "ignored": false
     }
   ],
-  "ignored_rules": [],
+  "skipped_rules": [
+    {
+      "rule_id": "workflow-ops-doc",
+      "severity": "MINOR",
+      "message": "CI/infra changed without ops documentation update"
+    }
+  ],
+  "ignored_rule_ids": ["workflow-ops-doc"],
+  "gate": { "fail_on_blocker": true, "fail_on_major_count": 2 },
   "policy_file": ".drift-gate.yml"
 }
+```
+
+**필드 설명:**
+
+| 필드 | 설명 |
+|------|------|
+| `violations[].confidence` | `high` / `medium` — 경로 패턴 매칭 신뢰도. `medium`이면 Markdown에 `[추정]` 라벨 표시 |
+| `violations[].change_types` | 트리거 파일의 분류된 변경 유형 목록 |
+| `violations[].checklist` | evaluate.py는 `[]`로 초기화. entrypoint.sh에서 Claude가 Markdown 리포트에 채움 |
+| `skipped_rules` | drift-ignore로 건너뛴 규칙 목록 (rule_id, severity, message 포함) |
+| `ignored_rule_ids` | PR description에서 파싱된 drift-ignore rule-id 목록 |
 ```
 
 ### 전체 Markdown 출력 예시 (로컬 모드)
@@ -309,13 +328,16 @@ BLOCKER 1개 이상일 때:
 ## CI 게이트 판정 로직
 
 ```
-docs-only 또는 test-only PR  → exit 0 (드리프트 평가 없이 통과)
-BLOCKER 1개 이상             → exit 1 (CI 실패)
-MAJOR   N개 이상             → exit 1 (N은 gate.fail_on_major_count, 기본 2)
-MINOR만 있음                 → exit 0, PR 코멘트만 게시
-위반 없음                    → exit 0, ✅ 코멘트 게시
-drift-ignore 적용 규칙       → 해당 규칙 제외 후 재판정
+docs-only 또는 test-only PR             → result=pass, exit 0 (드리프트 평가 생략)
+BLOCKER/MAJOR를 reason 없이 drift-ignore → CI 즉시 실패 (rule 평가 전)
+BLOCKER ≥ 1 && fail_on_blocker=true     → result=fail, exit 1
+MAJOR ≥ fail_on_major_count (기본 2)    → result=fail, exit 1
+MAJOR ≥ 1 또는 MINOR ≥ 1               → result=warn, exit 0 (PR 코멘트만)
+위반 없음                               → result=pass, exit 0, ✅ 코멘트 게시
 ```
+
+**BLOCKER/MAJOR drift-ignore reason 강제:**
+BLOCKER 또는 MAJOR 심각도 규칙을 `drift-ignore`할 때 PR description에 `reason:` 이 없으면 entrypoint.sh가 즉시 오류를 내고 CI를 실패시킵니다. MINOR/NIT는 `reason:` 없이도 허용됩니다.
 
 게이트 기준은 `.drift-gate.yml`의 `gate:` 섹션으로 오버라이드합니다:
 

@@ -22,7 +22,7 @@
   "install": {
     "copyTo": {
       "commands": ".claude/commands/",
-      "skills": ".claude/commands/"
+      "skills": ".claude/skills/"
     }
   }
 }

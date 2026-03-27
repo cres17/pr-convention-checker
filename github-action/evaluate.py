@@ -5,6 +5,11 @@ Drift Gate 정책 평가기.
 
 Usage:
   python3 evaluate.py <policy_path> <changed_files_json> <ignored_rules_json>
+
+Exit codes:
+  0 — 정상 완료
+  1 — 파일/파싱 오류
+  2 — 정책 검증 실패 (require.groups 누락 등)
 """
 import sys
 import json
@@ -13,7 +18,6 @@ import re
 try:
     import yaml
 except ImportError:
-    # yaml 없으면 간단한 폴백 파서 사용
     yaml = None
 
 
@@ -23,8 +27,7 @@ def load_yaml(path):
     if yaml is not None:
         with open(path) as f:
             return yaml.safe_load(f)
-    # 폴백: pyyaml 없는 환경 (GitHub Actions에는 기본 설치됨)
-    raise RuntimeError("pyyaml이 필요합니다. pip install pyyaml")
+    raise RuntimeError("pyyaml이 필요합니다: pip install pyyaml")
 
 
 # ─── Glob 매처 ───────────────────────────────────────────────────────────────
@@ -32,17 +35,16 @@ def load_yaml(path):
 def glob_to_regex(pattern):
     """
     glob 패턴을 정규식으로 변환.
-    - **/ : 0개 이상의 디렉토리 (포함 없음도 매칭)
-    - **  : 어떤 경로든
-    - *   : 슬래시 제외 모든 문자
-    - ?   : 슬래시 제외 단일 문자
+      **/ → 0개 이상의 디렉토리
+      **  → 모든 경로
+      *   → 슬래시 제외 모든 문자
+      ?   → 슬래시 제외 단일 문자
     """
     regex = ""
     i = 0
     while i < len(pattern):
         if pattern[i:i+3] == "**/":
-            regex += "(?:[^/]+/)* "
-            regex = regex.replace("(?:[^/]+/)* ", "(?:[^/]+/)*")
+            regex += "(?:[^/]+/)*"
             i += 3
         elif pattern[i:i+2] == "**":
             regex += ".*"
@@ -63,23 +65,50 @@ def glob_to_regex(pattern):
 
 
 def match_glob(path, pattern):
-    """경로가 glob 패턴과 매칭되는지 확인."""
     path = path.lstrip("/")
     pattern = pattern.lstrip("/")
-
     try:
-        regex = glob_to_regex(pattern)
-        return bool(re.fullmatch(regex, path))
+        return bool(re.fullmatch(glob_to_regex(pattern), path))
     except re.error:
         return False
 
 
 def matches_any(path, patterns):
-    """경로가 패턴 목록 중 하나라도 매칭되면 True."""
-    for pattern in patterns:
-        if match_glob(path, pattern):
-            return True
-    return False
+    return any(match_glob(path, p) for p in patterns)
+
+
+# ─── 신뢰도 계산 ──────────────────────────────────────────────────────────────
+
+def pattern_confidence(pattern):
+    """
+    단일 패턴의 신뢰도를 반환.
+      high   — 정확한 경로이거나 단순 디렉토리 glob (dir/**)
+      medium — 교차 경로 와일드카드 (**/something/**)
+    """
+    wildcards = pattern.count("*")
+    if wildcards == 0:
+        return "high"
+    if pattern.endswith("/**") and wildcards == 2:
+        return "high"
+    if wildcards <= 4:
+        return "medium"
+    return "medium"
+
+
+def compute_violation_confidence(trigger_files, when_patterns):
+    """
+    위반의 전체 신뢰도를 trigger_files × when_patterns 조합에서 산출.
+    가장 낮은 신뢰도가 전체 신뢰도가 된다.
+    """
+    lowest = "high"
+    for f in trigger_files:
+        for pattern in when_patterns:
+            if match_glob(f["path"], pattern):
+                c = pattern_confidence(pattern)
+                if c == "medium":
+                    lowest = "medium"
+                break
+    return lowest
 
 
 # ─── 변경 유형 분류 ───────────────────────────────────────────────────────────
@@ -91,7 +120,7 @@ TYPE_PATTERNS = {
     ],
     "db-schema": [
         "db/migrations/**", "prisma/schema.prisma", "sql/**",
-        "**/schema.sql", "database/migrations/**", "alembic/**",
+        "**/schema.sql", "database/migrations/**", "alembic/versions/**",
     ],
     "env-config": [
         ".env", ".env.local", ".env.production", ".env.staging",
@@ -111,31 +140,29 @@ DOCS_PATTERNS = ["docs/**", "**/*.md", "**/*.rst"]
 TEST_PATTERNS = ["tests/**", "**/*.test.*", "**/*.spec.*", "test/**", "__tests__/**"]
 
 
+def get_file_change_types(path):
+    """단일 파일 경로에 해당하는 변경 유형 목록을 반환."""
+    return [ct for ct, patterns in TYPE_PATTERNS.items() if matches_any(path, patterns)] or ["other"]
+
+
 def classify_change_types(changed_files):
     """
-    변경 파일 목록에서 변경 유형을 분류.
-    docs-only / test-only는 모든 파일이 해당 패턴에 속할 때만 반환.
+    전체 변경 파일 목록의 유형을 분류.
+    docs-only / test-only 는 모든 파일이 해당 패턴에 속할 때만 반환.
     """
     paths = [f["path"] for f in changed_files]
     if not paths:
         return []
 
-    # docs-only 판정: 모든 파일이 문서 패턴
     if all(matches_any(p, DOCS_PATTERNS) for p in paths):
         return ["docs-only"]
-
-    # test-only 판정: 모든 파일이 테스트 패턴
     if all(matches_any(p, TEST_PATTERNS) for p in paths):
         return ["test-only"]
 
-    # 일반 유형 분류
     detected = set()
-    for path in paths:
-        for change_type, patterns in TYPE_PATTERNS.items():
-            if matches_any(path, patterns):
-                detected.add(change_type)
-
-    return sorted(detected) if detected else ["other"]
+    for p in paths:
+        detected.update(get_file_change_types(p))
+    return sorted(detected)
 
 
 # ─── 그룹 평가 ───────────────────────────────────────────────────────────────
@@ -143,34 +170,24 @@ def classify_change_types(changed_files):
 def evaluate_group(group, changed_files):
     """
     단일 require 묶음을 평가.
-    - any_changed: 묶음 내 경로 중 하나라도 변경(삭제 제외)되면 충족
-    - all_changed: 묶음 내 경로가 모두 변경(삭제 제외)되어야 충족
+    deleted 상태 파일은 충족으로 간주하지 않는다.
     """
-    # 파일 경로 → 상태 맵 구성 (rename 전후 경로 모두 포함)
     path_status = {}
     for f in changed_files:
         path_status[f["path"]] = f.get("status", "modified")
-        prev = f.get("previous_path")
-        if prev:
-            path_status[prev] = f.get("status", "modified")
+        if f.get("previous_path"):
+            path_status[f["previous_path"]] = f.get("status", "modified")
 
-    def is_valid_change(path):
-        """경로가 삭제가 아닌 변경으로 존재하면 True."""
-        return path_status.get(path) != "deleted"
-
-    def path_matches_pattern(pattern):
-        """패턴과 매칭되고 유효한 변경 파일이 존재하면 True."""
-        for path, status in path_status.items():
-            if match_glob(path, pattern) and status != "deleted":
-                return True
-        return False
+    def pattern_satisfied(pattern):
+        return any(
+            match_glob(path, pattern) and status != "deleted"
+            for path, status in path_status.items()
+        )
 
     if "any_changed" in group:
-        return any(path_matches_pattern(p) for p in group["any_changed"])
-
+        return any(pattern_satisfied(p) for p in group["any_changed"])
     if "all_changed" in group:
-        return all(path_matches_pattern(p) for p in group["all_changed"])
-
+        return all(pattern_satisfied(p) for p in group["all_changed"])
     return False
 
 
@@ -178,13 +195,14 @@ def evaluate_group(group, changed_files):
 
 def evaluate_rules(policy, changed_files, ignored_rules, ignore_paths):
     """
-    모든 정책 규칙을 평가하고 위반 목록을 반환.
-    require.groups가 없는 규칙은 정책 오류로 즉시 종료.
+    모든 정책 규칙을 평가.
+    require.groups 없는 규칙은 정책 오류로 exit 2.
+    반환값: (violations, skipped_rules)
     """
     rules = policy.get("rules", [])
     violations = []
+    skipped_rules = []
 
-    # ignore_paths 적용
     relevant_files = [
         f for f in changed_files
         if not matches_any(f["path"], ignore_paths)
@@ -192,9 +210,15 @@ def evaluate_rules(policy, changed_files, ignored_rules, ignore_paths):
 
     for rule in rules:
         rule_id = rule.get("id", "unknown")
+        severity = rule.get("severity", "minor").upper()
 
-        # drift-ignore 처리
+        # drift-ignore 처리 — severity와 함께 기록
         if rule_id in ignored_rules:
+            skipped_rules.append({
+                "rule_id": rule_id,
+                "severity": severity,
+                "message": rule.get("message", ""),
+            })
             continue
 
         # require.groups 검증
@@ -209,50 +233,58 @@ def evaluate_rules(policy, changed_files, ignored_rules, ignore_paths):
             sys.exit(2)
 
         # when 조건 확인
-        when = rule.get("when") or {}
-        when_patterns = when.get("any_changed", [])
+        when_patterns = (rule.get("when") or {}).get("any_changed", [])
 
-        triggered_files = []
-        for f in relevant_files:
-            path = f["path"]
-            prev = f.get("previous_path") or ""
-            if matches_any(path, when_patterns) or (prev and matches_any(prev, when_patterns)):
-                triggered_files.append(f)
+        trigger_files = [
+            f for f in relevant_files
+            if matches_any(f["path"], when_patterns)
+            or (f.get("previous_path") and matches_any(f["previous_path"], when_patterns))
+        ]
 
-        if not triggered_files:
+        if not trigger_files:
             continue
 
         # require.groups 전체 평가
-        unsatisfied = []
-        for group in groups:
-            if not evaluate_group(group, relevant_files):
-                unsatisfied.append({
-                    "name": group.get("name", ""),
-                    "required": group.get("any_changed", group.get("all_changed", [])),
-                    "type": "any_changed" if "any_changed" in group else "all_changed",
-                })
+        unsatisfied = [
+            {
+                "name": g.get("name", ""),
+                "required": g.get("any_changed", g.get("all_changed", [])),
+                "type": "any_changed" if "any_changed" in g else "all_changed",
+            }
+            for g in groups
+            if not evaluate_group(g, relevant_files)
+        ]
 
         if unsatisfied:
+            # 트리거 파일의 변경 유형 산출
+            change_types = sorted(set(
+                ct
+                for f in trigger_files
+                for ct in get_file_change_types(f["path"])
+            ))
+
             violations.append({
                 "rule_id": rule_id,
-                "severity": rule.get("severity", "minor").upper(),
+                "severity": severity,
+                "confidence": compute_violation_confidence(trigger_files, when_patterns),
+                "change_types": change_types,
                 "message": rule.get("message", ""),
-                "trigger_files": triggered_files,
+                "trigger_files": trigger_files,
                 "unsatisfied_groups": unsatisfied,
+                "checklist": [],   # entrypoint.sh에서 Claude가 채움
                 "ignored": False,
             })
 
-    return violations
+    return violations, skipped_rules
 
 
 # ─── 메인 ────────────────────────────────────────────────────────────────────
 
 def main():
-    policy_path = sys.argv[1] if len(sys.argv) > 1 else ".drift-gate.yml"
-    changed_files = json.loads(sys.argv[2]) if len(sys.argv) > 2 else []
-    ignored_rules = set(json.loads(sys.argv[3])) if len(sys.argv) > 3 else set()
+    policy_path    = sys.argv[1] if len(sys.argv) > 1 else ".drift-gate.yml"
+    changed_files  = json.loads(sys.argv[2]) if len(sys.argv) > 2 else []
+    ignored_rules  = set(json.loads(sys.argv[3])) if len(sys.argv) > 3 else set()
 
-    # 정책 파일 로드
     try:
         policy = load_yaml(policy_path)
     except FileNotFoundError:
@@ -260,6 +292,7 @@ def main():
             "no_policy": True,
             "change_types": [],
             "violations": [],
+            "skipped_rules": [],
             "gate": {"fail_on_blocker": True, "fail_on_major_count": 2},
         }))
         return
@@ -270,26 +303,26 @@ def main():
     ignore_paths = policy.get("ignore_paths", [])
     gate = policy.get("gate", {"fail_on_blocker": True, "fail_on_major_count": 2})
 
-    # 변경 유형 분류
     change_types = classify_change_types(changed_files)
 
-    # docs-only / test-only → 드리프트 평가 생략
+    # docs-only / test-only → 평가 생략
     if change_types and change_types[0] in ("docs-only", "test-only"):
         print(json.dumps({
             "skip": True,
             "reason": change_types[0],
             "change_types": change_types,
             "violations": [],
+            "skipped_rules": [],
             "gate": gate,
         }))
         return
 
-    # 규칙 평가
-    violations = evaluate_rules(policy, changed_files, ignored_rules, ignore_paths)
+    violations, skipped_rules = evaluate_rules(policy, changed_files, ignored_rules, ignore_paths)
 
     print(json.dumps({
         "change_types": change_types,
         "violations": violations,
+        "skipped_rules": skipped_rules,
         "gate": gate,
     }))
 
