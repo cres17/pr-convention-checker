@@ -1,0 +1,32 @@
+{
+  "description": "DB schema change without runbook or integration test — expect MAJOR",
+  "changed_files": [
+    {"path": "db/migrations/0013_add_role_column.sql", "status": "added",    "previous_path": null, "patch": ""},
+    {"path": "prisma/schema.prisma",                   "status": "modified", "previous_path": null, "patch": ""}
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "schema-migration-proof",
+        "when": {"any_changed": ["db/migrations/**", "prisma/schema.prisma", "sql/**"]},
+        "require": {
+          "groups": [
+            {"name": "운영 문서",  "any_changed": ["docs/runbook/**", "docs/migration-notes/**"]},
+            {"name": "검증 흔적", "any_changed": ["tests/integration/**", "tests/e2e/**"]}
+          ]
+        },
+        "severity": "major",
+        "message": "DB schema changed without migration note/runbook or verification test"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "warn",
+    "blocker_count": 0,
+    "major_count": 1,
+    "violation_rule_ids": ["schema-migration-proof"]
+  }
+}

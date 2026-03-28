@@ -1,0 +1,33 @@
+{
+  "description": "API surface change without docs — expect BLOCKER",
+  "changed_files": [
+    {"path": "src/routes/users.ts",    "status": "modified", "previous_path": null, "patch": "@@ -10,6 +10,7 @@ router.get('/users'..."},
+    {"path": "src/routes/orders.ts",   "status": "added",    "previous_path": null, "patch": ""},
+    {"path": "openapi/users.yaml",     "status": "modified", "previous_path": null, "patch": ""}
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {"any_changed": ["src/routes/**", "openapi/**", "proto/**"]},
+        "require": {
+          "groups": [
+            {"name": "API 계약 문서",  "any_changed": ["docs/spec.md", "docs/api/**"]},
+            {"name": "릴리즈 공지",    "all_changed": ["CHANGELOG.md"]}
+          ]
+        },
+        "severity": "blocker",
+        "message": "API surface changed without synced contract/docs"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "fail",
+    "blocker_count": 1,
+    "major_count": 0,
+    "violation_rule_ids": ["api-contract-sync"]
+  }
+}

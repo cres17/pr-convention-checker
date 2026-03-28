@@ -1,0 +1,33 @@
+{
+  "description": "docs-only PR — expect pass (skip)",
+  "changed_files": [
+    {"path": "docs/api/users.md",    "status": "modified", "previous_path": null, "patch": ""},
+    {"path": "README.md",            "status": "modified", "previous_path": null, "patch": ""},
+    {"path": "docs/runbook/db.rst",  "status": "added",    "previous_path": null, "patch": ""}
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {"any_changed": ["src/routes/**", "openapi/**"]},
+        "require": {
+          "groups": [
+            {"name": "API 계약 문서", "any_changed": ["docs/spec.md"]}
+          ]
+        },
+        "severity": "blocker",
+        "message": "API surface changed without synced contract/docs"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "pass",
+    "skip": true,
+    "skip_reason": "docs-only",
+    "blocker_count": 0,
+    "violation_rule_ids": []
+  }
+}
