@@ -61,11 +61,24 @@ Output: Markdown report + JSON result
 
 Run before pushing. Uses your existing Claude subscription.
 
+**Install** (copy command + skill into your project's Claude config):
+
 ```bash
-git clone https://github.com/cres17/pr-convention-checker .claude-plugins/drift-gate
+# Run from your project root
+curl -fsSL https://raw.githubusercontent.com/cres17/pr-convention-checker/main/install.sh | bash
 ```
 
-Then invoke:
+Or manually:
+
+```bash
+mkdir -p .claude/commands .claude/skills
+curl -fsSL https://raw.githubusercontent.com/cres17/pr-convention-checker/main/commands/drift-gate.md \
+  -o .claude/commands/drift-gate.md
+curl -fsSL https://raw.githubusercontent.com/cres17/pr-convention-checker/main/skills/drift-gate.md \
+  -o .claude/skills/drift-gate.md
+```
+
+Then invoke inside Claude Code:
 ```
 /drift-gate:review
 /drift-gate:review main        # compare against main
