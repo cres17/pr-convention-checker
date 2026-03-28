@@ -102,6 +102,8 @@ jobs:
 
 Add the secret: `Settings → Secrets → Actions → ANTHROPIC_API_KEY`
 
+> **Large PRs**: The action collects all changed files via paginated GitHub API calls (`per_page=100`). PRs with more than 100 files are fully supported.
+
 ---
 
 ## Configuration
@@ -188,6 +190,43 @@ ignore_paths:
 | `violation_count` | Total violations |
 | `comment_url` | URL of posted PR comment |
 
+### JSON output schema
+
+`drift_gate_report.json` is written to `$RUNNER_TEMP`. Key fields:
+
+```json
+{
+  "summary": {
+    "blocker": 1, "major": 0, "minor": 0, "nit": 0,
+    "gate_decision": "fail"
+  },
+  "result": "fail",
+  "change_types": ["api-surface"],
+  "violations": [
+    {
+      "rule_id": "api-contract-sync",
+      "severity": "BLOCKER",
+      "confidence": "high",
+      "change_types": ["api-surface"],
+      "change_type": "api-surface",
+      "message": "API surface changed without synced contract/docs",
+      "trigger_files": [{ "path": "src/routes/users.ts", "status": "modified" }],
+      "unsatisfied_groups": [
+        { "name": "API 계약 문서", "required": ["docs/spec.md"], "type": "any_changed" }
+      ],
+      "checklist": ["관련 spec/API 문서를 변경 내용에 맞게 업데이트"],
+      "ignored": false
+    }
+  ],
+  "skipped_rules": [
+    { "rule_id": "workflow-ops-doc", "severity": "MINOR", "reason": "dev-only", "message": "..." }
+  ],
+  "rejected_ignores": [],
+  "gate": { "fail_on_blocker": true, "fail_on_major_count": 2 },
+  "policy_file": ".drift-gate.yml"
+}
+```
+
 ---
 
 ## Suppressing false positives
@@ -199,7 +238,9 @@ drift-ignore: api-contract-sync
 reason: internal refactor only, no externally visible contract change
 ```
 
-`reason:` is optional but recommended for audit trails.
+**`reason:` policy:**
+- **BLOCKER / MAJOR**: `reason:` is **required**. Without it, the drift-ignore is rejected — the rule stays in `violations` and appears in `rejected_ignores` in the report. The violation still counts toward the CI gate.
+- **MINOR / NIT**: `reason:` is optional. The rule is always skipped regardless.
 
 Add to `.drift-gate.yml` to exclude paths globally:
 

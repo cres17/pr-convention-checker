@@ -4,7 +4,9 @@ Drift Gate 정책 평가기.
 .drift-gate.yml을 로드하고 변경 파일에 대해 규칙을 평가한 뒤 결과를 JSON으로 출력.
 
 Usage:
-  python3 evaluate.py <policy_path> <changed_files_json> <ignored_rules_json>
+  python3 evaluate.py <policy_path> <changed_files_json> <drift_ignores_json>
+
+  drift_ignores_json: [{"rule_id": "...", "reason": "..." | null}, ...]
 
 Exit codes:
   0 — 정상 완료
@@ -25,7 +27,7 @@ except ImportError:
 
 def load_yaml(path):
     if yaml is not None:
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             return yaml.safe_load(f)
     raise RuntimeError("pyyaml이 필요합니다: pip install pyyaml")
 
@@ -90,25 +92,34 @@ def pattern_confidence(pattern):
         return "high"
     if pattern.endswith("/**") and wildcards == 2:
         return "high"
-    if wildcards <= 4:
-        return "medium"
     return "medium"
 
 
 def compute_violation_confidence(trigger_files, when_patterns):
     """
     위반의 전체 신뢰도를 trigger_files × when_patterns 조합에서 산출.
-    가장 낮은 신뢰도가 전체 신뢰도가 된다.
+    - "other" 유형만 있으면 low
+    - 복수 유형이거나 renamed 파일이 있으면 medium
+    - 매칭 패턴 신뢰도가 medium이면 medium
+    - 그 외 high
     """
-    lowest = "high"
+    change_types_set = set(
+        ct
+        for f in trigger_files
+        for ct in get_file_change_types(f["path"])
+    )
+    if not change_types_set or change_types_set == {"other"}:
+        return "low"
+
+    has_rename = any(f.get("status") == "renamed" for f in trigger_files)
+    if len(change_types_set) > 1 or has_rename:
+        return "medium"
+
     for f in trigger_files:
         for pattern in when_patterns:
-            if match_glob(f["path"], pattern):
-                c = pattern_confidence(pattern)
-                if c == "medium":
-                    lowest = "medium"
-                break
-    return lowest
+            if match_glob(f["path"], pattern) and pattern_confidence(pattern) == "medium":
+                return "medium"
+    return "high"
 
 
 # ─── 변경 유형 분류 ───────────────────────────────────────────────────────────
@@ -165,6 +176,36 @@ def classify_change_types(changed_files):
     return sorted(detected)
 
 
+# ─── 체크리스트 템플릿 ────────────────────────────────────────────────────────
+
+CHECKLIST_TEMPLATES = {
+    "API 계약 문서":  ["관련 spec/API 문서를 변경 내용에 맞게 업데이트"],
+    "릴리즈 공지":    ["CHANGELOG.md에 변경 항목 추가"],
+    "운영 문서":      ["관련 runbook 또는 운영 문서 업데이트"],
+    "샘플 환경변수":  [".env.example에 새 환경변수 반영"],
+    "배포 문서":      ["배포 문서에 설정 변경 내용 업데이트"],
+    "검증 흔적":      ["관련 integration/e2e 테스트 추가 또는 업데이트"],
+    "보안/권한 문서": ["보안 문서 또는 권한 정책 업데이트"],
+}
+
+
+def build_fallback_checklist(unsatisfied_groups):
+    """
+    불충족 묶음 목록으로부터 결정론적 체크리스트 항목을 생성.
+    템플릿에 없는 묶음 이름은 "<이름> 업데이트"로 폴백.
+    """
+    items = []
+    for group in unsatisfied_groups:
+        name = group.get("name", "")
+        if name in CHECKLIST_TEMPLATES:
+            items.extend(CHECKLIST_TEMPLATES[name])
+        else:
+            required = group.get("required", [])
+            desc = required[0] if required else name
+            items.append(f"{name or desc} 업데이트")
+    return items
+
+
 # ─── 그룹 평가 ───────────────────────────────────────────────────────────────
 
 def evaluate_group(group, changed_files):
@@ -193,15 +234,26 @@ def evaluate_group(group, changed_files):
 
 # ─── 규칙 평가 ───────────────────────────────────────────────────────────────
 
-def evaluate_rules(policy, changed_files, ignored_rules, ignore_paths):
+def evaluate_rules(policy, changed_files, drift_ignores, ignore_paths):
     """
     모든 정책 규칙을 평가.
+
+    drift_ignores: [{"rule_id": "...", "reason": "..." | null}, ...]
+    - BLOCKER/MAJOR + reason 있음  → skipped_rules (규칙 생략)
+    - BLOCKER/MAJOR + reason 없음  → rejected_ignores에 기록 + 규칙은 정상 평가
+    - MINOR/NIT + reason 있음      → skipped_rules
+    - MINOR/NIT + reason 없음      → skipped_rules (reason 없어도 허용)
+
     require.groups 없는 규칙은 정책 오류로 exit 2.
-    반환값: (violations, skipped_rules)
+    반환값: (violations, skipped_rules, rejected_ignores)
     """
     rules = policy.get("rules", [])
     violations = []
     skipped_rules = []
+    rejected_ignores = []
+
+    # drift_ignores를 rule_id → reason 맵으로 변환
+    ignore_map = {d["rule_id"]: d.get("reason") for d in drift_ignores}
 
     relevant_files = [
         f for f in changed_files
@@ -212,14 +264,26 @@ def evaluate_rules(policy, changed_files, ignored_rules, ignore_paths):
         rule_id = rule.get("id", "unknown")
         severity = rule.get("severity", "minor").upper()
 
-        # drift-ignore 처리 — severity와 함께 기록
-        if rule_id in ignored_rules:
-            skipped_rules.append({
-                "rule_id": rule_id,
-                "severity": severity,
-                "message": rule.get("message", ""),
-            })
-            continue
+        # drift-ignore 처리
+        if rule_id in ignore_map:
+            reason = ignore_map[rule_id]
+            if severity in ("BLOCKER", "MAJOR") and not reason:
+                # reason 없는 BLOCKER/MAJOR ignore → 거부. 규칙은 계속 평가.
+                rejected_ignores.append({
+                    "rule_id": rule_id,
+                    "severity": severity,
+                    "message": rule.get("message", ""),
+                })
+                # fall through — evaluate this rule normally
+            else:
+                # reason 있는 BLOCKER/MAJOR 또는 MINOR/NIT (reason 유무 무관)
+                skipped_rules.append({
+                    "rule_id": rule_id,
+                    "severity": severity,
+                    "reason": reason or "",
+                    "message": rule.get("message", ""),
+                })
+                continue
 
         # require.groups 검증
         require = rule.get("require") or {}
@@ -262,28 +326,31 @@ def evaluate_rules(policy, changed_files, ignored_rules, ignore_paths):
                 for f in trigger_files
                 for ct in get_file_change_types(f["path"])
             ))
+            # 단수형: 첫 번째 유형(대표값)
+            change_type = change_types[0] if change_types else "other"
 
             violations.append({
                 "rule_id": rule_id,
                 "severity": severity,
                 "confidence": compute_violation_confidence(trigger_files, when_patterns),
                 "change_types": change_types,
+                "change_type": change_type,
                 "message": rule.get("message", ""),
                 "trigger_files": trigger_files,
                 "unsatisfied_groups": unsatisfied,
-                "checklist": [],   # entrypoint.sh에서 Claude가 채움
+                "checklist": build_fallback_checklist(unsatisfied),
                 "ignored": False,
             })
 
-    return violations, skipped_rules
+    return violations, skipped_rules, rejected_ignores
 
 
 # ─── 메인 ────────────────────────────────────────────────────────────────────
 
 def main():
-    policy_path    = sys.argv[1] if len(sys.argv) > 1 else ".drift-gate.yml"
-    changed_files  = json.loads(sys.argv[2]) if len(sys.argv) > 2 else []
-    ignored_rules  = set(json.loads(sys.argv[3])) if len(sys.argv) > 3 else set()
+    policy_path   = sys.argv[1] if len(sys.argv) > 1 else ".drift-gate.yml"
+    changed_files = json.loads(sys.argv[2]) if len(sys.argv) > 2 else []
+    drift_ignores = json.loads(sys.argv[3]) if len(sys.argv) > 3 else []
 
     try:
         policy = load_yaml(policy_path)
@@ -293,6 +360,7 @@ def main():
             "change_types": [],
             "violations": [],
             "skipped_rules": [],
+            "rejected_ignores": [],
             "gate": {"fail_on_blocker": True, "fail_on_major_count": 2},
         }))
         return
@@ -313,16 +381,20 @@ def main():
             "change_types": change_types,
             "violations": [],
             "skipped_rules": [],
+            "rejected_ignores": [],
             "gate": gate,
         }))
         return
 
-    violations, skipped_rules = evaluate_rules(policy, changed_files, ignored_rules, ignore_paths)
+    violations, skipped_rules, rejected_ignores = evaluate_rules(
+        policy, changed_files, drift_ignores, ignore_paths
+    )
 
     print(json.dumps({
         "change_types": change_types,
         "violations": violations,
         "skipped_rules": skipped_rules,
+        "rejected_ignores": rejected_ignores,
         "gate": gate,
     }))
 

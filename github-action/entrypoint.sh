@@ -124,17 +124,24 @@ fi
 
 log "PR body에서 drift-ignore 파싱 중..."
 
-IGNORED_RULES_JSON=$(printf '%s' "$PR_BODY" | python3 -c "
+# [{rule_id, reason}] 구조로 파싱 — reason이 없으면 null
+DRIFT_IGNORES_JSON=$(printf '%s' "$PR_BODY" | python3 -c "
 import sys, json, re
 body = sys.stdin.read()
-ignored = [m.group(1) for m in re.finditer(r'drift-ignore:\s*(\S+)', body)]
-print(json.dumps(ignored))
+ignores = []
+for m in re.finditer(r'drift-ignore:\s*(\S+)', body):
+    rule_id = m.group(1)
+    window = body[m.start(): m.start() + 300]
+    reason_m = re.search(r'reason\s*:\s*(.+)', window)
+    reason = reason_m.group(1).strip() if reason_m else None
+    ignores.append({'rule_id': rule_id, 'reason': reason})
+print(json.dumps(ignores))
 ")
 
-IGNORED_COUNT=$(echo "$IGNORED_RULES_JSON" | jq 'length')
+IGNORED_COUNT=$(echo "$DRIFT_IGNORES_JSON" | jq 'length')
 if [ "$IGNORED_COUNT" -gt 0 ]; then
-  IGNORED_LIST=$(echo "$IGNORED_RULES_JSON" | jq -r '.[]' | tr '\n' ' ')
-  log "drift-ignore 규칙: ${IGNORED_LIST}"
+  IGNORED_LIST=$(echo "$DRIFT_IGNORES_JSON" | jq -r '.[].rule_id' | tr '\n' ' ')
+  log "drift-ignore 요청: ${IGNORED_LIST}"
 fi
 
 # ─── Step 3: 정책 평가 ───────────────────────────────────────────────────────
@@ -144,7 +151,7 @@ log "정책 평가 중 (${POLICY_FILE})..."
 EVAL_RESULT=$(python3 "${SCRIPT_DIR}/evaluate.py" \
   "$POLICY_FILE" \
   "$CHANGED_FILES_JSON" \
-  "$IGNORED_RULES_JSON" 2>&1) || {
+  "$DRIFT_IGNORES_JSON" 2>&1) || {
   EXIT_CODE=$?
   if [ $EXIT_CODE -eq 2 ]; then
     fail "$(echo "$EVAL_RESULT" | grep 'ERROR:' | head -1)"
@@ -208,6 +215,7 @@ fi
 CHANGE_TYPES=$(echo "$EVAL_RESULT" | jq -r '.change_types | join(", ")')
 VIOLATIONS=$(echo "$EVAL_RESULT" | jq '.violations')
 SKIPPED_RULES=$(echo "$EVAL_RESULT" | jq '.skipped_rules // []')
+REJECTED_IGNORES=$(echo "$EVAL_RESULT" | jq '.rejected_ignores // []')
 VIOLATION_COUNT=$(echo "$VIOLATIONS" | jq 'length')
 GATE=$(echo "$EVAL_RESULT" | jq '.gate')
 
@@ -215,45 +223,13 @@ BLOCKER_COUNT=$(echo "$VIOLATIONS" | jq '[.[] | select(.severity == "BLOCKER")] 
 MAJOR_COUNT=$(echo "$VIOLATIONS"   | jq '[.[] | select(.severity == "MAJOR")]   | length')
 MINOR_COUNT=$(echo "$VIOLATIONS"   | jq '[.[] | select(.severity == "MINOR")]   | length')
 NIT_COUNT=$(echo "$VIOLATIONS"     | jq '[.[] | select(.severity == "NIT")]     | length')
+REJECTED_COUNT=$(echo "$REJECTED_IGNORES" | jq 'length')
 
 log "변경 유형: ${CHANGE_TYPES}"
 log "위반: BLOCKER=${BLOCKER_COUNT} MAJOR=${MAJOR_COUNT} MINOR=${MINOR_COUNT} NIT=${NIT_COUNT}"
-
-# ─── Step 4: drift-ignore reason 강제 검증 ───────────────────────────────────
-# BLOCKER 또는 MAJOR 규칙을 reason 없이 무시하면 CI 실패
-
-REASON_FAIL=false
-
-while IFS= read -r skipped; do
-  SKIPPED_ID=$(echo "$skipped" | jq -r '.rule_id')
-  SKIPPED_SEV=$(echo "$skipped" | jq -r '.severity')
-
-  if [ "$SKIPPED_SEV" = "BLOCKER" ] || [ "$SKIPPED_SEV" = "MAJOR" ]; then
-    HAS_REASON=$(printf '%s' "$PR_BODY" | python3 -c "
-import sys, re
-body = sys.stdin.read()
-rule_id = '${SKIPPED_ID}'
-# drift-ignore: RULE_ID 뒤 2줄 안에 reason: 이 있는지 확인
-for m in re.finditer(r'drift-ignore:\s*' + re.escape(rule_id), body):
-    window = body[m.start(): m.start() + 200]
-    if re.search(r'reason\s*:', window):
-        print('yes')
-        sys.exit(0)
-print('no')
-")
-    if [ "$HAS_REASON" = "no" ]; then
-      log "ERROR: drift-ignore '${SKIPPED_ID}' (${SKIPPED_SEV}) — reason이 없습니다."
-      log "       BLOCKER/MAJOR 규칙을 무시할 때는 반드시 reason을 명시해야 합니다."
-      log "       PR description 예시:"
-      log "         drift-ignore: ${SKIPPED_ID}"
-      log "         reason: <이유>"
-      REASON_FAIL=true
-    fi
-  fi
-done < <(echo "$SKIPPED_RULES" | jq -c '.[]' 2>/dev/null || true)
-
-if [ "$REASON_FAIL" = "true" ]; then
-  fail "BLOCKER/MAJOR drift-ignore에 reason이 필요합니다. PR description을 확인하세요."
+if [ "$REJECTED_COUNT" -gt 0 ]; then
+  REJECTED_LIST=$(echo "$REJECTED_IGNORES" | jq -r '[.[].rule_id] | join(", ")')
+  log "거부된 drift-ignore (reason 없음): ${REJECTED_LIST}"
 fi
 
 # ─── Step 5: Claude API — 근거 및 체크리스트 생성 ────────────────────────────
@@ -420,10 +396,19 @@ if m:
   echo "| 🔧 NIT | ${NIT_COUNT} |"
   echo ""
   echo "**CI 판정:** $([ "$RESULT" = "fail" ] && echo "FAIL ❌" || ([ "$RESULT" = "warn" ] && echo "WARN ⚠️" || echo "PASS ✅"))"
-  if [ "$IGNORED_COUNT" -gt 0 ]; then
+
+  SKIPPED_COUNT=$(echo "$SKIPPED_RULES" | jq 'length')
+  if [ "$SKIPPED_COUNT" -gt 0 ]; then
     echo ""
-    SKIPPED_DISPLAY=$(echo "$SKIPPED_RULES" | jq -r '[.[] | .rule_id + "(" + .severity + ")"] | join(", ")')
-    echo "**건너뛴 규칙:** ${SKIPPED_DISPLAY}"
+    SKIPPED_DISPLAY=$(echo "$SKIPPED_RULES" | jq -r '[.[] | .rule_id + " (" + .severity + ")"] | join(", ")')
+    echo "**적용된 ignore (${SKIPPED_COUNT}):** ${SKIPPED_DISPLAY}"
+  fi
+  if [ "$REJECTED_COUNT" -gt 0 ]; then
+    echo ""
+    REJECTED_DISPLAY=$(echo "$REJECTED_IGNORES" | jq -r '[.[] | .rule_id + " (" + .severity + ")"] | join(", ")')
+    echo "**거부된 ignore — reason 없음 (${REJECTED_COUNT}):** ${REJECTED_DISPLAY}"
+    echo ""
+    echo "> ⚠️ BLOCKER/MAJOR drift-ignore는 \`reason:\`이 필수입니다."
   fi
   echo ""
   echo "BLOCKER/MAJOR 규칙을 무시하려면 PR description에 아래를 추가하세요:"
@@ -440,25 +425,25 @@ if m:
 jq -n \
   --argjson violations "$VIOLATIONS" \
   --argjson skipped "$SKIPPED_RULES" \
+  --argjson rejected "$REJECTED_IGNORES" \
   --argjson blocker "$BLOCKER_COUNT" \
   --argjson major "$MAJOR_COUNT" \
   --argjson minor "$MINOR_COUNT" \
   --argjson nit "$NIT_COUNT" \
   --argjson change_types "$(echo "$EVAL_RESULT" | jq '.change_types')" \
   --argjson gate "$GATE" \
-  --argjson ignored "$IGNORED_RULES_JSON" \
   --arg result "$RESULT" \
   --arg policy "$POLICY_FILE" \
   '{
     summary: {
       blocker: $blocker, major: $major, minor: $minor, nit: $nit,
-      passed: ($result == "pass")
+      gate_decision: $result
     },
     result: $result,
     change_types: $change_types,
     violations: $violations,
     skipped_rules: $skipped,
-    ignored_rule_ids: $ignored,
+    rejected_ignores: $rejected,
     gate: $gate,
     policy_file: $policy
   }' > "$REPORT_JSON"
