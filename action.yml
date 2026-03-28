@@ -7,8 +7,9 @@ branding:
 
 inputs:
   anthropic_api_key:
-    description: Anthropic API key (required for Claude checklist generation)
-    required: true
+    description: Anthropic API key (optional — used for Claude checklist enrichment)
+    required: false
+    default: ""
   github_token:
     description: GitHub token for posting PR comments
     required: true
@@ -18,7 +19,7 @@ inputs:
     required: false
     default: ".drift-gate.yml"
   model:
-    description: Claude model ID to use for checklist generation
+    description: Claude model ID for checklist enrichment
     required: false
     default: "claude-opus-4-6"
   post_comment:
@@ -50,6 +51,10 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Install dependencies
+      shell: bash
+      run: pip install pyyaml --quiet
+
     - name: Run drift gate evaluation
       id: check
       shell: bash
@@ -58,11 +63,11 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
         REPO: ${{ github.repository }}
-        BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        MODEL: ${{ inputs.model }}
         POLICY_FILE: ${{ inputs.policy_file }}
-      run: ${{ github.action_path }}/github-action/entrypoint.sh
+        MODEL: ${{ inputs.model }}
+      run: |
+        cd "${{ github.action_path }}"
+        python3 -m drift_gate.adapters.github_action.runner
 
     - name: Post PR comment
       id: post
@@ -107,5 +112,5 @@ runs:
       if: inputs.fail_on_blocker == 'true' && steps.check.outputs.result == 'fail'
       shell: bash
       run: |
-        echo "::error::Drift Gate FAIL — ${{ steps.check.outputs.blocker_count }} BLOCKER(s) found. Sync your contract docs before merging."
+        echo "::error::Drift Gate FAIL — ${{ steps.check.outputs.blocker_count }} BLOCKER(s). Sync your contract docs before merging."
         exit 1

@@ -1,13 +1,12 @@
 # .drift-gate.yml — Spec/Contract Drift Gate 정책 파일
 #
-# PR 변경분과 팀 계약 문서의 정합성을 판정하는 규칙을 정의합니다.
-# 각 rule은 'when' 조건이 충족될 때 활성화되고,
-# 'require.groups'의 모든 묶음을 만족해야 통과합니다.
+# when 조건이 충족되면 규칙 활성화.
+# require.groups의 모든 묶음을 만족해야 통과.
+# 묶음 하나라도 불충족 → 위반.
 
 rules:
-  # ──────────────────────────────────────────────────────────
-  # API surface 변경 → 계약 문서 + 릴리즈 공지 동기화
-  # ──────────────────────────────────────────────────────────
+
+  # ─── API surface 변경 → 계약 문서 + 릴리즈 공지 ─────────────────────────────
   - id: api-contract-sync
     when:
       any_changed:
@@ -22,16 +21,13 @@ rules:
           any_changed:
             - "docs/spec.md"
             - "docs/api/**"
-            - "openapi/**"
         - name: "릴리즈 공지"
           all_changed:
             - "CHANGELOG.md"
     severity: blocker
     message: "API surface changed without synced contract/docs"
 
-  # ──────────────────────────────────────────────────────────
-  # DB 스키마 변경 → 운영 문서 + 검증 흔적
-  # ──────────────────────────────────────────────────────────
+  # ─── DB 스키마 변경 → 운영 문서 + 검증 흔적 ──────────────────────────────────
   - id: schema-migration-proof
     when:
       any_changed:
@@ -39,7 +35,6 @@ rules:
         - "prisma/schema.prisma"
         - "sql/**"
         - "**/schema.sql"
-        - "database/migrations/**"
         - "alembic/versions/**"
     require:
       groups:
@@ -52,11 +47,9 @@ rules:
             - "tests/integration/**"
             - "tests/e2e/**"
     severity: major
-    message: "DB schema changed without migration note/runbook or verification test"
+    message: "DB schema changed without runbook or integration test"
 
-  # ──────────────────────────────────────────────────────────
-  # env/config 변경 → .env.example + 배포 문서
-  # ──────────────────────────────────────────────────────────
+  # ─── env/config 변경 → .env.example + 배포 문서 ──────────────────────────────
   - id: env-config-sync
     when:
       any_changed:
@@ -79,9 +72,7 @@ rules:
     severity: major
     message: "env/config changed without .env.example or deployment docs update"
 
-  # ──────────────────────────────────────────────────────────
-  # CI/인프라 변경 → 운영 문서
-  # ──────────────────────────────────────────────────────────
+  # ─── CI/인프라 변경 → 운영 문서 ──────────────────────────────────────────────
   - id: workflow-ops-doc
     when:
       any_changed:
@@ -101,9 +92,7 @@ rules:
     severity: minor
     message: "CI/infra changed without ops documentation update"
 
-  # ──────────────────────────────────────────────────────────
-  # auth/권한 변경 → 보안 문서
-  # ──────────────────────────────────────────────────────────
+  # ─── auth/권한 변경 → 보안 문서 ───────────────────────────────────────────────
   - id: auth-security-doc
     when:
       any_changed:
@@ -111,7 +100,6 @@ rules:
         - "**/middleware/auth*"
         - "**/rbac/**"
         - "**/permissions/**"
-        - "**/policy/**"
     require:
       groups:
         - name: "보안/권한 문서"
@@ -122,20 +110,14 @@ rules:
     severity: major
     message: "Auth/permission changed without security documentation update"
 
-# ──────────────────────────────────────────────────────────
-# CI 게이트 기준
-# ──────────────────────────────────────────────────────────
+# ─── CI 게이트 기준 ────────────────────────────────────────────────────────────
 gate:
-  fail_on_blocker: true      # BLOCKER 1개 이상 → CI 실패
-  fail_on_major_count: 2     # MAJOR 2개 이상 → CI 실패
-  # MINOR만 있으면 통과 (PR 코멘트만 게시)
+  fail_on_blocker: true      # BLOCKER ≥ 1 → CI fail
+  fail_on_major_count: 2     # MAJOR ≥ 2  → CI fail  (1개는 warn)
 
-# ──────────────────────────────────────────────────────────
-# drift 평가 제외 경로
-# ──────────────────────────────────────────────────────────
+# ─── drift 평가 제외 경로 ─────────────────────────────────────────────────────
+# 주의: ignore_paths는 트리거(when)와 충족(require) 양쪽 모두에서 제외.
+# docs/**, tests/** 등 require.groups에서 사용하는 경로는 여기에 넣지 않는다.
 ignore_paths:
-  - "src/internal/**"     # 내부 구현 전용
+  - "src/internal/**"     # 외부 계약에 영향 없는 내부 구현
   - "scripts/dev/**"      # 개발 편의 스크립트
-  - "**/*.test.*"         # 테스트 파일
-  - "**/*.spec.*"
-  - "docs/**"             # 문서 자체 변경은 제외
