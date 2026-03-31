@@ -65,48 +65,10 @@ runs:
         REPO: ${{ github.repository }}
         POLICY_FILE: ${{ inputs.policy_file }}
         MODEL: ${{ inputs.model }}
+        POST_COMMENT: ${{ inputs.post_comment }}
       run: |
         cd "${{ github.action_path }}"
         python3 -m drift_gate.adapters.github_action.runner
-
-    - name: Post PR comment
-      id: post
-      if: inputs.post_comment == 'true' && github.event.pull_request.number != ''
-      shell: bash
-      env:
-        GITHUB_TOKEN: ${{ inputs.github_token }}
-        REPO: ${{ github.repository }}
-        PR_NUMBER: ${{ github.event.pull_request.number }}
-        COMMENT_MARKER: "<!-- drift-gate-v1 -->"
-      run: |
-        REPORT_FILE="${RUNNER_TEMP}/drift_gate_report.md"
-        if [ ! -f "$REPORT_FILE" ]; then
-          echo "report file not found, skipping comment"
-          exit 0
-        fi
-
-        BODY=$(cat "$REPORT_FILE")
-
-        EXISTING_ID=$(gh api \
-          "repos/${REPO}/issues/${PR_NUMBER}/comments" \
-          --jq ".[] | select(.body | startswith(\"${COMMENT_MARKER}\")) | .id" \
-          | head -1)
-
-        if [ -n "$EXISTING_ID" ]; then
-          COMMENT_URL=$(gh api \
-            -X PATCH \
-            "repos/${REPO}/issues/comments/${EXISTING_ID}" \
-            -f body="$BODY" \
-            --jq ".html_url")
-        else
-          COMMENT_URL=$(gh api \
-            -X POST \
-            "repos/${REPO}/issues/${PR_NUMBER}/comments" \
-            -f body="$BODY" \
-            --jq ".html_url")
-        fi
-
-        echo "comment_url=${COMMENT_URL}" >> "$GITHUB_OUTPUT"
 
     - name: Fail on blocker
       if: inputs.fail_on_blocker == 'true' && steps.check.outputs.result == 'fail'

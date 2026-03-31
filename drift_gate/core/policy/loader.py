@@ -2,10 +2,11 @@
 .drift-gate.yml 정책 파일 로더.
 I/O는 파일 읽기만. 외부 API 없음.
 """
+import sys
 from pathlib import Path
 from typing import Union
 
-from drift_gate.core.models.policy import Policy, Rule
+from drift_gate.core.models.policy import Policy
 
 
 class PolicyLoadError(Exception):
@@ -14,8 +15,9 @@ class PolicyLoadError(Exception):
 
 def load_policy(path: Union[str, Path]) -> Policy:
     """
-    YAML 파일에서 Policy 객체를 로드.
-    require.groups 없는 규칙은 PolicyLoadError.
+    YAML 파일에서 Policy 객체를 로드하고 유효성 검사 실행.
+    - 오류(error)  → PolicyLoadError 발생
+    - 경고(warning) → stderr 출력 후 계속
     """
     try:
         import yaml
@@ -33,14 +35,17 @@ def load_policy(path: Union[str, Path]) -> Policy:
         raise PolicyLoadError(f"정책 파일 파싱 실패: {e}") from e
 
     policy = Policy.from_dict(data)
-    _validate(policy)
+
+    # 유효성 검사 (validator는 별도 모듈 — 순환 임포트 방지를 위해 지연 임포트)
+    from drift_gate.core.policy.validator import validate, PolicyValidationError
+    vr = validate(policy)
+
+    for w in vr.warnings:
+        print(f"[drift-gate] WARNING: {w}", file=sys.stderr)
+
+    try:
+        vr.raise_if_errors()
+    except PolicyValidationError as e:
+        raise PolicyLoadError(str(e)) from e
+
     return policy
-
-
-def _validate(policy: Policy) -> None:
-    for rule in policy.rules:
-        if not rule.require.groups:
-            raise PolicyLoadError(
-                f"rule '{rule.id}'에 require.groups 없음. "
-                "require.groups는 최소 1개 이상의 묶음을 정의해야 합니다."
-            )

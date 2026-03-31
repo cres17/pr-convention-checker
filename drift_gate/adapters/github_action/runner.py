@@ -9,19 +9,21 @@ from pathlib import Path
 
 from drift_gate.core.engine import run
 from drift_gate.adapters.github.client import GitHubAdapter, parse_drift_ignores
+from drift_gate.adapters.github.commenter import PrCommenter
 from drift_gate.adapters.claude.enricher import ClaudeEnricher
 from drift_gate.reporters.markdown import MarkdownReporter
 from drift_gate.reporters.json_reporter import JsonReporter
 
 
 def main() -> None:
-    token        = _require_env("GITHUB_TOKEN")
-    repo         = _require_env("REPO")
-    pr_number    = int(_require_env("PR_NUMBER"))
-    policy_file  = os.environ.get("POLICY_FILE", ".drift-gate.yml")
-    model        = os.environ.get("MODEL", "claude-opus-4-6")
+    token         = _require_env("GITHUB_TOKEN")
+    repo          = _require_env("REPO")
+    pr_number     = int(_require_env("PR_NUMBER"))
+    policy_file   = os.environ.get("POLICY_FILE", ".drift-gate.yml")
+    model         = os.environ.get("MODEL", "claude-opus-4-6")
     anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    runner_temp  = os.environ.get("RUNNER_TEMP", "/tmp")
+    runner_temp   = os.environ.get("RUNNER_TEMP", "/tmp")
+    post_comment  = os.environ.get("POST_COMMENT", "true").lower() == "true"
 
     _log(f"변경 파일 수집 중 (PR #{pr_number})...")
     gh = GitHubAdapter(token=token, repo=repo)
@@ -70,7 +72,15 @@ def main() -> None:
         f"MINOR={result.minor_count} NIT={result.nit_count}"
     )
 
-    # 콘솔 출력 (로그에 표시)
+    # PR comment upsert (gh CLI 불필요 — urllib 기반)
+    if post_comment:
+        commenter = PrCommenter(token=token, repo=repo)
+        comment_url = commenter.upsert(pr_number, md)
+        if comment_url:
+            _log(f"PR comment 게시: {comment_url}")
+            _write_github_output({"comment_url": comment_url})
+
+    # 콘솔 출력 (Actions 로그에 표시)
     print(md)
 
 
