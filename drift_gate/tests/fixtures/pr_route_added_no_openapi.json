@@ -1,0 +1,43 @@
+{
+  "description": "New API route without OpenAPI or API docs should fail",
+  "category": "api",
+  "risk": "high",
+  "expected_reason": "A public POST /billing/:id/refund route was added without synced API docs.",
+  "source": "synthetic-fixture",
+  "changed_files": [
+    {
+      "path": "src/routes/billing.ts",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "diff --git a/src/routes/billing.ts b/src/routes/billing.ts\n@@ -1 +1,2 @@\n router.get('/billing', listBilling)\n+router.post('/billing/:id/refund', refundPayment)\n"
+    }
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {
+          "any_changed": ["src/routes/**", "openapi/**"],
+          "min_change_intensity": "route-contract-change"
+        },
+        "require": {
+          "groups": [
+            {"name": "API docs", "any_changed": ["docs/spec.md", "docs/api/**", "openapi/**"]},
+            {"name": "Release notes", "all_changed": ["CHANGELOG.md"]}
+          ]
+        },
+        "severity": "blocker",
+        "message": "API route changed without synced contract docs"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "fail",
+    "blocker_count": 1,
+    "major_count": 0,
+    "violation_rule_ids": ["api-contract-sync"]
+  }
+}

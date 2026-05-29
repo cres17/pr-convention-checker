@@ -11,13 +11,15 @@ TYPE_PATTERNS: dict = {
     "api-surface": [
         "src/routes/**", "openapi/**", "proto/**",
         "src/controllers/**", "app/controllers/**", "api/**",
+        "sdk/**", "client/**", "clients/**", "src/client/**",
+        "src/sdk/**", "packages/sdk/**", "generated/client/**",
     ],
     "db-schema": [
         "db/migrations/**", "prisma/schema.prisma", "sql/**",
         "**/schema.sql", "database/migrations/**", "alembic/versions/**",
     ],
     "env-config": [
-        ".env", ".env.local", ".env.production", ".env.staging",
+        ".env", ".env.*", ".env.local", ".env.production", ".env.staging",
         "config/**", "src/config/**", "**/settings.py", "**/config.py",
     ],
     "workflow-ci": [
@@ -27,6 +29,11 @@ TYPE_PATTERNS: dict = {
     "auth-permission": [
         "**/auth/**", "**/middleware/auth*", "**/rbac/**",
         "**/permissions/**", "**/policy/**",
+    ],
+    "cli-public-interface": [
+        "commands/**", "cli/**", "src/cli/**", "app/cli/**",
+        "**/commands/**", "**/cli.py", "**/cli.ts", "**/cli.js",
+        "main.py", "pyproject.toml", "package.json",
     ],
 }
 

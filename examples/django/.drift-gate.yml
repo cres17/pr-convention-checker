@@ -1,0 +1,94 @@
+rules:
+  - id: api-contract-sync
+    when:
+      any_changed:
+        - "**/views.py"
+        - "**/viewsets.py"
+        - "**/urls.py"
+        - "api/**"
+      min_change_intensity: route-contract-change
+    require:
+      groups:
+        - name: "API docs"
+          any_changed:
+            - "docs/api/**"
+            - "openapi.yaml"
+            - "docs/spec.md"
+        - name: "Changelog"
+          all_changed:
+            - "CHANGELOG.md"
+    severity: blocker
+    message: "Django REST view or URL changed without updating API documentation"
+
+  - id: db-migration-runbook
+    when:
+      any_changed:
+        - "**/migrations/**"
+        - "**/models.py"
+      min_change_intensity: db-schema-change
+    require:
+      groups:
+        - name: "DB runbook"
+          any_changed:
+            - "docs/runbooks/**"
+            - "RUNBOOK.md"
+    severity: major
+    message: "Django migration added without a runbook"
+
+  - id: env-config-sync
+    when:
+      any_changed:
+        - ".env*"
+        - "**/settings.py"
+        - "**/settings/**"
+      min_change_intensity: config-key-added
+    require:
+      groups:
+        - name: ".env.example"
+          all_changed:
+            - ".env.example"
+        - name: "Deployment docs"
+          any_changed:
+            - "docs/deployment.md"
+    severity: major
+    message: "Django settings or env variable changed without updating .env.example"
+
+  - id: serializer-contract-sync
+    when:
+      any_changed:
+        - "**/serializers.py"
+      min_change_intensity: signature-change
+    require:
+      groups:
+        - name: "API docs"
+          any_changed:
+            - "docs/api/**"
+            - "openapi.yaml"
+    severity: major
+    message: "DRF serializer changed without updating API documentation"
+
+  - id: auth-security-docs
+    when:
+      any_changed:
+        - "**/auth/**"
+        - "**/permissions.py"
+        - "**/authentication.py"
+      min_change_intensity: auth-policy-change
+    require:
+      groups:
+        - name: "Security docs"
+          any_changed:
+            - "docs/security.md"
+            - "SECURITY.md"
+    severity: blocker
+    message: "Django auth or permission class changed without security documentation update"
+
+gate:
+  fail_on_blocker: true
+  fail_on_major_count: 2
+
+ignore_paths:
+  - "**/tests/**"
+  - "**/test_*.py"
+  - "**/factories.py"
+  - "manage.py"

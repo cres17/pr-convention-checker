@@ -1,0 +1,43 @@
+{
+  "description": "Auth permission change without security docs should fail",
+  "category": "auth",
+  "risk": "high",
+  "expected_reason": "A privileged permission changed without updating security documentation.",
+  "source": "synthetic-fixture",
+  "changed_files": [
+    {
+      "path": "src/auth/rbac.ts",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "diff --git a/src/auth/rbac.ts b/src/auth/rbac.ts\n@@ -1 +1 @@\n+permissions.admin.refund = true\n"
+    }
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "auth-security-sync",
+        "when": {
+          "any_changed": ["src/auth/**", "**/rbac/**", "**/permissions/**"],
+          "min_change_intensity": "auth-policy-change"
+        },
+        "require": {
+          "groups": [
+            {"name": "Security docs", "any_changed": ["docs/security/**", "SECURITY.md"]},
+            {"name": "Release notes", "all_changed": ["CHANGELOG.md"]}
+          ]
+        },
+        "severity": "blocker",
+        "message": "Auth policy changed without security docs"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "fail",
+    "blocker_count": 1,
+    "major_count": 0,
+    "violation_rule_ids": ["auth-security-sync"]
+  }
+}

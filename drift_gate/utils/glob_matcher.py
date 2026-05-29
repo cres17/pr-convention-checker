@@ -21,8 +21,7 @@ def glob_to_regex(pattern: str) -> str:
     i = 0
     while i < len(pattern):
         if pattern[i:i+3] == "**/":
-            regex += "(?:[^/]+/)* "
-            regex = regex.replace("(?:[^/]+/)* ", "(?:[^/]+/)*")
+            regex += "(?:[^/]+/)*"
             i += 3
         elif pattern[i:i+2] == "**":
             regex += ".*"

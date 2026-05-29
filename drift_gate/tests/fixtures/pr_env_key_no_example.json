@@ -1,0 +1,43 @@
+{
+  "description": "New config key without .env.example update should require env docs",
+  "category": "env",
+  "risk": "high",
+  "expected_reason": "A new STRIPE_SECRET_KEY contract is introduced without updating .env.example.",
+  "source": "synthetic-fixture",
+  "changed_files": [
+    {
+      "path": "src/config/env.ts",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "diff --git a/src/config/env.ts b/src/config/env.ts\n@@ -1 +1,2 @@\n export const port = process.env.PORT\n+export const stripeKey = process.env.STRIPE_SECRET_KEY\n"
+    }
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "env-config-sync",
+        "when": {
+          "any_changed": ["src/config/**", "config/**", ".env", ".env.*"],
+          "min_change_intensity": "config-key-added"
+        },
+        "require": {
+          "groups": [
+            {"name": "Example env", "all_changed": [".env.example"]},
+            {"name": "Deployment docs", "any_changed": ["docs/deployment/**", "docs/runbook/**"]}
+          ]
+        },
+        "severity": "major",
+        "message": "Environment/config changed without docs or .env.example update"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 1},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "fail",
+    "blocker_count": 0,
+    "major_count": 1,
+    "violation_rule_ids": ["env-config-sync"]
+  }
+}

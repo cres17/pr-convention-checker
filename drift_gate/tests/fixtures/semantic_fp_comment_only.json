@@ -1,0 +1,47 @@
+{
+  "name": "semantic-fp-comment-only",
+  "description": "Comment-only change to route file should not trigger api-contract-sync when min_change_intensity is impl-only. Path-only baseline would fire (false positive); patch-aware correctly skips it.",
+  "category": "api",
+  "risk": "low",
+  "expected_reason": "Intensity filter prevents false positive on comment-only route file change",
+  "source": "false-positive-test",
+  "false_positive_target": true,
+  "changed_files": [
+    {
+      "path": "src/routes/users.py",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "@@ -10,6 +10,9 @@\n # User management endpoints\n+# TODO: add pagination support\n+# TODO: add rate limiting\n+# Updated: 2024-01-15 - Added comments for future work\n def get_users():\n     return users"
+    }
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {
+          "any_changed": ["src/routes/**", "openapi/**"],
+          "min_change_intensity": "impl-only"
+        },
+        "require": {
+          "groups": [
+            {
+              "name": "API contract docs",
+              "any_changed": ["docs/spec.md", "docs/api/**"]
+            }
+          ]
+        },
+        "severity": "blocker",
+        "message": "API surface changed without synced contract/docs"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "pass",
+    "blocker_count": 0,
+    "major_count": 0,
+    "violation_rule_ids": []
+  }
+}

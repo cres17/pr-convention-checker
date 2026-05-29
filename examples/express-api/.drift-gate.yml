@@ -1,0 +1,80 @@
+rules:
+  - id: api-contract-sync
+    when:
+      any_changed:
+        - "src/routes/**"
+        - "src/controllers/**"
+        - "openapi/**"
+      min_change_intensity: route-contract-change
+    require:
+      groups:
+        - name: "OpenAPI spec"
+          any_changed:
+            - "openapi/openapi.yaml"
+            - "openapi/**/*.yaml"
+            - "docs/api/**"
+        - name: "Changelog"
+          all_changed:
+            - "CHANGELOG.md"
+    severity: blocker
+    message: "Express route changed without updating OpenAPI spec or changelog"
+
+  - id: db-migration-runbook
+    when:
+      any_changed:
+        - "db/migrations/**"
+        - "src/models/**"
+      min_change_intensity: db-schema-change
+    require:
+      groups:
+        - name: "DB runbook"
+          any_changed:
+            - "docs/runbooks/**"
+            - "RUNBOOK.md"
+    severity: major
+    message: "DB migration added without a runbook"
+
+  - id: env-config-sync
+    when:
+      any_changed:
+        - ".env*"
+        - "config/**"
+      min_change_intensity: config-key-added
+    require:
+      groups:
+        - name: ".env.example"
+          all_changed:
+            - ".env.example"
+        - name: "Deployment docs"
+          any_changed:
+            - "docs/deployment.md"
+            - "docs/config.md"
+    severity: major
+    message: "New environment variable added without updating .env.example"
+
+  - id: auth-security-docs
+    when:
+      any_changed:
+        - "src/middleware/auth*"
+        - "src/auth/**"
+        - "src/rbac/**"
+      min_change_intensity: auth-policy-change
+    require:
+      groups:
+        - name: "Security docs"
+          any_changed:
+            - "docs/security.md"
+            - "SECURITY.md"
+            - "docs/security/**"
+    severity: blocker
+    message: "Auth middleware changed without updating security documentation"
+
+gate:
+  fail_on_blocker: true
+  fail_on_major_count: 2
+
+ignore_paths:
+  - "src/**/__tests__/**"
+  - "src/**/*.test.ts"
+  - "src/**/*.spec.ts"
+  - "src/internal/**"

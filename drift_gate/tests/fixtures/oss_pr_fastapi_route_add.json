@@ -1,0 +1,53 @@
+{
+  "name": "oss-pr-fastapi-route-add",
+  "description": "FastAPI adds new /items endpoint without updating OpenAPI spec",
+  "category": "api",
+  "risk": "high",
+  "expected_reason": "New route added without spec update",
+  "source": "oss-sample",
+  "false_positive_target": false,
+  "changed_files": [
+    {
+      "path": "src/routes/items.py",
+      "status": "added",
+      "previous_path": null,
+      "patch": "@@ -0,0 +1,15 @@\n+from fastapi import APIRouter\n+router = APIRouter()\n+\n+@router.get(\"/items\")\n+async def list_items():\n+    return []\n+\n+@router.post(\"/items\")\n+async def create_item(item: dict):\n+    return item\n"
+    }
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {
+          "any_changed": ["src/routes/**", "app/routers/**", "app/api/**"]
+        },
+        "require": {
+          "groups": [
+            {
+              "name": "OpenAPI spec",
+              "any_changed": ["openapi.yaml", "openapi/**", "docs/api/**"]
+            },
+            {
+              "name": "Changelog",
+              "all_changed": ["CHANGELOG.md"]
+            }
+          ]
+        },
+        "severity": "blocker",
+        "message": "API route added or changed without updating OpenAPI spec or changelog"
+      }
+    ],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 2
+    },
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "fail",
+    "blocker_count": 1,
+    "major_count": 0,
+    "violation_rule_ids": ["api-contract-sync"]
+  }
+}

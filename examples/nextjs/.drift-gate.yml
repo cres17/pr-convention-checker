@@ -1,0 +1,90 @@
+rules:
+  - id: api-route-contract-sync
+    when:
+      any_changed:
+        - "pages/api/**"
+        - "app/api/**"
+        - "src/app/api/**"
+        - "src/pages/api/**"
+      min_change_intensity: route-contract-change
+    require:
+      groups:
+        - name: "API docs"
+          any_changed:
+            - "docs/api/**"
+            - "openapi.yaml"
+            - "docs/spec.md"
+        - name: "Changelog"
+          all_changed:
+            - "CHANGELOG.md"
+    severity: blocker
+    message: "Next.js API route changed without updating API documentation"
+
+  - id: env-config-sync
+    when:
+      any_changed:
+        - ".env*"
+        - "next.config.*"
+      min_change_intensity: config-key-added
+    require:
+      groups:
+        - name: ".env.example"
+          all_changed:
+            - ".env.example"
+        - name: "Deployment docs"
+          any_changed:
+            - "docs/deployment.md"
+            - "docs/config.md"
+    severity: major
+    message: "New env variable added to Next.js config without updating .env.example"
+
+  - id: auth-security-docs
+    when:
+      any_changed:
+        - "pages/api/auth/**"
+        - "app/api/auth/**"
+        - "lib/auth/**"
+        - "src/auth/**"
+        - "middleware.ts"
+        - "middleware.js"
+      min_change_intensity: auth-policy-change
+    require:
+      groups:
+        - name: "Security docs"
+          any_changed:
+            - "docs/security.md"
+            - "SECURITY.md"
+    severity: blocker
+    message: "Next.js auth route or middleware changed without security documentation update"
+
+  - id: public-page-contract-sync
+    when:
+      any_changed:
+        - "pages/**"
+        - "app/**"
+        - "src/app/**"
+        - "src/pages/**"
+      min_change_intensity: export-added
+    require:
+      groups:
+        - name: "Page/component docs"
+          any_changed:
+            - "docs/pages/**"
+            - "CHANGELOG.md"
+    severity: minor
+    message: "New Next.js page or component exported without a changelog entry"
+
+gate:
+  fail_on_blocker: true
+  fail_on_major_count: 2
+
+ignore_paths:
+  - "**/__tests__/**"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"
+  - "**/*.stories.tsx"
+  - "**/*.stories.ts"
+  - "public/**"
+  - "styles/**"

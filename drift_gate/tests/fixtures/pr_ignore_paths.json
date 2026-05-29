@@ -1,0 +1,32 @@
+{
+  "description": "Changed files match ignore_paths — should not trigger rule even if path matches when.any_changed",
+  "changed_files": [
+    {"path": "src/internal/debug.ts", "status": "modified", "previous_path": null, "patch": "@@ -1,5 +1,6 @@ function debug()..."}
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {"any_changed": ["src/**"]},
+        "require": {
+          "groups": [
+            {"name": "문서 업데이트", "any_changed": ["docs/**"]}
+          ]
+        },
+        "severity": "blocker",
+        "message": "Code changes require docs"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": ["src/internal/**", "**/*.test.ts"]
+  },
+  "expected": {
+    "result": "pass",
+    "blocker_count": 0,
+    "major_count": 0,
+    "violation_rule_ids": [],
+    "skip": false,
+    "skip_reason": null
+  }
+}

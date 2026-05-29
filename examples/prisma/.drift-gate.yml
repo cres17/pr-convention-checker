@@ -1,0 +1,68 @@
+rules:
+  - id: db-migration-runbook
+    when:
+      any_changed:
+        - "prisma/migrations/**"
+        - "prisma/schema.prisma"
+      min_change_intensity: db-schema-change
+    require:
+      groups:
+        - name: "DB runbook"
+          any_changed:
+            - "docs/runbooks/**"
+            - "RUNBOOK.md"
+        - name: "Changelog"
+          all_changed:
+            - "CHANGELOG.md"
+    severity: blocker
+    message: "Prisma schema or migration changed without a runbook and changelog entry"
+
+  - id: db-seed-sync
+    when:
+      any_changed:
+        - "prisma/schema.prisma"
+        - "prisma/migrations/**"
+      min_change_intensity: db-schema-change
+    require:
+      groups:
+        - name: "Seed script"
+          any_changed:
+            - "prisma/seed.ts"
+            - "prisma/seed.js"
+    severity: minor
+    message: "Prisma schema changed — check if seed script needs updating"
+
+  - id: env-config-sync
+    when:
+      any_changed:
+        - ".env*"
+      min_change_intensity: config-key-added
+    require:
+      groups:
+        - name: ".env.example"
+          all_changed:
+            - ".env.example"
+    severity: major
+    message: "New environment variable added without updating .env.example"
+
+  - id: api-contract-sync
+    when:
+      any_changed:
+        - "prisma/schema.prisma"
+      min_change_intensity: db-schema-change
+    require:
+      groups:
+        - name: "API or GraphQL schema"
+          any_changed:
+            - "schema.graphql"
+            - "src/schema.graphql"
+            - "docs/api/**"
+    severity: major
+    message: "Prisma model changed — check if GraphQL or API schema also needs updating"
+
+gate:
+  fail_on_blocker: true
+  fail_on_major_count: 2
+
+ignore_paths:
+  - "prisma/migrations/**/*.json"

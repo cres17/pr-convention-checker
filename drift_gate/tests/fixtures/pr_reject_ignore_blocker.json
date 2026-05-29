@@ -1,0 +1,35 @@
+{
+  "description": "BLOCKER rule with drift-ignore but NO reason — should be rejected_ignores (rule still applies)",
+  "changed_files": [
+    {"path": "prisma/schema.prisma", "status": "modified", "previous_path": null, "patch": "@@ -5,6 +5,7 @@ model User..."}
+  ],
+  "drift_ignores": [
+    {"rule_id": "db-schema-sync", "reason": null}
+  ],
+  "policy": {
+    "rules": [
+      {
+        "id": "db-schema-sync",
+        "when": {"any_changed": ["prisma/**"]},
+        "require": {
+          "groups": [
+            {"name": "마이그레이션", "all_changed": ["db/migrations/**"]},
+            {"name": "CHANGELOG", "all_changed": ["CHANGELOG.md"]}
+          ]
+        },
+        "severity": "blocker",
+        "message": "Schema changes must have migrations + CHANGELOG"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "fail",
+    "blocker_count": 1,
+    "major_count": 0,
+    "violation_rule_ids": ["db-schema-sync"],
+    "rejected_ignore_rule_ids": ["db-schema-sync"],
+    "skipped_rule_ids": []
+  }
+}

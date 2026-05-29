@@ -1,0 +1,71 @@
+{
+  "name": "oss-pr-docs-only",
+  "description": "Documentation-only PR: updates API docs and README — should not trigger any violations",
+  "category": "docs",
+  "risk": "low",
+  "expected_reason": "Docs-only PR should pass without evaluation",
+  "source": "oss-sample",
+  "false_positive_target": true,
+  "changed_files": [
+    {
+      "path": "docs/api.md",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "@@ -1,5 +1,10 @@\n # API Documentation\n \n+## New Endpoints\n+\n+### GET /items\n+Returns a list of items.\n+\n ## Authentication\n"
+    },
+    {
+      "path": "README.md",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "@@ -10,3 +10,5 @@ Getting started with the API.\n \n ## Installation\n \n+See [API docs](docs/api.md) for the full endpoint reference.\n+\n ## Contributing\n"
+    }
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {
+          "any_changed": ["src/routes/**", "app/routers/**"]
+        },
+        "require": {
+          "groups": [
+            {
+              "name": "OpenAPI spec",
+              "any_changed": ["openapi.yaml", "openapi/**"]
+            }
+          ]
+        },
+        "severity": "blocker",
+        "message": "API route changed without updating OpenAPI spec"
+      },
+      {
+        "id": "db-migration-runbook",
+        "when": {
+          "any_changed": ["prisma/migrations/**", "db/migrations/**"]
+        },
+        "require": {
+          "groups": [
+            {
+              "name": "DB runbook",
+              "any_changed": ["RUNBOOK.md", "docs/runbooks/**"]
+            }
+          ]
+        },
+        "severity": "major",
+        "message": "DB migration added without a runbook"
+      }
+    ],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 2
+    },
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "pass",
+    "blocker_count": 0,
+    "major_count": 0,
+    "violation_rule_ids": []
+  }
+}

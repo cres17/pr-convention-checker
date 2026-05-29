@@ -1,0 +1,38 @@
+{
+  "description": "API route implementation-only change without docs; expect pass with signature threshold",
+  "changed_files": [
+    {
+      "path": "src/routes/users.ts",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "diff --git a/src/routes/users.ts b/src/routes/users.ts\n@@ -7,7 +7,7 @@ export async function listUsers(req, res) {\n-  const limit = Number(req.query.limit || 25)\n+  const limit = Math.min(Number(req.query.limit || 25), 100)\n   return res.json(await users.list({ limit }))\n }"
+    }
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {
+          "any_changed": ["src/routes/**", "openapi/**"],
+          "min_change_intensity": "signature-change"
+        },
+        "require": {
+          "groups": [
+            {"name": "API contract docs", "any_changed": ["docs/spec.md"]}
+          ]
+        },
+        "severity": "blocker",
+        "message": "API surface changed without synced contract/docs"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "pass",
+    "blocker_count": 0,
+    "major_count": 0,
+    "violation_rule_ids": []
+  }
+}

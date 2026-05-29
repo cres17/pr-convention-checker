@@ -27,7 +27,11 @@ inputs:
     required: false
     default: "true"
   fail_on_blocker:
-    description: Exit 1 when BLOCKER violations are found
+    description: Exit 1 when the configured gate result is fail
+    required: false
+    default: "true"
+  upload_report_artifact:
+    description: Upload Markdown, JSON, and HTML reports as a workflow artifact
     required: false
     default: "true"
 
@@ -46,7 +50,28 @@ outputs:
     value: ${{ steps.check.outputs.violation_count }}
   comment_url:
     description: URL of the posted PR comment
-    value: ${{ steps.post.outputs.comment_url }}
+    value: ${{ steps.check.outputs.comment_url }}
+  markdown_report_path:
+    description: Path to the generated Markdown report
+    value: ${{ steps.check.outputs.markdown_report_path }}
+  json_report_path:
+    description: Path to the generated JSON report
+    value: ${{ steps.check.outputs.json_report_path }}
+  html_report_path:
+    description: Path to the generated HTML report
+    value: ${{ steps.check.outputs.html_report_path }}
+  history_path:
+    description: Path to the generated history JSONL artifact
+    value: ${{ steps.check.outputs.history_path }}
+  artifact_name:
+    description: Name of uploaded report artifact
+    value: ${{ steps.check.outputs.artifact_name }}
+  html_artifact_hint:
+    description: Hint path to the HTML report inside the artifact
+    value: ${{ steps.check.outputs.html_artifact_hint }}
+  policy_error:
+    description: Policy load or validation error, when evaluation cannot run
+    value: ${{ steps.check.outputs.policy_error }}
 
 runs:
   using: composite
@@ -70,9 +95,20 @@ runs:
         cd "${{ github.action_path }}"
         python3 -m drift_gate.adapters.github_action.runner
 
+    - name: Upload Drift Gate reports
+      if: always() && inputs.upload_report_artifact == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: drift-gate-report
+        path: |
+          ${{ steps.check.outputs.markdown_report_path }}
+          ${{ steps.check.outputs.json_report_path }}
+          ${{ steps.check.outputs.html_report_path }}
+          ${{ steps.check.outputs.history_path }}
+
     - name: Fail on blocker
       if: inputs.fail_on_blocker == 'true' && steps.check.outputs.result == 'fail'
       shell: bash
       run: |
-        echo "::error::Drift Gate FAIL — ${{ steps.check.outputs.blocker_count }} BLOCKER(s). Sync your contract docs before merging."
+        echo "::error::Drift Gate FAIL - ${{ steps.check.outputs.blocker_count }} BLOCKER(s), ${{ steps.check.outputs.major_count }} MAJOR(s). Sync your contract docs before merging."
         exit 1

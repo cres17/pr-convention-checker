@@ -1,0 +1,30 @@
+{
+  "description": "Empty PR (no changed files) — should pass immediately",
+  "changed_files": [],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {"any_changed": ["src/routes/**"]},
+        "require": {
+          "groups": [
+            {"name": "문서", "any_changed": ["docs/**"]}
+          ]
+        },
+        "severity": "blocker",
+        "message": "API changes require docs"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "pass",
+    "blocker_count": 0,
+    "major_count": 0,
+    "violation_rule_ids": [],
+    "skip": false,
+    "skip_reason": null
+  }
+}

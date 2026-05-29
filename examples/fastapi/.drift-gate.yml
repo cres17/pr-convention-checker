@@ -1,0 +1,93 @@
+rules:
+  - id: api-contract-sync
+    when:
+      any_changed:
+        - "app/routers/**"
+        - "app/api/**"
+        - "app/main.py"
+      min_change_intensity: route-contract-change
+    require:
+      groups:
+        - name: "OpenAPI/spec docs"
+          any_changed:
+            - "docs/api/**"
+            - "openapi.yaml"
+            - "docs/spec.md"
+        - name: "Changelog"
+          all_changed:
+            - "CHANGELOG.md"
+    severity: blocker
+    message: "FastAPI route changed without updating OpenAPI spec or changelog"
+
+  - id: db-migration-runbook
+    when:
+      any_changed:
+        - "alembic/versions/**"
+        - "app/models/**"
+      min_change_intensity: db-schema-change
+    require:
+      groups:
+        - name: "DB runbook"
+          any_changed:
+            - "docs/runbooks/**"
+            - "docs/migrations/**"
+    severity: major
+    message: "Alembic migration added without a runbook"
+
+  - id: env-config-sync
+    when:
+      any_changed:
+        - ".env*"
+        - "app/core/config.py"
+        - "app/config.py"
+      min_change_intensity: config-key-added
+    require:
+      groups:
+        - name: ".env.example"
+          all_changed:
+            - ".env.example"
+        - name: "Deployment docs"
+          any_changed:
+            - "docs/deployment.md"
+            - "docs/config.md"
+    severity: major
+    message: "New env variable or config key added without updating .env.example"
+
+  - id: auth-security-docs
+    when:
+      any_changed:
+        - "app/auth/**"
+        - "app/core/security.py"
+        - "app/dependencies/auth*"
+      min_change_intensity: auth-policy-change
+    require:
+      groups:
+        - name: "Security docs"
+          any_changed:
+            - "docs/security.md"
+            - "SECURITY.md"
+    severity: blocker
+    message: "FastAPI auth dependency changed without security documentation update"
+
+  - id: schema-contract-sync
+    when:
+      any_changed:
+        - "app/schemas/**"
+      min_change_intensity: signature-change
+    require:
+      groups:
+        - name: "API docs or spec"
+          any_changed:
+            - "docs/api/**"
+            - "openapi.yaml"
+    severity: major
+    message: "Pydantic request/response schema changed without API documentation update"
+
+gate:
+  fail_on_blocker: true
+  fail_on_major_count: 2
+
+ignore_paths:
+  - "app/**/*_test.py"
+  - "tests/**"
+  - "app/internal/**"

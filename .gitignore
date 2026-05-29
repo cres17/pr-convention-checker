@@ -22,6 +22,15 @@ htmlcov/
 # Reports (generated at runtime)
 drift_gate_report.md
 drift_gate_report.json
+drift_gate_report.html
+drift-report.md
+drift-report.json
+drift-report.html
+benchmark.md
+benchmark.html
+benchmark-reports/
+.drift-gate-history.jsonl
+trend.html
 
 # IDE
 .vscode/

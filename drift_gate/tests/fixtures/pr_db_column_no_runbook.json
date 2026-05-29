@@ -1,0 +1,43 @@
+{
+  "description": "DB column addition without migration runbook should fail",
+  "category": "db",
+  "risk": "high",
+  "expected_reason": "A schema column was added without rollback/runbook documentation.",
+  "source": "synthetic-fixture",
+  "changed_files": [
+    {
+      "path": "db/migrations/20260520_add_plan.sql",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "diff --git a/db/migrations/20260520_add_plan.sql b/db/migrations/20260520_add_plan.sql\n@@ -1 +1 @@\n+ALTER TABLE users ADD COLUMN plan_id TEXT;\n"
+    }
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "db-schema-sync",
+        "when": {
+          "any_changed": ["db/migrations/**", "prisma/schema.prisma"],
+          "min_change_intensity": "db-schema-change"
+        },
+        "require": {
+          "groups": [
+            {"name": "Migration runbook", "any_changed": ["docs/runbook/**", "docs/database/**"]},
+            {"name": "Verification", "any_changed": ["tests/integration/**", "tests/e2e/**"]}
+          ]
+        },
+        "severity": "major",
+        "message": "DB schema changed without migration docs or verification"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 1},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "fail",
+    "blocker_count": 0,
+    "major_count": 1,
+    "violation_rule_ids": ["db-schema-sync"]
+  }
+}

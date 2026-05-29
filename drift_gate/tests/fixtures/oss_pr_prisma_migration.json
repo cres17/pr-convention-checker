@@ -1,0 +1,59 @@
+{
+  "name": "oss-pr-prisma-migration",
+  "description": "Prisma migration adds users table without runbook or changelog",
+  "category": "db",
+  "risk": "high",
+  "expected_reason": "DB migration added without runbook",
+  "source": "oss-sample",
+  "false_positive_target": false,
+  "changed_files": [
+    {
+      "path": "prisma/migrations/20240101_add_users_table/migration.sql",
+      "status": "added",
+      "previous_path": null,
+      "patch": "@@ -0,0 +1,12 @@\n+-- CreateTable\n+CREATE TABLE \"User\" (\n+    \"id\" SERIAL NOT NULL,\n+    \"email\" TEXT NOT NULL,\n+    \"name\" TEXT,\n+    \"createdAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n+\n+    CONSTRAINT \"User_pkey\" PRIMARY KEY (\"id\")\n+);\n+\n+-- CreateIndex\n+CREATE UNIQUE INDEX \"User_email_key\" ON \"User\"(\"email\");\n"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "@@ -10,3 +10,10 @@ datasource db {\n   url      = env(\"DATABASE_URL\")\n }\n \n+model User {\n+  id        Int      @id @default(autoincrement())\n+  email     String   @unique\n+  name      String?\n+  createdAt DateTime @default(now())\n+}\n"
+    }
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "db-migration-runbook",
+        "when": {
+          "any_changed": ["prisma/migrations/**", "prisma/schema.prisma", "db/migrations/**"]
+        },
+        "require": {
+          "groups": [
+            {
+              "name": "DB runbook",
+              "any_changed": ["docs/runbooks/**", "RUNBOOK.md", "docs/migrations/**"]
+            },
+            {
+              "name": "Changelog",
+              "all_changed": ["CHANGELOG.md"]
+            }
+          ]
+        },
+        "severity": "blocker",
+        "message": "DB migration added without a runbook and changelog entry"
+      }
+    ],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 2
+    },
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "fail",
+    "blocker_count": 1,
+    "major_count": 0,
+    "violation_rule_ids": ["db-migration-runbook"]
+  }
+}

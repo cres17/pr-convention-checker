@@ -1,0 +1,46 @@
+{
+  "description": "Real OSS style FastAPI route response schema change without API docs",
+  "category": "api",
+  "risk": "high",
+  "expected_reason": "FastAPI response_model changed and API docs were not updated",
+  "source": "real-oss-style-sample",
+  "false_positive_target": "semantic-aware should treat response_model changes as API contract drift",
+  "changed_files": [
+    {
+      "path": "app/api/users.py",
+      "status": "modified",
+      "patch": "diff --git a/app/api/users.py b/app/api/users.py\n@@ -1 +1 @@\n-@router.get('/users/{user_id}', response_model=UserResponse)\n+@router.get('/users/{user_id}', response_model=UserDetailResponse)\n"
+    }
+  ],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {
+          "any_changed": ["app/api/**"],
+          "min_change_intensity": "route-contract-change"
+        },
+        "require": {
+          "groups": [
+            {
+              "name": "API docs",
+              "any_changed": ["docs/api/**", "openapi/**"]
+            }
+          ]
+        },
+        "severity": "blocker",
+        "message": "API contract changed without docs"
+      }
+    ],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 2
+    }
+  },
+  "expected": {
+    "result": "fail",
+    "blocker_count": 1,
+    "major_count": 0,
+    "violation_rule_ids": ["api-contract-sync"]
+  }
+}

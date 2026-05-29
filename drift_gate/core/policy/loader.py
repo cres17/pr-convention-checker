@@ -1,51 +1,51 @@
+"""Pure policy parsing and validation helpers.
+
+The core layer accepts policy content that adapters have already read. File
+system access belongs in ``drift_gate.adapters``.
 """
-.drift-gate.yml 정책 파일 로더.
-I/O는 파일 읽기만. 외부 API 없음.
-"""
-import sys
-from pathlib import Path
-from typing import Union
+from typing import Any
 
 from drift_gate.core.models.policy import Policy
 
 
 class PolicyLoadError(Exception):
-    """정책 파일 로드/검증 실패."""
+    """Policy parsing or validation failed."""
 
 
-def load_policy(path: Union[str, Path]) -> Policy:
-    """
-    YAML 파일에서 Policy 객체를 로드하고 유효성 검사 실행.
-    - 오류(error)  → PolicyLoadError 발생
-    - 경고(warning) → stderr 출력 후 계속
-    """
+def load_policy_from_dict(data: dict[str, Any] | None) -> Policy:
+    """Build and validate a Policy from a decoded mapping."""
+    policy = Policy.from_dict(data or {})
+
+    from drift_gate.core.policy.validator import PolicyValidationError, validate
+
+    validation = validate(policy)
+    policy.load_warnings = list(validation.warnings)
+    try:
+        validation.raise_if_errors()
+    except PolicyValidationError as exc:
+        raise PolicyLoadError(str(exc)) from exc
+    return policy
+
+
+def load_policy_from_text(text: str) -> Policy:
+    """Parse YAML text and return a validated Policy."""
     try:
         import yaml
-    except ImportError:
-        raise PolicyLoadError("pyyaml 필요: pip install pyyaml")
-
-    path = Path(path)
-    if not path.exists():
-        raise FileNotFoundError(f"정책 파일 없음: {path}")
+    except ImportError as exc:
+        raise PolicyLoadError("pyyaml is required: pip install pyyaml") from exc
 
     try:
-        with open(path, encoding="utf-8") as f:
-            data = yaml.safe_load(f) or {}
-    except Exception as e:
-        raise PolicyLoadError(f"정책 파일 파싱 실패: {e}") from e
+        data = yaml.safe_load(text) or {}
+    except Exception as exc:
+        raise PolicyLoadError(f"failed to parse policy YAML: {exc}") from exc
 
-    policy = Policy.from_dict(data)
+    if not isinstance(data, dict):
+        raise PolicyLoadError("policy YAML root must be a mapping")
+    return load_policy_from_dict(data)
 
-    # 유효성 검사 (validator는 별도 모듈 — 순환 임포트 방지를 위해 지연 임포트)
-    from drift_gate.core.policy.validator import validate, PolicyValidationError
-    vr = validate(policy)
 
-    for w in vr.warnings:
-        print(f"[drift-gate] WARNING: {w}", file=sys.stderr)
-
-    try:
-        vr.raise_if_errors()
-    except PolicyValidationError as e:
-        raise PolicyLoadError(str(e)) from e
-
-    return policy
+def load_policy(data: dict[str, Any] | str) -> Policy:
+    """Backward-compatible pure loader for dict or YAML text input."""
+    if isinstance(data, dict):
+        return load_policy_from_dict(data)
+    return load_policy_from_text(data)

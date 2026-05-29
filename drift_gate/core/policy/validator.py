@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from typing import List
 
 from drift_gate.core.models.policy import Policy
-from drift_gate.utils.glob_matcher import matches_any
+from drift_gate.core.classification.intensity import VALID_INTENSITIES
 
 VALID_SEVERITIES = {"blocker", "major", "minor", "nit"}
 
@@ -60,11 +60,44 @@ def validate(policy: Policy) -> ValidationResult:
             result.errors.append(
                 f"rule '{rule_id}': require.groups가 없습니다."
             )
+        group_names = {group.name for group in rule.require.groups}
+        for relation in rule.require.cross_file:
+            if not relation.name:
+                result.errors.append(
+                    f"rule '{rule_id}': require.cross_file 항목의 name이 비어 있습니다."
+                )
+            if not relation.when_any_changed:
+                result.errors.append(
+                    f"rule '{rule_id}' / relation '{relation.name}': "
+                    "when_any_changed가 비어 있습니다."
+                )
+            if not relation.require_groups:
+                result.errors.append(
+                    f"rule '{rule_id}' / relation '{relation.name}': "
+                    "require_groups가 비어 있습니다."
+                )
+            missing_groups = [
+                name for name in relation.require_groups
+                if name not in group_names
+            ]
+            if missing_groups:
+                result.errors.append(
+                    f"rule '{rule_id}' / relation '{relation.name}': "
+                    f"정의되지 않은 require group 참조 {missing_groups}"
+                )
 
         # 4. when.any_changed 없음
         if not rule.when.any_changed:
             result.errors.append(
                 f"rule '{rule_id}': when.any_changed가 비어 있습니다."
+            )
+
+        # 4-1. when.min_change_intensity 값 검증
+        if rule.when.min_change_intensity not in VALID_INTENSITIES:
+            result.errors.append(
+                f"rule '{rule_id}': min_change_intensity="
+                f"'{rule.when.min_change_intensity}' 오류 — "
+                f"허용값: {', '.join(sorted(VALID_INTENSITIES))}"
             )
 
         # 5. when 경로가 ignore_paths와 완전 포함 관계 → rule이 절대 활성화 안 됨

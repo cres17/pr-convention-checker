@@ -1,0 +1,32 @@
+{
+  "description": "File rename (move) — changed_files has previous_path set, triggers rule with appropriate message",
+  "changed_files": [
+    {"path": "src/auth/v2/login.ts", "status": "renamed", "previous_path": "src/auth/v1/login.ts", "patch": ""}
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "auth-refactor-doc",
+        "when": {"any_changed": ["src/auth/**"]},
+        "require": {
+          "groups": [
+            {"name": "인증 변경 이력", "any_changed": ["docs/auth-changes.md", "CHANGELOG.md"]}
+          ]
+        },
+        "severity": "major",
+        "message": "Auth subsystem changes must be documented"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 1},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "fail",
+    "blocker_count": 0,
+    "major_count": 1,
+    "violation_rule_ids": ["auth-refactor-doc"],
+    "skip": false,
+    "skip_reason": null
+  }
+}

@@ -1,7 +1,6 @@
 """
 CI 게이트 판정 — 순수 함수.
 """
-from drift_gate.core.models.policy import Gate
 from drift_gate.core.models.result import EvaluationResult
 
 

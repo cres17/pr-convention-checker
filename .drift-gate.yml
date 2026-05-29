@@ -54,6 +54,7 @@ rules:
     when:
       any_changed:
         - ".env"
+        - ".env.*"
         - ".env.local"
         - ".env.production"
         - ".env.staging"

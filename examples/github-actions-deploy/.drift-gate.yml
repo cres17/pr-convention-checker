@@ -1,0 +1,96 @@
+rules:
+  - id: deploy-workflow-runbook
+    when:
+      any_changed:
+        - ".github/workflows/deploy*.yml"
+        - ".github/workflows/release*.yml"
+        - ".github/workflows/prod*.yml"
+      min_change_intensity: ci-secret-change
+    require:
+      groups:
+        - name: "Ops runbook"
+          any_changed:
+            - "docs/ops/**"
+            - "docs/deployment.md"
+            - "RUNBOOK.md"
+        - name: "Changelog"
+          all_changed:
+            - "CHANGELOG.md"
+    severity: blocker
+    message: "Deploy workflow changed without an ops runbook and changelog entry"
+
+  - id: ci-secret-ops-docs
+    when:
+      any_changed:
+        - ".github/workflows/**"
+      min_change_intensity: ci-secret-change
+    require:
+      groups:
+        - name: "Ops or security docs"
+          any_changed:
+            - "docs/ops/**"
+            - "docs/security.md"
+            - "SECURITY.md"
+    severity: major
+    message: "CI workflow secret or environment variable changed without ops documentation"
+
+  - id: infra-runbook
+    when:
+      any_changed:
+        - "infra/**"
+        - "terraform/**"
+        - "helm/**"
+        - "k8s/**"
+        - "kubernetes/**"
+      min_change_intensity: ci-secret-change
+    require:
+      groups:
+        - name: "Infra runbook"
+          any_changed:
+            - "docs/ops/**"
+            - "docs/infra/**"
+            - "RUNBOOK.md"
+    severity: major
+    message: "Infrastructure configuration changed without an ops runbook"
+
+  - id: docker-image-ops-docs
+    when:
+      any_changed:
+        - "Dockerfile*"
+        - "docker-compose*.yml"
+        - ".dockerignore"
+      min_change_intensity: impl-only
+    require:
+      groups:
+        - name: "Docker/container docs"
+          any_changed:
+            - "docs/ops/**"
+            - "docs/deployment.md"
+    severity: minor
+    message: "Dockerfile changed — confirm container docs are up to date"
+
+  - id: env-config-sync
+    when:
+      any_changed:
+        - ".env*"
+        - ".github/workflows/**"
+      min_change_intensity: config-key-added
+    require:
+      groups:
+        - name: "Environment docs"
+          any_changed:
+            - "docs/deployment.md"
+            - "docs/config.md"
+            - ".env.example"
+    severity: major
+    message: "New environment variable or workflow secret added without documentation"
+
+gate:
+  fail_on_blocker: true
+  fail_on_major_count: 2
+
+ignore_paths:
+  - ".github/workflows/ci.yml"
+  - ".github/CODEOWNERS"
+  - ".github/ISSUE_TEMPLATE/**"
+  - ".github/PULL_REQUEST_TEMPLATE.md"

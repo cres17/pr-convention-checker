@@ -1,0 +1,39 @@
+{
+  "description": "Tests-only API helper change; expect skip/pass without doc requirements",
+  "changed_files": [
+    {
+      "path": "tests/routes/users.test.ts",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "diff --git a/tests/routes/users.test.ts b/tests/routes/users.test.ts\n@@ -12,6 +12,7 @@ describe('users route', () => {\n+  expect(response.status).toBe(200)\n })"
+    }
+  ],
+  "drift_ignores": [],
+  "policy": {
+    "rules": [
+      {
+        "id": "api-contract-sync",
+        "when": {
+          "any_changed": ["src/routes/**", "openapi/**"],
+          "min_change_intensity": "signature-change"
+        },
+        "require": {
+          "groups": [
+            {"name": "API contract docs", "any_changed": ["docs/spec.md"]}
+          ]
+        },
+        "severity": "blocker",
+        "message": "API surface changed without synced contract/docs"
+      }
+    ],
+    "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+    "ignore_paths": []
+  },
+  "expected": {
+    "result": "pass",
+    "blocker_count": 0,
+    "major_count": 0,
+    "violation_rule_ids": [],
+    "skip_reason": "test-only"
+  }
+}
