@@ -1,21 +1,77 @@
+<div align="center">
+
 # Drift Gate
 
-Drift Gate is a GitHub Action and local CLI that checks whether PR code changes
-are matched by the contract documents your team expects: API specs, runbooks,
-CHANGELOG entries, `.env.example`, security docs, and similar files.
+**Code changes. Contracts should keep up.**
 
-It is not a style checker and it does not need an LLM to decide pass/fail. Rules
-live in `.drift-gate.yml`.
+Catch missing API specs, runbooks, release notes, and security docs before merge.<br>
+A GitHub Action and local CLI, powered by your team's policy.
 
-## What It Catches
+[![CI](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml/badge.svg)](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml)
+[![Benchmark](https://github.com/cres17/pr-convention-checker/actions/workflows/benchmark.yml/badge.svg)](https://github.com/cres17/pr-convention-checker/actions/workflows/benchmark.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-8B5CF6)](LICENSE)
 
-- API route or OpenAPI changes without API docs or CHANGELOG updates
-- DB migrations without runbooks or release notes
-- Environment/config changes without `.env.example`
-- CI/infra changes without ops docs
-- Auth/RBAC changes without security docs
+[![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](pyproject.toml)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](action.yml)
+[![YAML Policy](https://img.shields.io/badge/YAML-Policy-CB171E?style=for-the-badge&logo=yaml&logoColor=white)](#policy-example)
+[![Tree-sitter](https://img.shields.io/badge/Tree--sitter-Semantic_Analysis-4D9375?style=for-the-badge)](#semantic-detection)
+[![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](drift_gate/tests)
+
+[Quick Start](#quick-start) · [How It Works](#how-it-works) · [GitHub Action](#github-action) · [Policy Example](#policy-example) · [Examples & Guides](#examples--guides)
+
+</div>
+
+---
+
+## Why Drift Gate?
+
+A PR can pass its tests and still leave the next developer with an outdated
+contract. Drift Gate checks whether code changes include the documents your
+team expects, using explicit rules in `.drift-gate.yml`.
+
+| When this changes… | Keep these in sync |
+| :--- | :--- |
+| API routes or OpenAPI definitions | API docs and CHANGELOG entries |
+| Database schemas or migrations | Runbooks and release notes |
+| Environment variables or configuration | `.env.example` |
+| CI workflows or infrastructure | Operations docs |
+| Authentication or RBAC | Security docs |
+
+**Deterministic decisions.** Your policy controls pass/fail; an LLM is not
+required. Optional Claude enrichment improves checklist wording without
+changing the gate decision.
+
+**Checks that fit your workflow.** Run locally before opening a PR, then use
+the GitHub Action to publish results during review.
+
+## How It Works
+
+```mermaid
+flowchart TD
+    A[Pull request or local changes] --> B[Collect changed paths and patches]
+    B --> C[Classify changes with available semantic signals]
+    P[.drift-gate.yml policy] --> D[Evaluate required document changes]
+    C --> D
+    D --> E[Apply valid ignores and severity thresholds]
+    E --> F[Gate result]
+    F --> G[Markdown, JSON, and HTML reports]
+    G --> H[PR comment and workflow artifacts]
+
+    classDef input fill:#eff6ff,stroke:#3b82f6,color:#1e3a8a
+    classDef policy fill:#f5f3ff,stroke:#8b5cf6,color:#4c1d95
+    classDef output fill:#ecfdf5,stroke:#10b981,color:#064e3b
+    class A,B,C input
+    class P,D,E policy
+    class F,G,H output
+```
+
+The policy defines which documents must change alongside code. Drift Gate
+evaluates those requirements and applies your gate thresholds. Local runs can
+write reports; the GitHub Action can also post a PR comment and upload artifacts.
 
 ## Quick Start
+
+Requires **Python 3.10+**. From a local clone of this repository:
 
 ```bash
 py -m pip install -e .
@@ -23,7 +79,14 @@ py main.py init --preset api
 py main.py check --explain
 ```
 
-Useful commands:
+These commands install Drift Gate, create a starter policy, and check the
+current working tree with rule explanations. Adjust the generated paths to
+match your project.
+
+> **Platform tip:** The examples use the Windows `py` launcher. On macOS or
+> Linux, use `python3` instead.
+
+### Everyday commands
 
 ```bash
 py main.py check                         # check current working tree
@@ -44,7 +107,8 @@ drift-gate report --out-html report.html
 
 ## GitHub Action
 
-Create `.github/workflows/drift-gate.yml`:
+Commit your `.drift-gate.yml` policy, then create
+`.github/workflows/drift-gate.yml`:
 
 ```yaml
 name: Drift Gate
@@ -65,8 +129,11 @@ jobs:
       - uses: cres17/pr-convention-checker@v1
 ```
 
-Optional Claude enrichment can improve checklist wording, but does not affect
-the deterministic gate decision:
+<details>
+<summary><strong>Optional: enrich checklists with Claude</strong></summary>
+
+Add an Anthropic API key to improve checklist wording. The deterministic gate
+decision stays the same:
 
 ```yaml
       - uses: cres17/pr-convention-checker@v1
@@ -74,9 +141,29 @@ the deterministic gate decision:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
 ```
 
+</details>
+
+<details>
+<summary><strong>Action configuration</strong></summary>
+
+| Input | Default | Purpose |
+| :--- | :--- | :--- |
+| `policy_file` | `.drift-gate.yml` | Path to your team's policy |
+| `github_token` | `${{ github.token }}` | Token for posting PR comments |
+| `post_comment` | `true` | Publish the result as a PR comment |
+| `fail_on_blocker` | `true` | Fail the workflow when the configured gate returns `fail` |
+| `upload_report_artifact` | `true` | Upload generated reports as a workflow artifact |
+| `anthropic_api_key` | Empty | Enable optional Claude checklist enrichment |
+
+See [action.yml](action.yml) for all inputs and outputs, including the model
+setting and generated report paths.
+
+</details>
+
 ## Policy Example
 
-Create `.drift-gate.yml`:
+This policy requires **API docs and release notes** whenever a route or OpenAPI
+file changes. Save it as `.drift-gate.yml`:
 
 ```yaml
 rules:
@@ -105,11 +192,13 @@ ignore_paths:
   - "src/internal/**"
 ```
 
-Important: do not put required docs paths such as `docs/**` or `CHANGELOG.md`
-inside `ignore_paths`, because ignored paths are excluded from both trigger and
-require checks.
+> [!IMPORTANT]
+> Keep required docs paths such as `docs/**` and `CHANGELOG.md` out of
+> `ignore_paths`. Ignored paths are excluded from both trigger and requirement
+> checks.
 
-## Rule Fields
+<details>
+<summary><strong>Rule field reference</strong></summary>
 
 | Field | Meaning |
 |---|---|
@@ -121,6 +210,8 @@ require checks.
 | `severity` | `blocker`, `major`, `minor`, or `nit` |
 | `gate.fail_on_blocker` | Fail CI on blocker violations |
 | `gate.fail_on_major_count` | Fail CI when major count reaches this number |
+
+</details>
 
 ## Suppressing Intentional Drift
 
@@ -136,13 +227,16 @@ is rejected and the rule still counts toward the gate.
 
 ## Outputs
 
-CLI and Action runs produce:
+| Format | Use it for |
+| :--- | :--- |
+| **Markdown** | Readable summaries and PR comments |
+| **JSON** | Automation and structured rule decisions |
+| **HTML** | Visual reports for review; generate locally with `--out-html` |
 
-- Markdown summary for PR comments
-- JSON report for automation
-- Optional HTML report for local review
+<details>
+<summary><strong>Example JSON report</strong></summary>
 
-JSON includes:
+Illustrative passing result:
 
 ```json
 {
@@ -160,6 +254,8 @@ JSON includes:
 }
 ```
 
+</details>
+
 ## Semantic Detection
 
 Drift Gate combines path rules with patch/semantic signals. Current adapters
@@ -167,20 +263,48 @@ cover Python, TypeScript/JavaScript, Go, Java, Kotlin, and Ruby. When
 `tree-sitter-language-pack` is installed, grammar-backed parsing is used where
 available; conservative patch heuristics remain as fallback.
 
+Learn how signals are evaluated in the [detector guide](docs/detector-guide.md).
+
+## Examples & Guides
+
+Start with an example that matches your stack, then adapt its policy paths to
+your repository.
+
+| Stack | Example |
+| :--- | :--- |
+| Python APIs | [FastAPI](examples/fastapi/README.md) · [Django](examples/django/README.md) |
+| JavaScript / TypeScript | [Express](examples/express-api/README.md) · [Next.js](examples/nextjs/README.md) |
+| Database migrations | [Prisma](examples/prisma/README.md) |
+| Deployment workflows | [GitHub Actions](examples/github-actions-deploy/README.md) |
+
+**Further reading:** [Detector guide](docs/detector-guide.md) ·
+[Migration guide](docs/migration-guide.md) ·
+[Troubleshooting](docs/troubleshooting.md)
+
 ## Development
 
+### Repository workflows
+
+| Workflow | Runs on | Checks and artifacts |
+| :--- | :--- | :--- |
+| [CI](.github/workflows/ci.yml) | Pushes and PRs to `main` / `develop`; published releases | Tests on Ubuntu, Windows, and macOS with Python 3.10–3.12; critical Ruff checks; baseline and multi-engine benchmarks |
+| [Benchmark](.github/workflows/benchmark.yml) | Pushes to `main`; published releases | Tests, baseline comparison, and multi-engine evaluation; uploads benchmark reports and attaches reports to releases |
+
+The status badges at the top link directly to the corresponding workflow runs.
+
+### Local checks
+
 ```bash
-py -m pip install -e .
+py -m pip install -e ".[dev]"
 py -m pytest -q
+py main.py docs-check README.md --json
 py main.py eval drift_gate/tests/fixtures --recursive --compare-baseline --engines semantic-aware --max-fp 0 --max-fn 0 --min-f1 1.0
 ```
 
-Current semantic-aware benchmark:
-
-| Engine | Cases | Passed | Precision | Recall | F1 | FP | FN |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Semantic-aware | 22 | 22 | 1.000 | 1.000 | 1.000 | 0 | 0 |
+The evaluation command checks the fixture suite against explicit false-positive,
+false-negative, and F1 thresholds. Use `py main.py demo` to generate a browsable
+`benchmark.html` report.
 
 ## License
 
-MIT
+Released under the [MIT License](LICENSE).
