@@ -1,0 +1,36 @@
+{
+  "docs_check": {
+    "docs_files": [
+      "README.md"
+    ],
+    "checked_commands": [
+      "check",
+      "demo",
+      "docs-check",
+      "eval",
+      "init",
+      "report",
+      "review"
+    ],
+    "checked_json_keys": [
+      "change_types",
+      "gate",
+      "ignore_audit",
+      "rejected_ignores",
+      "result",
+      "rule_decisions",
+      "scan_metrics",
+      "skipped_rules",
+      "summary",
+      "temporal_warnings",
+      "violations"
+    ],
+    "checked_policy_fields": [
+      "gate",
+      "ignore_paths",
+      "rules"
+    ],
+    "warnings": [],
+    "warning_count": 0
+  }
+}

@@ -126,4 +126,6 @@ def _scan_metrics(changed_files: List[ChangedFile], policy: Policy) -> ScanMetri
             1 for f in changed_files if "large file skipped" in f.patch.lower()
         ),
         evaluated_rules=len(policy.rules),
+        analysis_notes=[{"path": f.path, "method": f.analysis_method, "reason": f.analysis_reason}
+                        for f in changed_files if f.analysis_method != "not-analyzed"],
     )

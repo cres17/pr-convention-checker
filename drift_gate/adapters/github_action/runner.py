@@ -49,6 +49,9 @@ def main() -> None:
     try:
         from drift_gate.adapters.policy_loader import load_policy as _load_policy
         _policy_obj = _load_policy(policy_path)
+        from drift_gate.adapters.github.approvals import verify_ignores
+        drift_ignores = verify_ignores(gh, pr_number, drift_ignores, _policy_obj, changed_files)
+        changed_files = gh.attach_env_documents(pr_number, changed_files, _policy_obj)
         for _w in _policy_obj.load_warnings:
             print(f"::warning title=Drift Gate policy warning::{_escape_workflow_command(_w)}", file=sys.stderr)
         result = run(

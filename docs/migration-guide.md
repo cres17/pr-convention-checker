@@ -9,7 +9,7 @@ This guide covers upgrading from earlier Drift Gate configurations to the curren
 ### What Changed
 
 The original Drift Gate only matched file paths. The current version adds:
-- **Semantic signals**: extracted from diff content (added lines) using language-aware heuristics
+- **Semantic signals**: extracted from added and removed diff fragments using grammar parsing and language-aware heuristics
 - **Change intensity**: a ranked scale from `comment-only` to `public-cli-change`
 - **`min_change_intensity`** in rule `when:` clauses to reduce false positives
 - **`drift-ignore` expiry** and per-rule allow/deny governance

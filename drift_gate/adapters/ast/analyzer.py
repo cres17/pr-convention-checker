@@ -1,8 +1,7 @@
 """Optional semantic signal extraction from patches.
 
-This is a lightweight adapter boundary for future Tree-sitter parsers. Today it
-uses conservative patch patterns and only adds signals the core already knows
-how to handle.
+Grammar parsing and conservative patch patterns inspect added and removed
+fragments. Analysis methods and recovery reasons are retained in the result.
 
 Language-specific logic is delegated to dedicated adapter classes:
 - TypeScript/JavaScript: drift_gate.adapters.ast.typescript_adapter.TypeScriptAdapter
@@ -12,6 +11,7 @@ Language-specific logic is delegated to dedicated adapter classes:
 - Ruby: drift_gate.adapters.ast.ruby_adapter.RubyAdapter
 """
 import re
+from dataclasses import replace
 from typing import Iterable
 
 from drift_gate.core.models.changed_file import ChangedFile
@@ -21,6 +21,7 @@ from drift_gate.adapters.ast.python_adapter import PythonAdapter
 from drift_gate.adapters.ast.go_adapter import GoAdapter
 from drift_gate.adapters.ast.java_kotlin_adapter import JavaKotlinAdapter
 from drift_gate.adapters.ast.ruby_adapter import RubyAdapter
+from drift_gate.adapters.ast.tree_sitter_support import parse_sexp
 
 if TREE_SITTER_AVAILABLE:
     from drift_gate.adapters.ast.tree_sitter_python_adapter import TreeSitterPythonAdapter
@@ -56,30 +57,57 @@ def enrich_semantic_signals(files: Iterable[ChangedFile]) -> list[ChangedFile]:
         signals = set(file.semantic_signals)
         evidence = set(file.semantic_evidence)
         suffix = _suffix(file.path)
-        added_lines = list(_added_lines(file.patch))
-        if suffix in {".ts", ".tsx", ".js", ".jsx"}:
-            _merge(signals, evidence, _typescript_signals(added_lines))
-        elif suffix == ".py":
-            _merge(signals, evidence, _python_signals(added_lines))
-        elif suffix == ".go":
-            _merge(signals, evidence, _go_signals(added_lines))
-        elif suffix in {".java", ".kt", ".kts"}:
-            language = "java" if suffix == ".java" else "kotlin"
-            _merge(signals, evidence, _java_kotlin_signals(added_lines, language))
-        elif suffix == ".rb":
-            _merge(signals, evidence, _ruby_signals(added_lines))
-        _merge(signals, evidence, _path_signals(file.path, added_lines))
-        enriched.append(
-            ChangedFile(
-                path=file.path,
-                status=file.status,
-                previous_path=file.previous_path,
-                patch=file.patch,
-                semantic_signals=sorted(signals),
-                semantic_evidence=sorted(evidence),
-            )
-        )
+        # Removed declarations are contract changes too. Keep the two sides
+        # separate: concatenating them can produce a misleading syntax tree.
+        added_lines = [line for line in _added_lines(file.patch) if not _comment_line(line)]
+        removed_lines = [line for line in _removed_lines(file.patch) if not _comment_line(line)]
+        for lines in (added_lines, removed_lines):
+            if suffix in {".ts", ".tsx", ".js", ".jsx"}:
+                _merge(signals, evidence, _typescript_signals(lines))
+            elif suffix == ".py":
+                _merge(signals, evidence, _python_signals(lines))
+            elif suffix == ".go":
+                _merge(signals, evidence, _go_signals(lines))
+            elif suffix in {".java", ".kt", ".kts"}:
+                _merge(signals, evidence, _java_kotlin_signals(lines, "java" if suffix == ".java" else "kotlin"))
+            elif suffix == ".rb":
+                _merge(signals, evidence, _ruby_signals(lines))
+            _merge(signals, evidence, _path_signals(file.path, lines))
+        method, reason = _analysis_status(file, suffix, added_lines, removed_lines)
+        if reason:
+            evidence.add(reason)
+        enriched.append(replace(file, semantic_signals=sorted(signals),
+                                semantic_evidence=sorted(evidence),
+                                analysis_method=method, analysis_reason=reason))
     return enriched
+
+
+def _analysis_status(file, suffix, added_lines, removed_lines):
+    if not file.patch.strip() or file.patch.startswith(("[binary file skipped]", "[large file skipped]")):
+        return "unavailable", "Patch unavailable; intensity cannot exclude a contract change"
+    if not added_lines and not removed_lines:
+        return "heuristic", "No changed code lines to parse"
+    languages = {".py": "python", ".ts": "typescript", ".tsx": "tsx", ".js": "javascript",
+                 ".jsx": "javascript", ".go": "go", ".java": "java", ".kt": "kotlin", ".kts": "kotlin", ".rb": "ruby"}
+    language = languages.get(suffix)
+    if not language:
+        return "heuristic", "No grammar-backed detector for this file type"
+    if not TREE_SITTER_AVAILABLE:
+        return "heuristic", "Tree-sitter unavailable; using patch heuristics"
+    try:
+        for lines in (added_lines, removed_lines):
+            if not lines:
+                continue
+            sexp = parse_sexp(language, lines)
+            if "(ERROR" in sexp or "(MISSING" in sexp:
+                return "heuristic", "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        return "grammar+heuristic", ""
+    except Exception as exc:
+        return "heuristic", f"Grammar unavailable ({type(exc).__name__}); using patch heuristics"
+
+
+def _comment_line(line):
+    return line.lstrip().startswith(("#", "//", "/*", "*", "*/"))
 
 
 def _typescript_signals(lines: list[str]) -> tuple[set[str], set[str]]:
@@ -142,6 +170,12 @@ def _merge(
 def _added_lines(patch: str) -> Iterable[str]:
     for line in patch.splitlines():
         if line.startswith("+") and not line.startswith("+++"):
+            yield line[1:]
+
+
+def _removed_lines(patch: str) -> Iterable[str]:
+    for line in patch.splitlines():
+        if line.startswith("-") and not line.startswith("---"):
             yield line[1:]
 
 

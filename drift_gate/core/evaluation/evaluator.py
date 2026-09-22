@@ -16,9 +16,11 @@ from drift_gate.core.classification.intensity import (
     classify_file_intensity,
     max_intensity,
     meets_min_intensity,
+    analysis_unavailable,
 )
 from drift_gate.core.reasoning.checklist import build_fallback_checklist
 from drift_gate.utils.glob_matcher import matches_any, match_glob, pattern_confidence
+from drift_gate.core.evaluation.contracts import content_requirement
 
 
 def evaluate(
@@ -61,6 +63,8 @@ def evaluate(
                 ignore_audit.append(IgnoreAuditEntry(
                     rule_id=rule_id,
                     action="rejected",
+                    approval_verified=directive.approval_verified,
+                    approval_commit=directive.approval_commit,
                     reason=rejection_reason,
                     approved_by=directive.approved_by,
                     expires=directive.expires,
@@ -74,6 +78,8 @@ def evaluate(
                 ignore_audit.append(IgnoreAuditEntry(
                     rule_id=rule_id,
                     action="accepted",
+                    approval_verified=directive.approval_verified,
+                    approval_commit=directive.approval_commit,
                     reason=directive.reason or "",
                     approved_by=directive.approved_by,
                     expires=directive.expires,
@@ -90,14 +96,15 @@ def evaluate(
 
         trigger_files = [
             f for f in relevant_files
-            if matches_any(f.path, when_patterns)
-            or (f.previous_path and matches_any(f.previous_path, when_patterns))
+            if f.status != "unchanged" and (matches_any(f.path, when_patterns)
+            or (f.previous_path and matches_any(f.previous_path, when_patterns)))
         ]
         min_intensity = rule.when.min_change_intensity
         if min_intensity and min_intensity != "any":
             trigger_files = [
                 f for f in trigger_files
-                if meets_min_intensity(classify_file_intensity(f), min_intensity)
+                if analysis_unavailable(f)
+                or meets_min_intensity(classify_file_intensity(f), min_intensity)
             ]
 
         if not trigger_files:
@@ -112,16 +119,24 @@ def evaluate(
         satisfied, unsatisfied = _evaluate_groups(
             [group for group in rule.require.groups if group.required],
             relevant_files,
+            trigger_files,
         )
         relation_satisfied, relation_unsatisfied, relation_names = (
             _evaluate_cross_file_relations(
                 rule.require.cross_file,
                 rule.require.groups,
                 relevant_files,
+                trigger_files,
             )
         )
         satisfied.extend(relation_satisfied)
         unsatisfied.extend(relation_unsatisfied)
+        unavailable = [f.path for f in trigger_files if analysis_unavailable(f)]
+        if unavailable and min_intensity and min_intensity != "any":
+            unsatisfied.append(UnsatisfiedGroup(
+                name="Analysis evidence unavailable", required=unavailable, type="analysis",
+                evidence="Cannot establish the configured change threshold; provide analyzable input or a valid exception",
+            ))
         matched_patterns = _matched_patterns(trigger_files, when_patterns)
 
         if unsatisfied:
@@ -186,23 +201,28 @@ def evaluate(
 def _evaluate_groups(
     groups: List[Group],
     changed_files: List[ChangedFile],
+    trigger_files: Tuple[ChangedFile, ...] | List[ChangedFile] = (),
 ) -> Tuple[List[SatisfiedGroup], List[UnsatisfiedGroup]]:
     satisfied: List[SatisfiedGroup] = []
     unsatisfied: List[UnsatisfiedGroup] = []
     for group in groups:
         required = group.any_changed or group.all_changed
         group_type = "any_changed" if group.any_changed else "all_changed"
-        if _evaluate_group(group, changed_files):
+        content = content_requirement(group, trigger_files, changed_files)
+        group_satisfied = content[0] if content is not None else _evaluate_group(group, changed_files)
+        if group_satisfied:
             satisfied.append(SatisfiedGroup(
                 name=group.name,
                 required=required,
                 type=group_type,
+                evidence=content[1] if content else "",
             ))
         else:
             unsatisfied.append(UnsatisfiedGroup(
                 name=group.name,
                 required=required,
                 type=group_type,
+                evidence=content[1] if content else "",
             ))
     return satisfied, unsatisfied
 
@@ -212,12 +232,10 @@ def _evaluate_group(group: Group, changed_files: List[ChangedFile]) -> bool:
     path_status = {}
     for f in changed_files:
         path_status[f.path] = f.status
-        if f.previous_path:
-            path_status[f.previous_path] = f.status
 
     def satisfied(pattern: str) -> bool:
         return any(
-            match_glob(p, pattern) and s != "deleted"
+            match_glob(p, pattern) and s not in ("deleted", "unchanged")
             for p, s in path_status.items()
         )
 
@@ -232,6 +250,7 @@ def _evaluate_cross_file_relations(
     relations: List[CrossFileRelation],
     groups: List[Group],
     changed_files: List[ChangedFile],
+    trigger_files: Tuple[ChangedFile, ...] | List[ChangedFile] = (),
 ) -> Tuple[List[SatisfiedGroup], List[UnsatisfiedGroup], List[str]]:
     group_by_name = {group.name: group for group in groups}
     satisfied: List[SatisfiedGroup] = []
@@ -242,11 +261,11 @@ def _evaluate_cross_file_relations(
         if not relation.when_any_changed:
             continue
         triggered = any(
-            matches_any(file.path, relation.when_any_changed)
+            file.status != "unchanged" and (matches_any(file.path, relation.when_any_changed)
             or (
                 file.previous_path
                 and matches_any(file.previous_path, relation.when_any_changed)
-            )
+            ))
             for file in changed_files
         )
         if not triggered:
@@ -260,17 +279,21 @@ def _evaluate_cross_file_relations(
             required = group.any_changed or group.all_changed
             group_type = "any_changed" if group.any_changed else "all_changed"
             relation_group_name = f"{relation.name}: {group.name}"
-            if _evaluate_group(group, changed_files):
+            content = content_requirement(group, trigger_files, changed_files)
+            group_satisfied = content[0] if content is not None else _evaluate_group(group, changed_files)
+            if group_satisfied:
                 satisfied.append(SatisfiedGroup(
                     name=relation_group_name,
                     required=required,
                     type=group_type,
+                    evidence=content[1] if content else "",
                 ))
             else:
                 unsatisfied.append(UnsatisfiedGroup(
                     name=relation_group_name,
                     required=required,
                     type=group_type,
+                    evidence=content[1] if content else "",
                 ))
 
     return satisfied, unsatisfied, sorted(triggered_names)
@@ -380,8 +403,11 @@ def _ignore_rejection_reason(
         return "this rule does not allow drift-ignore"
     if suppression.allowed_rules and directive.rule_id not in suppression.allowed_rules:
         return "rule is not listed in suppression.allowed_rules"
-    if suppression.require_codeowners_approval and not directive.approved_by:
-        return "CODEOWNERS approval is required"
+    if suppression.require_codeowners_approval:
+        if not directive.approved_by:
+            return "CODEOWNERS approval is required"
+        if not directive.approval_verified or not directive.approval_commit:
+            return directive.approval_error or "verified CODEOWNERS approval for the current commit is required"
     if severity in ("BLOCKER", "MAJOR") and not directive.reason:
         return "reason is required"
     if not directive.expires:

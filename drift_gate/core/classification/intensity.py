@@ -25,6 +25,12 @@ INTENSITY_ORDER = {
 
 VALID_INTENSITIES = set(INTENSITY_ORDER)
 
+
+def analysis_unavailable(file: ChangedFile) -> bool:
+    """Missing input is not evidence that a change is below a threshold."""
+    return (file.analysis_method == "unavailable" or not file.patch.strip()
+            or file.patch.startswith(("[binary file skipped]", "[large file skipped]")))
+
 SEMANTIC_SIGNAL_INTENSITY = {
     "env-key-added": "config-key-added",
     "db-schema-change": "db-schema-change",
@@ -57,6 +63,8 @@ EXPORT_PATTERNS = [
 ]
 
 ENV_KEY_PATTERNS = [
+    re.compile(r"os\.environ\[\s*['\"]([A-Z][A-Z0-9_]*)['\"]"),
+    re.compile(r"process\.env\[\s*['\"]([A-Z][A-Z0-9_]*)['\"]"),
     re.compile(r"^\s*[A-Z][A-Z0-9_]*\s*="),
     re.compile(r"process\.env\.([A-Z][A-Z0-9_]*)"),
     re.compile(r"os\.environ(?:\.get)?\(\s*['\"]([A-Z][A-Z0-9_]*)['\"]"),
@@ -136,7 +144,7 @@ def classify_file_intensity(file: ChangedFile) -> str:
 
     if file.status == "added":
         return "export-added"
-    if file.status in ("deleted", "renamed"):
+    if file.status in ("deleted", "renamed") and not file.patch:
         return "signature-change"
     if not file.patch:
         return "signature-change"

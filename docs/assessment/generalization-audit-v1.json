@@ -1,0 +1,596 @@
+{
+  "version": "generalization-audit-v1",
+  "protocol": "Post-development adversarial audit. Cases and expected results written before first execution; code is frozen during this audit. Author has seen the implementation, so this is not blind or independent third-party validation. Supported and explicitly unsupported boundary cases are reported separately. Synthetic engine-level inputs; no production accuracy claim.",
+  "policies": {
+    "api": {
+      "rules": [
+        {
+          "id": "api-doc",
+          "when": {
+            "any_changed": [
+              "src/routes/**"
+            ],
+            "min_change_intensity": "route-contract-change"
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API docs",
+                "any_changed": [
+                  "docs/api/**",
+                  "openapi/**"
+                ]
+              }
+            ]
+          },
+          "severity": "blocker"
+        }
+      ]
+    },
+    "env": {
+      "rules": [
+        {
+          "id": "env-sync",
+          "when": {
+            "any_changed": [
+              "src/config/**"
+            ],
+            "min_change_intensity": "config-key-added"
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "sample",
+                "all_changed": [
+                  ".env.example"
+                ],
+                "content": "env-keys"
+              }
+            ]
+          },
+          "severity": "blocker"
+        }
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "A01-get-added",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "A new literal GET endpoint needs docs.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "+@app.get('/catalog')\n"
+        }
+      ]
+    },
+    {
+      "id": "A02-delete-added",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "A new literal DELETE endpoint needs docs.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "+@app.delete('/catalog')\n"
+        }
+      ]
+    },
+    {
+      "id": "A03-head-added",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "HEAD is explicitly listed as supported in content verification.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "+@app.head('/health')\n"
+        }
+      ]
+    },
+    {
+      "id": "A04-options-added",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "OPTIONS is explicitly listed as supported in content verification.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "+@app.options('/catalog')\n"
+        }
+      ]
+    },
+    {
+      "id": "A05-correct-route-doc",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "pass",
+      "reason": "Both old removal and new addition are documented.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "-@app.get('/catalog')\n+@app.get('/products')\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "-GET /catalog\n+GET /products\n"
+        }
+      ]
+    },
+    {
+      "id": "A06-unrelated-route-doc",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "An unrelated endpoint update does not document this change.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "-@app.get('/catalog')\n+@app.get('/products')\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "-GET /invoices\n+GET /bills\n"
+        }
+      ]
+    },
+    {
+      "id": "A07-correct-method-doc",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "pass",
+      "reason": "The HTTP method change is documented.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "-@app.get('/catalog')\n+@app.post('/catalog')\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "-GET /catalog\n+POST /catalog\n"
+        }
+      ]
+    },
+    {
+      "id": "A08-wrong-method-doc",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "Documenting GET cannot satisfy a new POST operation.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "+@app.post('/catalog')\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "+GET /catalog\n"
+        }
+      ]
+    },
+    {
+      "id": "A09-stale-route-retained",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "The old route is removed then re-added in docs, so its net removal is not documented.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "-@app.get('/catalog')\n+@app.get('/products')\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "-GET /catalog\n+GET /catalog\n+GET /products\n"
+        }
+      ]
+    },
+    {
+      "id": "A10-route-in-string",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "pass",
+      "reason": "A Python string value describing a route does not register an endpoint.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "+message = \"@app.get('/example')\"\n"
+        }
+      ]
+    },
+    {
+      "id": "A11-route-in-inline-comment",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "pass",
+      "reason": "A route mentioned only in an inline comment is not registered.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "+counter = 1  # @app.get('/example')\n"
+        }
+      ]
+    },
+    {
+      "id": "A12-route-in-comment-line",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "pass",
+      "reason": "A comment-only route example must not block.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "+# @app.get('/example')\n"
+        }
+      ]
+    },
+    {
+      "id": "A13-two-routes-documented",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "pass",
+      "reason": "Two new literal routes both have matching documentation.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "+@app.get('/catalog')\n+@app.post('/catalog')\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "+GET /catalog\n+POST /catalog\n"
+        }
+      ]
+    },
+    {
+      "id": "A14-one-route-missing",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "Only one of two new literal routes is documented.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "+@app.get('/catalog')\n+@app.post('/catalog')\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "+GET /catalog\n"
+        }
+      ]
+    },
+    {
+      "id": "A15-route-file-deleted",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "Deleting the route also changes the public contract.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "deleted",
+          "patch": "-@app.get('/catalog')\n"
+        }
+      ]
+    },
+    {
+      "id": "A16-local-variable-rename",
+      "scope": "supported",
+      "policy": "api",
+      "expected": "pass",
+      "reason": "Only a local variable name changes.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "-    item = service.fetch()\n-    return item\n+    product = service.fetch()\n+    return product\n"
+        }
+      ]
+    },
+    {
+      "id": "E01-unrelated-key",
+      "scope": "supported",
+      "policy": "env",
+      "expected": "fail",
+      "reason": "The sample does not contain the new static key.",
+      "changed_files": [
+        {
+          "path": "src/config/payment.py",
+          "status": "modified",
+          "patch": "+delay = os.getenv('RETRY_DELAY')\n"
+        },
+        {
+          "path": ".env.example",
+          "status": "modified",
+          "patch": "+# sample update\n",
+          "documented_env_keys": [
+            "OTHER"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E02-bracket-key-present",
+      "scope": "supported",
+      "policy": "env",
+      "expected": "pass",
+      "reason": "The static key is already present in an unchanged sample.",
+      "changed_files": [
+        {
+          "path": "src/config/payment.py",
+          "status": "modified",
+          "patch": "+delay = os.environ['RETRY_DELAY']\n"
+        },
+        {
+          "path": ".env.example",
+          "status": "unchanged",
+          "patch": "",
+          "documented_env_keys": [
+            "RETRY_DELAY"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E03-javascript-key-present",
+      "scope": "supported",
+      "policy": "env",
+      "expected": "pass",
+      "reason": "The new JavaScript key is documented.",
+      "changed_files": [
+        {
+          "path": "src/config/payment.ts",
+          "status": "modified",
+          "patch": "+const delay = process.env.RETRY_DELAY\n"
+        },
+        {
+          "path": ".env.example",
+          "status": "modified",
+          "patch": "+# sample update\n",
+          "documented_env_keys": [
+            "RETRY_DELAY"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E04-existing-token-key",
+      "scope": "supported",
+      "policy": "env",
+      "expected": "pass",
+      "reason": "The same static key exists before and after; only whitespace handling changes.",
+      "changed_files": [
+        {
+          "path": "src/config/payment.py",
+          "status": "modified",
+          "patch": "-token = os.getenv('DEPLOY_TOKEN')\n+token = os.getenv('DEPLOY_TOKEN').strip()\n"
+        }
+      ]
+    },
+    {
+      "id": "E05-env-access-in-string",
+      "scope": "supported",
+      "policy": "env",
+      "expected": "pass",
+      "reason": "A string describing an access does not read an environment variable.",
+      "changed_files": [
+        {
+          "path": "src/config/payment.py",
+          "status": "modified",
+          "patch": "+message = \"os.getenv('RETRY_DELAY')\"\n"
+        }
+      ]
+    },
+    {
+      "id": "E06-empty-sample",
+      "scope": "supported",
+      "policy": "env",
+      "expected": "fail",
+      "reason": "An empty sample does not contain the required key.",
+      "changed_files": [
+        {
+          "path": "src/config/payment.py",
+          "status": "modified",
+          "patch": "+delay = os.getenv('RETRY_DELAY')\n"
+        },
+        {
+          "path": ".env.example",
+          "status": "modified",
+          "patch": "+# sample update\n",
+          "documented_env_keys": []
+        }
+      ]
+    },
+    {
+      "id": "E07-env-comment-only",
+      "scope": "supported",
+      "policy": "env",
+      "expected": "pass",
+      "reason": "A comment does not add a new required setting.",
+      "changed_files": [
+        {
+          "path": "src/config/payment.py",
+          "status": "modified",
+          "patch": "+# os.getenv('RETRY_DELAY')\n"
+        }
+      ]
+    },
+    {
+      "id": "E08-key-no-sample",
+      "scope": "supported",
+      "policy": "env",
+      "expected": "fail",
+      "reason": "A new static key is not documented.",
+      "changed_files": [
+        {
+          "path": "src/config/payment.py",
+          "status": "modified",
+          "patch": "+delay = os.getenv('RETRY_DELAY')\n"
+        }
+      ]
+    },
+    {
+      "id": "B01-multiline-route",
+      "scope": "boundary",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "A multiline route changes but unrelated docs are edited; unsupported syntax stress test.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "-@app.get(\n-    '/catalog'\n+@app.get(\n+    '/products'\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "+Unrelated note\n"
+        }
+      ]
+    },
+    {
+      "id": "B02-markdown-table",
+      "scope": "boundary",
+      "policy": "api",
+      "expected": "pass",
+      "reason": "The table documents the exact method and path; formatting compatibility stress test.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "-@app.get('/catalog')\n+@app.get('/products')\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "-| GET | /catalog |\n+| GET | /products |\n"
+        }
+      ]
+    },
+    {
+      "id": "B03-openapi-yaml",
+      "scope": "boundary",
+      "policy": "api",
+      "expected": "pass",
+      "reason": "The nested OpenAPI path is updated correctly; documented unsupported structured format.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "-@app.get('/catalog')\n+@app.get('/products')\n"
+        },
+        {
+          "path": "openapi/api.yaml",
+          "status": "modified",
+          "patch": "-  /catalog:\n+  /products:\n     get:\n       responses:\n"
+        }
+      ]
+    },
+    {
+      "id": "B04-router-prefix",
+      "scope": "boundary",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "Changing the router prefix changes URLs even though method declarations are untouched.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "-router = APIRouter(prefix='/v1')\n+router = APIRouter(prefix='/v2')\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "+Unrelated note\n"
+        }
+      ]
+    },
+    {
+      "id": "B05-dynamic-environment-key",
+      "scope": "boundary",
+      "policy": "env",
+      "expected": "fail",
+      "reason": "Dynamic key cannot be validated against a static sample; conservative desired behavior.",
+      "changed_files": [
+        {
+          "path": "src/config/payment.py",
+          "status": "modified",
+          "patch": "+value = os.getenv(setting_name)\n"
+        }
+      ]
+    },
+    {
+      "id": "B06-aliased-environment-getter",
+      "scope": "boundary",
+      "policy": "env",
+      "expected": "fail",
+      "reason": "An aliased getter reads a new key but is outside current recognition.",
+      "changed_files": [
+        {
+          "path": "src/config/payment.py",
+          "status": "modified",
+          "patch": "+from os import getenv as read_env\n+delay = read_env('RETRY_DELAY')\n"
+        }
+      ]
+    },
+    {
+      "id": "B07-response-schema",
+      "scope": "boundary",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "Response schema changes with the same route; unrelated docs do not describe it.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.py",
+          "status": "modified",
+          "patch": "-@app.get('/catalog', response_model=Brief)\n+@app.get('/catalog', response_model=Detailed)\n"
+        },
+        {
+          "path": "docs/api/catalog.md",
+          "status": "modified",
+          "patch": "+Unrelated note\n"
+        }
+      ]
+    },
+    {
+      "id": "B08-chained-router",
+      "scope": "boundary",
+      "policy": "api",
+      "expected": "fail",
+      "reason": "A chained Express route adds a public endpoint outside current literal matcher.",
+      "changed_files": [
+        {
+          "path": "src/routes/catalog.ts",
+          "status": "modified",
+          "patch": "+router.route('/catalog').get(handler)\n"
+        }
+      ]
+    }
+  ]
+}

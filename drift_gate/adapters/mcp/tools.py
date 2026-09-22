@@ -26,6 +26,9 @@ def drift_gate_check_local(
 ) -> dict:
     changed_files = enrich_semantic_signals(GitAdapter().get_changed_files(base))
     policy = load_policy(policy_path)
+    # Local runs cannot manufacture GitHub approval evidence.
+    from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+    changed_files = attach_env_documents(changed_files, policy, local_document_reader(Path.cwd()))
     result = run(changed_files=changed_files, policy=policy)
     return _render_for_agent(
         result,
@@ -48,9 +51,12 @@ def drift_gate_check_pr(
     changed_files, pr_body = github.get_pr_files_and_body(pr_number)
     changed_files = enrich_semantic_signals(changed_files)
     policy = load_policy(policy_path)
+    from drift_gate.adapters.github.approvals import verify_ignores
+    directives = verify_ignores(github, pr_number, parse_drift_ignores(pr_body), policy, changed_files)
+    changed_files = github.attach_env_documents(pr_number, changed_files, policy)
     result = run(
         changed_files=changed_files,
-        drift_ignores=parse_drift_ignores(pr_body),
+        drift_ignores=directives,
         policy=policy,
     )
     return _render_for_agent(
@@ -72,6 +78,8 @@ def drift_gate_get_evidence(
     """Return bounded diff evidence for one rule after the compact check."""
     changed_files = enrich_semantic_signals(GitAdapter().get_changed_files(base))
     policy = load_policy(policy_path)
+    from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+    changed_files = attach_env_documents(changed_files, policy, local_document_reader(Path.cwd()))
     result = run(changed_files=changed_files, policy=policy)
     violations = [
         violation for violation in result.violations

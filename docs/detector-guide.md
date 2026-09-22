@@ -40,7 +40,15 @@ Beyond path matching, Drift Gate extracts **semantic signals** from the diff con
 
 ### How Semantic Signals are Extracted
 
-For each changed file, the analyzer scans only the **added lines** (`+` prefix in the unified diff). It applies language-specific and path-based regex patterns.
+For each changed file, the analyzer scans **added and removed lines** separately.
+It combines grammar parsing with language-specific and path-based heuristics.
+Comment-only lines are excluded from semantic extraction. Per-file methods and
+fallback reasons are available under `scan_metrics.analysis_notes` in JSON.
+This is diff-fragment analysis, not whole-program semantic equivalence.
+
+Missing or deliberately skipped patches cannot be filtered out by a configured
+intensity threshold. Such rules require analysis evidence or a valid exception.
+For content-aware requirements, see [content verification](content-verification.md).
 
 #### TypeScript / JavaScript (`.ts`, `.tsx`, `.js`, `.jsx`)
 
