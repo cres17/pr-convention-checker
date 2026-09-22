@@ -259,8 +259,9 @@ def test_cli_reads_unchanged_sample_from_working_tree(tmp_path, sample, expected
     for args in (["init", "-q"], ["add", "."], ["-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-qm", "fixture"]):
         subprocess.run(["git", *args], cwd=tmp_path, check=True, capture_output=True)
     (tmp_path / "src/config/pay.py").write_text("timeout = os.getenv('PAYMENT_TIMEOUT')\n")
+    # The CLI writes UTF-8 bytes, regardless of the host's default encoding.
     result = subprocess.run([sys.executable, str(ROOT / "main.py"), "check", "--base", "HEAD", "--json"],
-                            cwd=tmp_path, capture_output=True, text=True)
+                            cwd=tmp_path, capture_output=True, text=True, encoding="utf-8")
     report = json.loads(result.stdout)
     assert report["result"] == expected
     assert result.returncode == (1 if expected == "fail" else 0)
