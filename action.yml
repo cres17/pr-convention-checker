@@ -78,7 +78,7 @@ runs:
   steps:
     - name: Install dependencies
       shell: bash
-      run: pip install pyyaml --quiet
+      run: python3 -m pip install "${{ github.action_path }}" --quiet
 
     - name: Run drift gate evaluation
       id: check

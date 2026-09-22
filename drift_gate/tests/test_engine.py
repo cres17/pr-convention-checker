@@ -342,6 +342,8 @@ class TestDriftIgnorePolicy:
                 rule_id="test-rule",
                 reason="temporary",
                 approved_by="@team/api",
+                approval_verified=True,
+                approval_commit="verified-current-head",
             )
         ]
         approved_result = run(changed_files=files, drift_ignores=approved, policy=policy)

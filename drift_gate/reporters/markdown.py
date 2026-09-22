@@ -54,6 +54,10 @@ class MarkdownReporter:
             return "\n".join(lines)
 
         lines += self._status_section(result)
+        if result.scan_metrics.analysis_notes:
+            methods = sorted({note["method"] for note in result.scan_metrics.analysis_notes})
+            lines += ["", "**Analysis methods:** " + ", ".join(f"`{method}`" for method in methods),
+                      "Fallback and unavailable-input reasons are recorded in the JSON analysis_notes."]
 
         if not result.violations:
             lines += [
@@ -130,6 +134,9 @@ class MarkdownReporter:
             "",
         ]
         if violation.checklist:
+            evidence = [group.evidence for group in violation.unsatisfied_groups if group.evidence]
+            if evidence:
+                lines += ["**Verification evidence**", ""] + [f"- {item}" for item in evidence] + [""]
             lines += ["**Checklist**", ""]
             lines.extend(f"- [ ] {item}" for item in violation.checklist)
             lines.append("")

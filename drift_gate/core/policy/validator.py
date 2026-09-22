@@ -114,6 +114,13 @@ def validate(policy: Policy) -> ValidationResult:
 
         # 6. require.groups 경로가 ignore_paths에 포함 → 충족 불가
         for group in rule.require.groups:
+            if group.content not in {"auto", "paths", "api-routes", "env-keys"}:
+                result.errors.append(f"rule '{rule_id}': unknown group content mode '{group.content}'")
+            if group.content == "env-keys" and any(
+                any(c in p for c in "*?[]") or p.startswith("/") or ".." in p.split("/")
+                for p in (group.any_changed or group.all_changed)
+            ):
+                result.errors.append(f"rule '{rule_id}': env-keys requires explicit relative document paths")
             required = group.any_changed or group.all_changed
             blocked = [
                 p for p in required

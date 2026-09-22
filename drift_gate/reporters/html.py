@@ -252,6 +252,8 @@ class HtmlReporter:
         diff_snippet = self._diff_snippet(violation)
         semantic_evidence = self._semantic_evidence(violation)
         enrichment = self._enrichment(violation)
+        contract_evidence = "".join(f"<li>{html.escape(group.evidence)}</li>"
+                                    for group in violation.unsatisfied_groups if group.evidence)
 
         return f"""<article class="card" id="{anchor}">
   <header>
@@ -270,6 +272,7 @@ class HtmlReporter:
     <tr><th>Confidence</th><td><code>{html.escape(violation.confidence)}</code></td></tr>
   </table>
   {semantic_evidence}
+  <ul>{contract_evidence}</ul>
   {enrichment}
   {diff_snippet}
   <h3>Suggested Fix</h3>

@@ -710,6 +710,9 @@ def _run_check(args) -> None:
         policy_for_run = load_policy(args.policy)
     except FileNotFoundError:
         policy_for_run = None
+    if policy_for_run and not (args.pr and args.repo):
+        from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+        changed_files = attach_env_documents(changed_files, policy_for_run, local_document_reader(Path.cwd()))
     result = run(
         changed_files=changed_files,
         drift_ignores=drift_ignores,
@@ -1517,7 +1520,13 @@ def _collect_inputs(args) -> tuple[list, list]:
             sys.exit(1)
         github = GitHubAdapter(token=token, repo=args.repo)
         changed_files, pr_body = github.get_pr_files_and_body(args.pr)
-        return enrich_semantic_signals(changed_files), parse_drift_ignores(pr_body)
+        from drift_gate.adapters.github.approvals import verify_ignores
+        directives = parse_drift_ignores(pr_body)
+        policy = _load_policy_optional(args.policy)
+        if policy:
+            directives = verify_ignores(github, args.pr, directives, policy, changed_files)
+            changed_files = github.attach_env_documents(args.pr, changed_files, policy)
+        return enrich_semantic_signals(changed_files), directives
 
     git = GitAdapter()
     return enrich_semantic_signals(git.get_changed_files(args.base)), []

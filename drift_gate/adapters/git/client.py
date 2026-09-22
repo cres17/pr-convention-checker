@@ -134,7 +134,7 @@ def _with_patch(file: ChangedFile, diff_base: str) -> ChangedFile:
         )
     try:
         patch = subprocess.check_output(
-            ["git", "diff", "--find-renames", diff_base, "--", file.path],
+            ["git", "diff", "--find-renames", diff_base, "--", *([file.previous_path] if file.previous_path else []), file.path],
             text=True,
             encoding="utf-8",
             errors="replace",

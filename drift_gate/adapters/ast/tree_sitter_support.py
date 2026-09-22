@@ -13,6 +13,11 @@ def _parser(language: str):
 
 def parse_sexp(language: str, added_lines: list[str]) -> str:
     """Parse added lines with a real grammar and return the root S-expression."""
+    return _parse_sexp(language, tuple(added_lines))
+
+
+@lru_cache(maxsize=512)
+def _parse_sexp(language: str, lines: tuple[str, ...]) -> str:
     parser = _parser(language)
-    tree = parser.parse("\n".join(added_lines) + "\n")
-    return tree.root_node().to_sexp()
+    tree = parser.parse(("\n".join(lines) + "\n").encode("utf-8"))
+    return str(tree.root_node)
