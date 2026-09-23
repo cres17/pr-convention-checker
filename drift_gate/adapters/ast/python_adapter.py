@@ -15,8 +15,8 @@ Future upgrade path (tree-sitter):
 """
 import re
 from functools import lru_cache
+from drift_gate.core.route_syntax import PYTHON_DECORATOR
 
-_PY_ROUTE = re.compile(r"@\w+\.(get|post|put|patch|delete)\s*\(")
 _API_SCHEMA = re.compile(
     r"\b(z\.object|response_model|requestBody|responses|parameters|operationId)\b"
 )
@@ -91,7 +91,7 @@ class PythonAdapter:
         Tree-sitter upgrade: match Decorator nodes whose Call target is a
         MemberExpression matching @router.get, @app.post, etc.
         """
-        return any(_PY_ROUTE.search(line) for line in lines)
+        return any(PYTHON_DECORATOR.match(line) for line in lines)
 
     def _has_api_schema(self, lines: list[str]) -> bool:
         """Detect Pydantic response_model or OpenAPI annotation keywords.

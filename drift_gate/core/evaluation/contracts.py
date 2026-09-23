@@ -2,10 +2,10 @@
 import re
 
 from drift_gate.utils.glob_matcher import matches_any
+from drift_gate.core.route_syntax import METHOD_PATTERN, literal_route
 
-METHODS = "get|post|put|patch|delete|head|options"
-ROUTE = re.compile(rf"(?:@?\w+\.)({METHODS})\s*\(\s*(['\"])(/[^'\"\n]*)\2", re.I)
-DOC_ROUTE = re.compile(rf"\b({METHODS})[ \t]+(/[^\s`'\"<>]+)", re.I)
+DOC_ROUTE = re.compile(rf"\b({METHOD_PATTERN})[ \t]+(/[^\s`'\"<>]+)", re.I)
+DOC_TABLE_ROUTE = re.compile(rf"^\s*\|\s*({METHOD_PATTERN})\s*\|\s*(/[^\s|`'\"<>]+)\s*\|", re.I)
 ENV_ACCESS = re.compile(
     r"\bprocess\.env\.([A-Z][A-Z0-9_]*)\b|"
     r"\bprocess\.env\[\s*['\"]([A-Z][A-Z0-9_]*)['\"]\s*\]|"
@@ -45,11 +45,17 @@ def added_env_keys(files):
 def _routes(lines, *, docs=False):
     pairs = set()
     for line in lines:
-        if not docs and line.lstrip().startswith(("#", "//", "*")):
-            continue
-        pattern = DOC_ROUTE if docs else ROUTE
-        for match in pattern.finditer(line):
-            pairs.add((match.group(1).upper(), match.group(2 if docs else 3)))
+        if docs:
+            table = DOC_TABLE_ROUTE.match(line)
+            if table:
+                pairs.add((table.group(1).upper(), table.group(2)))
+            else:
+                pairs.update((match.group(1).upper(), match.group(2))
+                             for match in DOC_ROUTE.finditer(line))
+        elif not line.lstrip().startswith(("#", "//", "*")):
+            route = literal_route(line)
+            if route:
+                pairs.add(route)
     return pairs
 
 

@@ -8,6 +8,7 @@ import re
 from typing import Iterable, List
 
 from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.route_syntax import METHOD_PATTERN, route_registration_method
 
 INTENSITY_ORDER = {
     "any": -1,
@@ -72,9 +73,7 @@ ENV_KEY_PATTERNS = [
 ]
 
 ROUTE_PATTERNS = [
-    re.compile(r"\b(router|app)\.(get|post|put|patch|delete)\s*\("),
-    re.compile(r"@\w+\.(get|post|put|patch|delete)\s*\("),
-    re.compile(r"@(Get|Post|Put|Patch|Delete)\s*\("),
+    re.compile(rf"^\s*@({METHOD_PATTERN})\s*\(", re.I),
     re.compile(r"\b(response_model|Body|Query|Path)\s*="),
     re.compile(r"\b(z\.object|schema|requestSchema|responseSchema)\s*\("),
     re.compile(r"^\s*(export\s+)?(interface|type)\s+\w*(Request|Response|Payload|Dto)\b"),
@@ -176,7 +175,8 @@ def classify_file_intensity(file: ChangedFile) -> str:
     if any(_matches_any(line, DB_SCHEMA_PATTERNS) for _, line in changed_lines):
         return "db-schema-change"
 
-    if any(_matches_any(line, ROUTE_PATTERNS) for _, line in changed_lines):
+    if any(route_registration_method(line) or _matches_any(line, ROUTE_PATTERNS)
+           for _, line in changed_lines):
         return "route-contract-change"
 
     if (

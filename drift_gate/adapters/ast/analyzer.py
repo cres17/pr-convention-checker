@@ -28,8 +28,6 @@ if TREE_SITTER_AVAILABLE:
     from drift_gate.adapters.ast.tree_sitter_typescript_adapter import TreeSitterTypeScriptAdapter
 
 # Module-level compiled patterns for path-wide signals.
-TS_ROUTE = re.compile(r"\b(router|app)\.(get|post|put|patch|delete)\s*\(")
-PY_ROUTE = re.compile(r"@\w+\.(get|post|put|patch|delete)\s*\(")
 API_SCHEMA = re.compile(r"\b(z\.object|response_model|requestBody|responses|parameters|operationId)\b")
 OPENAPI_OPERATION = re.compile(r"^\s*(operationId|parameters|requestBody|responses)\s*:", re.IGNORECASE)
 CLASS_TYPE = re.compile(r"^\s*(export\s+)?(class|interface|type|enum|data\s+class|sealed\s+class)\s+\w+")
