@@ -2,6 +2,8 @@
 
 기준: [`v1`–`ver2` 통제 비교](v1-ver2-controlled-comparison-2026-09-23.md)의 12개 합성 사례. 이 문서는 **수정 설계서**다. 작성 시점에는 제품 코드 수정과 수정 후 검증을 수행하지 않았으므로 P06·P10·B01은 모두 **미해결**이다. 기존 판정과 수치는 [재점검 원본](assessment/v1-ver2-controlled-2026-09-23/post-discovery-recheck/result.json)을 따른다.
 
+후속 구현과 검증 결과는 [수정 후 재검증 보고서](v1-ver2-contract-fix-results-2026-09-23.md)에 별도로 기록했다. 아래의 미해결 표기는 이 설계 문서 작성 당시 상태다.
+
 ## 먼저 고칠 판정 흐름
 
 `main.py check`가 변경 파일을 수집하면 [의미 신호 추출](../drift_gate/adapters/ast/analyzer.py)이 신호를 붙이고, [변경 강도 분류](../drift_gate/core/classification/intensity.py)가 정책의 `min_change_intensity`를 검사한다. 이 문턱을 넘은 파일만 [평가기](../drift_gate/core/evaluation/evaluator.py)의 문서 요구 조건으로 넘어간다. API 요구 조건은 [계약 검사](../drift_gate/core/evaluation/contracts.py)의 `route_delta()`로 코드의 추가·삭제 라우트를, `_routes(..., docs=True)`로 문서의 추가·삭제 라우트를 추출해 비교한다.
