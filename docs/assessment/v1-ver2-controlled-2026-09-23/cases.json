@@ -1,0 +1,127 @@
+{
+  "id": "v1-ver2-controlled-2026-09-23",
+  "baseline_files": {
+    "src/routes/users.py": "@app.get('/users')\ndef users():\n    return []\n",
+    "src/config/settings.py": "import os\nBASE = os.getenv('BASE')\n",
+    "docs/api/routes.md": "GET /users\n",
+    "docs/api/other.md": "Payment API\n",
+    ".env.example": "BASE=example\n",
+    "CLAUDE.md": "# PR contract rules\n- When a public route changes, its HTTP method and path must be updated in docs/api/; unrelated edits do not count.\n- A newly introduced static environment key must be present in .env.example; existing keys do not require an edit.\n- Code examples in strings or comments are not registered routes.\n",
+    ".drift-gate.yml": "rules:\n  - id: api-doc\n    when:\n      any_changed: ['src/routes/**']\n      min_change_intensity: route-contract-change\n    require:\n      groups:\n        - name: API docs\n          any_changed: ['docs/api/**']\n          content: api-routes\n    severity: blocker\n  - id: env-example\n    when:\n      any_changed: ['src/config/**']\n      min_change_intensity: config-key-added\n    require:\n      groups:\n        - name: Environment sample\n          all_changed: ['.env.example']\n          content: env-keys\n    severity: blocker\n"
+  },
+  "cases": [
+    {
+      "id": "P01-route-undocumented",
+      "expected": "fail",
+      "scope": "support",
+      "reason": "Route path changed without docs",
+      "head_files": {
+        "src/routes/users.py": "@app.get('/members')\ndef users():\n    return []\n"
+      }
+    },
+    {
+      "id": "P02-route-documented",
+      "expected": "pass",
+      "scope": "support",
+      "reason": "Matching route path changed in docs",
+      "head_files": {
+        "src/routes/users.py": "@app.get('/members')\ndef users():\n    return []\n",
+        "docs/api/routes.md": "GET /members\n"
+      }
+    },
+    {
+      "id": "P03-unrelated-doc",
+      "expected": "fail",
+      "scope": "support",
+      "reason": "Unrelated API document edit",
+      "head_files": {
+        "src/routes/users.py": "@app.get('/members')\ndef users():\n    return []\n",
+        "docs/api/other.md": "Payment API updated\n"
+      }
+    },
+    {
+      "id": "P04-deleted-route",
+      "expected": "fail",
+      "scope": "support",
+      "reason": "Public route removed without docs",
+      "head_files": {
+        "src/routes/users.py": null
+      }
+    },
+    {
+      "id": "P05-implementation-only",
+      "expected": "pass",
+      "scope": "support",
+      "reason": "Local return value changed without contract",
+      "head_files": {
+        "src/routes/users.py": "@app.get('/users')\ndef users():\n    result = []\n    return result\n"
+      }
+    },
+    {
+      "id": "P06-route-in-string",
+      "expected": "pass",
+      "scope": "support",
+      "reason": "Route-shaped text in a Python string",
+      "head_files": {
+        "src/routes/users.py": "@app.get('/users')\ndef users():\n    return []\nmessage = \"@app.get('/sample')\"\n"
+      }
+    },
+    {
+      "id": "P07-env-missing",
+      "expected": "fail",
+      "scope": "support",
+      "reason": "New static environment key without sample",
+      "head_files": {
+        "src/config/settings.py": "import os\nBASE = os.getenv('BASE')\nDELAY = os.getenv('RETRY_DELAY')\n"
+      }
+    },
+    {
+      "id": "P08-env-present",
+      "expected": "pass",
+      "scope": "support",
+      "reason": "New key in current sample",
+      "head_files": {
+        "src/config/settings.py": "import os\nBASE = os.getenv('BASE')\nDELAY = os.getenv('RETRY_DELAY')\n",
+        ".env.example": "BASE=example\nRETRY_DELAY=30\n"
+      }
+    },
+    {
+      "id": "P09-env-unrelated",
+      "expected": "fail",
+      "scope": "support",
+      "reason": "Sample edited but new key absent",
+      "head_files": {
+        "src/config/settings.py": "import os\nBASE = os.getenv('BASE')\nDELAY = os.getenv('RETRY_DELAY')\n",
+        ".env.example": "BASE=example\nOTHER=example\n"
+      }
+    },
+    {
+      "id": "P10-head-route",
+      "expected": "fail",
+      "scope": "support",
+      "reason": "HEAD route added without docs",
+      "head_files": {
+        "src/routes/users.py": "@app.get('/users')\ndef users():\n    return []\n@app.head('/health')\ndef health():\n    return None\n"
+      }
+    },
+    {
+      "id": "P11-docs-only",
+      "expected": "pass",
+      "scope": "support",
+      "reason": "Only documentation prose changed",
+      "head_files": {
+        "docs/api/other.md": "Payment API notes\n"
+      }
+    },
+    {
+      "id": "B01-markdown-table",
+      "expected": "pass",
+      "scope": "boundary",
+      "reason": "Valid route update represented as a Markdown table",
+      "head_files": {
+        "src/routes/users.py": "@app.get('/members')\ndef users():\n    return []\n",
+        "docs/api/routes.md": "| Method | Path |\n|---|---|\n| GET | /members |\n"
+      }
+    }
+  ]
+}
