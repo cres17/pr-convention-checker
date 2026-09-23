@@ -239,7 +239,7 @@ Claude 연결은 필수가 아닙니다. API 키를 설정하지 않아도 정�
 
 ## 버전별 변경
 
-아래 비교의 기준은 **기존 `main`의 `bffc655` → `ver2`**입니다. `ver2`는 브랜치명이며, `v2.0.0` 정식 릴리스를 의미하지 않습니다.
+아래 표의 기준은 **기존 `main`의 `bffc655` → `ver2`**입니다. 실제 [`v1` 태그와 `ver2`의 통제 비교](docs/v1-ver2-controlled-comparison-2026-09-23.md)는 별도 문서에서 다룹니다. `v1` 태그는 Claude 중심 PR 규칙 검사기였고, `main`의 `bffc655`는 이미 Python 정책 엔진을 포함합니다. `ver2`는 브랜치명이며, `v2.0.0` 정식 릴리스를 의미하지 않습니다.
 
 | 항목 | 기존 main | ver2에서 업데이트한 내용 |
 |---|---|---|
@@ -305,6 +305,7 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 
 | 목적 | 문서 |
 |---|---|
+| 실제 `v1` 태그와 `ver2`의 설계·실행 경로를 비교하고 싶을 때 | [통제 실험과 사례별 결과](docs/v1-ver2-controlled-comparison-2026-09-23.md) |
 | 개선 전후 결과를 검토하고 싶을 때 | [사후 검증·비교표](docs/generalization-audit-2026-09-22.md) · [1차 구현 결과](docs/development-results-2026-09-22.md) |
 | 다음 개발 범위를 확인할 때 | [개선 계획과 기준값](docs/development-roadmap.md) |
 | 내용 검사와 예외 승인을 설정할 때 | [내용 검증 안내](docs/content-verification.md) |
