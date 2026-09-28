@@ -6,7 +6,7 @@ review target. That makes local preflight useful before a commit is created.
 """
 import subprocess
 import os
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import List, Optional
 
 from drift_gate.core.models.changed_file import ChangedFile
@@ -67,23 +67,26 @@ def _sanitize_path(raw: str) -> Optional[str]:
 
 
 class GitAdapter:
+    def __init__(self, repo_root: str | Path | None = None):
+        self.repo_root = Path(repo_root) if repo_root is not None else None
+
     def get_changed_files(self, base: str = "HEAD~1") -> List[ChangedFile]:
         """Return files changed between base and the current working tree."""
         diff_base = base
-        output = _git_diff_name_status(diff_base)
+        output = _git_diff_name_status(diff_base, cwd=self.repo_root)
         if output is None:
             diff_base = "HEAD~1"
-            output = _git_diff_name_status(diff_base)
+            output = _git_diff_name_status(diff_base, cwd=self.repo_root)
         if output is None:
             return []
 
         return [
-            _with_patch(file, diff_base)
+            _with_patch(file, diff_base, cwd=self.repo_root)
             for file in _parse_name_status(output)
         ]
 
 
-def _git_diff_name_status(diff_base: str) -> str | None:
+def _git_diff_name_status(diff_base: str, cwd: Path | None = None) -> str | None:
     try:
         return subprocess.check_output(
             ["git", "diff", "--name-status", "--find-renames", diff_base],
@@ -91,6 +94,7 @@ def _git_diff_name_status(diff_base: str) -> str | None:
             encoding="utf-8",
             errors="replace",
             stderr=subprocess.DEVNULL,
+            **({"cwd": cwd} if cwd is not None else {}),
         )
     except subprocess.CalledProcessError:
         return None
@@ -123,7 +127,7 @@ def _parse_name_status(output: str) -> List[ChangedFile]:
     return files
 
 
-def _with_patch(file: ChangedFile, diff_base: str) -> ChangedFile:
+def _with_patch(file: ChangedFile, diff_base: str, cwd: Path | None = None) -> ChangedFile:
     """Attach per-file unified diff when available."""
     if _is_binary_path(file.path):
         return ChangedFile(
@@ -139,6 +143,7 @@ def _with_patch(file: ChangedFile, diff_base: str) -> ChangedFile:
             encoding="utf-8",
             errors="replace",
             stderr=subprocess.DEVNULL,
+            **({"cwd": cwd} if cwd is not None else {}),
         )
     except subprocess.CalledProcessError:
         patch = ""
