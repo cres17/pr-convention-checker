@@ -23,7 +23,7 @@ Windows PowerShell에서도 설치 명령은 같으며, Python 실행 명령이 
 
 ## 독립 실행 앱 만들기
 
-[Desktop app build](../.github/workflows/desktop-build.yml) 워크플로를 수동 실행하면 운영체제별 압축 파일을 CI 실행 결과의 아티팩트로 보관합니다. macOS 아티팩트는 `.app`, Windows 아티팩트는 `.exe`와 필요한 파일이 든 폴더입니다. 각 운영체제에서 별도로 빌드합니다. 실행 대상 컴퓨터에도 **Git은 설치되어 있어야** 합니다.
+`ver2`의 데스크톱 앱 코드가 바뀌면 [Desktop app build](../.github/workflows/desktop-build.yml) 워크플로가 운영체제별 압축 파일을 CI 실행 결과의 아티팩트로 보관합니다. macOS 아티팩트는 `.app`, Windows 아티팩트는 `.exe`와 필요한 파일이 든 폴더입니다. 각 운영체제에서 별도로 빌드합니다. 실행 대상 컴퓨터에도 **Git은 설치되어 있어야** 합니다.
 
 로컬에서 빌드할 때는 다음 명령을 사용할 수 있습니다.
 

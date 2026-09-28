@@ -1,6 +1,12 @@
 name: Desktop app build
 
 on:
+  push:
+    branches: [ver2]
+    paths:
+      - .github/workflows/desktop-build.yml
+      - drift_gate/desktop/**
+      - pyproject.toml
   workflow_dispatch:
 
 jobs:
