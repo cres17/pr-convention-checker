@@ -140,7 +140,7 @@ python -m pip install -e '.[desktop]'
 drift-gate-desktop
 ```
 
-`.drift-gate.yml`이 있는 Git 저장소를 고른 뒤 `HEAD` 또는 `main` 등을 비교 기준으로 입력합니다. 독립 실행 앱 빌드와 Windows·macOS 사용 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다. 첫 버전의 화면은 로컬 검사 전용입니다.
+`.drift-gate.yml`이 있는 Git 저장소를 고른 뒤 `HEAD` 또는 `main` 등을 비교 기준으로 입력합니다. [Windows·macOS 앱 다운로드](https://github.com/cres17/pr-convention-checker/actions/runs/36370807429)와 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다. 첫 버전의 화면은 로컬 검사 전용입니다.
 
 ![데스크톱 앱의 합성 검사 예시 화면](docs/assets/desktop-preview.png)
 
@@ -304,7 +304,7 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 
 새 반례는 처음에 제품 코드를 바꾸지 않은 채 두 버전에 적용했고, 이후 알려진 오류 세 가지를 수정해 같은 입력에 재검증했습니다. 작성자가 만든 합성 데이터이므로 독립·블라인드 검증은 아닙니다. **8/8이나 21/24를 실제 PR의 정확도로 해석할 수 없습니다.**
 
-기존 [CI #6 (`dba67d9`)](https://github.com/cres17/pr-convention-checker/actions/runs/35705709211)에서는 Ubuntu·Windows·macOS × Python 3.10·3.11·3.12의 9개 조합과 코드 검사·벤치마크가 모두 통과했습니다. 데스크톱 앱의 운영체제별 패키지는 [별도 빌드 워크플로](.github/workflows/desktop-build.yml)에서 생성합니다.
+[이번 CI (`557f9ca`)](https://github.com/cres17/pr-convention-checker/actions/runs/36370807360)에서 Ubuntu·Windows·macOS × Python 3.10·3.11·3.12의 9개 조합과 코드 검사·벤치마크가 모두 통과했습니다. [데스크톱 빌드](https://github.com/cres17/pr-convention-checker/actions/runs/36370807429)에서도 Windows·macOS 패키지 생성과 아티팩트 업로드가 성공했습니다.
 
 실행 환경과 첫 평가 원본은 [과적합 점검](docs/generalization-audit-2026-09-22.md), 수정 뒤 사례별 판정과 해시는 [재검증 보고서](docs/v1-ver2-contract-fix-results-2026-09-23.md)에 있습니다. 전체 테스트 통과와 실제 GitHub 권한 환경의 정상 동작 여부는 별개의 검증입니다.
 
