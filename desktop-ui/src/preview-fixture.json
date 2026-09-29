@@ -1,0 +1,133 @@
+{
+  "repository": "/sample/project",
+  "base": "HEAD",
+  "changed_file_count": 2,
+  "result": {
+    "summary": {
+      "blocker": 1,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "fail"
+    },
+    "scan_metrics": {
+      "scanned_files": 2,
+      "skipped_ignored_files": 0,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 1,
+      "runtime_seconds": 0.0,
+      "analysis_notes": []
+    },
+    "result": "fail",
+    "change_types": [
+      "api-surface",
+      "other"
+    ],
+    "violations": [
+      {
+        "rule_id": "api-doc-sync",
+        "severity": "BLOCKER",
+        "confidence": "high",
+        "change_types": [
+          "api-surface"
+        ],
+        "change_type": "api-surface",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": "src/routes/users.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "@@ -1 +1 @@\n-@app.get('/users')\n+@app.get('/members')\n",
+            "semantic_signals": [],
+            "semantic_evidence": [],
+            "analysis_method": "not-analyzed",
+            "analysis_reason": "",
+            "documented_env_keys": null
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "API docs",
+            "required": [
+              "docs/api.md"
+            ],
+            "type": "any_changed",
+            "evidence": "API documentation must reflect: add GET /members; remove GET /users"
+          }
+        ],
+        "checklist": [
+          "API docs 업데이트"
+        ],
+        "ignored": false,
+        "change_intensity": "route-contract-change",
+        "change_intensities": [
+          "route-contract-change"
+        ],
+        "trigger_patterns": [
+          "src/routes/**"
+        ],
+        "blast_radius": [
+          "OpenAPI/spec documentation",
+          "external API consumers",
+          "missing requirement group: API docs",
+          "release notes"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": []
+      }
+    ],
+    "rule_decisions": [
+      {
+        "rule_id": "api-doc-sync",
+        "severity": "BLOCKER",
+        "status": "fail",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "src/routes/**"
+        ],
+        "trigger_files": [
+          "src/routes/users.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "API docs",
+            "required": [
+              "docs/api.md"
+            ],
+            "type": "any_changed",
+            "evidence": "API documentation must reflect: add GET /members; remove GET /users"
+          }
+        ]
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 2
+    }
+  },
+  "policy": "rules:\n  - id: api-doc-sync\n    when:\n      any_changed: [src/routes/**]\n    require:\n      groups:\n        - name: API docs\n          any_changed: [docs/api.md]\n          content: api-routes\n    severity: blocker\n",
+  "files": [
+    {
+      "path": "src/routes/users.py",
+      "patch": "@@ -1 +1 @@\n-@app.get('/users')\n+@app.get('/members')\n",
+      "status": "modified"
+    },
+    {
+      "path": "docs/api.md",
+      "patch": "@@ -1 +1 @@\n-GET /users\n+GET /customers\n",
+      "status": "modified"
+    }
+  ],
+  "at": "2026-09-29T04:51:17.383480+00:00"
+}

@@ -5,7 +5,8 @@ on:
     branches: [ver2]
     paths:
       - .github/workflows/desktop-build.yml
-      - drift_gate/desktop/**
+      - drift_gate/**
+      - desktop-ui/**
       - pyproject.toml
   workflow_dispatch:
 
@@ -22,12 +23,23 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop-ui/package-lock.json
+      - name: Build and test React UI
+        working-directory: desktop-ui
+        run: |
+          npm ci
+          npm test
+          npm run build
       - name: Install app and build tools
         run: python -m pip install -e ".[dev,desktop]" pyinstaller
       - name: Check desktop behavior
-        run: python -m pytest drift_gate/tests/test_desktop_service.py drift_gate/tests/test_desktop_ui.py -q
+        run: python -m pytest drift_gate/tests/test_desktop_service.py drift_gate/tests/test_desktop_ui.py drift_gate/tests/test_subscription_review.py drift_gate/tests/test_desktop_web.py -q
       - name: Build native app
-        run: pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack drift_gate/desktop/app.py
+        run: pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack --add-data "drift_gate/desktop/web:drift_gate/desktop/web" drift_gate/desktop/web_app.py
       - name: Archive macOS app
         if: runner.os == 'macOS'
         run: ditto -c -k --sequesterRsrc --keepParent dist/DriftGate.app DriftGate-macOS.zip

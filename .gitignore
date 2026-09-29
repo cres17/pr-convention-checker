@@ -37,3 +37,7 @@ trend.html
 .vscode/
 .idea/
 *.swp
+
+# Desktop web build
+node_modules/
+drift_gate/desktop/web/
