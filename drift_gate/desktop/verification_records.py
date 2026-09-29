@@ -20,6 +20,15 @@ MAX_TESTS = 50_000
 MAX_PATTERNS = 5
 MAX_PATTERN_LENGTH = 200
 MAX_FAILING_LISTED = 5
+MAX_TEST_SOURCES = 2000
+MAX_TEST_SOURCE_BYTES = 512_000
+# Clock and checkout noise: a code file this much newer than the results counts as changed after them.
+NEWER_TOLERANCE_SECONDS = 2.0
+TEST_SOURCE_SUFFIXES = {".py", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".go", ".java", ".kt", ".rs", ".swift", ".vue", ".rb", ".cs"}
+_TEST_FILE = re.compile(
+    r"(^|/)(test_[^/]*|[^/]*_test\.[^/]*|[^/]*\.(test|spec)\.[^/]*|[^/]*Tests?\.[^/]*)$"
+)
+_TEST_DIRECTORY = re.compile(r"(^|/)(tests?|__tests__|spec)/")
 _DOCTYPE = re.compile(rb"<!\s*(DOCTYPE|ENTITY)", re.IGNORECASE)
 
 
@@ -63,7 +72,7 @@ def _jest(data: bytes) -> list[dict]:
     for suite in suites:
         if not isinstance(suite, dict):
             continue
-        file = Path(str(suite.get("name", ""))).name
+        file = re.split(r"[\\/]", str(suite.get("name", "")))[-1]  # Windows paths use backslashes
         for result in suite.get("assertionResults") or []:
             if not isinstance(result, dict):
                 continue
@@ -95,6 +104,7 @@ def parse_results(path: str | Path) -> dict:
         "format": kind,
         "file": target.name,
         "modified": datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat(),
+        "mtime": stat.st_mtime,
         "tests": tests,
     }
 
@@ -114,8 +124,26 @@ def clean_patterns(value: object) -> list[str] | None:
     return patterns
 
 
-def link_tests(parsed: dict, items: list[dict]) -> dict:
-    """Attach matching tests to each included item (patterns plus the ``req-`` marker)."""
+def _code_newer(root: Path | None, item: dict, results_mtime: float | None) -> bool:
+    """The item's evidence file was modified after the result file was written (heuristic)."""
+    evidence = item.get("evidence")
+    if root is None or results_mtime is None or not isinstance(evidence, dict):
+        return False
+    relative = evidence.get("path")
+    if not isinstance(relative, str):
+        return False
+    try:
+        return (root / relative).stat().st_mtime > results_mtime + NEWER_TOLERANCE_SECONDS
+    except OSError:
+        return False
+
+
+def link_tests(parsed: dict, items: list[dict], root: Path | None = None) -> dict:
+    """Attach matching tests to each included item (patterns plus the ``req-`` marker).
+
+    With ``root``, an item is also flagged ``code_newer`` when its evidence file was
+    changed after the result file was written, i.e. the results may predate the code.
+    """
     tests = parsed["tests"]
     linked = {}
     for item in items:
@@ -133,6 +161,7 @@ def link_tests(parsed: dict, items: list[dict]) -> dict:
             **counts,
             "failing": [t["name"] for t in matched if t["status"] == "failed"][:MAX_FAILING_LISTED],
             "no_match": not matched,
+            "code_newer": bool(matched) and _code_newer(root, item, parsed.get("mtime")),
         }
     return {
         "format": parsed["format"],
@@ -140,4 +169,46 @@ def link_tests(parsed: dict, items: list[dict]) -> dict:
         "modified": parsed["modified"],
         "total": len(tests),
         "items": linked,
+    }
+
+
+def is_test_source(path: str) -> bool:
+    """Whether a repository path looks like a test file (by name or test folder)."""
+    return (
+        Path(path).suffix.lower() in TEST_SOURCE_SUFFIXES
+        and bool(_TEST_FILE.search(path) or _TEST_DIRECTORY.search(path))
+    )
+
+
+def find_unmatched_patterns(root: Path, files: set[str], items: list[dict]) -> dict[str, list[str]]:
+    """Per item, the user's test-name patterns that appear in no test file of the repository.
+
+    Catches typos before any result file exists. A pattern counts as found when the
+    text appears anywhere in a test file (a function name, a describe/it title), so this
+    is a hint, not proof that a test with that exact name exists.
+    """
+    wanted = {
+        item["id"]: patterns
+        for item in items
+        if item.get("included") and (patterns := clean_patterns(item.get("test_patterns")))
+    }
+    if not wanted:
+        return {}
+    remaining = {pattern for patterns in wanted.values() for pattern in patterns}
+    candidates = sorted(name for name in files if is_test_source(name))[:MAX_TEST_SOURCES]
+    for name in candidates:
+        if not remaining:
+            break
+        try:
+            target = root / name
+            if target.is_symlink() or target.stat().st_size > MAX_TEST_SOURCE_BYTES:
+                continue
+            text = target.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        remaining -= {pattern for pattern in remaining if pattern in text}
+    return {
+        item_id: missing
+        for item_id, patterns in wanted.items()
+        if (missing := [pattern for pattern in patterns if pattern in remaining])
     }

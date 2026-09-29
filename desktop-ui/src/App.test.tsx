@@ -20,6 +20,7 @@ const api = vi.hoisted(() => ({
   openDocument: vi.fn(),
   checkProgressLinks: vi.fn(),
   loadTestResults: vi.fn(),
+  forgetTestResults: vi.fn(),
   previewPolicy: vi.fn(),
   createPolicy: vi.fn(),
   exportProgress: vi.fn(),
@@ -410,6 +411,35 @@ it("links a test-result file to items without changing the progress counts", asy
   expect(record.textContent).toContain("tests.test_auth::test_login_bad");
   expect(record.textContent).toContain("수동 확인으로 기록됐지만 연결된 테스트가 실패했습니다");
   expect(screen.getAllByText("1 / 1").length).toBeGreaterThan(0);  // the summary counts stay as saved
+  expect(screen.queryByText(/이전에 선택한 파일을 다시 읽었습니다/)).toBeNull();
+  act(() => emit({ type: "progressTests", requested_path: "/sample/project", format: "junit", file: "junit.xml",
+    modified: "2026-09-29T00:00:00Z", total: 9, remembered: true, items: { abcdef1234567890: { patterns: ["test_login"],
+      matched: 3, passed: 3, failed: 0, skipped: 0, failing: [], no_match: false, code_newer: true } } }));
+  expect(screen.getByText(/이전에 선택한 파일을 다시 읽었습니다/)).toBeTruthy();
+  expect(screen.getByLabelText("기능 목록").textContent).toContain("(결과가 코드보다 오래됨)");
+  expect(screen.getByText(/결과 파일보다 근거 코드가 나중에 바뀌었습니다/)).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "파일 기억 해제" }));
+  expect(api.forgetTestResults).toHaveBeenCalledWith("/sample/project");
+  expect(screen.queryByText(/테스트 결과: junit\.xml/)).toBeNull();
   fireEvent.change(screen.getByLabelText(/관련 테스트 이름/), { target: { value: "test_login, test_logout" } });
   expect((screen.getByLabelText(/관련 테스트 이름/) as HTMLInputElement).value).toBe("test_login, test_logout");
+});
+
+it("warns about test-name patterns that no repository test file contains", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  const { act } = await import("react");
+  const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
+  const item = { id: "one", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
+    implementation_status: "unknown" as const, evidence: null, test_patterns: ["test_logn"],
+    verification_status: "unverified" as const, verification_note: "" };
+  act(() => emit({ type: "progressSaved", requested_path: "/sample/project",
+    baseline: { repository: "/sample/project", documents: { "README.md": "abc" }, requirements: [item], version: 1 } }));
+  act(() => emit({ type: "progressReport", requested_path: "/sample/project", report: {
+    repository: "/sample/project", version: 1, at: "2026-09-29T00:00:00Z", head: "abc", stale_documents: [], total: 1,
+    limitations: "", test_pattern_hints: { one: ["test_logn"] }, items: [{ ...item, effective_status: "unknown" }],
+    counts: { implemented: 0, partial: 0, not_implemented: 0, unknown: 1, complete: 0, excluded: 0 } } }));
+  fireEvent.click(screen.getByText(/로그인/, { selector: "strong" }));
+  expect(screen.getByText(/저장소의 테스트 파일에서 찾지 못한 이름: test_logn/)).toBeTruthy();
 });

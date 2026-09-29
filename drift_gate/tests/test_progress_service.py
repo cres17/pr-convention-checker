@@ -455,3 +455,18 @@ def test_history_kept_under_the_old_path_key_is_still_read_after_a_remote_is_add
     record = _save_and_record(repo, state, draft)
     assert [r["version"] for r in record["snapshots"]] == [2, 1]  # appended, then stored under the remote key
     assert len(list(state.glob("*.history.json"))) == 2
+
+
+def test_report_flags_test_names_missing_from_the_repository_test_files(tmp_path):
+    repo = project(tmp_path)
+    (repo / "tests").mkdir()
+    (repo / "tests/test_login.py").write_text("def test_login_flow():\n    pass\n", encoding="utf-8")
+    subprocess.run(["git", "-C", str(repo), "add", "tests"], check=True)
+    state = tmp_path / "state"
+    draft = extract_requirements(repo, ["README.md"])
+    save_baseline(repo, state, draft)
+    assert inspect_progress(repo, state)["test_pattern_hints"] == {}  # no patterns, nothing to check
+    draft["requirements"][0]["test_patterns"] = ["test_login_flow", "test_logn_flow"]
+    saved = save_baseline(repo, state, draft)
+    hints = inspect_progress(repo, state)["test_pattern_hints"]
+    assert hints == {saved["requirements"][0]["id"]: ["test_logn_flow"]}

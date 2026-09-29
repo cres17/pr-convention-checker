@@ -100,12 +100,14 @@ export type TestLink = {
   skipped: number;
   failing: string[];
   no_match: boolean;
+  code_newer?: boolean;
 };
 export type TestLinks = {
   format: string;
   file: string;
   modified: string;
   total: number;
+  remembered?: boolean;
   items: Record<string, TestLink>;
 };
 export type LinkIssue = {
@@ -139,6 +141,7 @@ export type ProgressReport = {
   counts: Record<string, number>;
   items: ProgressItem[];
   doc_claims_unbacked?: number;
+  test_pattern_hints?: Record<string, string[]>;
   limitations: string;
 };
 export interface Bridge {
@@ -153,6 +156,7 @@ export interface Bridge {
   createPolicy: (path: string, preset: string) => void;
   checkProgressLinks: (path: string) => void;
   loadTestResults: (path: string) => void;
+  forgetTestResults: (path: string) => void;
   exportProgress: (path: string, kind: string) => void;
   openDocument: (relative: string) => void;
   listProjectDocs: (path: string) => void;

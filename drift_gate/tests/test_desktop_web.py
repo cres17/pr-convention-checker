@@ -123,7 +123,8 @@ def test_open_document_only_opens_text_files_inside_the_scanned_repository(tmp_p
                         lambda url: (opened.append(url.toLocalFile()), True)[1])
     bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
     bridge.openDocument('README.md')
-    assert opened == [str((repo / 'README.md').resolve())]
+    from pathlib import Path
+    assert [Path(item) for item in opened] == [(repo / 'README.md').resolve()]  # toLocalFile() uses '/' on Windows
     for bad in ('run.sh', '../x.md', 'docs/**', 'missing.md'):
         bridge.openDocument(bad)
     assert len(opened) == 1
@@ -252,9 +253,16 @@ def test_missing_policy_is_previewed_and_created_only_on_request(tmp_path):
     assert messages[-1]['type'] == 'error' and '덮어쓰지' in messages[-1]['message']
 
 
+def isolated_settings(bridge, tmp_path):
+    """Keep tests from touching the real per-user settings."""
+    from PySide6.QtCore import QSettings
+    bridge.settings = QSettings(str(tmp_path / 'settings.ini'), QSettings.Format.IniFormat)
+
+
 def test_test_results_are_linked_to_items_after_the_user_picks_a_file(tmp_path, monkeypatch):
     QApplication.instance() or QApplication([])
     repo, bridge, messages = _saved_baseline(tmp_path, monkeypatch)
+    isolated_settings(bridge, tmp_path)
     draft = of_type(messages, 'progressSaved')['baseline']
     draft['requirements'][0]['test_patterns'] = ['test_login']
     bridge.saveProgress(str(repo), json.dumps(draft))
@@ -282,3 +290,38 @@ def test_test_results_are_linked_to_items_after_the_user_picks_a_file(tmp_path, 
     bridge.loadTestResults(str(repo))
     settle(bridge)
     assert messages[-1]['type'] == 'progressError'
+
+
+def test_chosen_result_file_is_remembered_and_read_again_when_the_project_opens(tmp_path, monkeypatch):
+    QApplication.instance() or QApplication([])
+    repo, bridge, messages = _saved_baseline(tmp_path, monkeypatch)
+    isolated_settings(bridge, tmp_path)
+    draft = of_type(messages, 'progressSaved')['baseline']
+    draft['requirements'][0]['test_patterns'] = ['test_login']
+    bridge.saveProgress(str(repo), json.dumps(draft))
+    settle(bridge)
+    results = tmp_path / 'junit.xml'
+    results.write_text('<testsuite><testcase classname="t" name="test_login_ok"/></testsuite>', encoding='utf-8')
+    monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getOpenFileName', lambda *args: (str(results), ''))
+    bridge.loadTestResults(str(repo))
+    settle(bridge)
+    assert 'remembered' not in of_type(messages, 'progressTests')
+
+    messages.clear()
+    bridge.inspectProgress(str(repo))  # what the screen does when the project is opened
+    settle(bridge)
+    assert [m['type'] for m in messages] == ['progressReport', 'progressHistory', 'progressTests']
+    assert messages[-1]['remembered'] is True and messages[-1]['file'] == 'junit.xml'
+
+    results.unlink()  # a vanished file is skipped without an error
+    messages.clear()
+    bridge.inspectProgress(str(repo))
+    settle(bridge)
+    assert [m['type'] for m in messages] == ['progressReport', 'progressHistory']
+
+    results.write_text('<testsuite/>', encoding='utf-8')
+    bridge.forgetTestResults(str(repo))
+    messages.clear()
+    bridge.inspectProgress(str(repo))
+    settle(bridge)
+    assert 'progressTests' not in [m['type'] for m in messages]

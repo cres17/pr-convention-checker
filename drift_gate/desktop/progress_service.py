@@ -747,6 +747,10 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
                 counts["complete"] += 1
         items.append(item)
     unbacked = sum(1 for entry in items if entry.get("doc_claim") == "unbacked")
+    pattern_hints = {}
+    if any(entry.get("test_patterns") for entry in items):
+        tracked, untracked = _git_files(root)
+        pattern_hints = verification_records.find_unmatched_patterns(root, tracked | untracked, items)
     head = subprocess.run(
         ["git", "-C", str(root), "rev-parse", "HEAD"],
         capture_output=True,
@@ -765,6 +769,7 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
         "total": total,
         "items": items,
         "doc_claims_unbacked": unbacked,
+        "test_pattern_hints": pattern_hints,
         "limitations": "상태는 사용자가 확정한 코드 근거와 수동 검증 기록 기준입니다. 자동 의미 판정이나 테스트 실행은 아직 제공하지 않습니다.",
     }
 
@@ -836,5 +841,5 @@ def link_test_results(path: str | Path, data_dir: Path, results_file: str | Path
     if baseline is None:
         raise ValueError("기준 문서를 선택하고 기능 목록을 확정해 주세요.")
     return verification_records.link_tests(
-        verification_records.parse_results(results_file), baseline["requirements"]
+        verification_records.parse_results(results_file), baseline["requirements"], root
     )

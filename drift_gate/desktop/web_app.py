@@ -1,4 +1,5 @@
 """Local React surface hosted by Qt; only trusted bundled UI gets a bridge."""
+import hashlib
 import json
 import sys
 from datetime import datetime, timezone
@@ -99,6 +100,10 @@ class DesktopBridge(QObject):
     def emit(self, kind, **data):
         self.event.emit(json.dumps({'type': kind, **data}, ensure_ascii=False))
 
+    def _results_key(self, path):
+        digest = hashlib.sha256(str(Path(path).expanduser()).encode('utf-8')).hexdigest()[:16]
+        return f'testResults/{digest}'
+
     def _progress_dir(self):
         return Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)) / 'progress'
 
@@ -132,11 +137,19 @@ class DesktopBridge(QObject):
     @Slot(str)
     def inspectProgress(self, path):
         directory = self._progress_dir()
+        remembered = str(self.settings.value(self._results_key(path), '') or '')
 
         def work():
             report = inspect_progress(path, directory)
-            return [('progressReport', {'report': report}),
-                    ('progressHistory', progress_history_view(path, directory, report))]
+            events = [('progressReport', {'report': report}),
+                      ('progressHistory', progress_history_view(path, directory, report))]
+            if remembered and Path(remembered).is_file():
+                try:  # a file that vanished or went bad is skipped quietly; picking another replaces it
+                    events.append(('progressTests', {**link_test_results(path, directory, remembered),
+                                                     'remembered': True}))
+                except (ValueError, OSError):
+                    pass
+            return events
         self._run_progress(path, work)
 
     @Slot(str)
@@ -156,7 +169,12 @@ class DesktopBridge(QObject):
         if not filename:
             return
         directory = self._progress_dir()
+        self.settings.setValue(self._results_key(path), filename)  # re-read next time this project opens
         self._run_progress(path, lambda: [('progressTests', link_test_results(path, directory, filename))])
+
+    @Slot(str)
+    def forgetTestResults(self, path):
+        self.settings.remove(self._results_key(path))
 
     @Slot(str, str)
     def exportProgress(self, path, kind):
