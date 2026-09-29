@@ -27,7 +27,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest]
+        include:
+          # macos-latest is Apple Silicon (arm64); macos-15-intel builds the Intel app.
+          - { os: macos-latest, label: macOS-arm64 }
+          - { os: macos-15-intel, label: macOS-intel }
+          - { os: windows-latest, label: Windows }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -82,22 +86,79 @@ jobs:
           if not bundled_ui:
               sys.exit("the React UI (drift_gate/desktop/web/index.html) is not in the package")
           print("bundled UI:", bundled_ui[0])
-      - name: Archive macOS app
+      - name: Start the packaged app
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            python packaging/smoke_launch.py dist/DriftGate.app/Contents/MacOS/DriftGate
+          else
+            python packaging/smoke_launch.py dist/DriftGate/DriftGate.exe
+          fi
+      - name: Work out the version
+        id: version
+        shell: bash
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+        run: |
+          tag=""
+          if [ "$REF_TYPE" = "tag" ]; then tag="$REF_NAME"; elif [ -n "$INPUT_TAG" ]; then tag="$INPUT_TAG"; fi
+          version="${tag#desktop-v}"
+          [ -z "$tag" ] && version="0.0.0-dev"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      # macOS: a .dmg to open and drag the app into Applications.
+      - name: Package macOS app (.dmg)
         if: runner.os == 'macOS'
-        run: ditto -c -k --sequesterRsrc --keepParent dist/DriftGate.app DriftGate-macOS.zip
-      - name: Archive Windows app
+        run: |
+          # Ad-hoc signature (no developer certificate): keeps the bundle internally consistent.
+          codesign --force --deep --sign - dist/DriftGate.app
+          rm -rf dmgroot && mkdir dmgroot
+          cp -R dist/DriftGate.app dmgroot/
+          ln -s /Applications dmgroot/Applications
+          hdiutil create -volname "Cross Agent" -srcfolder dmgroot -ov -format UDZO "DriftGate-${{ matrix.label }}.dmg"
+      - name: Check the .dmg opens and holds the app
+        if: runner.os == 'macOS'
+        run: |
+          hdiutil attach -nobrowse -readonly -mountpoint "$RUNNER_TEMP/dgmount" "DriftGate-${{ matrix.label }}.dmg"
+          test -x "$RUNNER_TEMP/dgmount/DriftGate.app/Contents/MacOS/DriftGate"
+          test -L "$RUNNER_TEMP/dgmount/Applications"
+          lipo -archs "$RUNNER_TEMP/dgmount/DriftGate.app/Contents/MacOS/DriftGate"
+          hdiutil detach "$RUNNER_TEMP/dgmount"
+
+      # Windows: a Setup.exe installer plus a portable zip (unzip and run DriftGate.exe).
+      - name: Package Windows app (installer and portable zip)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: Compress-Archive -Path dist/DriftGate -DestinationPath DriftGate-Windows.zip
+        run: |
+          choco install innosetup --no-progress -y
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=${{ steps.version.outputs.version }}" "/DSourceDir=$PWD\dist\DriftGate" "/O$PWD" packaging\windows\DriftGate.iss
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
+          Compress-Archive -Path dist/DriftGate -DestinationPath DriftGate-Windows-portable.zip
+      - name: Check the installer installs, starts and uninstalls
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP 'dg-install'
+          Start-Process -FilePath .\DriftGate-Windows-Setup.exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',"/DIR=$dir" -Wait
+          if (-not (Test-Path "$dir\DriftGate.exe")) { throw "installer did not install DriftGate.exe" }
+          python packaging/smoke_launch.py "$dir\DriftGate.exe"
+          if ($LASTEXITCODE -ne 0) { throw "installed app failed to start" }
+          Start-Process -FilePath "$dir\unins000.exe" -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES' -Wait
+          Get-ChildItem .\DriftGate-Windows-Setup.exe | Format-List Name, Length
+
       - uses: actions/upload-artifact@v4
         if: runner.os == 'macOS'
         with:
-          name: DriftGate-macOS
-          path: DriftGate-macOS.zip
+          name: DriftGate-${{ matrix.label }}
+          path: DriftGate-${{ matrix.label }}.dmg
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: runner.os == 'Windows'
         with:
           name: DriftGate-Windows
-          path: DriftGate-Windows.zip
+          path: |
+            DriftGate-Windows-Setup.exe
+            DriftGate-Windows-portable.zip
           retention-days: 14
