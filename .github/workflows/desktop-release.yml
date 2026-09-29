@@ -1,6 +1,7 @@
 name: Desktop release
 
-# Publishes the macOS and Windows desktop apps as a DRAFT GitHub release.
+# Publishes the macOS (Apple Silicon and Intel .dmg) and Windows (Setup.exe and portable zip)
+# desktop apps as a DRAFT GitHub release.
 # Tags use the desktop- prefix because v1 / v1.0.0 belong to the GitHub Action.
 #   git tag desktop-v0.2.0 && git push origin desktop-v0.2.0
 # or run this workflow manually and enter the tag; the tag is created when the
@@ -57,7 +58,7 @@ jobs:
         working-directory: dist
         run: |
           ls -l
-          sha256sum DriftGate-macOS.zip DriftGate-Windows.zip | tee SHA256SUMS.txt
+          sha256sum DriftGate-* | tee SHA256SUMS.txt
       - name: Create draft release
         env:
           DRY_RUN: ${{ inputs.dry_run }}
@@ -65,16 +66,20 @@ jobs:
           cat > notes.md <<NOTES
           Cross Agent (Drift Gate desktop) built from commit \`${SHA}\`.
 
-          | File | Platform |
+          | Download | For |
           |---|---|
-          | \`DriftGate-macOS.zip\` | macOS on **Apple Silicon** (arm64). Intel Macs are not supported by this build. |
-          | \`DriftGate-Windows.zip\` | Windows (x64) |
+          | \`DriftGate-macOS-arm64.dmg\` | Mac with Apple Silicon (M1 and later) |
+          | \`DriftGate-macOS-intel.dmg\` | Mac with an Intel processor |
+          | \`DriftGate-Windows-Setup.exe\` | Windows 64-bit installer (Start menu entry, uninstaller) |
+          | \`DriftGate-Windows-portable.zip\` | Windows without installing: unzip and run \`DriftGate.exe\` |
 
-          **These builds are not code-signed or notarized.**
-          - macOS: Gatekeeper blocks the first launch. Unzip, then right-click the app > Open, or run \`xattr -dr com.apple.quarantine DriftGate.app\`.
-          - Windows: SmartScreen may warn. Choose "More info" > "Run anyway" only if the SHA-256 matches `SHA256SUMS.txt`.
+          Not sure which Mac you have? Apple menu > About This Mac: "Chip: Apple M…" means Apple Silicon, "Processor: Intel" means Intel.
 
-          Verify a download with \`SHA256SUMS.txt\` (\`shasum -a 256 -c\` on macOS/Linux, \`Get-FileHash\` on Windows).
+          **These builds are not code-signed or notarized**, so the first launch is blocked by the OS:
+          - macOS: open the .dmg, drag the app to Applications, then open it once. If macOS refuses, go to System Settings > Privacy & Security and choose "Open Anyway" (older macOS: right-click the app > Open), or run \`xattr -dr com.apple.quarantine /Applications/DriftGate.app\`.
+          - Windows: SmartScreen may show "Windows protected your PC". Choose "More info" > "Run anyway".
+
+          Verify a download against \`SHA256SUMS.txt\` (\`shasum -a 256\` on macOS, \`Get-FileHash\` on Windows).
           NOTES
           if [ "$DRY_RUN" = "true" ]; then
             echo "Dry run: no release created for $TAG. Release notes that would be used:" >> "$GITHUB_STEP_SUMMARY"
@@ -82,7 +87,7 @@ jobs:
             ls -l dist
             exit 0
           fi
-          gh release create "$TAG" dist/DriftGate-macOS.zip dist/DriftGate-Windows.zip dist/SHA256SUMS.txt \
+          gh release create "$TAG" dist/* \
             --repo "$REPO" --target "$SHA" --draft \
             --title "Cross Agent desktop ${TAG#desktop-}" --notes-file notes.md
           echo "Draft release created for $TAG. Review and publish it from the Releases page." >> "$GITHUB_STEP_SUMMARY"
