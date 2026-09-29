@@ -19,6 +19,12 @@ export type Violation = {
   docs_update_draft: string;
   false_positive_note: string;
 };
+export type ScanImpact = {
+  scan_at: string;
+  version: number;
+  items: { id: string; title: string; path: string; line?: number; change: string; invalidated: boolean }[];
+  documents: { path: string; invalidated: boolean }[];
+};
 export type Scan = {
   repository: string;
   base: string;

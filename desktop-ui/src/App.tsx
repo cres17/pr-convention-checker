@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import ProjectProgress from "./features/project-progress/ProjectProgress";
 import ViolationGuide from "./features/review/ViolationGuide";
+import ScanImpact from "./features/review/ScanImpact";
 import { findViolation, problemSummary, problemTitle } from "./features/review/violations";
 import { StatsDisplay } from "./components/tool-ui/stats-display";
 import { parseSerializableStatsDisplay } from "./components/tool-ui/stats-display/schema";
@@ -35,6 +36,7 @@ import {
   type Scan,
   type Review,
   type Decision,
+  type ScanImpact as Impact,
 } from "./bridge";
 
 const labels: Record<string, string> = {
@@ -114,6 +116,8 @@ export default function App({
   const [collapsed, setCollapsed] = useState(false);
   const [historyScan, setHistoryScan] = useState<Scan | null>(null);
   const [fileIndex, setFileIndex] = useState(0);
+  const [impact, setImpact] = useState<Impact | null>(null);
+  const [progressFocus, setProgressFocus] = useState<{ id: string; n: number } | null>(null);
   const [progressEvents, setProgressEvents] = useState<any[]>([]);
   const progressSeq = useRef(0);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -153,6 +157,9 @@ export default function App({
           setFileIndex(0);
           setRecords((old) => [event.scan, ...old].slice(0, 20));
           break;
+        case "scanImpact":
+          setImpact(event as Impact);
+          break;
         case "preview":
           setPrompt(event.prompt);
           break;
@@ -191,6 +198,8 @@ export default function App({
   }, [prompt]);
   const current = historyScan ?? scan;
   const decisions = current?.result.rule_decisions ?? [];
+  // Only the latest live scan has an impact; history scans and stale answers do not.
+  const scanImpact = !historyScan && impact && impact.scan_at === scan?.at ? impact : null;
   const issues = decisions.filter(
     (d) => d.status === "fail" || d.status === "rejected-ignore",
   );
@@ -212,6 +221,7 @@ export default function App({
     bridge.current?.startScan(path, base);
   };
   const navigate = (target: string) => {
+    setProgressFocus(null);
     setPage(target);
     setHistoryScan(null);
   };
@@ -621,6 +631,15 @@ export default function App({
                       )}
                     </section>
                   </div>
+                  {scanImpact && (
+                    <ScanImpact
+                      impact={scanImpact}
+                      onOpen={(id) => {
+                        navigate("progress");
+                        setProgressFocus({ id, n: Date.now() });
+                      }}
+                    />
+                  )}
                   <section className="card diff-section" id="diff-view">
                     <div className="section-heading">
                       <h2>코드 변경 근거</h2>
@@ -769,7 +788,7 @@ export default function App({
             </>
           )}
           {page === "progress" && (
-            <ProjectProgress path={path} connected={connected} bridge={desktopBridge} events={progressEvents} />
+            <ProjectProgress path={path} connected={connected} bridge={desktopBridge} events={progressEvents} focus={progressFocus} />
           )}
           {page === "rules" && (
             <section className="card document">

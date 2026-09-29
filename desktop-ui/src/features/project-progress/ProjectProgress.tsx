@@ -27,8 +27,8 @@ function FieldMessage({ text }: { text?: string }) {
 }
 
 export default function ProjectProgress({
-  path, connected, bridge, events,
-}: { path: string; connected: boolean; bridge: Bridge | null; events: Event[] }) {
+  path, connected, bridge, events, focus = null,
+}: { path: string; connected: boolean; bridge: Bridge | null; events: Event[]; focus?: { id: string; n: number } | null }) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
   const [draft, setDraft] = useState<ProgressBaseline | null>(null);
@@ -64,6 +64,16 @@ export default function ProjectProgress({
   }, [path, connected, bridge]);
 
   // Events from before this screen mounted are history, not input.
+  // Select the item another screen pointed at, once per request.
+  const handledFocus = useRef(0);
+  useEffect(() => {
+    if (!focus || !focus.id || focus.n === handledFocus.current) return;
+    if (!draft?.requirements.some((entry) => entry.id === focus.id)) return;
+    handledFocus.current = focus.n;
+    setFilter("all");
+    setQuery("");
+    setSelectedId(focus.id);
+  }, [focus, draft]);
   const handledSeq = useRef(events.at(-1)?._seq ?? 0);
   useEffect(() => {
     for (const event of events) {

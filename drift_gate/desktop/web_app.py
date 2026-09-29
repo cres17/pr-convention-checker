@@ -20,7 +20,7 @@ from drift_gate.desktop.progress_report import render_markdown
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
     BaselineError, check_references, evidence_candidates, extract_requirements, inspect_progress,
-    list_documents, load_baseline, repository_root, save_baseline,
+    list_documents, load_baseline, repository_root, save_baseline, scan_impact,
 )
 
 WEB_ROOT = Path(__file__).parent / 'web'
@@ -174,6 +174,23 @@ class DesktopBridge(QObject):
             return [('progressEvidence', {'id': item['id'], 'candidates': evidence_candidates(path, item)})]
         self._run_progress(path, work)
 
+    def _emit_scan_impact(self, scan, scan_at):
+        """Tell the review screen which saved progress evidence this scan's changes touch."""
+        directory = self._progress_dir()
+        changes = [{'path': f.path, 'previous_path': f.previous_path, 'status': f.status}
+                   for f in scan.files]
+        repository = str(scan.repository)
+
+        def work():
+            try:
+                impact = scan_impact(repository, directory, changes)
+            except (ValueError, OSError, json.JSONDecodeError):
+                return []  # a review scan must not raise progress errors
+            if impact is None or not (impact['items'] or impact['documents']):
+                return []
+            return [('scanImpact', {**impact, 'scan_at': scan_at})]
+        self._run_progress(repository, work)
+
     @Slot()
     def initialize(self):
         installed = {}
@@ -221,6 +238,7 @@ class DesktopBridge(QObject):
         self.history.insert(0, payload)
         self.history = self.history[:20]
         self.emit('scanned', scan=payload)
+        self._emit_scan_impact(scan, payload['at'])
 
     @Slot(str)
     def _scan_failed(self, message):
