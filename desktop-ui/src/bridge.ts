@@ -73,6 +73,24 @@ export type ProgressItem = {
   effective_status?: ProgressItem["implementation_status"] | "excluded";
 };
 export type ProgressFieldError = { id: string; field: string; message: string };
+export type ChangeCounts = Partial<Record<"gained" | "regressed" | "excluded" | "reincluded" | "added" | "removed", number>>;
+export type ProgressHistory = {
+  snapshots: {
+    at: string;
+    version: number;
+    head: string;
+    total: number;
+    counts: Record<string, number>;
+    changes?: ChangeCounts;
+    complete_delta?: number;
+  }[];
+  since_save: null | ({
+    since: string;
+    version: number;
+    complete_delta: number;
+    counts: ChangeCounts;
+  } & Record<"gained" | "regressed" | "excluded" | "reincluded" | "added" | "removed", { id: string; title: string }[]>);
+};
 export type LinkIssue = {
   path: string;
   line: number;

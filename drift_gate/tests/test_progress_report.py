@@ -42,3 +42,19 @@ def test_stale_documents_and_evidence_are_marked_for_recheck():
     assert "기준 문서가 변경됐습니다: `README.md`" in text
     assert text.count("재확인 필요") == 2  # both included items
     assert "- 저장소: shop" in text  # name falls back to the folder
+
+
+def test_markdown_includes_history_and_changes_since_the_last_save():
+    history = {
+        "since_save": {"version": 3, "counts": {"regressed": 1, "gained": 0}},
+        "snapshots": [
+            {"version": 3, "at": "2026-09-29", "total": 2, "counts": {"complete": 1, "implemented": 1},
+             "changes": {"gained": 2, "regressed": 1}, "complete_delta": 1},
+            {"version": 2, "at": "2026-09-28", "total": 2, "counts": {"complete": 0, "implemented": 0}},
+        ],
+    }
+    text = render_markdown(report(), history=history)
+    assert "마지막 저장(기준 v3) 이후 변화: 회귀(구현 확인 → 아님) 1" in text
+    assert "| v3 | 2026-09-29 | 1 / 2 | 1 | 새로 구현 확인 2 · 회귀(구현 확인 → 아님) 1 |" in text
+    assert "| v2 | 2026-09-28 | 0 / 2 | 0 | 첫 기록 |" in text
+    assert "## 진행 이력" not in render_markdown(report())

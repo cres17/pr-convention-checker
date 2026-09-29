@@ -15,6 +15,7 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+from drift_gate.desktop import progress_history
 from drift_gate.desktop.doc_links import (
     MAX_ISSUES,
     fenced_lines as _fenced_lines,
@@ -539,17 +540,56 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
     }
     if remote is not None:
         saved["remote"] = remote
-    data_dir.mkdir(parents=True, exist_ok=True)
+    _write_json(target, saved)
+    return saved
+
+
+def _write_json(target: Path, data: dict) -> None:
+    """Atomic replace, so a crash never leaves a half-written file."""
+    target.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(
-        "w", encoding="utf-8", dir=data_dir, delete=False
+        "w", encoding="utf-8", dir=target.parent, delete=False
     ) as stream:
-        json.dump(saved, stream, ensure_ascii=False, indent=2)
+        json.dump(data, stream, ensure_ascii=False, indent=2)
         temporary = Path(stream.name)
     try:
         temporary.replace(target)
     finally:
         temporary.unlink(missing_ok=True)
-    return saved
+
+
+def _history_file(root: Path, data_dir: Path, remote: str | None) -> Path:
+    return _store_file(root, data_dir, remote).with_suffix(".history.json")
+
+
+def _load_snapshots(root: Path, data_dir: Path, remote: str | None) -> list[dict]:
+    """Stored snapshots; a history kept under the old path key is still read."""
+    for target in (_history_file(root, data_dir, remote), _legacy_store_file(root, data_dir).with_suffix(".history.json")):
+        if target.is_file():
+            try:
+                data = json.loads(target.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                return []  # history is a convenience: a damaged file must not block progress
+            if data.get("schema") == 1 and isinstance(data.get("snapshots"), list):
+                return data["snapshots"]
+    return []
+
+
+def record_snapshot(path: str | Path, data_dir: Path, report: dict) -> dict:
+    """Store the report's state as a history entry (after a baseline save)."""
+    root = _repository(path)
+    remote = _remote_identity(root)
+    snapshots = progress_history.append_snapshot(
+        _load_snapshots(root, data_dir, remote), progress_history.make_snapshot(report)
+    )
+    _write_json(_history_file(root, data_dir, remote), {"schema": 1, "snapshots": snapshots})
+    return progress_history.summarize(snapshots, report)
+
+
+def progress_history_view(path: str | Path, data_dir: Path, report: dict | None = None) -> dict:
+    """Recorded history and, given the current report, what changed since the last save."""
+    root = _repository(path)
+    return progress_history.summarize(_load_snapshots(root, data_dir, _remote_identity(root)), report)
 
 
 def _evidence(

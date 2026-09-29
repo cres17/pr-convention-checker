@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, BookOpen, Check, ChevronRight, FileSearch, Plus, RefreshCw } from "lucide-react";
-import type { Bridge, LinkReport, ProgressBaseline, ProgressFieldError, ProgressItem, ProgressReport } from "../../bridge";
+import type { Bridge, LinkReport, ProgressHistory, ProgressBaseline, ProgressFieldError, ProgressItem, ProgressReport } from "../../bridge";
+import History from "./History";
 import { docClaimUnbacked, effectiveStatus, isStaleEvidence } from "./status";
 
 type Document = { path: string; tracked: boolean; bytes: number };
@@ -44,6 +45,7 @@ export default function ProjectProgress({
   const [fieldErrors, setFieldErrors] = useState<ProgressFieldError[]>([]);
   const [focusField, setFocusField] = useState("");
   const [links, setLinks] = useState<LinkReport | null>(null);
+  const [history, setHistory] = useState<ProgressHistory | null>(null);
   const [exported, setExported] = useState("");
 
   useEffect(() => {
@@ -55,6 +57,7 @@ export default function ProjectProgress({
     setCandidates([]);
     setFieldErrors([]);
     setLinks(null);
+    setHistory(null);
     setExported("");
     setShowDocuments(true);
     if (connected && path && bridge) {
@@ -117,6 +120,9 @@ export default function ProjectProgress({
       case "progressReport":
         setBusy("");
         setReport(event.report);
+        break;
+      case "progressHistory":
+        setHistory({ snapshots: event.snapshots, since_save: event.since_save } as ProgressHistory);
         break;
       case "progressLinks":
         setBusy("");
@@ -231,6 +237,7 @@ export default function ProjectProgress({
       {count && <p className="progress-legend">구현 확인 {count.implemented} · 부분 구현 {count.partial} · 미구현 확인 {count.not_implemented} · 확인 필요 {count.unknown} · 제외 {count.excluded}</p>}
       {!!report?.stale_documents.length && <div className="notice error" role="alert">기준 문서가 변경됐습니다: {report.stale_documents.join(", ")}. 기능 후보를 다시 추출하고 확정해 주세요. 이전 확인은 현황 집계에서 제외했습니다.</div>}
       {!!report?.doc_claims_unbacked && <div className="notice" role="status">문서에는 완료로 표시했지만 코드 근거가 확인되지 않은 항목이 {report.doc_claims_unbacked}개 있습니다. 체크 표시는 구현 근거로 쓰지 않습니다. <button className="text-button" onClick={() => setFilter("claims")}>해당 항목 보기</button></div>}
+      {history && <History history={history} />}
       <section className="card progress-workspace">
         <div className="section-heading"><h2>기능별 현황 <span>{draft.requirements.length}</span></h2><div className="progress-actions"><button className="secondary" onClick={addManual} disabled={!!busy}><Plus size={15} /> 직접 추가</button><button className="primary" onClick={save} disabled={!!busy}>{busy === "save" ? "저장 중…" : "기준과 근거 저장"}</button></div></div>
         <div className="progress-actions"><button className="secondary" disabled={!report || !!busy} onClick={() => { setBusy("links"); bridge?.checkProgressLinks(path); }}>{busy === "links" ? "점검 중…" : "문서 링크 점검"}</button><button className="secondary" disabled={!report || !!busy} onClick={() => bridge?.exportProgress(path, "md")}>Markdown 저장</button><button className="secondary" disabled={!report || !!busy} onClick={() => bridge?.exportProgress(path, "json")}>JSON 저장</button>{exported && <span className="hint" role="status">{exported}</span>}</div>

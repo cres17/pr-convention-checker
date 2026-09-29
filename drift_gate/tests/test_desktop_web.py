@@ -12,6 +12,11 @@ from drift_gate.desktop.subscription_review import parse_review
 from drift_gate.tests.test_progress_service import project
 
 
+def of_type(messages, kind):
+    """Newest message of a type; a save also sends a trailing progressHistory event."""
+    return next(m for m in reversed(messages) if m['type'] == kind)
+
+
 def settle(bridge):
     """Wait for the progress worker, then deliver its queued events."""
     assert bridge.progress_pool.waitForDone(10000)
@@ -74,9 +79,9 @@ def test_progress_bridge_reads_documents_and_persists_reviewed_baseline(tmp_path
     assert preview['type'] == 'progressPreview'
     bridge.saveProgress(str(repo), json.dumps(preview))
     settle(bridge)
-    assert messages[-2]['type'] == 'progressSaved'
-    assert messages[-1]['type'] == 'progressReport'
-    assert messages[-1]['report']['counts']['complete'] == 0
+    assert [m['type'] for m in messages[-3:]] == ['progressSaved', 'progressReport', 'progressHistory']
+    assert of_type(messages, 'progressReport')['report']['counts']['complete'] == 0
+    assert len(messages[-1]['snapshots']) == 1
 
 
 def test_failed_save_reports_each_invalid_item_and_items_carry_effective_status(tmp_path, monkeypatch):
@@ -103,8 +108,7 @@ def test_failed_save_reports_each_invalid_item_and_items_carry_effective_status(
     draft['requirements'][1]['implementation_note'] = '확인함'
     bridge.saveProgress(str(repo), json.dumps(draft))
     settle(bridge)
-    assert messages[-1]['type'] == 'progressReport'
-    assert {i['effective_status'] for i in messages[-1]['report']['items']} == {'unknown', 'not_implemented'}
+    assert {i['effective_status'] for i in of_type(messages, 'progressReport')['report']['items']} == {'unknown', 'not_implemented'}
 
 
 def test_open_document_only_opens_text_files_inside_the_scanned_repository(tmp_path, monkeypatch):
@@ -160,7 +164,7 @@ def _saved_baseline(tmp_path, monkeypatch):
     settle(bridge)
     bridge.saveProgress(str(repo), json.dumps(messages[-1]))
     settle(bridge)
-    assert messages[-1]['type'] == 'progressReport'
+    assert of_type(messages, 'progressReport')
     return repo, bridge, messages
 
 
@@ -196,7 +200,7 @@ def test_scan_reports_which_progress_evidence_it_touches(tmp_path, monkeypatch):
     from drift_gate.desktop.service import DesktopScan
     QApplication.instance() or QApplication([])
     repo, bridge, messages = _saved_baseline(tmp_path, monkeypatch)
-    draft = messages[-2]['baseline']
+    draft = of_type(messages, 'progressSaved')['baseline']
     draft['requirements'][0].update(implementation_status='implemented',
                                     evidence={'path': 'src/login.py', 'line': 1, 'note': '확인'})
     bridge.saveProgress(str(repo), json.dumps(draft))

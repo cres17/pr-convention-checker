@@ -1143,3 +1143,22 @@ td {
   padding: 10px;
   font-size: 11px;
 }
+.progress-history {
+  margin: 8px 0 14px;
+  font-size: 12px;
+}
+.progress-history summary {
+  cursor: pointer;
+}
+.progress-history ul {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+}
+.progress-history li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 6px 0;
+  border-top: 1px solid #e5e2da;
+}
