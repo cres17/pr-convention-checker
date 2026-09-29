@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
 )
 
 from drift_gate.adapters.report_naming import default_report_path
-from drift_gate.desktop.service import DesktopScan, scan_repository
+from drift_gate.desktop.service import DesktopScan, PolicyMissingError, scan_repository
 from drift_gate.desktop.review_dialog import ReviewDialog, review_html
 from drift_gate.desktop.subscription_review import VERDICTS
 from drift_gate.reporters.html import HtmlReporter
@@ -59,6 +59,7 @@ DECISION = {"pass": "통과", "fail": "조치 필요", "skipped": "제외", "unm
 class ScanWorker(QObject):
     finished = Signal(object)
     failed = Signal(str)
+    policy_missing = Signal(str)  # repository root; emitted in addition to ``failed``
 
     def __init__(self, path: str, base: str):
         super().__init__()
@@ -69,6 +70,9 @@ class ScanWorker(QObject):
     def run(self):
         try:
             self.finished.emit(scan_repository(self.path, self.base))
+        except PolicyMissingError as exc:
+            self.policy_missing.emit(str(exc.repository))
+            self.failed.emit(str(exc))
         except Exception as exc:
             self.failed.emit(str(exc))
 

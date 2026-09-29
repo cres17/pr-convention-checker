@@ -1131,3 +1131,15 @@ td {
 .impact-list code {
   overflow-wrap: anywhere;
 }
+.policy-setup {
+  margin-bottom: 22px;
+}
+.policy-preview {
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre;
+  background: #f5f4ef;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 11px;
+}

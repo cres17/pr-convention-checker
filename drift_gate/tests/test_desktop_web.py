@@ -216,3 +216,33 @@ def test_scan_reports_which_progress_evidence_it_touches(tmp_path, monkeypatch):
     bridge._emit_scan_impact(untouched, 'scan-2')
     settle(bridge)
     assert messages == []  # nothing to say, and no progress error either
+
+
+def test_missing_policy_is_previewed_and_created_only_on_request(tmp_path):
+    import subprocess
+    from drift_gate.desktop.app import ScanWorker
+    QApplication.instance() or QApplication([])
+    repo = tmp_path / 'fresh'
+    (repo / 'src/routes').mkdir(parents=True)
+    (repo / 'src/routes/users.py').write_text('x\n', encoding='utf-8')
+    subprocess.run(['git', 'init', '-q', str(repo)], check=True)
+    seen = []
+    worker = ScanWorker(str(repo), 'HEAD')
+    worker.policy_missing.connect(lambda repository: seen.append(('missing', repository)))
+    worker.failed.connect(lambda message: seen.append(('failed', message)))
+    worker.run()
+    assert seen[0] == ('missing', str(repo.resolve())) and seen[1][0] == 'failed'
+
+    bridge = DesktopBridge()
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    bridge.previewPolicy(str(repo), 'auto')
+    settle(bridge)
+    assert messages[-1]['type'] == 'policyPreview' and messages[-1]['preset'] == 'api'
+    assert not (repo / '.drift-gate.yml').exists()
+    bridge.createPolicy(str(repo), 'auto')
+    settle(bridge)
+    assert messages[-1]['type'] == 'policyCreated' and (repo / '.drift-gate.yml').is_file()
+    bridge.createPolicy(str(repo), 'auto')  # second attempt must not overwrite
+    settle(bridge)
+    assert messages[-1]['type'] == 'error' and '덮어쓰지' in messages[-1]['message']

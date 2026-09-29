@@ -1590,7 +1590,7 @@ def _dead_rule_warnings(policy, repo_root: Path) -> list[str]:
 
 def _repo_recommendations(repo_root: Path) -> dict:
     paths = set(_repo_paths(repo_root))
-    frameworks = _detect_frameworks(paths)
+    frameworks = _detect_frameworks(paths, repo_root)
     presets = []
 
     if _has_any(paths, ["prisma/schema.prisma", "db/**", "database/migrations/**", "alembic/versions/**"]):
@@ -1632,11 +1632,24 @@ def _select_init_preset(requested: str, recommendations: dict) -> str:
     return "fullstack"
 
 
-def _detect_frameworks(paths: set[str]) -> list[str]:
+def recommend_preset(repo_root: Path, requested: str = "auto") -> dict:
+    """Starter-policy choice and repository recommendations for ``repo_root``.
+
+    Independent of the working directory, so GUIs can preview what ``init`` would write.
+    """
+    recommendations = _repo_recommendations(repo_root)
+    return {
+        "preset": _select_init_preset(requested, recommendations),
+        "recommendations": recommendations,
+    }
+
+
+def _detect_frameworks(paths: set[str], repo_root: Path | None = None) -> list[str]:
     frameworks = []
-    package_json = Path("package.json")
-    pyproject = Path("pyproject.toml")
-    requirements = Path("requirements.txt")
+    base = repo_root if repo_root is not None else Path(".")
+    package_json = base / "package.json"
+    pyproject = base / "pyproject.toml"
+    requirements = base / "requirements.txt"
 
     package_text = package_json.read_text(encoding="utf-8") if package_json.exists() else ""
     pyproject_text = pyproject.read_text(encoding="utf-8") if pyproject.exists() else ""

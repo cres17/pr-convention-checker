@@ -12,6 +12,7 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 
 from drift_gate.desktop.app import ScanWorker
+from drift_gate.desktop.policy_setup import create_policy, preview_policy
 from drift_gate.desktop.service import resolve_document
 from drift_gate.desktop.review_dialog import ReviewWorker, review_html
 from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
@@ -56,18 +57,19 @@ class _ProgressSignals(QObject):
 class ProgressTask(QRunnable):
     """Runs one project-progress request off the UI thread and emits ready-made events."""
 
-    def __init__(self, signals, path, work):
+    def __init__(self, signals, path, work, error_type='progressError'):
         super().__init__()
         self.signals, self.path, self.work = signals, path, work
+        self.error_type = error_type
 
     def run(self):
         try:
             events = [{'type': kind, 'requested_path': self.path, **data} for kind, data in self.work()]
         except BaselineError as exc:
-            events = [{'type': 'progressError', 'requested_path': self.path,
+            events = [{'type': self.error_type, 'requested_path': self.path,
                        'message': str(exc), 'errors': exc.errors}]
         except (ValueError, OSError, json.JSONDecodeError, KeyError) as exc:
-            events = [{'type': 'progressError', 'requested_path': self.path, 'message': str(exc)}]
+            events = [{'type': self.error_type, 'requested_path': self.path, 'message': str(exc)}]
         for event in events:
             self.signals.raw.emit(json.dumps(event, ensure_ascii=False))
 
@@ -90,8 +92,8 @@ class DesktopBridge(QObject):
         self._progress_signals = _ProgressSignals(self)
         self._progress_signals.raw.connect(self.event)
 
-    def _run_progress(self, path, work):
-        self.progress_pool.start(ProgressTask(self._progress_signals, path, work))
+    def _run_progress(self, path, work, error_type='progressError'):
+        self.progress_pool.start(ProgressTask(self._progress_signals, path, work, error_type))
 
     def emit(self, kind, **data):
         self.event.emit(json.dumps({'type': kind, **data}, ensure_ascii=False))
@@ -221,6 +223,7 @@ class DesktopBridge(QObject):
         self.scan_worker.moveToThread(self.scan_thread)
         self.scan_thread.started.connect(self.scan_worker.run)
         self.scan_worker.finished.connect(self._scan_done)
+        self.scan_worker.policy_missing.connect(self._policy_missing)
         self.scan_worker.failed.connect(self._scan_failed)
         self.scan_worker.finished.connect(self.scan_worker.deleteLater)
         self.scan_worker.failed.connect(self.scan_worker.deleteLater)
@@ -243,6 +246,18 @@ class DesktopBridge(QObject):
     @Slot(str)
     def _scan_failed(self, message):
         self.emit('error', message=message)
+
+    @Slot(str)
+    def _policy_missing(self, repository):
+        self.emit('policyMissing', repository=repository)
+
+    @Slot(str, str)
+    def previewPolicy(self, path, preset):
+        self._run_progress(path, lambda: [('policyPreview', preview_policy(path, preset))], 'error')
+
+    @Slot(str, str)
+    def createPolicy(self, path, preset):
+        self._run_progress(path, lambda: [('policyCreated', create_policy(path, preset))], 'error')
 
     @Slot()
     def _scan_cleanup(self):

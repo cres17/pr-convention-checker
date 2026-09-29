@@ -19,6 +19,8 @@ const api = vi.hoisted(() => ({
   exportReport: vi.fn(),
   openDocument: vi.fn(),
   checkProgressLinks: vi.fn(),
+  previewPolicy: vi.fn(),
+  createPolicy: vi.fn(),
   exportProgress: vi.fn(),
   listProjectDocs: vi.fn(),
   previewProgress: vi.fn(),
@@ -323,4 +325,28 @@ it("tells the review screen which saved evidence a scan touches and opens that i
     baseline: { repository: "/sample/project", documents: { "README.md": "abc" },
       requirements: [make("one", "로그인"), make("two", "가입")], version: 2 } }));
   await waitFor(() => expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("가입"));
+});
+
+it("offers to create a starter policy when the repository has none, then scans again", async () => {
+  render(<App />);
+  await waitFor(() => expect(screen.getByText("데스크톱 연결됨")).toBeTruthy());
+  const { act } = await import("react");
+  act(() => emit({ type: "policyMissing", repository: "/sample/project" }));
+  expect(api.previewPolicy).toHaveBeenCalledWith("/sample/project", "auto");
+  expect(screen.getByText("저장소를 살펴보는 중…")).toBeTruthy();
+  const preview = { type: "policyPreview", repository: "/sample/project", exists: false, preset: "api",
+    presets: ["auto", "api", "db"], policy: "rules:\n  - id: api-contract-sync\n",
+    recommendations: { presets: ["api"], frameworks: ["FastAPI"], docs_paths: ["docs/api/**"] } };
+  act(() => emit(preview));
+  expect(screen.getByLabelText("만들 정책 파일 내용").textContent).toContain("api-contract-sync");
+  expect(screen.getByText(/감지한 프레임워크: FastAPI/)).toBeTruthy();
+  expect(api.createPolicy).not.toHaveBeenCalled();
+  fireEvent.change(screen.getByLabelText("시작용 정책"), { target: { value: "db" } });
+  expect(api.previewPolicy).toHaveBeenLastCalledWith("/sample/project", "db");
+  fireEvent.click(screen.getByRole("button", { name: /\.drift-gate\.yml 만들고 검사/ }));
+  expect(api.createPolicy).toHaveBeenCalledWith("/sample/project", "db");
+  act(() => emit({ type: "policyCreated", repository: "/sample/project", path: "/sample/project/.drift-gate.yml", preset: "db" }));
+  await waitFor(() => expect(api.startScan).toHaveBeenCalledWith("/sample/project", "HEAD"));
+  expect(screen.queryByLabelText("정책 파일 만들기")).toBeNull();
+  expect(screen.getByText(/정책 파일을 만들었습니다/)).toBeTruthy();
 });

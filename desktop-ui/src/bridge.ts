@@ -19,6 +19,14 @@ export type Violation = {
   docs_update_draft: string;
   false_positive_note: string;
 };
+export type PolicyPreview = {
+  repository: string;
+  exists: boolean;
+  preset: string;
+  presets: string[];
+  recommendations: { presets: string[]; frameworks: string[]; docs_paths: string[] };
+  policy: string;
+};
 export type ScanImpact = {
   scan_at: string;
   version: number;
@@ -106,6 +114,8 @@ export interface Bridge {
   startReview: (provider: string, path: string) => void;
   cancelReview: () => void;
   exportReport: (kind: string) => void;
+  previewPolicy: (path: string, preset: string) => void;
+  createPolicy: (path: string, preset: string) => void;
   checkProgressLinks: (path: string) => void;
   exportProgress: (path: string, kind: string) => void;
   openDocument: (relative: string) => void;
