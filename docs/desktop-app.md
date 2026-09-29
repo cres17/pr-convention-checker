@@ -1,6 +1,6 @@
 # Drift Gate 데스크톱 앱
 
-명령어 없이 **로컬 Git 저장소를 선택하고 규칙별 판정을 읽는** 첫 버전입니다. Windows와 macOS에서 같은 화면을 사용합니다. 기존 Python 정책 엔진을 그대로 호출하므로 CLI 및 GitHub Actions와 판정 기준이 같습니다.
+명령어 없이 **로컬 Git 저장소를 선택하고 규칙별 판정을 읽는** 데스크톱 앱입니다. Windows와 macOS에서 같은 화면을 사용합니다. 기존 Python 정책 엔진을 그대로 호출하므로 CLI 및 GitHub Actions와 판정 기준이 같습니다.
 
 ## 사용 흐름
 
@@ -28,7 +28,7 @@ Windows PowerShell에서도 설치 명령은 같으며, Python 실행 명령이 
 
 `ver2`의 데스크톱 앱 코드가 바뀌면 [Desktop app build](../.github/workflows/desktop-build.yml) 워크플로가 운영체제별 압축 파일을 CI 실행 결과의 아티팩트로 보관합니다. macOS 아티팩트는 `.app`, Windows 아티팩트는 `.exe`와 필요한 파일이 든 폴더입니다. 각 운영체제에서 별도로 빌드합니다. 실행 대상 컴퓨터에도 **Git은 설치되어 있어야** 합니다.
 
-[이전 UI의 Windows·macOS 빌드 기록](https://github.com/cres17/pr-convention-checker/actions/runs/36370807429)에서 두 아티팩트가 생성된 것을 확인할 수 있습니다.
+[현재 Cross Agent UI의 Windows·macOS 빌드와 다운로드](https://github.com/cres17/pr-convention-checker/actions/runs/36536161858)에서 두 아티팩트가 생성된 것을 확인할 수 있습니다.
 
 로컬에서 빌드할 때는 다음 명령을 사용할 수 있습니다.
 
@@ -39,11 +39,11 @@ npm run build --prefix desktop-ui
 pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack --add-data "drift_gate/desktop/web:drift_gate/desktop/web" drift_gate/desktop/web_app.py
 ```
 
-현재 macOS에서는 앱 번들 생성과 실행 시작을 확인했습니다. Windows에서는 CI의 화면 테스트와 패키지 빌드·업로드를 확인했으며, 실제 사용자 PC에서의 실행은 아직 검증하지 않았습니다. 서명·공증, 설치 프로그램, 자동 업데이트도 아직 제공하지 않습니다. 서명되지 않은 개발 빌드는 OS 보안 안내가 표시될 수 있습니다.
+현재 macOS에서는 앱 번들 생성과 실행 시작, 합성 Git 저장소 검사와 diff 표시를 확인했습니다. Windows에서는 CI의 화면 테스트와 패키지 빌드·업로드를 확인했으며, 실제 사용자 PC에서의 실행은 아직 검증하지 않았습니다. 서명·공증, 설치 프로그램, 자동 업데이트도 아직 제공하지 않습니다. 서명되지 않은 개발 빌드는 OS 보안 안내가 표시될 수 있습니다.
 
 ## 화면에서 읽는 방법
 
-상단은 **현재 판정과 비교 기준**, 가운데는 **변경 파일·평가된 규칙·차단 항목**입니다. 아래 목록의 각 규칙을 선택하면 변경 파일, 필요한 문서, 엔진 근거를 볼 수 있습니다. `통과`는 **설정된 정책을 이 입력에서 충족했다**는 뜻이며 코드와 문서의 모든 의미가 같다는 보장은 아닙니다.
+상단은 **현재 판정과 비교 기준**, 가운데는 **변경 파일·평가된 규칙·차단 항목**입니다. 아래 목록의 각 규칙을 선택하면 변경 파일, 필요한 문서, 엔진 근거와 코드 diff를 볼 수 있습니다. `통과`는 **설정된 정책을 이 입력에서 충족했다**는 뜻이며 코드와 문서의 모든 의미가 같다는 보장은 아닙니다.
 
 
 ## 새 Cross Agent 화면
