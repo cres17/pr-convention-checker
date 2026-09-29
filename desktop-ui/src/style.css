@@ -1085,3 +1085,15 @@ td {
   gap: 8px;
   margin-top: 12px;
 }
+.field [aria-invalid="true"] {
+  border-color: #b3382c;
+}
+.field-error {
+  display: block;
+  color: #b3382c;
+  font-size: 11px;
+  margin-top: 4px;
+}
+.progress-duplicate {
+  color: #6b675f;
+}

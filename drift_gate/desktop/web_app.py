@@ -18,7 +18,7 @@ from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
 from drift_gate.adapters.report_naming import default_report_path
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
-    evidence_candidates, extract_requirements, inspect_progress,
+    BaselineError, evidence_candidates, extract_requirements, inspect_progress,
     list_documents, load_baseline, save_baseline,
 )
 
@@ -91,6 +91,8 @@ class DesktopBridge(QObject):
             self.emit('progressSaved', requested_path=path, baseline=baseline)
             self.emit('progressReport', requested_path=path,
                       report=inspect_progress(path, self._progress_dir()))
+        except BaselineError as exc:
+            self.emit('progressError', requested_path=path, message=str(exc), errors=exc.errors)
         except (ValueError, OSError, json.JSONDecodeError) as exc:
             self.emit('progressError', requested_path=path, message=str(exc))
 

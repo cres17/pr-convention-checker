@@ -18,6 +18,8 @@ from pathlib import Path
 MAX_DOC_BYTES = 256_000
 MAX_DOCS = 150
 MAX_REQUIREMENTS = 120
+MAX_DUPLICATES = 20
+STATUSES = frozenset({"unknown", "partial", "implemented", "not_implemented"})
 MAX_SOURCE_BYTES = 512_000
 EXCLUDED_PARTS = {
     ".git",
@@ -43,8 +45,52 @@ SOURCE_SUFFIXES = {
 }
 CHECKBOX = re.compile(r"^\s*[-*+]\s+\[[ xX]\]\s+(.+?)\s*$")
 HEADING = re.compile(r"^#{2,3}\s+(.+?)\s*#*\s*$")
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 BACKTICK = re.compile(r"`([^`\n]+)`")
 TABLE_DIVIDER = re.compile(r"^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$")
+
+
+class FieldError(ValueError):
+    """A validation problem tied to one input field of a requirement."""
+
+    def __init__(self, field: str, message: str):
+        super().__init__(message)
+        self.field = field
+
+
+class BaselineError(ValueError):
+    """Every invalid requirement of a save attempt, so the UI can mark each one."""
+
+    def __init__(self, errors: list[dict]):
+        self.errors = errors
+        first = errors[0]["message"]
+        super().__init__(
+            first
+            if len(errors) == 1
+            else f"{len(errors)}개 항목을 확인해 주세요. 첫 오류: {first}"
+        )
+
+
+def _fenced_lines(lines: list[str]) -> set[int]:
+    """Indexes of lines inside (or delimiting) fenced code blocks."""
+    fenced: set[int] = set()
+    marker = ""
+    for index, line in enumerate(lines):
+        match = FENCE.match(line)
+        if not marker:
+            if match:
+                marker = match.group(1)
+                fenced.add(index)
+        else:
+            fenced.add(index)
+            if (
+                match
+                and match.group(1)[0] == marker[0]
+                and len(match.group(1)) >= len(marker)
+                and not match.group(2).strip()
+            ):
+                marker = ""
+    return fenced
 
 
 def _table_cells(line: str) -> list[str]:
@@ -174,9 +220,36 @@ def extract_requirements(path: str | Path, selected: list[str]) -> dict:
         item in available for item in selected
     ):
         raise ValueError("선택한 Markdown 파일을 찾지 못했습니다.")
-    requirements = []
-    seen = set()
+    requirements: list[dict] = []
+    seen: dict[str, dict] = {}
     doc_hashes = {}
+
+    def add(item: dict, original: str) -> None:
+        """Keep repeated titles as locations of the first item, never drop them."""
+        key = re.sub(r"\W+", "", item["title"]).casefold()
+        if not key:
+            return
+        first = seen.get(key)
+        if first is None:
+            seen[key] = item
+            requirements.append(item)
+        elif len(first.setdefault("duplicates", [])) < MAX_DUPLICATES:
+            first["duplicates"].append(
+                {
+                    "path": item["source"]["path"],
+                    "line": item["source"]["line"],
+                    "excerpt": original.strip(),
+                    "criterion": item["criterion"],
+                }
+            )
+
+    def contributed(relative: str) -> bool:
+        return any(
+            place["path"] == relative
+            for item in requirements
+            for place in [item["source"], *item.get("duplicates", [])]
+        )
+
     for relative in selected:
         target = _safe_file(root, relative, {".md"}, MAX_DOC_BYTES)
         raw = target.read_bytes()
@@ -185,7 +258,10 @@ def extract_requirements(path: str | Path, selected: list[str]) -> dict:
             continue
         heading = ""
         fallback = []
-        lines = raw.decode("utf-8-sig", errors="replace").splitlines()
+        source_lines = raw.decode("utf-8-sig", errors="replace").splitlines()
+        fenced = _fenced_lines(source_lines)
+        # Code samples are not goals: blank them so no parser sees their lines.
+        lines = ["" if i in fenced else line for i, line in enumerate(source_lines)]
         for line_no, line in enumerate(lines, 1):
             match = HEADING.match(line)
             if match:
@@ -195,44 +271,26 @@ def extract_requirements(path: str | Path, selected: list[str]) -> dict:
             if not match:
                 continue
             title = match.group(1).strip()[:240]
-            key = re.sub(r"\W+", "", title).casefold()
-            if key in seen or not title:
-                continue
-            seen.add(key)
-            requirements.append(
-                _item(relative, line_no, line, title, heading, doc_hashes[relative])
-            )
+            if title:
+                add(_item(relative, line_no, line, title, heading, doc_hashes[relative]), line)
             if len(requirements) >= MAX_REQUIREMENTS:
                 break
+        found = contributed(relative)
         # Prefer rows whose table explicitly names completion conditions.
         # Headings are only a fallback for prose-only documents.
-        if not any(item["source"]["path"] == relative for item in requirements):
+        if not found:
             for line_no, original, title, criterion in _table_requirements(lines):
-                key = re.sub(r"\W+", "", title).casefold()
-                if key in seen:
-                    continue
-                seen.add(key)
                 candidate = _item(
-                    relative,
-                    line_no,
-                    original,
-                    title,
-                    "완료 조건 표",
-                    doc_hashes[relative],
+                    relative, line_no, original, title, "완료 조건 표", doc_hashes[relative]
                 )
                 candidate["criterion"] = criterion
-                requirements.append(candidate)
+                add(candidate, original)
                 if len(requirements) >= MAX_REQUIREMENTS:
                     break
-        if not any(item["source"]["path"] == relative for item in requirements):
+            found = contributed(relative)
+        if not found:
             for line_no, title, original in fallback[:30]:
-                key = re.sub(r"\W+", "", title).casefold()
-                if key in seen:
-                    continue
-                seen.add(key)
-                requirements.append(
-                    _item(relative, line_no, original, title, "", doc_hashes[relative])
-                )
+                add(_item(relative, line_no, original, title, "", doc_hashes[relative]), original)
                 if len(requirements) >= MAX_REQUIREMENTS:
                     break
     return {
@@ -281,6 +339,73 @@ def load_baseline(path: str | Path, data_dir: Path) -> dict | None:
     return data
 
 
+def _item_errors(
+    root: Path, item: dict, docs: dict, doc_lines: dict[str, list[str]]
+) -> list[tuple[str, str]]:
+    """Validate one requirement; return every (field, message) problem found."""
+    errors: list[tuple[str, str]] = []
+    for key, label in (("title", "기능 이름"), ("criterion", "완료 조건")):
+        value = item.get(key)
+        if not isinstance(value, str) or not value.strip() or len(value) > 500:
+            errors.append((key, f"{label}을 500자 이하로 입력해 주세요."))
+    source = item.get("source")
+    if not isinstance(source, dict) or source.get("path") not in docs:
+        errors.append(("source", "기능의 문서 출처가 올바르지 않습니다."))
+    elif (
+        source.get("sha256") != docs[source["path"]]
+        or type(source.get("line")) is not int
+    ):
+        errors.append(("source", "기능의 문서 출처가 변경됐습니다."))
+    else:
+        if source["path"] not in doc_lines:
+            doc_lines[source["path"]] = (
+                _safe_file(root, source["path"], {".md"}, MAX_DOC_BYTES)
+                .read_text(encoding="utf-8-sig", errors="replace")
+                .splitlines()
+            )
+        lines = doc_lines[source["path"]]
+        if source["line"] == 0:
+            if source.get("excerpt") != "사용자가 직접 추가":
+                errors.append(("source", "직접 추가한 기능의 출처가 올바르지 않습니다."))
+        elif not (1 <= source["line"] <= len(lines)) or lines[
+            source["line"] - 1
+        ].strip() != source.get("excerpt"):
+            errors.append(("source", "기능의 문서 위치가 변경됐습니다."))
+    duplicates = item.get("duplicates", [])
+    if not isinstance(duplicates, list) or len(duplicates) > MAX_DUPLICATES or not all(
+        isinstance(place, dict)
+        and place.get("path") in docs
+        and type(place.get("line")) is int
+        for place in duplicates
+    ):
+        errors.append(("source", "다른 문서의 같은 항목 정보가 올바르지 않습니다."))
+    status = item.get("implementation_status")
+    if not isinstance(status, str) or status not in STATUSES:
+        errors.append(("implementation_status", "구현 상태가 올바르지 않습니다."))
+    verification = item.get("verification_status")
+    if verification not in {"unverified", "verified"}:
+        errors.append(("verification_status", "검증 상태가 올바르지 않습니다."))
+    if not isinstance(item.get("included"), bool):
+        errors.append(("included", "기능의 포함 여부가 올바르지 않습니다."))
+    if status in {"partial", "implemented"}:
+        try:
+            item["evidence"] = _evidence(root, item.get("evidence"))
+        except FieldError as exc:
+            errors.append((exc.field, str(exc)))
+        except ValueError as exc:
+            errors.append(("evidence.path", str(exc)))
+    else:
+        item["evidence"] = None
+    if status == "not_implemented" and not str(item.get("implementation_note", "")).strip():
+        errors.append(("implementation_note", "미구현 확인에는 확인 이유가 필요합니다."))
+    if verification == "verified":
+        if not str(item.get("verification_note", "")).strip():
+            errors.append(("verification_note", "수동 검증 확인에는 검증 기록이 필요합니다."))
+        if status != "implemented":
+            errors.append(("verification_status", "검증 완료는 구현 확인 후 기록해 주세요."))
+    return errors
+
+
 def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
     root = _repository(path)
     if not isinstance(payload, dict):
@@ -308,63 +433,13 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
         ):
             raise ValueError("기능 ID가 중복되거나 올바르지 않습니다.")
         ids.add(item["id"])
-        if not all(
-            isinstance(item.get(key), str)
-            and item[key].strip()
-            and len(item[key]) <= 500
-            for key in ("title", "criterion")
-        ):
-            raise ValueError("각 기능의 이름과 완료 조건을 입력해 주세요.")
-        source = item.get("source")
-        if not isinstance(source, dict) or source.get("path") not in docs:
-            raise ValueError("기능의 문서 출처가 올바르지 않습니다.")
-        if (
-            source.get("sha256") != docs[source["path"]]
-            or type(source.get("line")) is not int
-        ):
-            raise ValueError("기능의 문서 출처가 변경됐습니다.")
-        doc_lines = (
-            _safe_file(root, source["path"], {".md"}, MAX_DOC_BYTES)
-            .read_text(encoding="utf-8-sig", errors="replace")
-            .splitlines()
-        )
-        if source["line"] == 0:
-            if source.get("excerpt") != "사용자가 직접 추가":
-                raise ValueError("직접 추가한 기능의 출처가 올바르지 않습니다.")
-        elif not (1 <= source["line"] <= len(doc_lines)) or doc_lines[
-            source["line"] - 1
-        ].strip() != source.get("excerpt"):
-            raise ValueError("기능의 문서 위치가 변경됐습니다.")
-        if item.get("implementation_status") not in {
-            "unknown",
-            "partial",
-            "implemented",
-            "not_implemented",
-        }:
-            raise ValueError("구현 상태가 올바르지 않습니다.")
-        if item.get("verification_status") not in {"unverified", "verified"}:
-            raise ValueError("검증 상태가 올바르지 않습니다.")
-        if not isinstance(item.get("included"), bool):
-            raise ValueError("기능의 포함 여부가 올바르지 않습니다.")
-        if item["implementation_status"] in {"partial", "implemented"}:
-            item["evidence"] = _evidence(root, item.get("evidence"))
-        else:
-            item["evidence"] = None
-        if (
-            item["implementation_status"] == "not_implemented"
-            and not str(item.get("implementation_note", "")).strip()
-        ):
-            raise ValueError("미구현 확인에는 확인 이유가 필요합니다.")
-        if (
-            item["verification_status"] == "verified"
-            and not str(item.get("verification_note", "")).strip()
-        ):
-            raise ValueError("수동 검증 확인에는 검증 기록이 필요합니다.")
-        if (
-            item["verification_status"] == "verified"
-            and item["implementation_status"] != "implemented"
-        ):
-            raise ValueError("검증 완료는 구현 확인 후 기록해 주세요.")
+    doc_lines: dict[str, list[str]] = {}
+    errors = []
+    for item in items:
+        for field, message in _item_errors(root, item, docs, doc_lines):
+            errors.append({"id": item["id"], "field": field, "message": message})
+    if errors:
+        raise BaselineError(errors)
     previous = load_baseline(root, data_dir)
     if previous and previous["documents"] == docs and previous["requirements"] == items:
         return previous
@@ -393,17 +468,20 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
 
 def _evidence(root: Path, evidence: object) -> dict:
     if not isinstance(evidence, dict):
-        raise ValueError("구현 확인에는 코드 근거가 필요합니다.")
+        raise FieldError("evidence.path", "구현 확인에는 코드 근거가 필요합니다.")
     relative = evidence.get("path")
-    target = _safe_file(root, relative, SOURCE_SUFFIXES, MAX_SOURCE_BYTES)
+    try:
+        target = _safe_file(root, relative, SOURCE_SUFFIXES, MAX_SOURCE_BYTES)
+    except ValueError as exc:
+        raise FieldError("evidence.path", str(exc)) from exc
     lines = target.read_text(encoding="utf-8", errors="replace").splitlines()
     line = evidence.get("line")
     if type(line) is not int or line < 1 or line > len(lines):
-        raise ValueError("코드 근거의 줄 번호를 확인해 주세요.")
+        raise FieldError("evidence.line", "코드 근거의 줄 번호를 확인해 주세요.")
     if not lines[line - 1].strip():
-        raise ValueError("내용이 있는 코드 줄을 근거로 선택해 주세요.")
+        raise FieldError("evidence.line", "내용이 있는 코드 줄을 근거로 선택해 주세요.")
     if not isinstance(evidence.get("note"), str) or not evidence["note"].strip():
-        raise ValueError("이 코드가 완료 조건과 어떻게 연결되는지 적어 주세요.")
+        raise FieldError("evidence.note", "이 코드가 완료 조건과 어떻게 연결되는지 적어 주세요.")
     return {
         "path": relative,
         "line": line,
