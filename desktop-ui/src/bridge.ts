@@ -41,6 +41,7 @@ export type ProgressItem = {
   verification_status: "unverified" | "verified";
   verification_note: string;
   stale_evidence?: boolean;
+  effective_status?: ProgressItem["implementation_status"] | "excluded";
 };
 export type ProgressBaseline = {
   repository: string;

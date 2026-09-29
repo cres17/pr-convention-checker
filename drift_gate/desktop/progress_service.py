@@ -450,6 +450,7 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
                 stale_evidence = True
         item["stale_evidence"] = stale_evidence
         if not item["included"]:
+            item["effective_status"] = "excluded"
             counts["excluded"] += 1
         else:
             effective = (
@@ -457,6 +458,7 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
                 if stale_evidence or stale_docs
                 else item["implementation_status"]
             )
+            item["effective_status"] = effective
             counts[effective] += 1
             if (
                 effective == "implemented"

@@ -64,12 +64,16 @@ def test_verified_requires_reviewed_code_and_note(tmp_path):
     assert report["counts"]["implemented"] == 1
     assert report["counts"]["complete"] == 1
     assert report["items"][0]["evidence"]["sha256"]
+    assert report["items"][0]["effective_status"] == "implemented"
     (repo / "src/login.py").write_text(
         "def login():\n    raise NotImplementedError\n", encoding="utf-8"
     )
     changed = inspect_progress(repo, tmp_path / "state")
     assert changed["items"][0]["stale_evidence"]
+    assert changed["items"][0]["effective_status"] == "unknown"
     assert changed["counts"]["unknown"] == 2
+    statuses = [entry["effective_status"] for entry in changed["items"]]
+    assert statuses.count("unknown") == changed["counts"]["unknown"]
     assert changed["counts"]["complete"] == 0
 
 
@@ -93,11 +97,14 @@ def test_document_change_invalidates_progress_and_excluded_item_leaves_denominat
     draft = extract_requirements(repo, ["README.md"])
     draft["requirements"][1]["included"] = False
     save_baseline(repo, tmp_path / "state", draft)
-    assert inspect_progress(repo, tmp_path / "state")["total"] == 1
+    first = inspect_progress(repo, tmp_path / "state")
+    assert first["total"] == 1
+    assert [entry["effective_status"] for entry in first["items"]] == ["unknown", "excluded"]
     (repo / "README.md").write_text("# Service\n새 계획\n", encoding="utf-8")
     report = inspect_progress(repo, tmp_path / "state")
     assert report["stale_documents"] == ["README.md"]
     assert report["counts"]["unknown"] == 1
+    assert [entry["effective_status"] for entry in report["items"]] == ["unknown", "excluded"]
     with pytest.raises(ValueError, match="변경"):
         save_baseline(repo, tmp_path / "state", draft)
 
