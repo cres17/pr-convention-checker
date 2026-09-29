@@ -224,3 +224,27 @@ it("marks every invalid item after a failed save and jumps to the first one", as
   fireEvent.change(document.activeElement as HTMLInputElement, { target: { value: "로그인 화면" } });
   expect(screen.getByText("1개 항목을 확인하세요.")).toBeTruthy();
 });
+
+it("applies progress events that arrive in the same render batch", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  const { act } = await import("react");
+  const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
+  const item = {
+    id: "one", title: "서버가 정규화한 제목", criterion: "로그인", area: "계정", included: true, source,
+    implementation_status: "unknown" as const, evidence: null,
+    verification_status: "unverified" as const, verification_note: "",
+  };
+  act(() => {
+    emit({ type: "progressSaved", requested_path: "/sample/project",
+      baseline: { repository: "/sample/project", documents: { "README.md": "abc" }, requirements: [item], version: 1 } });
+    emit({ type: "progressReport", requested_path: "/sample/project", report: {
+      repository: "/sample/project", version: 1, at: "2026-09-29T00:00:00Z", head: "abc",
+      stale_documents: [], total: 1, limitations: "", items: [item],
+      counts: { implemented: 0, partial: 0, not_implemented: 0, unknown: 1, complete: 0, excluded: 0 },
+    } });
+  });
+  expect(screen.getByText("서버가 정규화한 제목", { selector: "strong" })).toBeTruthy();
+  expect(screen.getAllByText("0 / 1").length).toBe(2);
+});
