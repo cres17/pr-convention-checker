@@ -14,6 +14,7 @@ from drift_gate.desktop.progress_service import (
     load_baseline,
     normalize_remote,
     save_baseline,
+    scan_impact,
 )
 
 
@@ -349,3 +350,53 @@ def test_malformed_evidence_paths_are_reported_not_crashed(tmp_path):
     with pytest.raises(BaselineError) as raised:
         save_baseline(repo, tmp_path / "state", draft)
     assert raised.value.errors[0]["field"] == "evidence.path"
+
+
+def _baseline_with_evidence(tmp_path):
+    repo = project(tmp_path)
+    (repo / "src/other.py").write_text("x = 1\n", encoding="utf-8")
+    draft = extract_requirements(repo, ["README.md"])
+    for item, name in zip(draft["requirements"], ("login.py", "other.py")):
+        item["implementation_status"] = "implemented"
+        item["evidence"] = {"path": f"src/{name}", "line": 1, "note": "확인"}
+    save_baseline(repo, tmp_path / "state", draft)
+    return repo, tmp_path / "state"
+
+
+def test_scan_impact_lists_items_whose_evidence_file_is_in_the_change_set(tmp_path):
+    repo, state = _baseline_with_evidence(tmp_path)
+    (repo / "src/login.py").write_text("def login():\n    return 1\n", encoding="utf-8")
+    impact = scan_impact(repo, state, [{"path": "src/login.py", "previous_path": None, "status": "modified"}])
+    assert impact["version"] == 1 and impact["documents"] == []
+    assert [(i["path"], i["change"], i["invalidated"]) for i in impact["items"]] == [
+        ("src/login.py", "modified", True)
+    ]
+    assert impact["items"][0]["title"].startswith("로그인")
+
+
+def test_scan_impact_distinguishes_unchanged_content_renames_and_deletions(tmp_path):
+    repo, state = _baseline_with_evidence(tmp_path)
+    same = scan_impact(repo, state, [{"path": "src/other.py", "previous_path": None, "status": "modified"}])
+    assert [i["invalidated"] for i in same["items"]] == [False]  # file still matches the evidence
+    (repo / "src/other.py").rename(repo / "src/renamed.py")
+    moved = scan_impact(repo, state, [{"path": "src/renamed.py", "previous_path": "src/other.py", "status": "renamed"}])
+    assert [(i["path"], i["change"], i["invalidated"]) for i in moved["items"]] == [("src/other.py", "renamed", True)]
+    assert scan_impact(repo, state, [{"path": "src/unrelated.py", "previous_path": None, "status": "added"}])["items"] == []
+
+
+def test_scan_impact_reports_changed_baseline_documents_and_ignores_excluded_items(tmp_path):
+    repo, state = _baseline_with_evidence(tmp_path)
+    baseline = load_baseline(repo, state)
+    baseline["requirements"][0]["included"] = False
+    save_baseline(repo, state, baseline)
+    (repo / "README.md").write_text("# Service\n새 계획\n", encoding="utf-8")
+    impact = scan_impact(repo, state, [
+        {"path": "README.md", "previous_path": None, "status": "modified"},
+        {"path": "src/login.py", "previous_path": None, "status": "modified"},
+    ])
+    assert impact["documents"] == [{"path": "README.md", "invalidated": True}]
+    assert impact["items"] == []  # the login item is excluded from this scope
+
+
+def test_scan_impact_is_none_without_a_saved_baseline(tmp_path):
+    assert scan_impact(project(tmp_path), tmp_path / "state", []) is None

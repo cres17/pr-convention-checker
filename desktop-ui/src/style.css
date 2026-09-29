@@ -1111,3 +1111,23 @@ td {
   overflow-wrap: anywhere;
   margin-bottom: 3px;
 }
+.scan-impact {
+  margin-bottom: 22px;
+}
+.impact-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.impact-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  border-top: 1px solid #e5e2da;
+  font-size: 12px;
+}
+.impact-list code {
+  overflow-wrap: anywhere;
+}

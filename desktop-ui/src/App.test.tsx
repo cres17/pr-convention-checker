@@ -294,3 +294,33 @@ it("flags document checkmarks without evidence, checks links and exports the rep
   act(() => emit({ type: "progressExported", requested_path: "/sample/project", file: "/tmp/x.md" }));
   expect(screen.getByText("저장했습니다 · /tmp/x.md")).toBeTruthy();
 });
+
+it("tells the review screen which saved evidence a scan touches and opens that item in progress", async () => {
+  const value = fixture as Scan;
+  render(<App initialScan={value} />);
+  await waitFor(() => expect(screen.getByText("데스크톱 연결됨")).toBeTruthy());
+  const { act } = await import("react");
+  const impact = { type: "scanImpact", requested_path: "/sample/project", version: 2, documents: [
+    { path: "README.md", invalidated: false }], items: [
+    { id: "two", title: "가입", path: "src/routes/users.py", line: 3, change: "modified", invalidated: true },
+    { id: "one", title: "로그인", path: "src/login.py", line: 1, change: "deleted", invalidated: false }] };
+  act(() => emit({ ...impact, scan_at: "some-older-scan" }));
+  expect(screen.queryByLabelText("프로젝트 현황 영향")).toBeNull();
+  act(() => emit({ ...impact, scan_at: value.at }));
+  const section = screen.getByLabelText("프로젝트 현황 영향");
+  expect(section.textContent).toContain("1개 기능은 저장된 근거와 현재 코드가 달라");
+  expect(section.textContent).toContain("근거 무효");
+  expect(section.textContent).toContain("삭제");
+  fireEvent.click(screen.getAllByRole("button", { name: "현황에서 보기" })[0]);
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
+  const make = (id: string, title: string) => ({
+    id, title, criterion: title, area: "계정", included: true, source,
+    implementation_status: "unknown" as const, evidence: null,
+    verification_status: "unverified" as const, verification_note: "",
+  });
+  act(() => emit({ type: "progressDocs", requested_path: "/sample/project", documents: [], omitted: 0,
+    baseline: { repository: "/sample/project", documents: { "README.md": "abc" },
+      requirements: [make("one", "로그인"), make("two", "가입")], version: 2 } }));
+  await waitFor(() => expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("가입"));
+});

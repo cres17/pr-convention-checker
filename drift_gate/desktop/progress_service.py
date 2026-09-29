@@ -585,6 +585,61 @@ def _evidence(
     }
 
 
+def _source_digest(root: Path, relative: str) -> str | None:
+    """Hash of a source file as it is now; None if it is missing, moved or unreadable."""
+    try:
+        return _hash(_safe_file(root, relative, SOURCE_SUFFIXES, MAX_SOURCE_BYTES).read_bytes())
+    except (ValueError, OSError):
+        return None
+
+
+def scan_impact(path: str | Path, data_dir: Path, changes: list[dict]) -> dict | None:
+    """Which saved progress items a review scan's changed files touch (read-only).
+
+    ``changes`` are ``{"path", "previous_path", "status"}`` entries. An item is listed
+    when its evidence file is among them; ``invalidated`` says whether the file now
+    differs from the content the evidence was recorded against. Returns None when the
+    project has no saved baseline.
+    """
+    root = _repository(path)
+    baseline = _load_baseline(root, data_dir, _remote_identity(root))
+    if baseline is None:
+        return None
+    changed: dict[str, dict] = {}
+    for change in changes:
+        for name in (change.get("path"), change.get("previous_path")):
+            if isinstance(name, str) and name:
+                changed[name] = change
+    documents = []
+    for relative, digest in baseline["documents"].items():
+        if relative in changed:
+            try:
+                current = _hash(_safe_file(root, relative, {".md"}, MAX_DOC_BYTES).read_bytes())
+            except (ValueError, OSError):
+                current = None
+            documents.append({"path": relative, "invalidated": current != digest})
+    digests: dict[str, str | None] = {}
+    items = []
+    for item in baseline["requirements"]:
+        evidence = item.get("evidence")
+        if not item.get("included") or not evidence or evidence.get("path") not in changed:
+            continue
+        relative = evidence["path"]
+        if relative not in digests:
+            digests[relative] = _source_digest(root, relative)
+        items.append(
+            {
+                "id": item["id"],
+                "title": item["title"],
+                "path": relative,
+                "line": evidence.get("line"),
+                "change": changed[relative].get("status", "modified"),
+                "invalidated": digests[relative] != evidence.get("sha256"),
+            }
+        )
+    return {"version": baseline["version"], "items": items, "documents": documents}
+
+
 def inspect_progress(path: str | Path, data_dir: Path) -> dict:
     root = _repository(path)
     baseline = _load_baseline(root, data_dir, _remote_identity(root))
@@ -616,11 +671,7 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
         if not isinstance(relative, str):
             return None
         if relative not in digests:
-            try:
-                target = _safe_file(root, relative, SOURCE_SUFFIXES, MAX_SOURCE_BYTES)
-                digests[relative] = _hash(target.read_bytes())
-            except (ValueError, OSError):
-                digests[relative] = None  # missing, moved or unreadable: evidence is void
+            digests[relative] = _source_digest(root, relative)
         return digests[relative]
 
     for source in baseline["requirements"]:

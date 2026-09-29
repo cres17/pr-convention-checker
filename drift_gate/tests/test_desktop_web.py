@@ -189,3 +189,30 @@ def test_progress_report_export_uses_project_file_name(tmp_path, monkeypatch, ki
     assert marker in target.read_text(encoding='utf-8')
     bridge.exportProgress(str(repo), 'exe')  # unknown kinds are ignored
     assert len(suggested) == 1
+
+
+def test_scan_reports_which_progress_evidence_it_touches(tmp_path, monkeypatch):
+    from drift_gate.core.models.changed_file import ChangedFile
+    from drift_gate.desktop.service import DesktopScan
+    QApplication.instance() or QApplication([])
+    repo, bridge, messages = _saved_baseline(tmp_path, monkeypatch)
+    draft = messages[-2]['baseline']
+    draft['requirements'][0].update(implementation_status='implemented',
+                                    evidence={'path': 'src/login.py', 'line': 1, 'note': '확인'})
+    bridge.saveProgress(str(repo), json.dumps(draft))
+    settle(bridge)
+    (repo / 'src/login.py').write_text('def login():\n    return 2\n', encoding='utf-8')
+    base = scan()
+    touched = DesktopScan(repo, 'HEAD', 1, base.result, (ChangedFile('src/login.py', 'modified'),))
+    messages.clear()
+    bridge._emit_scan_impact(touched, 'scan-1')
+    settle(bridge)
+    assert [m['type'] for m in messages] == ['scanImpact']
+    impact = messages[0]
+    assert impact['scan_at'] == 'scan-1'
+    assert [(i['path'], i['invalidated']) for i in impact['items']] == [('src/login.py', True)]
+    untouched = DesktopScan(repo, 'HEAD', 1, base.result, (ChangedFile('docs/other.md', 'added'),))
+    messages.clear()
+    bridge._emit_scan_impact(untouched, 'scan-2')
+    settle(bridge)
+    assert messages == []  # nothing to say, and no progress error either
