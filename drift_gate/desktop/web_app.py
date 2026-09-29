@@ -4,7 +4,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from PySide6.QtCore import QObject, QSettings, QStandardPaths, QThread, QUrl, Signal, Slot
+from PySide6.QtCore import QObject, QRunnable, QSettings, QStandardPaths, QThread, QThreadPool, QUrl, Signal, Slot
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineUrlRequestInterceptor
@@ -48,6 +48,29 @@ class LocalPage(QWebEnginePage):
         return url.scheme() == 'file' and Path(url.toLocalFile()).resolve().is_relative_to(WEB_ROOT.resolve())
 
 
+class _ProgressSignals(QObject):
+    raw = Signal(str)
+
+
+class ProgressTask(QRunnable):
+    """Runs one project-progress request off the UI thread and emits ready-made events."""
+
+    def __init__(self, signals, path, work):
+        super().__init__()
+        self.signals, self.path, self.work = signals, path, work
+
+    def run(self):
+        try:
+            events = [{'type': kind, 'requested_path': self.path, **data} for kind, data in self.work()]
+        except BaselineError as exc:
+            events = [{'type': 'progressError', 'requested_path': self.path,
+                       'message': str(exc), 'errors': exc.errors}]
+        except (ValueError, OSError, json.JSONDecodeError, KeyError) as exc:
+            events = [{'type': 'progressError', 'requested_path': self.path, 'message': str(exc)}]
+        for event in events:
+            self.signals.raw.emit(json.dumps(event, ensure_ascii=False))
+
+
 class DesktopBridge(QObject):
     event = Signal(str)
 
@@ -60,6 +83,14 @@ class DesktopBridge(QObject):
         self.scan_worker = None
         self.review_worker = None
         self.history = []  # Session-only: no hidden persistence of source diffs.
+        # One thread keeps progress results in request order (save -> report).
+        self.progress_pool = QThreadPool(self)
+        self.progress_pool.setMaxThreadCount(1)
+        self._progress_signals = _ProgressSignals(self)
+        self._progress_signals.raw.connect(self.event)
+
+    def _run_progress(self, path, work):
+        self.progress_pool.start(ProgressTask(self._progress_signals, path, work))
 
     def emit(self, kind, **data):
         self.event.emit(json.dumps({'type': kind, **data}, ensure_ascii=False))
@@ -69,49 +100,41 @@ class DesktopBridge(QObject):
 
     @Slot(str)
     def listProjectDocs(self, path):
-        try:
+        directory = self._progress_dir()
+
+        def work():
             result = list_documents(path)
-            result['baseline'] = load_baseline(path, self._progress_dir())
-            self.emit('progressDocs', requested_path=path, **result)
-        except (ValueError, OSError, json.JSONDecodeError) as exc:
-            self.emit('progressError', requested_path=path, message=str(exc))
+            result['baseline'] = load_baseline(path, directory)
+            return [('progressDocs', result)]
+        self._run_progress(path, work)
 
     @Slot(str, str)
     def previewProgress(self, path, selected_json):
-        try:
-            self.emit('progressPreview', requested_path=path,
-                      **extract_requirements(path, json.loads(selected_json)))
-        except (ValueError, OSError, json.JSONDecodeError) as exc:
-            self.emit('progressError', requested_path=path, message=str(exc))
+        self._run_progress(path, lambda: [
+            ('progressPreview', extract_requirements(path, json.loads(selected_json)))])
 
     @Slot(str, str)
     def saveProgress(self, path, payload_json):
-        try:
-            baseline = save_baseline(path, self._progress_dir(), json.loads(payload_json))
-            self.emit('progressSaved', requested_path=path, baseline=baseline)
-            self.emit('progressReport', requested_path=path,
-                      report=inspect_progress(path, self._progress_dir()))
-        except BaselineError as exc:
-            self.emit('progressError', requested_path=path, message=str(exc), errors=exc.errors)
-        except (ValueError, OSError, json.JSONDecodeError) as exc:
-            self.emit('progressError', requested_path=path, message=str(exc))
+        directory = self._progress_dir()
+
+        def work():
+            baseline = save_baseline(path, directory, json.loads(payload_json))
+            return [('progressSaved', {'baseline': baseline}),
+                    ('progressReport', {'report': inspect_progress(path, directory)})]
+        self._run_progress(path, work)
 
     @Slot(str)
     def inspectProgress(self, path):
-        try:
-            self.emit('progressReport', requested_path=path,
-                      report=inspect_progress(path, self._progress_dir()))
-        except (ValueError, OSError, json.JSONDecodeError) as exc:
-            self.emit('progressError', requested_path=path, message=str(exc))
+        directory = self._progress_dir()
+        self._run_progress(path, lambda: [
+            ('progressReport', {'report': inspect_progress(path, directory)})])
 
     @Slot(str, str)
     def suggestProgressEvidence(self, path, item_json):
-        try:
+        def work():
             item = json.loads(item_json)
-            self.emit('progressEvidence', requested_path=path, id=item['id'],
-                      candidates=evidence_candidates(path, item))
-        except (ValueError, OSError, json.JSONDecodeError, KeyError) as exc:
-            self.emit('progressError', requested_path=path, message=str(exc))
+            return [('progressEvidence', {'id': item['id'], 'candidates': evidence_candidates(path, item)})]
+        self._run_progress(path, work)
 
     @Slot()
     def initialize(self):
@@ -264,6 +287,9 @@ class WebDesktopWindow(QMainWindow):
     def closeEvent(self, event):
         if self.bridge.scan_thread:
             QMessageBox.information(self, '검사 진행 중', '현재 검사가 끝난 뒤 앱을 닫아 주세요.')
+            event.ignore()
+            return
+        if not self.bridge.progress_pool.waitForDone(3000):
             event.ignore()
             return
         if self.bridge.review_worker:

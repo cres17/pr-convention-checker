@@ -114,7 +114,8 @@ export default function App({
   const [collapsed, setCollapsed] = useState(false);
   const [historyScan, setHistoryScan] = useState<Scan | null>(null);
   const [fileIndex, setFileIndex] = useState(0);
-  const [progressEvent, setProgressEvent] = useState<any>(null);
+  const [progressEvents, setProgressEvents] = useState<any[]>([]);
+  const progressSeq = useRef(0);
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     if (preview) return;
@@ -122,7 +123,9 @@ export default function App({
     connect((event) => {
       if (!active) return;
       if (String(event.type).startsWith("progress")) {
-        setProgressEvent(event);
+        // Queue, never overwrite: two events in one render batch must both be handled.
+        const seq = ++progressSeq.current;
+        setProgressEvents((old) => [...old.slice(-49), { ...event, _seq: seq }]);
         return;
       }
       switch (event.type) {
@@ -766,7 +769,7 @@ export default function App({
             </>
           )}
           {page === "progress" && (
-            <ProjectProgress path={path} connected={connected} bridge={desktopBridge} event={progressEvent} />
+            <ProjectProgress path={path} connected={connected} bridge={desktopBridge} events={progressEvents} />
           )}
           {page === "rules" && (
             <section className="card document">

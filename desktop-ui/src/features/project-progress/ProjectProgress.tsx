@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, BookOpen, Check, ChevronRight, FileSearch, Plus, RefreshCw } from "lucide-react";
 import type { Bridge, ProgressBaseline, ProgressFieldError, ProgressItem, ProgressReport } from "../../bridge";
 import { effectiveStatus, isStaleEvidence } from "./status";
@@ -27,8 +27,8 @@ function FieldMessage({ text }: { text?: string }) {
 }
 
 export default function ProjectProgress({
-  path, connected, bridge, event,
-}: { path: string; connected: boolean; bridge: Bridge | null; event: Event | null }) {
+  path, connected, bridge, events,
+}: { path: string; connected: boolean; bridge: Bridge | null; events: Event[] }) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
   const [draft, setDraft] = useState<ProgressBaseline | null>(null);
@@ -59,8 +59,17 @@ export default function ProjectProgress({
     }
   }, [path, connected, bridge]);
 
+  // Events from before this screen mounted are history, not input.
+  const handledSeq = useRef(events.at(-1)?._seq ?? 0);
   useEffect(() => {
-    if (!event) return;
+    for (const event of events) {
+      if (event._seq <= handledSeq.current) continue;
+      handledSeq.current = event._seq;
+      handle(event);
+    }
+  }, [events]);
+
+  const handle = (event: Event) => {
     if (event.requested_path && event.requested_path !== path) return;
     switch (event.type) {
       case "progressDocs":
@@ -104,7 +113,7 @@ export default function ProjectProgress({
         setError(Array.isArray(event.errors) && event.errors.length ? "" : event.message);
         break;
     }
-  }, [event, path, bridge, selectedId]);
+  };
 
   const edit = (id: string, patch: Partial<ProgressItem>) => {
     setReport(null);
