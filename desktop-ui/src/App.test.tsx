@@ -19,6 +19,7 @@ const api = vi.hoisted(() => ({
   exportReport: vi.fn(),
   openDocument: vi.fn(),
   checkProgressLinks: vi.fn(),
+  loadTestResults: vi.fn(),
   previewPolicy: vi.fn(),
   createPolicy: vi.fn(),
   exportProgress: vi.fn(),
@@ -379,4 +380,36 @@ it("shows what changed since the last save and the list of saved states", async 
   expect(screen.getByText("진행 이력 2개")).toBeTruthy();
   expect(screen.getByText("새로 구현 확인 2")).toBeTruthy();
   expect(screen.getByText("첫 기록")).toBeTruthy();
+});
+
+it("links a test-result file to items without changing the progress counts", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  const { act } = await import("react");
+  const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
+  const item = { id: "abcdef1234567890", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
+    implementation_status: "implemented" as const, evidence: null, test_patterns: ["test_login"],
+    verification_status: "verified" as const, verification_note: "수동 확인" };
+  act(() => emit({ type: "progressSaved", requested_path: "/sample/project",
+    baseline: { repository: "/sample/project", documents: { "README.md": "abc" }, requirements: [item], version: 1 } }));
+  act(() => emit({ type: "progressReport", requested_path: "/sample/project", report: {
+    repository: "/sample/project", version: 1, at: "2026-09-29T00:00:00Z", head: "abc",
+    stale_documents: [], total: 1, limitations: "", items: [{ ...item, effective_status: "implemented" }],
+    counts: { implemented: 1, partial: 0, not_implemented: 0, unknown: 0, complete: 1, excluded: 0 } } }));
+  fireEvent.click(screen.getByText(/로그인/, { selector: "strong" }));
+  expect(screen.getByText("req-abcdef12")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "테스트 결과 불러오기" }));
+  expect(api.loadTestResults).toHaveBeenCalledWith("/sample/project");
+  act(() => emit({ type: "progressTests", requested_path: "/sample/project", format: "junit", file: "junit.xml",
+    modified: "2026-09-29T00:00:00Z", total: 9, items: { abcdef1234567890: { patterns: ["test_login"], matched: 3,
+      passed: 2, failed: 1, skipped: 0, failing: ["tests.test_auth::test_login_bad"], no_match: false } } }));
+  expect(screen.getByText(/테스트 결과: junit\.xml · JUnit XML · 테스트 9개/)).toBeTruthy();
+  expect(screen.getByLabelText("기능 목록").textContent).toContain("자동 검증: 통과 2 · 실패 1");
+  const record = screen.getByLabelText("자동 검증 기록");
+  expect(record.textContent).toContain("tests.test_auth::test_login_bad");
+  expect(record.textContent).toContain("수동 확인으로 기록됐지만 연결된 테스트가 실패했습니다");
+  expect(screen.getAllByText("1 / 1").length).toBeGreaterThan(0);  // the summary counts stay as saved
+  fireEvent.change(screen.getByLabelText(/관련 테스트 이름/), { target: { value: "test_login, test_logout" } });
+  expect((screen.getByLabelText(/관련 테스트 이름/) as HTMLInputElement).value).toBe("test_login, test_logout");
 });

@@ -21,7 +21,7 @@ from drift_gate.desktop.progress_report import render_markdown
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
     BaselineError, check_references, evidence_candidates, extract_requirements, inspect_progress,
-    list_documents, load_baseline, progress_history_view, record_snapshot, repository_root,
+    link_test_results, list_documents, load_baseline, progress_history_view, record_snapshot, repository_root,
     save_baseline, scan_impact,
 )
 
@@ -143,6 +143,20 @@ class DesktopBridge(QObject):
     def checkProgressLinks(self, path):
         directory = self._progress_dir()
         self._run_progress(path, lambda: [('progressLinks', check_references(path, directory))])
+
+    @Slot(str)
+    def loadTestResults(self, path):
+        try:
+            root = repository_root(path)
+        except (ValueError, OSError) as exc:
+            self.emit('progressError', requested_path=path, message=str(exc))
+            return
+        filename, _ = QFileDialog.getOpenFileName(
+            self.parent(), '테스트 결과 파일 선택', str(root), '테스트 결과 (*.xml *.json)')
+        if not filename:
+            return
+        directory = self._progress_dir()
+        self._run_progress(path, lambda: [('progressTests', link_test_results(path, directory, filename))])
 
     @Slot(str, str)
     def exportProgress(self, path, kind):
