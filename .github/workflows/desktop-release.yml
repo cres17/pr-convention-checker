@@ -1,0 +1,88 @@
+name: Desktop release
+
+# Publishes the macOS and Windows desktop apps as a DRAFT GitHub release.
+# Tags use the desktop- prefix because v1 / v1.0.0 belong to the GitHub Action.
+#   git tag desktop-v0.2.0 && git push origin desktop-v0.2.0
+# or run this workflow manually and enter the tag; the tag is created when the
+# draft is published, on the commit the workflow ran for.
+on:
+  push:
+    tags:
+      - "desktop-v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, e.g. desktop-v0.2.0"
+        required: true
+      dry_run:
+        description: "Build, test and prepare the release files, but do not create a release"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  # Same tests and build as every push, so a release never ships untested code.
+  build:
+    uses: ./.github/workflows/desktop-build.yml
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+      SHA: ${{ github.sha }}
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Check the tag name
+        run: |
+          if ! [[ "$TAG" =~ ^desktop-v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::Tag '$TAG' must look like desktop-v1.2.3 (optionally with a -rc.1 style suffix)."
+            exit 1
+          fi
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            echo "::error::A release for '$TAG' already exists. Delete it or choose a new tag."
+            exit 1
+          fi
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: DriftGate-*
+          merge-multiple: true
+          path: dist
+      - name: Checksums
+        working-directory: dist
+        run: |
+          ls -l
+          sha256sum DriftGate-macOS.zip DriftGate-Windows.zip | tee SHA256SUMS.txt
+      - name: Create draft release
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          cat > notes.md <<NOTES
+          Cross Agent (Drift Gate desktop) built from commit \`${SHA}\`.
+
+          | File | Platform |
+          |---|---|
+          | \`DriftGate-macOS.zip\` | macOS on **Apple Silicon** (arm64). Intel Macs are not supported by this build. |
+          | \`DriftGate-Windows.zip\` | Windows (x64) |
+
+          **These builds are not code-signed or notarized.**
+          - macOS: Gatekeeper blocks the first launch. Unzip, then right-click the app > Open, or run \`xattr -dr com.apple.quarantine DriftGate.app\`.
+          - Windows: SmartScreen may warn. Choose "More info" > "Run anyway" only if the SHA-256 matches `SHA256SUMS.txt`.
+
+          Verify a download with \`SHA256SUMS.txt\` (\`shasum -a 256 -c\` on macOS/Linux, \`Get-FileHash\` on Windows).
+          NOTES
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "Dry run: no release created for $TAG. Release notes that would be used:" >> "$GITHUB_STEP_SUMMARY"
+            cat notes.md >> "$GITHUB_STEP_SUMMARY"
+            ls -l dist
+            exit 0
+          fi
+          gh release create "$TAG" dist/DriftGate-macOS.zip dist/DriftGate-Windows.zip dist/SHA256SUMS.txt \
+            --repo "$REPO" --target "$SHA" --draft \
+            --title "Cross Agent desktop ${TAG#desktop-}" --notes-file notes.md
+          echo "Draft release created for $TAG. Review and publish it from the Releases page." >> "$GITHUB_STEP_SUMMARY"
