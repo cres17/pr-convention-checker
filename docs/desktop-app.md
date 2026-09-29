@@ -41,6 +41,27 @@ pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-a
 
 현재 macOS에서는 앱 번들 생성과 실행 시작, 합성 Git 저장소 검사와 diff 표시를 확인했습니다. Windows에서는 CI의 화면 테스트와 패키지 빌드·업로드를 확인했으며, 실제 사용자 PC에서의 실행은 아직 검증하지 않았습니다. 서명·공증, 설치 프로그램, 자동 업데이트도 아직 제공하지 않습니다. 서명되지 않은 개발 빌드는 OS 보안 안내가 표시될 수 있습니다.
 
+## 보고서 파일 이름
+
+HTML·JSON 저장 창의 기본 파일 이름은 선택한 저장소에 따라 달라집니다. 기본 형식은 `{project}_{branch}_{version}_{kind}_{timestamp}`입니다.
+
+```text
+pr-convention-checker_ver2_v1.0.0_drift-report_20260929-173012.html
+```
+
+- `project`: 저장소 폴더 이름
+- `branch`: 현재 브랜치. 분리된 HEAD에서는 생략
+- `version`: 현재 커밋에 정확히 붙은 태그. 없으면 `package.json` 또는 `pyproject.toml`의 버전(`v` 접두사 추가). 둘 다 없으면 생략
+- `kind`: 보고서 종류(현재 `drift-report`)
+- `timestamp`: 저장 시각(`YYYYMMDD-HHMMSS`). 같은 날 여러 번 저장해도 덮어쓰지 않음
+
+값이 없는 항목은 구분자와 함께 빠지고, 파일 이름에 쓸 수 없는 문자는 `-`로 바뀝니다. 저장소별로 형식을 바꾸려면 `.drift-gate.yml`에 다음을 추가합니다. 사용할 수 있는 자리표시자는 `project`, `branch`, `version`, `commit`, `kind`, `date`, `timestamp`이며, 그 밖의 값이 있으면 기본 형식을 사용합니다.
+
+```yaml
+report:
+  filename: "{project}-{version}-{kind}-{date}"
+```
+
 ## 화면에서 읽는 방법
 
 상단은 **현재 판정과 비교 기준**, 가운데는 **변경 파일·평가된 규칙·차단 항목**입니다. 아래 목록의 각 규칙을 선택하면 변경 파일, 필요한 문서, 엔진 근거와 코드 diff를 볼 수 있습니다. `통과`는 **설정된 정책을 이 입력에서 충족했다**는 뜻이며 코드와 문서의 모든 의미가 같다는 보장은 아닙니다.

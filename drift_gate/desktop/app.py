@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
     QTextBrowser, QVBoxLayout, QWidget,
 )
 
+from drift_gate.adapters.report_naming import default_report_path
 from drift_gate.desktop.service import DesktopScan, scan_repository
 from drift_gate.desktop.review_dialog import ReviewDialog, review_html
 from drift_gate.desktop.subscription_review import VERDICTS
@@ -359,7 +360,7 @@ class DesktopWindow(QMainWindow):
         if not self._scan:
             return
         filename, selected_filter = QFileDialog.getSaveFileName(
-            self, "검사 결과 저장", str(self._scan.repository / "drift-gate-report.html"),
+            self, "검사 결과 저장", str(default_report_path(self._scan.repository, "drift-report", "html", self._scan.policy_source)),
             "HTML 보고서 (*.html);;JSON 데이터 (*.json)",
         )
         if not filename:
