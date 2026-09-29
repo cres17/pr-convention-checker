@@ -1,6 +1,7 @@
 """Bridge contract checks; no model calls or real user repository mutations."""
 import json
 import os
+import re
 os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 import pytest
 pytest.importorskip('PySide6.QtWebEngineWidgets')
@@ -30,6 +31,17 @@ def test_bridge_keeps_llm_separate_and_exports(tmp_path, monkeypatch):
     data = json.loads(target.read_text(encoding='utf-8'))
     assert data['result'] == 'pass'
     assert data['llm_review']['verdict'] == 'fail'
+
+
+def test_export_suggests_project_named_file(monkeypatch):
+    QApplication.instance() or QApplication([])
+    bridge = DesktopBridge()
+    bridge.scan = scan()
+    seen = []
+    monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getSaveFileName',
+                        lambda *args: (seen.append(args[2]), ('', ''))[1])
+    bridge.exportReport('html')
+    assert re.fullmatch(r'.*[\\/]sample_drift-report_\d{8}-\d{6}\.html', seen[0])
 
 
 def test_bridge_does_not_start_llm_without_scan():

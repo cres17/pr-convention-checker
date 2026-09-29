@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBo
 from drift_gate.desktop.app import ScanWorker
 from drift_gate.desktop.review_dialog import ReviewWorker, review_html
 from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
+from drift_gate.adapters.report_naming import default_report_path
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
     evidence_candidates, extract_requirements, inspect_progress,
@@ -206,7 +207,8 @@ class DesktopBridge(QObject):
         if not self.scan or kind not in {'html', 'json'}:
             return
         filename, _ = QFileDialog.getSaveFileName(self.parent(), '결과 저장',
-            str(self.scan.repository / f'drift-gate-report.{kind}'), f'{kind.upper()} (*.{kind})')
+            str(default_report_path(self.scan.repository, 'drift-report', kind, self.scan.policy_source)),
+            f'{kind.upper()} (*.{kind})')
         if not filename:
             return
         try:
