@@ -50,6 +50,6 @@ Python 검사 서비스와 gate 판정 규칙은 유지한다. 화면의 직접 
 
 합성 Git 저장소에서 코드 `GET /members`, 문서 `GET /customers` 변경을 만들고 실제 데스크톱 버튼으로 검사했다. 규칙 엔진은 fail, 변경 파일 2개, 조치 항목 1개로 판정했다. 이는 UI 연결 검증이며 일반 정확도 측정이 아니다.
 
-자동 검증: Python 562개, React 상호작용 5개 통과. TypeScript 빌드와 Ruff 주요 오류 검사를 통과했다. 실제 화면에서 검사·필터·diff·설정·전송 미리보기를 확인한다. Windows 실행은 CI 패키지 빌드와 로컬 macOS 실행 검증을 구분해 기록한다.
+자동 검증: Python 562개, React 상호작용 5개 통과. TypeScript 빌드와 Ruff 주요 오류 검사를 통과했다. 실제 화면에서 검사·필터·diff·설정·전송 미리보기를 확인한다. [Windows·macOS 패키지 빌드](https://github.com/cres17/pr-convention-checker/actions/runs/36536161858)가 모두 통과했다. 실제 Windows 사용자 PC 실행은 아직 확인하지 않았다.
 
 ![실제 합성 저장소 검사 화면](../assets/cross-agent-desktop.png)
