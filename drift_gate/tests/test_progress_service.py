@@ -1,5 +1,6 @@
 """Controlled cases for document-sourced project progress."""
 
+import shutil
 import subprocess
 
 import pytest
@@ -11,6 +12,7 @@ from drift_gate.desktop.progress_service import (
     inspect_progress,
     list_documents,
     load_baseline,
+    normalize_remote,
     save_baseline,
 )
 
@@ -208,3 +210,70 @@ def test_duplicate_locations_must_point_at_selected_documents(tmp_path):
     draft["requirements"][0]["duplicates"] = [{"path": "other.md", "line": 1}]
     with pytest.raises(BaselineError):
         save_baseline(repo, tmp_path / "state", draft)
+
+
+def _origin(repo, url):
+    subprocess.run(["git", "-C", str(repo), "remote", "add", "origin", url], check=True)
+
+
+def test_remote_urls_of_one_repository_normalize_to_the_same_identity():
+    same = [
+        "git@github.com:cres17/pr-convention-checker.git",
+        "https://github.com/cres17/pr-convention-checker",
+        "https://user:token@GitHub.com/cres17/pr-convention-checker.git/",
+        "ssh://git@github.com/cres17/pr-convention-checker.git",
+    ]
+    assert {normalize_remote(url) for url in same} == {"github.com/cres17/pr-convention-checker"}
+    assert normalize_remote("https://github.com/cres17/other") != normalize_remote(same[0])
+    for local in ("", "/srv/git/x.git", "../x.git", "C:\\repos\\x", "file:///srv/x.git", "~/x", "plain"):
+        assert normalize_remote(local) is None
+
+
+def test_baseline_follows_the_remote_when_the_folder_moves(tmp_path):
+    repo = project(tmp_path)
+    _origin(repo, "git@github.com:acme/shop.git")
+    draft = extract_requirements(repo, ["README.md"])
+    save_baseline(repo, tmp_path / "state", draft)
+    moved = tmp_path / "moved" / "shop-clone"
+    moved.parent.mkdir()
+    shutil.copytree(repo, moved)
+    subprocess.run(["git", "-C", str(moved), "remote", "set-url", "origin", "https://github.com/acme/shop"], check=True)
+    loaded = load_baseline(moved, tmp_path / "state")
+    assert loaded and loaded["version"] == 1 and loaded["remote"] == "github.com/acme/shop"
+    assert inspect_progress(moved, tmp_path / "state")["total"] == 2
+
+
+def test_projects_with_different_remotes_keep_separate_baselines(tmp_path):
+    first = project(tmp_path)
+    _origin(first, "https://github.com/acme/one.git")
+    save_baseline(first, tmp_path / "state", extract_requirements(first, ["README.md"]))
+    second = tmp_path / "second"
+    shutil.copytree(first, second)
+    subprocess.run(["git", "-C", str(second), "remote", "set-url", "origin", "https://github.com/acme/two.git"], check=True)
+    assert load_baseline(second, tmp_path / "state") is None
+
+
+def test_baseline_saved_before_remote_keys_is_found_and_rewritten(tmp_path):
+    repo = project(tmp_path)
+    draft = extract_requirements(repo, ["README.md"])
+    state = tmp_path / "state"
+    save_baseline(repo, state, draft)  # no remote yet: stored under the path key
+    _origin(repo, "https://github.com/acme/shop.git")
+    old = load_baseline(repo, state)
+    assert old and old["version"] == 1 and "remote" not in old
+    migrated = save_baseline(repo, state, draft)
+    assert migrated["version"] == 1 and migrated["remote"] == "github.com/acme/shop"
+    assert len(list(state.glob("*.json"))) == 2  # the old file is left untouched
+    moved = tmp_path / "elsewhere"
+    shutil.copytree(repo, moved)
+    assert load_baseline(moved, state)["remote"] == "github.com/acme/shop"
+
+
+def test_repository_without_a_usable_remote_still_keys_by_path(tmp_path):
+    repo = project(tmp_path)
+    _origin(repo, "/srv/git/local.git")
+    save_baseline(repo, tmp_path / "state", extract_requirements(repo, ["README.md"]))
+    assert "remote" not in load_baseline(repo, tmp_path / "state")
+    moved = tmp_path / "moved"
+    shutil.copytree(repo, moved)
+    assert load_baseline(moved, tmp_path / "state") is None

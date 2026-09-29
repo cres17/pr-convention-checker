@@ -324,17 +324,83 @@ def _item(
     }
 
 
-def _store_file(root: Path, data_dir: Path) -> Path:
+_SCP_REMOTE = re.compile(r"^(?:[^@/\s]+@)?([^:/\s]+):(?!//)(.+)$")
+_WINDOWS_DRIVE = re.compile(r"^[A-Za-z]:[\\/]")
+
+
+def normalize_remote(url: str) -> str | None:
+    """Host and path of a remote URL, so https/ssh/scp clones of one repo match.
+
+    Credentials, scheme, a trailing ``.git`` and the host's case are dropped.
+    Local-path and ``file://`` remotes are not portable identities: None.
+    """
+    url = url.strip()
+    if not url or url.startswith((".", "/", "~")) or _WINDOWS_DRIVE.match(url):
+        return None
+    if "://" in url:
+        scheme, _, rest = url.partition("://")
+        if scheme.lower() == "file":
+            return None
+        host, _, path = rest.partition("/")
+    else:
+        match = _SCP_REMOTE.match(url)
+        if not match:
+            return None
+        host, path = match.groups()
+    host = host.rpartition("@")[2].lower()
+    path = re.sub(r"(\.git)?/*$", "", path.strip("/"))
+    return f"{host}/{path}" if host and path else None
+
+
+def _remote_identity(root: Path) -> str | None:
+    """Normalized URL of ``origin`` (else the first remote), or None without one."""
+
+    def git(*args: str) -> str:
+        result = subprocess.run(
+            ["git", "-C", str(root), *args],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+        return result.stdout.strip() if result.returncode == 0 else ""
+
+    names = git("remote").split()
+    for name in ("origin", *sorted(names)):
+        if name in names:
+            identity = normalize_remote(git("remote", "get-url", name))
+            if identity:
+                return identity
+    return None
+
+
+def _legacy_store_file(root: Path, data_dir: Path) -> Path:
+    """Baselines saved before remote-based keys were keyed by absolute path."""
     return data_dir / (_hash(str(root).encode())[:24] + ".json")
+
+
+def _store_file(root: Path, data_dir: Path) -> Path:
+    """Keyed by remote URL so moving or re-cloning a project keeps its baseline."""
+    remote = _remote_identity(root)
+    if remote is None:
+        return _legacy_store_file(root, data_dir)
+    return data_dir / (_hash(f"remote:{remote}".encode())[:24] + ".json")
 
 
 def load_baseline(path: str | Path, data_dir: Path) -> dict | None:
     root = _repository(path)
+    remote = _remote_identity(root)
     target = _store_file(root, data_dir)
     if not target.is_file():
-        return None
+        target = _legacy_store_file(root, data_dir)
+        if remote is None or not target.is_file():
+            return None
     data = json.loads(target.read_text(encoding="utf-8"))
-    if data.get("repository") != str(root) or data.get("schema") != 1:
+    if data.get("schema") != 1:
+        raise ValueError("저장된 기준의 형식이 현재 앱과 맞지 않습니다.")
+    # Files keyed by remote carry it; path-keyed files must match this folder.
+    owner = data.get("remote")
+    if (owner != remote) if owner is not None else (data.get("repository") != str(root)):
         raise ValueError("저장된 기준의 형식이 현재 앱과 맞지 않습니다.")
     return data
 
@@ -441,9 +507,22 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
     if errors:
         raise BaselineError(errors)
     previous = load_baseline(root, data_dir)
-    if previous and previous["documents"] == docs and previous["requirements"] == items:
+    remote = _remote_identity(root)
+    target = _store_file(root, data_dir)
+    # A baseline still stored under the old path key is rewritten under the remote key.
+    if (
+        previous
+        and previous["documents"] == docs
+        and previous["requirements"] == items
+        and (remote is None or target.is_file())
+    ):
         return previous
-    version = (previous["version"] + 1) if previous else 1
+    unchanged = bool(
+        previous
+        and previous["documents"] == docs
+        and previous["requirements"] == items
+    )
+    version = (previous["version"] + (0 if unchanged else 1)) if previous else 1
     saved = {
         "schema": 1,
         "repository": str(root),
@@ -452,8 +531,9 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
         "documents": docs,
         "requirements": items,
     }
+    if remote is not None:
+        saved["remote"] = remote
     data_dir.mkdir(parents=True, exist_ok=True)
-    target = _store_file(root, data_dir)
     with tempfile.NamedTemporaryFile(
         "w", encoding="utf-8", dir=data_dir, delete=False
     ) as stream:
