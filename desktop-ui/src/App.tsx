@@ -18,7 +18,9 @@ import {
   Download,
   PanelLeftClose,
   PanelLeftOpen,
+  ChartNoAxesCombined,
 } from "lucide-react";
+import ProjectProgress from "./features/project-progress/ProjectProgress";
 import { StatsDisplay } from "./components/tool-ui/stats-display";
 import { parseSerializableStatsDisplay } from "./components/tool-ui/stats-display/schema";
 import { ProgressTracker } from "./components/tool-ui/progress-tracker";
@@ -87,6 +89,7 @@ export default function App({
   preview?: boolean;
 }) {
   const bridge = useRef<Bridge | null>(null);
+  const [desktopBridge, setDesktopBridge] = useState<Bridge | null>(null);
   const [connected, setConnected] = useState(false);
   const [page, setPage] = useState("review");
   const [path, setPath] = useState(initialScan?.repository ?? "");
@@ -109,12 +112,17 @@ export default function App({
   const [collapsed, setCollapsed] = useState(false);
   const [historyScan, setHistoryScan] = useState<Scan | null>(null);
   const [fileIndex, setFileIndex] = useState(0);
+  const [progressEvent, setProgressEvent] = useState<any>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     if (preview) return;
     let active = true;
     connect((event) => {
       if (!active) return;
+      if (String(event.type).startsWith("progress")) {
+        setProgressEvent(event);
+        return;
+      }
       switch (event.type) {
         case "ready":
           setConnected(true);
@@ -165,6 +173,7 @@ export default function App({
     })
       .then((value) => {
         bridge.current = value;
+        setDesktopBridge(value);
       })
       .catch((e) => setError(String(e)));
     return () => {
@@ -252,6 +261,7 @@ export default function App({
         <nav aria-label="주 메뉴">
           {[
             ["review", "리뷰", LayoutList],
+            ["progress", "프로젝트 현황", ChartNoAxesCombined],
             ["rules", "규칙", ShieldCheck],
             ["history", "히스토리", History],
             ["settings", "설정", SlidersHorizontal],
@@ -300,6 +310,7 @@ export default function App({
               {
                 {
                   review: "리뷰",
+                  progress: "프로젝트 현황",
                   rules: "규칙",
                   history: "히스토리",
                   settings: "설정",
@@ -324,6 +335,7 @@ export default function App({
                 {
                   {
                     review: "변경을 살피고, 확신을 더하세요.",
+                    progress: "계획에서 지금까지, 한눈에 확인하세요.",
                     rules: "검사의 기준을 확인하세요.",
                     history: "검토의 흐름을 이어가세요.",
                     settings: "나에게 맞는 리뷰 환경.",
@@ -335,6 +347,8 @@ export default function App({
                   {
                     review:
                       "규칙 판정부터 코드 근거, AI의 두 번째 의견까지 한곳에서.",
+                    progress:
+                      "문서의 기능과 완료 조건을 정리하고, 코드 근거와 남은 작업을 확인하세요.",
                     rules:
                       "현재 검사에 사용한 정책입니다. 실제 파일과 구분해 확인하세요.",
                     history: "이 앱 실행 중 완료한 최근 20개 검사입니다.",
@@ -740,6 +754,9 @@ export default function App({
                 </>
               )}
             </>
+          )}
+          {page === "progress" && (
+            <ProjectProgress path={path} connected={connected} bridge={desktopBridge} event={progressEvent} />
           )}
           {page === "rules" && (
             <section className="card document">

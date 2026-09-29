@@ -17,6 +17,11 @@ const api = vi.hoisted(() => ({
   chooseRepository: vi.fn(),
   cancelReview: vi.fn(),
   exportReport: vi.fn(),
+  listProjectDocs: vi.fn(),
+  previewProgress: vi.fn(),
+  saveProgress: vi.fn(),
+  inspectProgress: vi.fn(),
+  suggestProgressEvidence: vi.fn(),
 }));
 beforeAll(() => {
   HTMLDialogElement.prototype.showModal = function () {
@@ -100,4 +105,39 @@ it("preserves a complete Git patch without duplicating file headers", () => {
   file.patch = `diff --git a/${file.path} b/${file.path}\n--- a/${file.path}\n+++ b/${file.path}\n${file.patch}`;
   render(<App initialScan={value} />);
   expect(screen.getByText((_text, node) => node?.tagName === "PRE" && node.textContent === file.patch)).toBeTruthy();
+});
+
+it("keeps project progress unconfirmed until the user saves reviewed evidence", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  const { act } = await import("react");
+  act(() => emit({ type: "progressDocs", repository: "/sample/project", documents: [
+    { path: "README.md", tracked: true, bytes: 100 },
+  ], omitted: 0, baseline: null }));
+  fireEvent.click(screen.getByRole("button", { name: "기능 후보 추출" }));
+  expect(api.previewProgress).toHaveBeenCalledWith("/sample/project", '["README.md"]');
+  const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
+  act(() => emit({ type: "progressPreview", repository: "/sample/project",
+    documents: { "README.md": "abc" }, requirements: [{
+      id: "one", title: "로그인", criterion: "로그인", area: "계정", included: true,
+      source, implementation_status: "unknown", evidence: null,
+      verification_status: "unverified", verification_note: "",
+    }], truncated: false }));
+  expect(screen.getByText("기준 저장 필요")).toBeTruthy();
+  expect(screen.getAllByText("확인 필요").length).toBeGreaterThan(0);
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  expect(api.saveProgress).toHaveBeenCalledOnce();
+  const saved = JSON.parse(api.saveProgress.mock.calls[0][1]);
+  expect(saved.requirements[0].implementation_status).toBe("unknown");
+  act(() => emit({ type: "progressSaved", requested_path: "/sample/project",
+    baseline: { ...saved, version: 1 } }));
+  act(() => emit({ type: "progressReport", requested_path: "/sample/project", report: {
+    repository: "/sample/project", version: 1, at: "2026-09-29T00:00:00Z", head: "abc",
+    stale_documents: [], total: 1, items: saved.requirements,
+    counts: { implemented: 0, partial: 0, not_implemented: 0, unknown: 1, complete: 0, excluded: 0 },
+    limitations: "수동 확인 기준",
+  } }));
+  expect(screen.getAllByText("0 / 1").length).toBe(2);
+  expect(screen.getByRole("button", { name: "기준 문서 변경" })).toBeTruthy();
 });

@@ -4,7 +4,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from PySide6.QtCore import QObject, QSettings, QThread, QUrl, Signal, Slot
+from PySide6.QtCore import QObject, QSettings, QStandardPaths, QThread, QUrl, Signal, Slot
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineUrlRequestInterceptor
 from PySide6.QtWebEngineWidgets import QWebEngineView
@@ -14,6 +14,10 @@ from drift_gate.desktop.app import ScanWorker
 from drift_gate.desktop.review_dialog import ReviewWorker, review_html
 from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
 from drift_gate.reporters.html import HtmlReporter
+from drift_gate.desktop.progress_service import (
+    evidence_candidates, extract_requirements, inspect_progress,
+    list_documents, load_baseline, save_baseline,
+)
 
 WEB_ROOT = Path(__file__).parent / 'web'
 
@@ -56,6 +60,53 @@ class DesktopBridge(QObject):
 
     def emit(self, kind, **data):
         self.event.emit(json.dumps({'type': kind, **data}, ensure_ascii=False))
+
+    def _progress_dir(self):
+        return Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)) / 'progress'
+
+    @Slot(str)
+    def listProjectDocs(self, path):
+        try:
+            result = list_documents(path)
+            result['baseline'] = load_baseline(path, self._progress_dir())
+            self.emit('progressDocs', requested_path=path, **result)
+        except (ValueError, OSError, json.JSONDecodeError) as exc:
+            self.emit('progressError', requested_path=path, message=str(exc))
+
+    @Slot(str, str)
+    def previewProgress(self, path, selected_json):
+        try:
+            self.emit('progressPreview', requested_path=path,
+                      **extract_requirements(path, json.loads(selected_json)))
+        except (ValueError, OSError, json.JSONDecodeError) as exc:
+            self.emit('progressError', requested_path=path, message=str(exc))
+
+    @Slot(str, str)
+    def saveProgress(self, path, payload_json):
+        try:
+            baseline = save_baseline(path, self._progress_dir(), json.loads(payload_json))
+            self.emit('progressSaved', requested_path=path, baseline=baseline)
+            self.emit('progressReport', requested_path=path,
+                      report=inspect_progress(path, self._progress_dir()))
+        except (ValueError, OSError, json.JSONDecodeError) as exc:
+            self.emit('progressError', requested_path=path, message=str(exc))
+
+    @Slot(str)
+    def inspectProgress(self, path):
+        try:
+            self.emit('progressReport', requested_path=path,
+                      report=inspect_progress(path, self._progress_dir()))
+        except (ValueError, OSError, json.JSONDecodeError) as exc:
+            self.emit('progressError', requested_path=path, message=str(exc))
+
+    @Slot(str, str)
+    def suggestProgressEvidence(self, path, item_json):
+        try:
+            item = json.loads(item_json)
+            self.emit('progressEvidence', requested_path=path, id=item['id'],
+                      candidates=evidence_candidates(path, item))
+        except (ValueError, OSError, json.JSONDecodeError, KeyError) as exc:
+            self.emit('progressError', requested_path=path, message=str(exc))
 
     @Slot()
     def initialize(self):

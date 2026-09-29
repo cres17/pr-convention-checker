@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QApplication
 from drift_gate.desktop.web_app import DesktopBridge, scan_payload
 from drift_gate.tests.test_subscription_review import scan, response
 from drift_gate.desktop.subscription_review import parse_review
+from drift_gate.tests.test_progress_service import project
 
 
 def test_payload_uses_engine_result_without_reclassification():
@@ -19,7 +20,7 @@ def test_payload_uses_engine_result_without_reclassification():
 
 
 def test_bridge_keeps_llm_separate_and_exports(tmp_path, monkeypatch):
-    app = QApplication.instance() or QApplication([])
+    QApplication.instance() or QApplication([])
     bridge = DesktopBridge()
     bridge.scan = scan()
     bridge.review = parse_review(response('fail'), 'codex')
@@ -32,7 +33,26 @@ def test_bridge_keeps_llm_separate_and_exports(tmp_path, monkeypatch):
 
 
 def test_bridge_does_not_start_llm_without_scan():
-    app = QApplication.instance() or QApplication([])
+    QApplication.instance() or QApplication([])
     bridge = DesktopBridge()
     bridge.startReview('codex', '')
     assert bridge.review_worker is None
+
+
+def test_progress_bridge_reads_documents_and_persists_reviewed_baseline(tmp_path, monkeypatch):
+    QApplication.instance() or QApplication([])
+    repo = project(tmp_path)
+    bridge = DesktopBridge()
+    monkeypatch.setattr(bridge, '_progress_dir', lambda: tmp_path / 'app-data')
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    bridge.listProjectDocs(str(repo))
+    assert messages[-1]['type'] == 'progressDocs'
+    assert messages[-1]['requested_path'] == str(repo)
+    bridge.previewProgress(str(repo), json.dumps(['README.md']))
+    preview = messages[-1]
+    assert preview['type'] == 'progressPreview'
+    bridge.saveProgress(str(repo), json.dumps(preview))
+    assert messages[-2]['type'] == 'progressSaved'
+    assert messages[-1]['type'] == 'progressReport'
+    assert messages[-1]['report']['counts']['complete'] == 0

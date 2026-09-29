@@ -28,6 +28,37 @@ export type Review = {
   findings: { rule_id: string; reason: string; suggestion: string }[];
   limitations: string[];
 };
+export type ProgressItem = {
+  id: string;
+  title: string;
+  criterion: string;
+  area: string;
+  included: boolean;
+  source: { path: string; line: number; excerpt: string; sha256: string };
+  implementation_status: "unknown" | "partial" | "implemented" | "not_implemented";
+  implementation_note?: string;
+  evidence: { path: string; line: number; excerpt?: string; sha256?: string; note: string } | null;
+  verification_status: "unverified" | "verified";
+  verification_note: string;
+  stale_evidence?: boolean;
+};
+export type ProgressBaseline = {
+  repository: string;
+  documents: Record<string, string>;
+  requirements: ProgressItem[];
+  version?: number;
+};
+export type ProgressReport = {
+  repository: string;
+  version: number;
+  at: string;
+  head: string;
+  stale_documents: string[];
+  total: number;
+  counts: Record<string, number>;
+  items: ProgressItem[];
+  limitations: string;
+};
 export interface Bridge {
   initialize: () => void;
   chooseRepository: () => void;
@@ -36,6 +67,11 @@ export interface Bridge {
   startReview: (provider: string, path: string) => void;
   cancelReview: () => void;
   exportReport: (kind: string) => void;
+  listProjectDocs: (path: string) => void;
+  previewProgress: (path: string, selectedJson: string) => void;
+  saveProgress: (path: string, payloadJson: string) => void;
+  inspectProgress: (path: string) => void;
+  suggestProgressEvidence: (path: string, itemJson: string) => void;
   event: { connect: (fn: (message: string) => void) => void };
 }
 declare global {
