@@ -193,3 +193,34 @@ it("shows how to fix a violation and opens the required document", async () => {
   fireEvent.click(screen.getByRole("button", { name: /문서 수정 후 다시 검사/ }));
   expect(api.startScan).toHaveBeenCalledWith("/sample/project", "HEAD");
 });
+
+it("marks every invalid item after a failed save and jumps to the first one", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  const { act } = await import("react");
+  const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
+  const make = (id: string, title: string) => ({
+    id, title, criterion: title, area: "계정", included: true, source,
+    implementation_status: "unknown" as const, evidence: null,
+    verification_status: "unverified" as const, verification_note: "",
+    ...(id === "one" ? { duplicates: [{ path: "docs/b.md", line: 4, excerpt: "- [ ] 로그인", criterion: "로그인" }] } : {}),
+  });
+  act(() => emit({ type: "progressSaved", requested_path: "/sample/project",
+    baseline: { repository: "/sample/project", documents: { "README.md": "abc" },
+      requirements: [make("one", "로그인"), make("two", "가입")], version: 1 } }));
+  fireEvent.click(screen.getByText(/로그인/, { selector: "strong" }));
+  expect(screen.getByText(/같은 항목: docs\/b\.md:4/)).toBeTruthy();
+  fireEvent.click(screen.getByText(/가입/, { selector: "strong" }));
+  act(() => emit({ type: "progressError", requested_path: "/sample/project",
+    message: "2개 항목을 확인해 주세요. 첫 오류: 줄 번호", errors: [
+      { id: "two", field: "criterion", message: "완료 조건을 500자 이하로 입력해 주세요." },
+      { id: "one", field: "title", message: "기능 이름을 500자 이하로 입력해 주세요." },
+    ] }));
+  expect(screen.getByText("2개 항목을 확인하세요.")).toBeTruthy();
+  expect(screen.getByText("완료 조건을 500자 이하로 입력해 주세요.")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "첫 항목으로 이동" }));
+  await waitFor(() => expect(document.activeElement?.getAttribute("data-field")).toBe("title"));
+  fireEvent.change(document.activeElement as HTMLInputElement, { target: { value: "로그인 화면" } });
+  expect(screen.getByText("1개 항목을 확인하세요.")).toBeTruthy();
+});

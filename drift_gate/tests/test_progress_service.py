@@ -5,10 +5,12 @@ import subprocess
 import pytest
 
 from drift_gate.desktop.progress_service import (
+    BaselineError,
     evidence_candidates,
     extract_requirements,
     inspect_progress,
     list_documents,
+    load_baseline,
     save_baseline,
 )
 
@@ -130,3 +132,79 @@ def test_completion_table_becomes_reviewable_features(tmp_path):
     assert result["requirements"][0]["title"] == "로그인"
     assert result["requirements"][0]["criterion"] == "요청이 연결된다"
     assert result["requirements"][0]["implementation_status"] == "unknown"
+
+
+def test_code_blocks_are_not_requirements_and_real_headings_survive(tmp_path):
+    repo = project(tmp_path)
+    (repo / "GUIDE.md").write_text(
+        "## 로그인\n\n```md\n- [ ] 코드블록 안 체크\n## 예시 제목\n```\n\n"
+        "~~~\n- [x] 물결 펜스 안\n~~~\n\n````\n```\n- [ ] 중첩 펜스 안\n```\n````\n",
+        encoding="utf-8",
+    )
+    subprocess.run(["git", "-C", str(repo), "add", "GUIDE.md"], check=True)
+    titles = [
+        item["title"]
+        for item in extract_requirements(repo, ["GUIDE.md"])["requirements"]
+    ]
+    assert titles == ["로그인"]
+
+
+def test_unclosed_fence_hides_the_rest_but_keeps_earlier_items(tmp_path):
+    repo = project(tmp_path)
+    (repo / "GUIDE.md").write_text(
+        "- [ ] 앞 항목\n```\n- [ ] 닫히지 않은 블록\n", encoding="utf-8"
+    )
+    subprocess.run(["git", "-C", str(repo), "add", "GUIDE.md"], check=True)
+    titles = [i["title"] for i in extract_requirements(repo, ["GUIDE.md"])["requirements"]]
+    assert titles == ["앞 항목"]
+
+
+def test_same_title_in_several_documents_is_kept_as_duplicate_locations(tmp_path):
+    repo = project(tmp_path)
+    (repo / "a.md").write_text("- [x] 로그인\n", encoding="utf-8")
+    (repo / "b.md").write_text("- [ ] 로그인\n- [ ] 로그인\n", encoding="utf-8")
+    subprocess.run(["git", "-C", str(repo), "add", "a.md", "b.md"], check=True)
+    draft = extract_requirements(repo, ["a.md", "b.md"])
+    assert len(draft["requirements"]) == 1
+    item = draft["requirements"][0]
+    assert item["source"]["path"] == "a.md"
+    assert [(d["path"], d["line"]) for d in item["duplicates"]] == [("b.md", 1), ("b.md", 2)]
+    saved = save_baseline(repo, tmp_path / "state", draft)
+    assert len(saved["requirements"][0]["duplicates"]) == 2
+
+
+def test_doc_whose_only_item_is_a_duplicate_does_not_fall_back_to_headings(tmp_path):
+    repo = project(tmp_path)
+    (repo / "a.md").write_text("- [x] 로그인\n", encoding="utf-8")
+    (repo / "b.md").write_text("## 개요\n- [ ] 로그인\n", encoding="utf-8")
+    subprocess.run(["git", "-C", str(repo), "add", "a.md", "b.md"], check=True)
+    draft = extract_requirements(repo, ["a.md", "b.md"])
+    assert [i["title"] for i in draft["requirements"]] == ["로그인"]
+
+
+def test_save_reports_every_invalid_item_with_its_field(tmp_path):
+    repo = project(tmp_path)
+    draft = extract_requirements(repo, ["README.md"])
+    first, second = draft["requirements"]
+    first["implementation_status"] = "implemented"
+    first["evidence"] = {"path": "src/login.py", "line": 99, "note": ""}
+    second["title"] = " "
+    second["implementation_status"] = "not_implemented"
+    with pytest.raises(BaselineError) as raised:
+        save_baseline(repo, tmp_path / "state", draft)
+    found = {(e["id"], e["field"]) for e in raised.value.errors}
+    assert found == {
+        (first["id"], "evidence.line"),
+        (second["id"], "title"),
+        (second["id"], "implementation_note"),
+    }
+    assert "3개 항목" in str(raised.value)
+    assert load_baseline(repo, tmp_path / "state") is None
+
+
+def test_duplicate_locations_must_point_at_selected_documents(tmp_path):
+    repo = project(tmp_path)
+    draft = extract_requirements(repo, ["README.md"])
+    draft["requirements"][0]["duplicates"] = [{"path": "other.md", "line": 1}]
+    with pytest.raises(BaselineError):
+        save_baseline(repo, tmp_path / "state", draft)

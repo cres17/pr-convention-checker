@@ -53,8 +53,10 @@ export type ProgressItem = {
   verification_status: "unverified" | "verified";
   verification_note: string;
   stale_evidence?: boolean;
+  duplicates?: { path: string; line: number; excerpt: string; criterion: string }[];
   effective_status?: ProgressItem["implementation_status"] | "excluded";
 };
+export type ProgressFieldError = { id: string; field: string; message: string };
 export type ProgressBaseline = {
   repository: string;
   documents: Record<string, string>;
