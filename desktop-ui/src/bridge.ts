@@ -68,6 +68,7 @@ export type ProgressItem = {
   verification_note: string;
   stale_evidence?: boolean;
   doc_marked_done?: boolean;
+  test_patterns?: string[];
   doc_claim?: "unbacked" | null;
   duplicates?: { path: string; line: number; excerpt: string; criterion: string }[];
   effective_status?: ProgressItem["implementation_status"] | "excluded";
@@ -90,6 +91,22 @@ export type ProgressHistory = {
     complete_delta: number;
     counts: ChangeCounts;
   } & Record<"gained" | "regressed" | "excluded" | "reincluded" | "added" | "removed", { id: string; title: string }[]>);
+};
+export type TestLink = {
+  patterns: string[];
+  matched: number;
+  passed: number;
+  failed: number;
+  skipped: number;
+  failing: string[];
+  no_match: boolean;
+};
+export type TestLinks = {
+  format: string;
+  file: string;
+  modified: string;
+  total: number;
+  items: Record<string, TestLink>;
 };
 export type LinkIssue = {
   path: string;
@@ -135,6 +152,7 @@ export interface Bridge {
   previewPolicy: (path: string, preset: string) => void;
   createPolicy: (path: string, preset: string) => void;
   checkProgressLinks: (path: string) => void;
+  loadTestResults: (path: string) => void;
   exportProgress: (path: string, kind: string) => void;
   openDocument: (relative: string) => void;
   listProjectDocs: (path: string) => void;

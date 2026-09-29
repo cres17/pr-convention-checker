@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, BookOpen, Check, ChevronRight, FileSearch, Plus, RefreshCw } from "lucide-react";
-import type { Bridge, LinkReport, ProgressHistory, ProgressBaseline, ProgressFieldError, ProgressItem, ProgressReport } from "../../bridge";
+import type { Bridge, LinkReport, ProgressHistory, TestLinks, ProgressBaseline, ProgressFieldError, ProgressItem, ProgressReport } from "../../bridge";
 import History from "./History";
 import { docClaimUnbacked, effectiveStatus, isStaleEvidence } from "./status";
 
@@ -21,6 +21,11 @@ function nextAction(item: ProgressItem, report: ProgressReport | null): string {
   if (status === "not_implemented") return "기능 구현";
   if (item.verification_status !== "verified") return "동작 검증 기록";
   return "완료 확인";
+}
+
+function testSummary(link: { matched: number; passed: number; failed: number; skipped: number; no_match: boolean }): string {
+  if (link.no_match) return "일치하는 테스트 없음";
+  return [`통과 ${link.passed}`, link.failed ? `실패 ${link.failed}` : "", link.skipped ? `건너뜀 ${link.skipped}` : ""].filter(Boolean).join(" · ");
 }
 
 function FieldMessage({ text }: { text?: string }) {
@@ -46,6 +51,7 @@ export default function ProjectProgress({
   const [focusField, setFocusField] = useState("");
   const [links, setLinks] = useState<LinkReport | null>(null);
   const [history, setHistory] = useState<ProgressHistory | null>(null);
+  const [tests, setTests] = useState<TestLinks | null>(null);
   const [exported, setExported] = useState("");
 
   useEffect(() => {
@@ -58,6 +64,7 @@ export default function ProjectProgress({
     setFieldErrors([]);
     setLinks(null);
     setHistory(null);
+    setTests(null);
     setExported("");
     setShowDocuments(true);
     if (connected && path && bridge) {
@@ -120,6 +127,10 @@ export default function ProjectProgress({
       case "progressReport":
         setBusy("");
         setReport(event.report);
+        break;
+      case "progressTests":
+        setBusy("");
+        setTests(event as unknown as TestLinks);
         break;
       case "progressHistory":
         setHistory({ snapshots: event.snapshots, since_save: event.since_save } as ProgressHistory);
@@ -240,7 +251,8 @@ export default function ProjectProgress({
       {history && <History history={history} />}
       <section className="card progress-workspace">
         <div className="section-heading"><h2>기능별 현황 <span>{draft.requirements.length}</span></h2><div className="progress-actions"><button className="secondary" onClick={addManual} disabled={!!busy}><Plus size={15} /> 직접 추가</button><button className="primary" onClick={save} disabled={!!busy}>{busy === "save" ? "저장 중…" : "기준과 근거 저장"}</button></div></div>
-        <div className="progress-actions"><button className="secondary" disabled={!report || !!busy} onClick={() => { setBusy("links"); bridge?.checkProgressLinks(path); }}>{busy === "links" ? "점검 중…" : "문서 링크 점검"}</button><button className="secondary" disabled={!report || !!busy} onClick={() => bridge?.exportProgress(path, "md")}>Markdown 저장</button><button className="secondary" disabled={!report || !!busy} onClick={() => bridge?.exportProgress(path, "json")}>JSON 저장</button>{exported && <span className="hint" role="status">{exported}</span>}</div>
+        <div className="progress-actions"><button className="secondary" disabled={!report || !!busy} onClick={() => { setBusy("links"); bridge?.checkProgressLinks(path); }}>{busy === "links" ? "점검 중…" : "문서 링크 점검"}</button><button className="secondary" disabled={!report || !!busy} onClick={() => { setBusy("tests"); bridge?.loadTestResults(path); }}>{busy === "tests" ? "읽는 중…" : "테스트 결과 불러오기"}</button><button className="secondary" disabled={!report || !!busy} onClick={() => bridge?.exportProgress(path, "md")}>Markdown 저장</button><button className="secondary" disabled={!report || !!busy} onClick={() => bridge?.exportProgress(path, "json")}>JSON 저장</button>{exported && <span className="hint" role="status">{exported}</span>}</div>
+        {tests && <p className="hint" role="status">테스트 결과: {tests.file} · {tests.format === "junit" ? "JUnit XML" : "Jest/Vitest JSON"} · 테스트 {tests.total}개 · 파일 시각 {new Date(tests.modified).toLocaleString("ko-KR")}. 앱이 테스트를 실행한 것이 아니며, 현황 수치에는 반영하지 않습니다.</p>}
         {links && <div className="progress-links" aria-label="문서 링크 점검 결과">
           <h3>문서 링크 점검 <span>{links.checked}개 확인</span></h3>
           {(() => {
@@ -256,7 +268,7 @@ export default function ProjectProgress({
         <p className="hint">{report ? `요구사항 v${report.version} · 분석 ${new Date(report.at).toLocaleString("ko-KR")} · 코드 ${report.head.slice(0, 8)}` : "변경 사항이 저장되면 현황 수치를 다시 계산합니다."}</p>
         <div className="progress-toolbar"><label>목록 필터 <select value={filter} onChange={(e) => setFilter(e.target.value)}><option value="all">전체</option><option value="remaining">남은 작업</option><option value="unknown">확인 필요</option><option value="claims">문서와 불일치</option><option value="excluded">제외</option></select></label><label>기능 검색 <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="기능명·조건" /></label></div>
         <div className="progress-grid"><div className="progress-list" aria-label="기능 목록">
-          {visible.length ? visible.map((entry) => <button key={entry.id} className={`progress-row ${selectedId === entry.id ? "active" : ""}`} onClick={() => { setSelectedId(entry.id); setCandidates([]); }} aria-current={selectedId === entry.id ? "true" : undefined}><span><strong>{errorsOf(entry.id).length > 0 && <AlertCircle size={13} aria-label="확인이 필요한 입력이 있습니다" />} {entry.title}</strong><small>{entry.area || entry.source.path} · 다음: {nextAction(entry, report)}{entry.duplicates?.length ? ` · 다른 문서 ${entry.duplicates.length}곳에도 있음` : ""}{docClaimUnbacked(entry, report) ? " · 문서는 완료 표시, 근거 없음" : ""}</small></span><span className={`progress-status ${effectiveStatus(entry, report)}`}>{isStaleEvidence(entry, report) || (entry.included && report?.stale_documents.length) ? "재확인 필요" : statusText[effectiveStatus(entry, report)]}</span><ChevronRight size={15} /></button>) : <div className="empty-inline">조건에 맞는 기능이 없습니다.</div>}
+          {visible.length ? visible.map((entry) => <button key={entry.id} className={`progress-row ${selectedId === entry.id ? "active" : ""}`} onClick={() => { setSelectedId(entry.id); setCandidates([]); }} aria-current={selectedId === entry.id ? "true" : undefined}><span><strong>{errorsOf(entry.id).length > 0 && <AlertCircle size={13} aria-label="확인이 필요한 입력이 있습니다" />} {entry.title}</strong><small>{entry.area || entry.source.path} · 다음: {nextAction(entry, report)}{entry.duplicates?.length ? ` · 다른 문서 ${entry.duplicates.length}곳에도 있음` : ""}{docClaimUnbacked(entry, report) ? " · 문서는 완료 표시, 근거 없음" : ""}{tests?.items[entry.id] ? ` · 자동 검증: ${testSummary(tests.items[entry.id])}` : ""}</small></span><span className={`progress-status ${effectiveStatus(entry, report)}`}>{isStaleEvidence(entry, report) || (entry.included && report?.stale_documents.length) ? "재확인 필요" : statusText[effectiveStatus(entry, report)]}</span><ChevronRight size={15} /></button>) : <div className="empty-inline">조건에 맞는 기능이 없습니다.</div>}
         </div><div className="progress-detail">
           {item ? <>
             <div className="section-heading"><h3>기능과 완료 조건</h3><label className="progress-include"><input type="checkbox" checked={item.included} onChange={(e) => edit(item.id, { included: e.target.checked })} /> 이번 범위에 포함</label></div>
@@ -270,6 +282,14 @@ export default function ProjectProgress({
             {item.implementation_status === "not_implemented" && <label className="field">미구현을 확인한 이유<textarea {...mark("implementation_note")} rows={2} value={item.implementation_note ?? ""} onChange={(e) => edit(item.id, { implementation_note: e.target.value })} /><FieldMessage text={fieldError("implementation_note")} /></label>}
             <label className="field">검증 상태<select {...mark("verification_status")} value={item.verification_status} disabled={item.implementation_status !== "implemented"} onChange={(e) => edit(item.id, { verification_status: e.target.value as ProgressItem["verification_status"] })}><option value="unverified">미검증</option><option value="verified">수동 확인</option></select><FieldMessage text={fieldError("verification_status")} /></label>
             {item.verification_status === "verified" && <label className="field">검증 기록<textarea {...mark("verification_note")} rows={2} value={item.verification_note} onChange={(e) => edit(item.id, { verification_note: e.target.value })} placeholder="검증 방법·대상·결과를 적어 주세요" /><FieldMessage text={fieldError("verification_note")} /></label>}
+            <label className="field">관련 테스트 이름 (쉼표로 구분, 이름의 일부)<input {...mark("test_patterns")} value={(item.test_patterns ?? []).join(",")} onChange={(e) => edit(item.id, { test_patterns: e.target.value.split(",") })} placeholder="test_login" /><FieldMessage text={fieldError("test_patterns")} /></label>
+            <p className="hint">테스트 이름에 <code>req-{item.id.slice(0, 8)}</code>를 넣으면 이 기능에 자동으로 연결됩니다.</p>
+            {tests?.items[item.id] && <div className="progress-tests" aria-label="자동 검증 기록">
+              <h3>자동 검증 기록 <small>{tests.file}</small></h3>
+              <p>{tests.items[item.id].no_match ? `입력한 이름과 일치하는 테스트가 결과 파일에 없습니다: ${tests.items[item.id].patterns.join(", ")}` : `연결된 테스트 ${tests.items[item.id].matched}개 · ${testSummary(tests.items[item.id])}`}</p>
+              {tests.items[item.id].failing.length > 0 && <ul>{tests.items[item.id].failing.map((name) => <li key={name}><code>{name}</code></li>)}</ul>}
+              {item.verification_status === "verified" && tests.items[item.id].failed > 0 && <p className="notice error" role="alert">수동 확인으로 기록됐지만 연결된 테스트가 실패했습니다. 결과가 최신인지 확인해 주세요.</p>}
+            </div>}
             <p className="hint">수동 확인은 검증 기록을 남긴 경우에만 완료로 집계합니다. 자동 테스트 실행·CI 연결은 후속 단계입니다.</p>
           </> : <div className="empty-inline">기능을 선택하면 출처와 근거를 확인할 수 있습니다.</div>}
         </div></div>

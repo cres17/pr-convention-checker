@@ -15,7 +15,7 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-from drift_gate.desktop import progress_history
+from drift_gate.desktop import progress_history, verification_records
 from drift_gate.desktop.doc_links import (
     MAX_ISSUES,
     fenced_lines as _fenced_lines,
@@ -443,6 +443,11 @@ def _item_errors(
             errors.append(("source", "기능의 문서 위치가 변경됐습니다."))
     if not isinstance(item.get("doc_marked_done", False), bool):
         errors.append(("source", "문서의 완료 표시 정보가 올바르지 않습니다."))
+    patterns = verification_records.clean_patterns(item.get("test_patterns"))
+    if patterns is None:
+        errors.append(("test_patterns", "관련 테스트 이름은 200자 이하로 최대 5개까지 입력할 수 있습니다."))
+    elif "test_patterns" in item:
+        item["test_patterns"] = patterns
     duplicates = item.get("duplicates", [])
     if not isinstance(duplicates, list) or len(duplicates) > MAX_DUPLICATES or not all(
         isinstance(place, dict)
@@ -822,3 +827,14 @@ def check_references(path: str | Path, data_dir: Path) -> dict:
         "truncated": len(issues) > MAX_ISSUES,
         "limitations": "링크 대상의 존재만 확인합니다. #제목 앵커와 웹 주소는 검사하지 않습니다. 백틱 경로는 `폴더/파일.확장자` 형태만 대상입니다.",
     }
+
+
+def link_test_results(path: str | Path, data_dir: Path, results_file: str | Path) -> dict:
+    """Attach a test-result file's outcomes to the saved baseline's items (read-only)."""
+    root = _repository(path)
+    baseline = _load_baseline(root, data_dir, _remote_identity(root))
+    if baseline is None:
+        raise ValueError("기준 문서를 선택하고 기능 목록을 확정해 주세요.")
+    return verification_records.link_tests(
+        verification_records.parse_results(results_file), baseline["requirements"]
+    )

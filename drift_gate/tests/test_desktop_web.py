@@ -250,3 +250,35 @@ def test_missing_policy_is_previewed_and_created_only_on_request(tmp_path):
     bridge.createPolicy(str(repo), 'auto')  # second attempt must not overwrite
     settle(bridge)
     assert messages[-1]['type'] == 'error' and '덮어쓰지' in messages[-1]['message']
+
+
+def test_test_results_are_linked_to_items_after_the_user_picks_a_file(tmp_path, monkeypatch):
+    QApplication.instance() or QApplication([])
+    repo, bridge, messages = _saved_baseline(tmp_path, monkeypatch)
+    draft = of_type(messages, 'progressSaved')['baseline']
+    draft['requirements'][0]['test_patterns'] = ['test_login']
+    bridge.saveProgress(str(repo), json.dumps(draft))
+    settle(bridge)
+    results = tmp_path / 'junit.xml'
+    results.write_text('<testsuite><testcase classname="t" name="test_login_ok"/>'
+                       '<testcase classname="t" name="test_login_bad"><failure/></testcase></testsuite>', encoding='utf-8')
+    chosen = []
+    monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getOpenFileName',
+                        lambda *args: (chosen.append(args[2]), (str(results), ''))[1])
+    bridge.loadTestResults(str(repo))
+    settle(bridge)
+    assert chosen == [str(repo.resolve())]
+    linked = messages[-1]
+    assert linked['type'] == 'progressTests' and linked['file'] == 'junit.xml' and linked['total'] == 2
+    only = next(iter(linked['items'].values()))
+    assert (only['passed'], only['failed']) == (1, 1)
+    monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getOpenFileName', lambda *args: ('', ''))
+    count = len(messages)
+    bridge.loadTestResults(str(repo))  # cancelled dialog: nothing happens
+    settle(bridge)
+    assert len(messages) == count
+    results.write_text('not a result file', encoding='utf-8')
+    monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getOpenFileName', lambda *args: (str(results), ''))
+    bridge.loadTestResults(str(repo))
+    settle(bridge)
+    assert messages[-1]['type'] == 'progressError'

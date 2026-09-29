@@ -1162,3 +1162,17 @@ td {
   padding: 6px 0;
   border-top: 1px solid #e5e2da;
 }
+.progress-tests {
+  border-left: 2px solid #d0b28b;
+  padding: 2px 12px;
+  margin: 8px 0;
+  font-size: 12px;
+}
+.progress-tests h3 small {
+  font-weight: 400;
+  color: #6b675f;
+}
+.progress-tests ul {
+  margin: 4px 0;
+  padding-left: 18px;
+}
