@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, BookOpen, Check, ChevronRight, FileSearch, Plus, RefreshCw } from "lucide-react";
 import type { Bridge, ProgressBaseline, ProgressItem, ProgressReport } from "../../bridge";
+import { effectiveStatus, isStaleEvidence } from "./status";
 
 type Document = { path: string; tracked: boolean; bytes: number };
 type Event = { type: string; [key: string]: any };
@@ -10,12 +11,13 @@ const statusText: Record<ProgressItem["implementation_status"], string> = {
   implemented: "구현 확인",
   not_implemented: "미구현 확인",
 };
-function nextAction(item: ProgressItem): string {
+function nextAction(item: ProgressItem, report: ProgressReport | null): string {
   if (!item.included) return "이번 범위에서 제외";
-  if (item.stale_evidence) return "변경된 코드를 다시 확인";
-  if (item.implementation_status === "unknown") return "코드 근거 확인";
-  if (item.implementation_status === "partial") return "남은 완료 조건 구현";
-  if (item.implementation_status === "not_implemented") return "기능 구현";
+  if (isStaleEvidence(item, report)) return "변경된 코드를 다시 확인";
+  const status = effectiveStatus(item, report);
+  if (status === "unknown") return "코드 근거 확인";
+  if (status === "partial") return "남은 완료 조건 구현";
+  if (status === "not_implemented") return "기능 구현";
   if (item.verification_status !== "verified") return "동작 검증 기록";
   return "완료 확인";
 }
@@ -106,12 +108,12 @@ export default function ProjectProgress({
   };
   const item = draft?.requirements.find((value) => value.id === selectedId);
   const visible = useMemo(() => (draft?.requirements ?? []).filter((entry) => {
-    if (filter === "remaining" && entry.included && entry.implementation_status === "implemented" && entry.verification_status === "verified") return false;
-    if (filter === "unknown" && entry.implementation_status !== "unknown") return false;
+    if (filter === "remaining" && entry.included && effectiveStatus(entry, report) === "implemented" && entry.verification_status === "verified") return false;
+    if (filter === "unknown" && effectiveStatus(entry, report) !== "unknown") return false;
     if (filter === "excluded" && entry.included) return false;
     if (filter !== "excluded" && !entry.included) return false;
     return `${entry.title} ${entry.area} ${entry.criterion}`.toLowerCase().includes(query.toLowerCase());
-  }), [draft, filter, query]);
+  }), [draft, report, filter, query]);
   const count = report?.counts;
   const percentage = (value: number) => report?.total ? `${Math.round(value / report.total * 100)}%` : "대상 없음";
   const extract = () => {
@@ -172,16 +174,16 @@ export default function ProjectProgress({
         <p className="hint">{report ? `요구사항 v${report.version} · 분석 ${new Date(report.at).toLocaleString("ko-KR")} · 코드 ${report.head.slice(0, 8)}` : "변경 사항이 저장되면 현황 수치를 다시 계산합니다."}</p>
         <div className="progress-toolbar"><label>목록 필터 <select value={filter} onChange={(e) => setFilter(e.target.value)}><option value="all">전체</option><option value="remaining">남은 작업</option><option value="unknown">확인 필요</option><option value="excluded">제외</option></select></label><label>기능 검색 <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="기능명·조건" /></label></div>
         <div className="progress-grid"><div className="progress-list" aria-label="기능 목록">
-          {visible.length ? visible.map((entry) => <button key={entry.id} className={`progress-row ${selectedId === entry.id ? "active" : ""}`} onClick={() => { setSelectedId(entry.id); setCandidates([]); }} aria-current={selectedId === entry.id ? "true" : undefined}><span><strong>{entry.title}</strong><small>{entry.area || entry.source.path} · 다음: {nextAction(entry)}</small></span><span className={`progress-status ${entry.stale_evidence || report?.stale_documents.length ? "unknown" : entry.implementation_status}`}>{entry.stale_evidence || report?.stale_documents.length ? "재확인 필요" : statusText[entry.implementation_status]}</span><ChevronRight size={15} /></button>) : <div className="empty-inline">조건에 맞는 기능이 없습니다.</div>}
+          {visible.length ? visible.map((entry) => <button key={entry.id} className={`progress-row ${selectedId === entry.id ? "active" : ""}`} onClick={() => { setSelectedId(entry.id); setCandidates([]); }} aria-current={selectedId === entry.id ? "true" : undefined}><span><strong>{entry.title}</strong><small>{entry.area || entry.source.path} · 다음: {nextAction(entry, report)}</small></span><span className={`progress-status ${effectiveStatus(entry, report)}`}>{isStaleEvidence(entry, report) || (entry.included && report?.stale_documents.length) ? "재확인 필요" : statusText[effectiveStatus(entry, report)]}</span><ChevronRight size={15} /></button>) : <div className="empty-inline">조건에 맞는 기능이 없습니다.</div>}
         </div><div className="progress-detail">
           {item ? <>
             <div className="section-heading"><h3>기능과 완료 조건</h3><label className="progress-include"><input type="checkbox" checked={item.included} onChange={(e) => edit(item.id, { included: e.target.checked })} /> 이번 범위에 포함</label></div>
             <label className="field">기능명<input value={item.title} onChange={(e) => edit(item.id, { title: e.target.value })} maxLength={500} /></label>
             <label className="field">완료 조건<textarea value={item.criterion} onChange={(e) => edit(item.id, { criterion: e.target.value })} rows={3} maxLength={500} /></label>
             <p className="progress-source"><strong>문서 출처</strong> {item.source.path}{item.source.line ? `:${item.source.line}` : " · 직접 추가"}<br /><span>{item.source.excerpt}</span></p>
-            <p className="progress-next"><strong>다음 할 일</strong> {report?.stale_documents.length ? "변경된 기준 문서 다시 확인" : nextAction(item)}</p>
+            <p className="progress-next"><strong>다음 할 일</strong> {report?.stale_documents.length ? "변경된 기준 문서 다시 확인" : nextAction(item, report)}</p>
             <label className="field">구현 상태<select value={item.implementation_status} onChange={(e) => edit(item.id, { implementation_status: e.target.value as ProgressItem["implementation_status"], verification_status: "unverified" })}><option value="unknown">확인 필요</option><option value="partial">부분 구현</option><option value="implemented">구현 확인</option><option value="not_implemented">미구현 확인</option></select></label>
-            {item.implementation_status !== "not_implemented" && <div className="progress-evidence"><div className="section-heading"><h3>코드 근거</h3><button className="text-button" onClick={() => bridge?.suggestProgressEvidence(path, JSON.stringify(item))}>문서에 명시된 파일 찾기</button></div><p className="hint">후보는 파일 존재만 확인합니다. 완료 조건과의 연결은 직접 검토해 주세요. 근거를 저장하려면 구현 상태를 선택하세요.</p>{candidates.map((candidate) => <button key={candidate.path} className="progress-candidate" onClick={() => edit(item.id, { evidence: { path: candidate.path, line: candidate.line, note: item.evidence?.note ?? "" } })}>{candidate.path}:{candidate.line} · {candidate.excerpt}</button>)}<div className="progress-evidence-input"><label className="field">코드 파일 경로<input value={item.evidence?.path ?? ""} onChange={(e) => edit(item.id, { evidence: { path: e.target.value, line: item.evidence?.line ?? 1, note: item.evidence?.note ?? "" } })} placeholder="src/login.py" /></label><label className="field">줄 번호<input type="number" min={1} value={item.evidence?.line ?? 1} onChange={(e) => edit(item.id, { evidence: { path: item.evidence?.path ?? "", line: Number(e.target.value), note: item.evidence?.note ?? "" } })} /></label></div><label className="field">이 코드가 조건을 충족하는 이유<textarea rows={2} value={item.evidence?.note ?? ""} onChange={(e) => edit(item.id, { evidence: { path: item.evidence?.path ?? "", line: item.evidence?.line ?? 1, note: e.target.value } })} /></label>{item.evidence?.excerpt && <code className="progress-code">{item.evidence.excerpt}</code>}{item.stale_evidence && <p className="notice error">코드가 바뀌었습니다. 근거를 다시 확인해 저장하세요.</p>}</div>}
+            {item.implementation_status !== "not_implemented" && <div className="progress-evidence"><div className="section-heading"><h3>코드 근거</h3><button className="text-button" onClick={() => bridge?.suggestProgressEvidence(path, JSON.stringify(item))}>문서에 명시된 파일 찾기</button></div><p className="hint">후보는 파일 존재만 확인합니다. 완료 조건과의 연결은 직접 검토해 주세요. 근거를 저장하려면 구현 상태를 선택하세요.</p>{candidates.map((candidate) => <button key={candidate.path} className="progress-candidate" onClick={() => edit(item.id, { evidence: { path: candidate.path, line: candidate.line, note: item.evidence?.note ?? "" } })}>{candidate.path}:{candidate.line} · {candidate.excerpt}</button>)}<div className="progress-evidence-input"><label className="field">코드 파일 경로<input value={item.evidence?.path ?? ""} onChange={(e) => edit(item.id, { evidence: { path: e.target.value, line: item.evidence?.line ?? 1, note: item.evidence?.note ?? "" } })} placeholder="src/login.py" /></label><label className="field">줄 번호<input type="number" min={1} value={item.evidence?.line ?? 1} onChange={(e) => edit(item.id, { evidence: { path: item.evidence?.path ?? "", line: Number(e.target.value), note: item.evidence?.note ?? "" } })} /></label></div><label className="field">이 코드가 조건을 충족하는 이유<textarea rows={2} value={item.evidence?.note ?? ""} onChange={(e) => edit(item.id, { evidence: { path: item.evidence?.path ?? "", line: item.evidence?.line ?? 1, note: e.target.value } })} /></label>{item.evidence?.excerpt && <code className="progress-code">{item.evidence.excerpt}</code>}{isStaleEvidence(item, report) && <p className="notice error">코드가 바뀌었습니다. 근거를 다시 확인해 저장하세요.</p>}</div>}
             {item.implementation_status === "not_implemented" && <label className="field">미구현을 확인한 이유<textarea rows={2} value={item.implementation_note ?? ""} onChange={(e) => edit(item.id, { implementation_note: e.target.value })} /></label>}
             <label className="field">검증 상태<select value={item.verification_status} disabled={item.implementation_status !== "implemented"} onChange={(e) => edit(item.id, { verification_status: e.target.value as ProgressItem["verification_status"] })}><option value="unverified">미검증</option><option value="verified">수동 확인</option></select></label>
             {item.verification_status === "verified" && <label className="field">검증 기록<textarea rows={2} value={item.verification_note} onChange={(e) => edit(item.id, { verification_note: e.target.value })} placeholder="검증 방법·대상·결과를 적어 주세요" /></label>}

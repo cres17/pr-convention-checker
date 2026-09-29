@@ -141,3 +141,32 @@ it("keeps project progress unconfirmed until the user saves reviewed evidence", 
   expect(screen.getAllByText("0 / 1").length).toBe(2);
   expect(screen.getByRole("button", { name: "기준 문서 변경" })).toBeTruthy();
 });
+
+it("uses one effective status for badge, filter and summary when evidence became stale", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  const { act } = await import("react");
+  const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
+  const make = (id: string, title: string) => ({
+    id, title, criterion: title, area: "계정", included: true, source,
+    implementation_status: "implemented" as const,
+    evidence: { path: "src/a.py", line: 1, note: "확인", excerpt: "def a():", sha256: "old" },
+    verification_status: "unverified" as const, verification_note: "",
+  });
+  const saved = [make("one", "로그인"), make("two", "가입")];
+  act(() => emit({ type: "progressSaved", requested_path: "/sample/project",
+    baseline: { repository: "/sample/project", documents: { "README.md": "abc" }, requirements: saved, version: 1 } }));
+  act(() => emit({ type: "progressReport", requested_path: "/sample/project", report: {
+    repository: "/sample/project", version: 1, at: "2026-09-29T00:00:00Z", head: "abc",
+    stale_documents: [], total: 2, limitations: "",
+    items: [{ ...saved[0], stale_evidence: true, effective_status: "unknown" },
+      { ...saved[1], stale_evidence: false, effective_status: "implemented" }],
+    counts: { implemented: 1, partial: 0, not_implemented: 0, unknown: 1, complete: 0, excluded: 0 },
+  } }));
+  expect(screen.getAllByText("재확인 필요").length).toBe(1);
+  fireEvent.change(screen.getByLabelText("목록 필터"), { target: { value: "unknown" } });
+  const list = screen.getByLabelText("기능 목록");
+  expect(list.textContent).toContain("로그인");
+  expect(list.textContent).not.toContain("가입");
+});
