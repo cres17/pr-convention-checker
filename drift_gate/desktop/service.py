@@ -11,6 +11,7 @@ from drift_gate.adapters.git.client import GitAdapter
 from drift_gate.adapters.policy_loader import load_policy
 from drift_gate.core.engine import run
 from drift_gate.core.models.result import EvaluationResult
+from drift_gate.core.models.changed_file import ChangedFile
 
 
 @dataclass(frozen=True)
@@ -19,6 +20,8 @@ class DesktopScan:
     base: str
     changed_file_count: int
     result: EvaluationResult
+    files: tuple[ChangedFile, ...] = ()
+    policy_source: str = ""
 
 
 def _git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
@@ -67,4 +70,5 @@ def scan_repository(path: str | Path, base: str = "HEAD") -> DesktopScan:
     )
     result = run(changed_files=changed_files, policy=policy)
     result.scan_metrics.runtime_seconds = time.perf_counter() - started
-    return DesktopScan(repository, base, changed_count, result)
+    return DesktopScan(repository, base, changed_count, result, tuple(changed_files),
+                       policy_path.read_text(encoding="utf-8"))

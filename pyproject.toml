@@ -18,7 +18,7 @@ drift-gate = "drift_gate.adapters.cli.runner:run_cli"
 dg = "drift_gate.adapters.cli.runner:run_cli"
 drift-gate-eval = "drift_gate.adapters.eval.runner:run_eval"
 drift-gate-mcp = "drift_gate.adapters.mcp.server:main"
-drift-gate-desktop = "drift_gate.desktop.app:main"
+drift-gate-desktop = "drift_gate.desktop.web_app:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -29,3 +29,6 @@ testpaths = ["drift_gate/tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+
+[tool.setuptools.package-data]
+"drift_gate.desktop" = ["web/**/*", "web/*"]

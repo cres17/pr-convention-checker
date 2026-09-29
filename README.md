@@ -40,6 +40,8 @@ Drift Gate는 이런 변경을 코드 리뷰 전에 확인하도록 만들었습
 
 **통과·실패는 정책 엔진이 결정합니다.** Claude API는 선택 기능으로, 검사가 끝난 뒤 체크리스트와 설명을 보완합니다. API 키 없이도 기본 검사와 보고서 생성이 동작합니다.
 
+데스크톱 앱에서는 [구독 계정으로 LLM 추가 판정](docs/subscription-llm-review.md)도 받을 수 있습니다. 사용자가 로그인한 공식 Codex·Claude Code를 호출하며, LLM의 결론과 수정 제안을 규칙 판정 옆에서 확인합니다.
+
 ## 기술 스택
 
 `main`과 `ver2` 모두 **Python · YAML 정책 · Tree-sitter · GitHub Actions · pytest**를 사용합니다. `ver2`에서는 이 구성을 유지하고 분석 로직과 의존성 버전 조건을 수정했습니다.
@@ -55,7 +57,8 @@ Drift Gate는 이런 변경을 코드 리뷰 전에 확인하도록 만들었습
 | 보고서 | **Markdown · JSON · HTML** | 리뷰용 요약, 자동화용 데이터, 브라우저 보고서 출력 |
 | AI 도구 연동 | **MCP** | 로컬 AI 도구에서 정책 조회와 검사 기능 호출 |
 | 선택 기능 | **Claude API** | 판정 후 체크리스트·근거 설명 보완 |
-| 선택 기능 | **PySide6 · Qt Widgets** | Windows·macOS용 로컬 검사 화면 |
+| 선택 기능 | **PySide6 · Qt WebEngine · React · TypeScript · tool-ui** | Windows·macOS용 로컬 검사 화면 |
+| 선택 기능 | **Codex CLI · Claude Code CLI** | 사용자 구독 로그인으로 LLM 추가 검토 |
 
 실행 의존성은 [pyproject.toml](pyproject.toml), 테스트와 코드 검사 설정은 [CI 설정](.github/workflows/ci.yml)에 있습니다. MCP와 Claude 연동은 `main`에도 있던 기능입니다.
 
@@ -136,13 +139,15 @@ Python 3.10 이상과 Git이 필요합니다. 아래는 macOS·Linux 기준입�
 명령어 출력이 낯설다면 저장소를 선택하고 **상태 → 변경 파일 → 규칙별 근거** 순서로 읽을 수 있는 앱을 실행하세요.
 
 ```bash
+npm ci --prefix desktop-ui
+npm run build --prefix desktop-ui
 python -m pip install -e '.[desktop]'
 drift-gate-desktop
 ```
 
-`.drift-gate.yml`이 있는 Git 저장소를 고른 뒤 `HEAD` 또는 `main` 등을 비교 기준으로 입력합니다. [Windows·macOS 앱 다운로드](https://github.com/cres17/pr-convention-checker/actions/runs/36370807429)와 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다. 첫 버전의 화면은 로컬 검사 전용입니다.
+`.drift-gate.yml`이 있는 Git 저장소를 고른 뒤 `HEAD` 또는 `main` 등을 비교 기준으로 입력합니다. [Windows·macOS 앱 빌드 및 다운로드](https://github.com/cres17/pr-convention-checker/actions/workflows/desktop-build.yml?query=branch%3Aver2)와 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다. 로컬 규칙 검사 후 구독 계정으로 LLM 의견을 추가할 수 있습니다.
 
-![데스크톱 앱의 합성 검사 예시 화면](docs/assets/desktop-preview.png)
+![데스크톱 앱의 합성 검사 예시 화면](docs/assets/cross-agent-desktop.png)
 
 *화면 예시는 설명을 위한 합성 입력입니다.*
 
@@ -267,7 +272,8 @@ Claude 연결은 필수가 아닙니다. API 키를 설정하지 않아도 정�
 | 승인 예외 | PR 본문의 승인자 문자열 처리 | CODEOWNERS·리뷰 승인·대상 커밋 등 검증된 근거 확인 |
 | 설치 | Action에서 PyYAML 설치 | Action에서 패키지와 선언된 의존성을 함께 설치 |
 | 검증 | 기존 테스트·합성 벤치마크 | 개선 목표·새 반례 비교 자료 추가, Windows 테스트 출력 인코딩 수정 |
-| 로컬 사용 화면 | CLI·HTML 보고서 | PySide6 데스크톱 앱에서 저장소 선택, 규칙별 근거 확인, 보고서 저장 |
+| 로컬 사용 화면 | CLI·HTML 보고서 | PySide6 · Qt WebEngine · React · TypeScript · tool-ui 데스크톱 앱에서 저장소 선택, 규칙별 근거 확인, 보고서 저장 |
+| 구독 LLM 검토 | 별도 API 키로 Claude 설명 보완 | 공식 Codex·Claude Code 구독 로그인으로 추가 판정, 전송 미리보기와 중지 |
 
 <details>
 <summary>실제로 바뀐 의존성 버전 조건</summary>
@@ -301,12 +307,12 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 | 정상 변경을 잘못 차단 — 새 반례 | 5/12 | 2/12 | 오탐 3건 감소 |
 | 누락을 놓침 — 새 반례 | 9/12 | 1/12 | 미탐 8건 감소 |
 | **새 반례: 확장·형식 경계** | **2/8** | **1/8** | 여러 줄 라우트·OpenAPI 등 7개 불일치 |
-| 전체 pytest | 470/471 | 542/542 | 기존 실패 수정과 데스크톱 검사 포함 |
+| 전체 pytest | 470/471 | 562/562 | 구독 CLI 프로토콜·취소·데스크톱 검사 포함 |
 | 파서 직접 실행 | 0/3 | 3/3 | Python·TypeScript·Go 호출 확인 |
 
 새 반례는 처음에 제품 코드를 바꾸지 않은 채 두 버전에 적용했고, 이후 알려진 오류 세 가지를 수정해 같은 입력에 재검증했습니다. 작성자가 만든 합성 데이터이므로 독립·블라인드 검증은 아닙니다. **8/8이나 21/24를 실제 PR의 정확도로 해석할 수 없습니다.**
 
-[이번 CI (`557f9ca`)](https://github.com/cres17/pr-convention-checker/actions/runs/36370807360)에서 Ubuntu·Windows·macOS × Python 3.10·3.11·3.12의 9개 조합과 코드 검사·벤치마크가 모두 통과했습니다. [데스크톱 빌드](https://github.com/cres17/pr-convention-checker/actions/runs/36370807429)에서도 Windows·macOS 패키지 생성과 아티팩트 업로드가 성공했습니다.
+[이전 버전 CI (`557f9ca`)](https://github.com/cres17/pr-convention-checker/actions/runs/36370807360)에서 Ubuntu·Windows·macOS × Python 3.10·3.11·3.12의 9개 조합과 코드 검사·벤치마크가 모두 통과했습니다. [데스크톱 빌드](https://github.com/cres17/pr-convention-checker/actions/runs/36370807429)에서도 Windows·macOS 패키지 생성과 아티팩트 업로드가 성공했습니다.
 
 실행 환경과 첫 평가 원본은 [과적합 점검](docs/generalization-audit-2026-09-22.md), 수정 뒤 사례별 판정과 해시는 [재검증 보고서](docs/v1-ver2-contract-fix-results-2026-09-23.md)에 있습니다. 전체 테스트 통과와 실제 GitHub 권한 환경의 정상 동작 여부는 별개의 검증입니다.
 
@@ -327,6 +333,7 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 | 실제 `v1` 태그와 `ver2`의 설계·실행 경로를 비교하고 싶을 때 | [통제 실험과 사례별 결과](docs/v1-ver2-controlled-comparison-2026-09-23.md) |
 | 개선 전후 결과를 검토하고 싶을 때 | [세 오류 수정 후 재검증](docs/v1-ver2-contract-fix-results-2026-09-23.md) · [첫 사후 검증](docs/generalization-audit-2026-09-22.md) |
 | 로컬 변경을 화면에서 검사하고 싶을 때 | [데스크톱 앱 사용·빌드 안내](docs/desktop-app.md) |
+| API 키 없이 구독 계정으로 LLM 검토를 받고 싶을 때 | [구독 연결과 실제 응답 기록](docs/subscription-llm-review.md) |
 | 다음 개발 범위를 확인할 때 | [개선 계획과 기준값](docs/development-roadmap.md) |
 | 내용 검사와 예외 승인을 설정할 때 | [내용 검증 안내](docs/content-verification.md) |
 | 탐지 규칙·기존 설정을 이해할 때 | [탐지기 안내](docs/detector-guide.md) · [마이그레이션](docs/migration-guide.md) |
@@ -356,3 +363,5 @@ drift-gate-eval --recursive --compare-baseline
 Claude를 활용해 개발한 개인 프로젝트입니다. 코드와 재현 가능한 검증 자료를 공개하며, 실제 PR 정확도와 리뷰 시간 절감 효과는 후속 평가 대상으로 남겨 두었습니다.
 
 [MIT License](LICENSE)
+
+새 화면의 컴포넌트 사용·검증 범위는 [UI 개편 기록](docs/design/tool-ui-integration-2026-09-29.md)에 정리했습니다.

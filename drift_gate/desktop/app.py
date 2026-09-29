@@ -14,6 +14,8 @@ from PySide6.QtWidgets import (
 )
 
 from drift_gate.desktop.service import DesktopScan, scan_repository
+from drift_gate.desktop.review_dialog import ReviewDialog, review_html
+from drift_gate.desktop.subscription_review import VERDICTS
 from drift_gate.reporters.html import HtmlReporter
 
 
@@ -129,6 +131,7 @@ class DesktopWindow(QMainWindow):
         self.setMinimumSize(900, 620)
         self._settings = QSettings("Drift Gate", "Desktop")
         self._scan: DesktopScan | None = None
+        self._llm_review = None
         self._thread: QThread | None = None
         self._worker: ScanWorker | None = None
         self._build()
@@ -221,6 +224,10 @@ class DesktopWindow(QMainWindow):
         self.policy_button.setEnabled(False)
         self.policy_button.clicked.connect(self._open_policy)
         heading.addWidget(self.policy_button)
+        self.llm_button = QPushButton("LLM 추가 판정")
+        self.llm_button.setEnabled(False)
+        self.llm_button.clicked.connect(self._review_with_llm)
+        heading.addWidget(self.llm_button)
         self.export_button = QPushButton("결과 저장")
         self.export_button.setEnabled(False)
         self.export_button.clicked.connect(self._export)
@@ -256,6 +263,9 @@ class DesktopWindow(QMainWindow):
         if self._thread is not None:
             return
         self._scan = None
+        self._llm_review = None
+        self.llm_button.setEnabled(False)
+        self.llm_button.setText("LLM 추가 판정")
         self.policy_button.setEnabled(False)
         self.export_button.setEnabled(False)
         self.decisions.clear()
@@ -310,6 +320,7 @@ class DesktopWindow(QMainWindow):
         self.metric_labels["blockers"].setText(str(result.blocker_count))
         self.policy_button.setEnabled(True)
         self.export_button.setEnabled(True)
+        self.llm_button.setEnabled(scan.changed_file_count > 0)
         self.decisions.clear()
         for decision in result.rule_decisions:
             data = decision.to_dict()
@@ -335,6 +346,15 @@ class DesktopWindow(QMainWindow):
         if self._scan:
             QDesktopServices.openUrl(QUrl.fromLocalFile(str(self._scan.repository / ".drift-gate.yml")))
 
+    def _review_with_llm(self):
+        if self._scan is None:
+            return
+        dialog = ReviewDialog(self._scan, self._llm_review, self)
+        dialog.exec()
+        self._llm_review = dialog.review
+        self.llm_button.setText(
+            f"LLM: {VERDICTS[self._llm_review.verdict]}" if self._llm_review else "LLM 추가 판정")
+
     def _export(self):
         if not self._scan:
             return
@@ -347,10 +367,15 @@ class DesktopWindow(QMainWindow):
         target = Path(filename)
         try:
             if "JSON" in selected_filter or target.suffix.lower() == ".json":
-                target.write_text(json.dumps(self._scan.result.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
+                data = self._scan.result.to_dict()
+                if self._llm_review is not None:
+                    data["llm_review"] = self._llm_review.to_dict()
+                target.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
             else:
-                policy = (self._scan.repository / ".drift-gate.yml").read_text(encoding="utf-8")
-                target.write_text(HtmlReporter().render(self._scan.result, policy_source=policy), encoding="utf-8")
+                report = HtmlReporter().render(self._scan.result, policy_source=self._scan.policy_source)
+                if self._llm_review is not None:
+                    report = report.replace("</main>", "<section class='card'>" + review_html(self._llm_review) + "</section></main>")
+                target.write_text(report, encoding="utf-8")
         except OSError as exc:
             self._show_error(f"결과를 저장하지 못했습니다: {exc}")
 

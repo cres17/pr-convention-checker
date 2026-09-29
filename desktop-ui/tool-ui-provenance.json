@@ -1,0 +1,12 @@
+{
+  "repository": "https://github.com/assistant-ui/tool-ui",
+  "commit": "49a870286facdbf28160cd647f0d337ebdc9b275",
+  "components": [
+    "StatsDisplay",
+    "ProgressTracker",
+    "ApprovalCard",
+    "OptionList",
+    "CodeDiff"
+  ],
+  "changes": "Vite NODE_ENV syntax; remove obsolete private theme registry; Korean copy label; explicit empty OptionList actions hide redundant confirmation footer; application theme/layout overrides."
+}
