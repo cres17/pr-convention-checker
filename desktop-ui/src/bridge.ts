@@ -53,10 +53,27 @@ export type ProgressItem = {
   verification_status: "unverified" | "verified";
   verification_note: string;
   stale_evidence?: boolean;
+  doc_marked_done?: boolean;
+  doc_claim?: "unbacked" | null;
   duplicates?: { path: string; line: number; excerpt: string; criterion: string }[];
   effective_status?: ProgressItem["implementation_status"] | "excluded";
 };
 export type ProgressFieldError = { id: string; field: string; message: string };
+export type LinkIssue = {
+  path: string;
+  line: number;
+  target: string;
+  kind: "link" | "path" | "document";
+  confidence?: "high" | "low";
+  message: string;
+};
+export type LinkReport = {
+  documents: string[];
+  checked: number;
+  issues: LinkIssue[];
+  truncated: boolean;
+  limitations: string;
+};
 export type ProgressBaseline = {
   repository: string;
   documents: Record<string, string>;
@@ -72,6 +89,7 @@ export type ProgressReport = {
   total: number;
   counts: Record<string, number>;
   items: ProgressItem[];
+  doc_claims_unbacked?: number;
   limitations: string;
 };
 export interface Bridge {
@@ -82,6 +100,8 @@ export interface Bridge {
   startReview: (provider: string, path: string) => void;
   cancelReview: () => void;
   exportReport: (kind: string) => void;
+  checkProgressLinks: (path: string) => void;
+  exportProgress: (path: string, kind: string) => void;
   openDocument: (relative: string) => void;
   listProjectDocs: (path: string) => void;
   previewProgress: (path: string, selectedJson: string) => void;

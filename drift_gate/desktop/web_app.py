@@ -15,11 +15,12 @@ from drift_gate.desktop.app import ScanWorker
 from drift_gate.desktop.service import resolve_document
 from drift_gate.desktop.review_dialog import ReviewWorker, review_html
 from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
-from drift_gate.adapters.report_naming import default_report_path
+from drift_gate.adapters.report_naming import default_report_path, detect_project
+from drift_gate.desktop.progress_report import render_markdown
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
-    BaselineError, evidence_candidates, extract_requirements, inspect_progress,
-    list_documents, load_baseline, save_baseline,
+    BaselineError, check_references, evidence_candidates, extract_requirements, inspect_progress,
+    list_documents, load_baseline, repository_root, save_baseline,
 )
 
 WEB_ROOT = Path(__file__).parent / 'web'
@@ -128,6 +129,43 @@ class DesktopBridge(QObject):
         directory = self._progress_dir()
         self._run_progress(path, lambda: [
             ('progressReport', {'report': inspect_progress(path, directory)})])
+
+    @Slot(str)
+    def checkProgressLinks(self, path):
+        directory = self._progress_dir()
+        self._run_progress(path, lambda: [('progressLinks', check_references(path, directory))])
+
+    @Slot(str, str)
+    def exportProgress(self, path, kind):
+        if kind not in {'md', 'json'}:
+            return
+        directory = self._progress_dir()
+        try:
+            root = repository_root(path)
+            policy = root / '.drift-gate.yml'
+            policy_source = policy.read_text(encoding='utf-8') if policy.is_file() else ''
+            suggested = default_report_path(root, 'progress', kind, policy_source)
+        except (ValueError, OSError) as exc:
+            self.emit('progressError', requested_path=path, message=str(exc))
+            return
+        filename, _ = QFileDialog.getSaveFileName(
+            self.parent(), '현황 저장', str(suggested), f'{"Markdown" if kind == "md" else "JSON"} (*.{kind})')
+        if not filename:
+            return
+
+        def work():
+            report = inspect_progress(root, directory)
+            project = detect_project(root)
+            identity = {'name': project.name, 'branch': project.branch,
+                        'version': project.version, 'commit': project.commit}
+            if kind == 'json':
+                content = json.dumps({'schema': 1, 'project': identity, 'report': report},
+                                     ensure_ascii=False, indent=2)
+            else:
+                content = render_markdown(report, identity)
+            Path(filename).write_text(content, encoding='utf-8')
+            return [('progressExported', {'file': filename})]
+        self._run_progress(path, work)
 
     @Slot(str, str)
     def suggestProgressEvidence(self, path, item_json):

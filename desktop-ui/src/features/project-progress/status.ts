@@ -12,3 +12,8 @@ export function effectiveStatus(item: ProgressItem, report: ProgressReport | nul
 export function isStaleEvidence(item: ProgressItem, report: ProgressReport | null): boolean {
   return report?.items.find((entry) => entry.id === item.id)?.stale_evidence ?? item.stale_evidence ?? false;
 }
+
+/** The document ticked this item as done, but no current code evidence backs it. */
+export function docClaimUnbacked(item: ProgressItem, report: ProgressReport | null): boolean {
+  return (report?.items.find((entry) => entry.id === item.id)?.doc_claim ?? null) === "unbacked";
+}

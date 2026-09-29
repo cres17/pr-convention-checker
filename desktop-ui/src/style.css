@@ -1097,3 +1097,17 @@ td {
 .progress-duplicate {
   color: #6b675f;
 }
+.progress-links {
+  border-top: 1px solid #e5e2da;
+  margin-top: 12px;
+  padding-top: 8px;
+  font-size: 12px;
+}
+.progress-links ul {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+.progress-links li {
+  overflow-wrap: anywhere;
+  margin-bottom: 3px;
+}
