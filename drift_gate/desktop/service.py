@@ -36,6 +36,14 @@ def resolve_document(repository: Path, relative: str) -> Path:
     return target
 
 
+class PolicyMissingError(ValueError):
+    """The repository has no .drift-gate.yml; the desktop offers to create one."""
+
+    def __init__(self, repository: Path):
+        super().__init__("저장소 루트에 .drift-gate.yml이 없습니다. 먼저 정책 파일을 준비해 주세요.")
+        self.repository = repository
+
+
 @dataclass(frozen=True)
 class DesktopScan:
     repository: Path
@@ -74,7 +82,7 @@ def scan_repository(path: str | Path, base: str = "HEAD") -> DesktopScan:
     repository = Path(root_result.stdout.strip()).resolve()
     policy_path = repository / ".drift-gate.yml"
     if not policy_path.is_file():
-        raise ValueError("저장소 루트에 .drift-gate.yml이 없습니다. 먼저 정책 파일을 준비해 주세요.")
+        raise PolicyMissingError(repository)
 
     base = base.strip()
     if not base or base.startswith("-"):

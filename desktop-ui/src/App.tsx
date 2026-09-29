@@ -23,6 +23,7 @@ import {
 import ProjectProgress from "./features/project-progress/ProjectProgress";
 import ViolationGuide from "./features/review/ViolationGuide";
 import ScanImpact from "./features/review/ScanImpact";
+import PolicySetup from "./features/review/PolicySetup";
 import { findViolation, problemSummary, problemTitle } from "./features/review/violations";
 import { StatsDisplay } from "./components/tool-ui/stats-display";
 import { parseSerializableStatsDisplay } from "./components/tool-ui/stats-display/schema";
@@ -37,6 +38,7 @@ import {
   type Review,
   type Decision,
   type ScanImpact as Impact,
+  type PolicyPreview,
 } from "./bridge";
 
 const labels: Record<string, string> = {
@@ -117,6 +119,9 @@ export default function App({
   const [historyScan, setHistoryScan] = useState<Scan | null>(null);
   const [fileIndex, setFileIndex] = useState(0);
   const [impact, setImpact] = useState<Impact | null>(null);
+  const [policyRepo, setPolicyRepo] = useState("");
+  const [policyPreview, setPolicyPreview] = useState<PolicyPreview | null>(null);
+  const [rescan, setRescan] = useState(0);
   const [progressFocus, setProgressFocus] = useState<{ id: string; n: number } | null>(null);
   const [progressEvents, setProgressEvents] = useState<any[]>([]);
   const progressSeq = useRef(0);
@@ -152,10 +157,25 @@ export default function App({
           break;
         case "scanned":
           setBusy("");
+          setPolicyRepo("");
           setScan(event.scan);
           setSelected(0);
           setFileIndex(0);
           setRecords((old) => [event.scan, ...old].slice(0, 20));
+          break;
+        case "policyMissing":
+          setPolicyRepo(event.repository);
+          setPolicyPreview(null);
+          bridge.current?.previewPolicy(event.repository, "auto");
+          break;
+        case "policyPreview":
+          setPolicyPreview(event as PolicyPreview);
+          break;
+        case "policyCreated":
+          setPolicyRepo("");
+          setPolicyPreview(null);
+          setNotice(`정책 파일을 만들었습니다 · ${event.path}`);
+          setRescan((n) => n + 1);
           break;
         case "scanImpact":
           setImpact(event as Impact);
@@ -214,6 +234,12 @@ export default function App({
   const decision = visible[selected] ?? visible[0];
   const files = current?.files ?? [];
   const file = files[fileIndex];
+  useEffect(() => {
+    if (!rescan) return;
+    setHistoryScan(null);
+    setPage("review");
+    bridge.current?.startScan(path, base);
+  }, [rescan]);
   const run = () => {
     setNotice("");
     setHistoryScan(null);
@@ -395,6 +421,18 @@ export default function App({
                 <X size={16} />
               </button>
             </div>
+          )}
+          {policyRepo && page === "review" && (
+            <PolicySetup
+              preview={policyPreview}
+              busy={busy !== ""}
+              onPreset={(preset) => bridge.current?.previewPolicy(policyRepo, preset)}
+              onCreate={(preset) => {
+                setBusy("policy");
+                setError("");
+                bridge.current?.createPolicy(policyRepo, preset);
+              }}
+            />
           )}
           {notice && (
             <div className="notice" role="status">
