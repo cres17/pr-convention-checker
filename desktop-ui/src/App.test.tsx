@@ -17,6 +17,7 @@ const api = vi.hoisted(() => ({
   chooseRepository: vi.fn(),
   cancelReview: vi.fn(),
   exportReport: vi.fn(),
+  openDocument: vi.fn(),
   listProjectDocs: vi.fn(),
   previewProgress: vi.fn(),
   saveProgress: vi.fn(),
@@ -169,4 +170,26 @@ it("uses one effective status for badge, filter and summary when evidence became
   const list = screen.getByLabelText("기능 목록");
   expect(list.textContent).toContain("로그인");
   expect(list.textContent).not.toContain("가입");
+});
+
+it("shows how to fix a violation and opens the required document", async () => {
+  const value = structuredClone(fixture) as Scan;
+  Object.assign(value.result.violations![0], {
+    message: "API 문서가 변경을 반영하지 않음",
+    changed_contract_summary: "GET /members 추가, GET /users 삭제",
+    missing_docs_explanation: "docs/api.md가 이번 변경에서 수정되지 않았습니다.",
+    checklist: ["docs/api.md에 GET /members 추가"],
+    docs_update_draft: "### GET /members",
+  });
+  render(<App initialScan={value} />);
+  await waitFor(() => expect(screen.getByText("데스크톱 연결됨")).toBeTruthy());
+  expect(screen.getAllByText("API 문서가 변경을 반영하지 않음").length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/반영되지 않은 문서 조건 1개: API docs/).length).toBeGreaterThan(0);
+  expect(screen.queryByText("required groups are missing")).toBeNull();
+  expect(screen.getByText("docs/api.md에 GET /members 추가")).toBeTruthy();
+  expect(screen.getByText("### GET /members")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: /docs\/api\.md 열기/ }));
+  expect(api.openDocument).toHaveBeenCalledWith("docs/api.md");
+  fireEvent.click(screen.getByRole("button", { name: /문서 수정 후 다시 검사/ }));
+  expect(api.startScan).toHaveBeenCalledWith("/sample/project", "HEAD");
 });

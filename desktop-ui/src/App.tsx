@@ -21,6 +21,8 @@ import {
   ChartNoAxesCombined,
 } from "lucide-react";
 import ProjectProgress from "./features/project-progress/ProjectProgress";
+import ViolationGuide from "./features/review/ViolationGuide";
+import { findViolation, problemSummary, problemTitle } from "./features/review/violations";
 import { StatsDisplay } from "./components/tool-ui/stats-display";
 import { parseSerializableStatsDisplay } from "./components/tool-ui/stats-display/schema";
 import { ProgressTracker } from "./components/tool-ui/progress-tracker";
@@ -551,8 +553,9 @@ export default function App({
                               <Badge value={d.status} />
                               <span className="source">규칙 검사</span>
                             </div>
-                            <strong>{d.rule_id}</strong>
-                            <p>{d.reason || "상세 근거를 확인하세요."}</p>
+                            <strong>{problemTitle(d, findViolation(current, d))}</strong>
+                            {problemTitle(d, findViolation(current, d)) !== d.rule_id && <small className="rule-id">{d.rule_id}</small>}
+                            <p>{problemSummary(d)}</p>
                             <ChevronRight size={17} />
                           </button>
                         ))}
@@ -574,8 +577,9 @@ export default function App({
                             <span className="eyebrow">EVIDENCE</span>
                             <Badge value={decision.status} />
                           </div>
-                          <h2>{decision.rule_id}</h2>
-                          <p>{decision.reason}</p>
+                          <h2>{problemTitle(decision, findViolation(current, decision))}</h2>
+                          {problemTitle(decision, findViolation(current, decision)) !== decision.rule_id && <small className="rule-id">{decision.rule_id}</small>}
+                          <p>{problemSummary(decision)}</p>
                           <h3>변경된 코드</h3>
                           {decision.trigger_files.map((f) => (
                             <button
@@ -600,6 +604,12 @@ export default function App({
                             </button>
                           ))}
                           <GroupList decision={decision} />
+                          <ViolationGuide
+                            decision={decision}
+                            violation={findViolation(current, decision)}
+                            onOpen={!historyScan && desktopBridge ? (relative) => desktopBridge.openDocument(relative) : undefined}
+                            onRescan={!historyScan && desktopBridge && path ? run : undefined}
+                          />
                         </>
                       ) : (
                         <div className="list-empty">

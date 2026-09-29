@@ -8,6 +8,17 @@ export type Decision = {
   unsatisfied_groups: Group[];
   satisfied_groups: Group[];
 };
+export type Violation = {
+  rule_id: string;
+  severity: string;
+  confidence: string;
+  message: string;
+  checklist: string[];
+  missing_docs_explanation: string;
+  changed_contract_summary: string;
+  docs_update_draft: string;
+  false_positive_note: string;
+};
 export type Scan = {
   repository: string;
   base: string;
@@ -18,6 +29,7 @@ export type Scan = {
   result: {
     result: string;
     rule_decisions: Decision[];
+    violations?: Violation[];
     [key: string]: unknown;
   };
 };
@@ -68,6 +80,7 @@ export interface Bridge {
   startReview: (provider: string, path: string) => void;
   cancelReview: () => void;
   exportReport: (kind: string) => void;
+  openDocument: (relative: string) => void;
   listProjectDocs: (path: string) => void;
   previewProgress: (path: string, selectedJson: string) => void;
   saveProgress: (path: string, payloadJson: string) => void;

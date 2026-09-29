@@ -66,3 +66,17 @@ def test_missing_policy_is_error(repository):
     os.remove(repository / ".drift-gate.yml")
     with pytest.raises(ValueError, match=".drift-gate.yml"):
         scan_repository(repository)
+
+
+def test_resolve_document_allows_only_text_files_inside_repository(tmp_path):
+    from drift_gate.desktop.service import resolve_document
+
+    repo = tmp_path / "repo"
+    (repo / "docs").mkdir(parents=True)
+    (repo / "docs/api.md").write_text("# API\n", encoding="utf-8")
+    (repo / "run.sh").write_text("echo hi\n", encoding="utf-8")
+    (tmp_path / "outside.md").write_text("x", encoding="utf-8")
+    assert resolve_document(repo, "docs/api.md") == (repo / "docs/api.md").resolve()
+    for bad in ("docs/missing.md", "run.sh", "../outside.md", "docs/**", "", str(tmp_path / "outside.md")):
+        with pytest.raises(ValueError):
+            resolve_document(repo, bad)

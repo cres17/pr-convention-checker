@@ -5,12 +5,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from PySide6.QtCore import QObject, QSettings, QStandardPaths, QThread, QUrl, Signal, Slot
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineUrlRequestInterceptor
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 
 from drift_gate.desktop.app import ScanWorker
+from drift_gate.desktop.service import resolve_document
 from drift_gate.desktop.review_dialog import ReviewWorker, review_html
 from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
 from drift_gate.adapters.report_naming import default_report_path
@@ -201,6 +203,18 @@ class DesktopBridge(QObject):
     def cancelReview(self):
         if self.review_worker:
             self.review_worker.cancel.set()
+
+    @Slot(str)
+    def openDocument(self, relative):
+        if not self.scan:
+            return
+        try:
+            target = resolve_document(self.scan.repository, relative)
+        except ValueError as exc:
+            self.emit('error', message=str(exc))
+            return
+        if not QDesktopServices.openUrl(QUrl.fromLocalFile(str(target))):
+            self.emit('error', message=f'기본 편집기로 열지 못했습니다: {relative}')
 
     @Slot(str)
     def exportReport(self, kind):

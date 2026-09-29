@@ -1055,3 +1055,33 @@ td {
   .progress-doc-list, .progress-overview { grid-template-columns: 1fr; }
   .progress-evidence-input { grid-template-columns: 1fr; }
 }
+.rule-id {
+  display: block;
+  color: #6b675f;
+  font-size: 10px;
+}
+.fix-guide {
+  margin-top: 18px;
+}
+.fix-guide .confidence {
+  font-size: 10px;
+  color: #6b675f;
+}
+.fix-checklist {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+.fix-draft {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #f5f4ef;
+  border-radius: 5px;
+  padding: 9px;
+  font-size: 11px;
+}
+.fix-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}

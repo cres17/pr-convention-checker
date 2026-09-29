@@ -14,6 +14,28 @@ from drift_gate.core.models.result import EvaluationResult
 from drift_gate.core.models.changed_file import ChangedFile
 
 
+# Text documents only: opening arbitrary file types with the OS could run programs.
+OPENABLE_SUFFIXES = frozenset({".md", ".rst", ".txt", ".yml", ".yaml", ".json", ".toml"})
+
+
+def resolve_document(repository: Path, relative: str) -> Path:
+    """Return an existing text document inside the repository, or raise ValueError."""
+    if not isinstance(relative, str) or not relative or "\x00" in relative or any(c in relative for c in "*?["):
+        raise ValueError("열 수 있는 파일 경로가 아닙니다.")
+    raw = Path(relative)
+    root = repository.resolve()
+    if raw.is_absolute() or ".." in raw.parts:
+        raise ValueError("저장소 안의 파일만 열 수 있습니다.")
+    target = root / raw
+    if target.is_symlink() or not target.resolve().is_relative_to(root):
+        raise ValueError("저장소 안의 파일만 열 수 있습니다.")
+    if not target.is_file():
+        raise ValueError(f"{relative} 파일이 아직 없습니다. 새로 만들어 주세요.")
+    if target.suffix.lower() not in OPENABLE_SUFFIXES:
+        raise ValueError("문서·설정 파일만 앱에서 열 수 있습니다.")
+    return target
+
+
 @dataclass(frozen=True)
 class DesktopScan:
     repository: Path
