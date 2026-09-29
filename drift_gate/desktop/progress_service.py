@@ -175,7 +175,11 @@ def _git_files(root: Path) -> tuple[set[str], set[str]]:
 
 def list_documents(path: str | Path) -> dict:
     root = _repository(path)
-    tracked, untracked = _git_files(root)
+    return _documents(root, *_git_files(root))
+
+
+def _documents(root: Path, tracked: set[str], untracked: set[str]) -> dict:
+    """Markdown files from an already-read Git file listing."""
     docs = []
     omitted = 0
     for relative in sorted(tracked | untracked, key=str.casefold):
@@ -201,7 +205,7 @@ def list_documents(path: str | Path) -> dict:
 
 def extract_requirements(path: str | Path, selected: list[str]) -> dict:
     root = _repository(path)
-    available = {entry["path"] for entry in list_documents(root)["documents"]}
+    available = {entry["path"] for entry in _documents(root, *_git_files(root))["documents"]}
     if not isinstance(selected, list) or not selected or len(selected) > 10:
         raise ValueError("기준 Markdown을 1~10개 선택해 주세요.")
     if len(set(selected)) != len(selected) or not all(
@@ -356,9 +360,11 @@ def _remote_identity(root: Path) -> str | None:
         )
         return result.stdout.strip() if result.returncode == 0 else ""
 
-    names = git("remote").split()
-    for name in ("origin", *sorted(names)):
-        if name in names:
+    identity = normalize_remote(git("remote", "get-url", "origin"))
+    if identity:
+        return identity
+    for name in sorted(git("remote").split()):
+        if name != "origin":
             identity = normalize_remote(git("remote", "get-url", name))
             if identity:
                 return identity
@@ -370,9 +376,8 @@ def _legacy_store_file(root: Path, data_dir: Path) -> Path:
     return data_dir / (_hash(str(root).encode())[:24] + ".json")
 
 
-def _store_file(root: Path, data_dir: Path) -> Path:
+def _store_file(root: Path, data_dir: Path, remote: str | None) -> Path:
     """Keyed by remote URL so moving or re-cloning a project keeps its baseline."""
-    remote = _remote_identity(root)
     if remote is None:
         return _legacy_store_file(root, data_dir)
     return data_dir / (_hash(f"remote:{remote}".encode())[:24] + ".json")
@@ -380,8 +385,11 @@ def _store_file(root: Path, data_dir: Path) -> Path:
 
 def load_baseline(path: str | Path, data_dir: Path) -> dict | None:
     root = _repository(path)
-    remote = _remote_identity(root)
-    target = _store_file(root, data_dir)
+    return _load_baseline(root, data_dir, _remote_identity(root))
+
+
+def _load_baseline(root: Path, data_dir: Path, remote: str | None) -> dict | None:
+    target = _store_file(root, data_dir, remote)
     if not target.is_file():
         target = _legacy_store_file(root, data_dir)
         if remote is None or not target.is_file():
@@ -397,7 +405,11 @@ def load_baseline(path: str | Path, data_dir: Path) -> dict | None:
 
 
 def _item_errors(
-    root: Path, item: dict, docs: dict, doc_lines: dict[str, list[str]]
+    root: Path,
+    item: dict,
+    docs: dict,
+    doc_lines: dict[str, list[str]],
+    evidence_files: dict[str, tuple[list[str], str]],
 ) -> list[tuple[str, str]]:
     """Validate one requirement; return every (field, message) problem found."""
     errors: list[tuple[str, str]] = []
@@ -448,7 +460,7 @@ def _item_errors(
         errors.append(("included", "기능의 포함 여부가 올바르지 않습니다."))
     if status in {"partial", "implemented"}:
         try:
-            item["evidence"] = _evidence(root, item.get("evidence"))
+            item["evidence"] = _evidence(root, item.get("evidence"), evidence_files)
         except FieldError as exc:
             errors.append((exc.field, str(exc)))
         except ValueError as exc:
@@ -475,7 +487,7 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
         raise ValueError("기준 문서를 선택해 주세요.")
     if not isinstance(items, list) or len(items) > MAX_REQUIREMENTS:
         raise ValueError("기능 목록을 확인해 주세요.")
-    available = {entry["path"] for entry in list_documents(root)["documents"]}
+    available = {entry["path"] for entry in _documents(root, *_git_files(root))["documents"]}
     for relative, digest in docs.items():
         if (
             relative not in available
@@ -493,15 +505,16 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
             raise ValueError("기능 ID가 중복되거나 올바르지 않습니다.")
         ids.add(item["id"])
     doc_lines: dict[str, list[str]] = {}
+    evidence_files: dict[str, tuple[list[str], str]] = {}
     errors = []
     for item in items:
-        for field, message in _item_errors(root, item, docs, doc_lines):
+        for field, message in _item_errors(root, item, docs, doc_lines, evidence_files):
             errors.append({"id": item["id"], "field": field, "message": message})
     if errors:
         raise BaselineError(errors)
-    previous = load_baseline(root, data_dir)
     remote = _remote_identity(root)
-    target = _store_file(root, data_dir)
+    previous = _load_baseline(root, data_dir, remote)
+    target = _store_file(root, data_dir, remote)
     # A baseline still stored under the old path key is rewritten under the remote key.
     if (
         previous
@@ -539,15 +552,23 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
     return saved
 
 
-def _evidence(root: Path, evidence: object) -> dict:
+def _evidence(
+    root: Path, evidence: object, cache: dict[str, tuple[list[str], str]] | None = None
+) -> dict:
+    """Validate reviewed evidence. ``cache`` shares one read of a file across items."""
     if not isinstance(evidence, dict):
         raise FieldError("evidence.path", "구현 확인에는 코드 근거가 필요합니다.")
     relative = evidence.get("path")
-    try:
-        target = _safe_file(root, relative, SOURCE_SUFFIXES, MAX_SOURCE_BYTES)
-    except ValueError as exc:
-        raise FieldError("evidence.path", str(exc)) from exc
-    lines = target.read_text(encoding="utf-8", errors="replace").splitlines()
+    if not isinstance(relative, str):
+        raise FieldError("evidence.path", "코드 파일 경로가 올바르지 않습니다.")
+    cache = {} if cache is None else cache
+    if relative not in cache:
+        try:
+            raw = _safe_file(root, relative, SOURCE_SUFFIXES, MAX_SOURCE_BYTES).read_bytes()
+        except ValueError as exc:
+            raise FieldError("evidence.path", str(exc)) from exc
+        cache[relative] = (raw.decode("utf-8", errors="replace").splitlines(), _hash(raw))
+    lines, digest = cache[relative]
     line = evidence.get("line")
     if type(line) is not int or line < 1 or line > len(lines):
         raise FieldError("evidence.line", "코드 근거의 줄 번호를 확인해 주세요.")
@@ -559,14 +580,14 @@ def _evidence(root: Path, evidence: object) -> dict:
         "path": relative,
         "line": line,
         "excerpt": lines[line - 1].strip()[:240],
-        "sha256": _hash(target.read_bytes()),
+        "sha256": digest,
         "note": evidence["note"].strip()[:1000],
     }
 
 
 def inspect_progress(path: str | Path, data_dir: Path) -> dict:
     root = _repository(path)
-    baseline = load_baseline(root, data_dir)
+    baseline = _load_baseline(root, data_dir, _remote_identity(root))
     if baseline is None:
         raise ValueError("기준 문서를 선택하고 기능 목록을 확정해 주세요.")
     stale_docs = []
@@ -588,17 +609,26 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
         "complete": 0,
         "excluded": 0,
     }
+    digests: dict[str, str | None] = {}
+
+    def current_digest(relative: object) -> str | None:
+        """Hash of an evidence file as it is now; read once however many items cite it."""
+        if not isinstance(relative, str):
+            return None
+        if relative not in digests:
+            try:
+                target = _safe_file(root, relative, SOURCE_SUFFIXES, MAX_SOURCE_BYTES)
+                digests[relative] = _hash(target.read_bytes())
+            except (ValueError, OSError):
+                digests[relative] = None  # missing, moved or unreadable: evidence is void
+        return digests[relative]
+
     for source in baseline["requirements"]:
         item = dict(source)
         stale_evidence = False
         if item.get("evidence"):
-            try:
-                stale_evidence = (
-                    _evidence(root, item["evidence"])["sha256"]
-                    != item["evidence"]["sha256"]
-                )
-            except ValueError:
-                stale_evidence = True
+            evidence = item["evidence"]
+            stale_evidence = current_digest(evidence.get("path")) != evidence.get("sha256")
         item["stale_evidence"] = stale_evidence
         if not item["included"]:
             item["effective_status"] = "excluded"
@@ -676,7 +706,7 @@ def evidence_candidates(path: str | Path, item: dict) -> list[dict]:
 def check_references(path: str | Path, data_dir: Path) -> dict:
     """Broken links and file paths in the baseline's documents (read-only)."""
     root = _repository(path)
-    baseline = load_baseline(root, data_dir)
+    baseline = _load_baseline(root, data_dir, _remote_identity(root))
     if baseline is None:
         raise ValueError("기준 문서를 선택하고 기능 목록을 확정해 주세요.")
     tracked, untracked = _git_files(root)

@@ -305,3 +305,47 @@ def test_invalid_document_mark_is_rejected(tmp_path):
     draft["requirements"][0]["doc_marked_done"] = "yes"
     with pytest.raises(BaselineError):
         save_baseline(repo, tmp_path / "state", draft)
+
+
+def test_evidence_becomes_stale_when_its_file_changes_shrinks_or_disappears(tmp_path):
+    repo = project(tmp_path)
+    (repo / "src/other.py").write_text("a = 1\nb = 2\n", encoding="utf-8")
+    draft = extract_requirements(repo, ["README.md"])
+    for item, name, line in zip(draft["requirements"], ("login.py", "login.py"), (1, 2)):
+        item["implementation_status"] = "implemented"
+        item["evidence"] = {"path": f"src/{name}", "line": line, "note": "확인"}
+    save_baseline(repo, tmp_path / "state", draft)
+    state = tmp_path / "state"
+    assert [i["stale_evidence"] for i in inspect_progress(repo, state)["items"]] == [False, False]
+    (repo / "src/login.py").write_text("def login():\n", encoding="utf-8")  # shrinks past line 2
+    assert [i["stale_evidence"] for i in inspect_progress(repo, state)["items"]] == [True, True]
+    (repo / "src/login.py").unlink()
+    assert [i["stale_evidence"] for i in inspect_progress(repo, state)["items"]] == [True, True]
+
+
+def test_service_runs_few_git_commands(tmp_path, monkeypatch):
+    from drift_gate.desktop import progress_service as service
+
+    repo = project(tmp_path)
+    _origin(repo, "https://github.com/acme/shop.git")
+    calls = []
+    real = subprocess.run
+    monkeypatch.setattr(service.subprocess, "run", lambda *a, **k: (calls.append(a[0][3:5]), real(*a, **k))[1])
+    draft = extract_requirements(repo, ["README.md"])
+    assert len(calls) <= 3  # toplevel + two ls-files
+    calls.clear()
+    save_baseline(repo, tmp_path / "state", draft)
+    assert len(calls) <= 4  # + origin URL
+    calls.clear()
+    inspect_progress(repo, tmp_path / "state")
+    assert len(calls) <= 3  # toplevel + origin URL + HEAD
+
+
+def test_malformed_evidence_paths_are_reported_not_crashed(tmp_path):
+    repo = project(tmp_path)
+    draft = extract_requirements(repo, ["README.md"])
+    draft["requirements"][0]["implementation_status"] = "implemented"
+    draft["requirements"][0]["evidence"] = {"path": ["src/login.py"], "line": 1, "note": "x"}
+    with pytest.raises(BaselineError) as raised:
+        save_baseline(repo, tmp_path / "state", draft)
+    assert raised.value.errors[0]["field"] == "evidence.path"
