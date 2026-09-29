@@ -26,7 +26,7 @@ def test_bridge_keeps_llm_separate_and_exports(tmp_path, monkeypatch):
     target = tmp_path / 'report.json'
     monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getSaveFileName',lambda *args: (str(target),''))
     bridge.exportReport('json')
-    data = json.loads(target.read_text())
+    data = json.loads(target.read_text(encoding='utf-8'))
     assert data['result'] == 'pass'
     assert data['llm_review']['verdict'] == 'fail'
 
