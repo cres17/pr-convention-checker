@@ -28,7 +28,22 @@ def _status(item: dict, stale_documents: list[str]) -> str:
     return label
 
 
-def render_markdown(report: dict, project: dict | None = None) -> str:
+_CHANGE_LABELS = (
+    ("gained", "새로 구현 확인"),
+    ("regressed", "회귀(구현 확인 → 아님)"),
+    ("excluded", "범위에서 제외"),
+    ("reincluded", "다시 포함"),
+    ("added", "추가"),
+    ("removed", "삭제"),
+)
+
+
+def change_text(counts: dict) -> str:
+    """One line such as "새로 구현 확인 2 · 회귀(구현 확인 → 아님) 1"; empty when nothing changed."""
+    return " · ".join(f"{label} {counts[key]}" for key, label in _CHANGE_LABELS if counts.get(key))
+
+
+def render_markdown(report: dict, project: dict | None = None, history: dict | None = None) -> str:
     """Team-shareable summary. Only states what the saved baseline and evidence support."""
     project = project or {}
     counts = report["counts"]
@@ -56,6 +71,19 @@ def render_markdown(report: dict, project: dict | None = None) -> str:
     unbacked = report.get("doc_claims_unbacked", 0)
     if unbacked:
         lines += ["", f"> 문서에는 완료로 표시됐지만 코드 근거가 확인되지 않은 항목이 {unbacked}개 있습니다."]
+    since = (history or {}).get("since_save")
+    snapshots = (history or {}).get("snapshots") or []
+    if since:
+        text = change_text(since["counts"])
+        lines += ["", f"> 마지막 저장(기준 v{since['version']}) 이후 변화: {text or '완료 확인 수만 변경'}"]
+    if snapshots:
+        lines += ["", "## 진행 이력", "", "| 기준 | 저장 시각 | 완료 확인 | 구현 확인 | 지난 저장 대비 |", "|---|---|---|---|---|"]
+        for row in snapshots[:10]:
+            counts = row["counts"]
+            lines.append(
+                f"| v{row['version']} | {_cell(row['at'])} | {counts.get('complete', 0)} / {row['total']} "
+                f"| {counts.get('implemented', 0)} | {_cell(change_text(row.get('changes') or {}) if row.get('changes') else '첫 기록')} |"
+            )
     lines += ["", "## 기능별 현황", "",
               "| 기능 | 상태 | 검증 | 코드 근거 | 문서 출처 | 비고 |", "|---|---|---|---|---|---|"]
     for item in report["items"]:

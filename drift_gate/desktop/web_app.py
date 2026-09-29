@@ -21,7 +21,8 @@ from drift_gate.desktop.progress_report import render_markdown
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
     BaselineError, check_references, evidence_candidates, extract_requirements, inspect_progress,
-    list_documents, load_baseline, repository_root, save_baseline, scan_impact,
+    list_documents, load_baseline, progress_history_view, record_snapshot, repository_root,
+    save_baseline, scan_impact,
 )
 
 WEB_ROOT = Path(__file__).parent / 'web'
@@ -122,15 +123,21 @@ class DesktopBridge(QObject):
 
         def work():
             baseline = save_baseline(path, directory, json.loads(payload_json))
+            report = inspect_progress(path, directory)
             return [('progressSaved', {'baseline': baseline}),
-                    ('progressReport', {'report': inspect_progress(path, directory)})]
+                    ('progressReport', {'report': report}),
+                    ('progressHistory', record_snapshot(path, directory, report))]
         self._run_progress(path, work)
 
     @Slot(str)
     def inspectProgress(self, path):
         directory = self._progress_dir()
-        self._run_progress(path, lambda: [
-            ('progressReport', {'report': inspect_progress(path, directory)})])
+
+        def work():
+            report = inspect_progress(path, directory)
+            return [('progressReport', {'report': report}),
+                    ('progressHistory', progress_history_view(path, directory, report))]
+        self._run_progress(path, work)
 
     @Slot(str)
     def checkProgressLinks(self, path):
@@ -157,14 +164,15 @@ class DesktopBridge(QObject):
 
         def work():
             report = inspect_progress(root, directory)
+            history = progress_history_view(root, directory, report)
             project = detect_project(root)
             identity = {'name': project.name, 'branch': project.branch,
                         'version': project.version, 'commit': project.commit}
             if kind == 'json':
-                content = json.dumps({'schema': 1, 'project': identity, 'report': report},
+                content = json.dumps({'schema': 1, 'project': identity, 'report': report, 'history': history},
                                      ensure_ascii=False, indent=2)
             else:
-                content = render_markdown(report, identity)
+                content = render_markdown(report, identity, history)
             Path(filename).write_text(content, encoding='utf-8')
             return [('progressExported', {'file': filename})]
         self._run_progress(path, work)

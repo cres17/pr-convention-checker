@@ -12,6 +12,8 @@ from drift_gate.desktop.progress_service import (
     inspect_progress,
     list_documents,
     load_baseline,
+    progress_history_view,
+    record_snapshot,
     normalize_remote,
     save_baseline,
     scan_impact,
@@ -400,3 +402,56 @@ def test_scan_impact_reports_changed_baseline_documents_and_ignores_excluded_ite
 
 def test_scan_impact_is_none_without_a_saved_baseline(tmp_path):
     assert scan_impact(project(tmp_path), tmp_path / "state", []) is None
+
+
+def _save_and_record(repo, state, draft):
+    save_baseline(repo, state, draft)
+    return record_snapshot(repo, state, inspect_progress(repo, state))
+
+
+def test_history_records_each_save_and_shows_change_since_the_last_one(tmp_path):
+    repo = project(tmp_path)
+    state = tmp_path / "state"
+    draft = extract_requirements(repo, ["README.md"])
+    first = _save_and_record(repo, state, draft)
+    assert [r["version"] for r in first["snapshots"]] == [1] and first["since_save"] is None
+
+    draft["requirements"][0]["implementation_status"] = "implemented"
+    draft["requirements"][0]["evidence"] = {"path": "src/login.py", "line": 1, "note": "확인"}
+    second = _save_and_record(repo, state, draft)
+    assert [r["version"] for r in second["snapshots"]] == [2, 1]
+    assert second["snapshots"][0]["changes"]["gained"] == 1
+    assert second["snapshots"][0]["counts"]["implemented"] == 1
+    assert _save_and_record(repo, state, draft)["snapshots"] == second["snapshots"]  # unchanged: no new row
+
+    (repo / "src/login.py").write_text("def login():\n    raise SystemExit\n", encoding="utf-8")
+    view = progress_history_view(repo, state, inspect_progress(repo, state))
+    since = view["since_save"]
+    assert since["counts"]["regressed"] == 1 and since["regressed"][0]["title"].startswith("로그인")
+    assert len(view["snapshots"]) == 2  # viewing never records
+
+
+def test_history_survives_a_folder_move_and_ignores_a_damaged_file(tmp_path):
+    repo = project(tmp_path)
+    _origin(repo, "https://github.com/acme/shop.git")
+    state = tmp_path / "state"
+    _save_and_record(repo, state, extract_requirements(repo, ["README.md"]))
+    moved = tmp_path / "moved"
+    shutil.copytree(repo, moved)
+    assert len(progress_history_view(moved, state)["snapshots"]) == 1
+    history = next(state.glob("*.history.json"))
+    history.write_text("{not json", encoding="utf-8")
+    assert progress_history_view(moved, state) == {"snapshots": [], "since_save": None}
+
+
+def test_history_kept_under_the_old_path_key_is_still_read_after_a_remote_is_added(tmp_path):
+    repo = project(tmp_path)
+    state = tmp_path / "state"
+    _save_and_record(repo, state, extract_requirements(repo, ["README.md"]))  # no remote: path key
+    _origin(repo, "https://github.com/acme/shop.git")
+    assert len(progress_history_view(repo, state)["snapshots"]) == 1
+    draft = load_baseline(repo, state)
+    draft["requirements"][0]["included"] = False
+    record = _save_and_record(repo, state, draft)
+    assert [r["version"] for r in record["snapshots"]] == [2, 1]  # appended, then stored under the remote key
+    assert len(list(state.glob("*.history.json"))) == 2

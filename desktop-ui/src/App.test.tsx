@@ -350,3 +350,33 @@ it("offers to create a starter policy when the repository has none, then scans a
   expect(screen.queryByLabelText("정책 파일 만들기")).toBeNull();
   expect(screen.getByText(/정책 파일을 만들었습니다/)).toBeTruthy();
 });
+
+it("shows what changed since the last save and the list of saved states", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  const { act } = await import("react");
+  const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
+  const item = { id: "one", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
+    implementation_status: "unknown" as const, evidence: null,
+    verification_status: "unverified" as const, verification_note: "" };
+  act(() => emit({ type: "progressSaved", requested_path: "/sample/project",
+    baseline: { repository: "/sample/project", documents: { "README.md": "abc" }, requirements: [item], version: 3 } }));
+  expect(screen.queryByText(/마지막 저장/)).toBeNull();
+  act(() => emit({ type: "progressHistory", requested_path: "/sample/project",
+    since_save: { since: "2026-09-29T00:00:00Z", version: 3, complete_delta: -1,
+      counts: { regressed: 1, gained: 0 }, regressed: [{ id: "one", title: "로그인" }], gained: [], excluded: [],
+      reincluded: [], added: [], removed: [] },
+    snapshots: [
+      { at: "2026-09-29T00:00:00Z", version: 3, head: "abc", total: 2, counts: { complete: 1, implemented: 2 },
+        changes: { gained: 2, regressed: 0 }, complete_delta: 1 },
+      { at: "2026-09-28T00:00:00Z", version: 2, head: "abc", total: 2, counts: { complete: 0, implemented: 0 } },
+    ] }));
+  const notice = screen.getByText(/마지막 저장\(기준 v3\) 이후 변화/);
+  expect(notice.textContent).toContain("회귀(구현 확인 → 아님) 1");
+  expect(notice.textContent).toContain("완료 확인 -1");
+  expect(notice.textContent).toContain("회귀: 로그인");
+  expect(screen.getByText("진행 이력 2개")).toBeTruthy();
+  expect(screen.getByText("새로 구현 확인 2")).toBeTruthy();
+  expect(screen.getByText("첫 기록")).toBeTruthy();
+});
