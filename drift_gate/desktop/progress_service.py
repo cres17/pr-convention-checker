@@ -15,6 +15,12 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+from drift_gate.desktop.doc_links import (
+    MAX_ISSUES,
+    fenced_lines as _fenced_lines,
+    find_broken_references,
+)
+
 MAX_DOC_BYTES = 256_000
 MAX_DOCS = 150
 MAX_REQUIREMENTS = 120
@@ -43,9 +49,8 @@ SOURCE_SUFFIXES = {
     ".rs",
     ".vue",
 }
-CHECKBOX = re.compile(r"^\s*[-*+]\s+\[[ xX]\]\s+(.+?)\s*$")
+CHECKBOX = re.compile(r"^\s*[-*+]\s+\[([ xX])\]\s+(.+?)\s*$")
 HEADING = re.compile(r"^#{2,3}\s+(.+?)\s*#*\s*$")
-FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 BACKTICK = re.compile(r"`([^`\n]+)`")
 TABLE_DIVIDER = re.compile(r"^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$")
 
@@ -69,28 +74,6 @@ class BaselineError(ValueError):
             if len(errors) == 1
             else f"{len(errors)}개 항목을 확인해 주세요. 첫 오류: {first}"
         )
-
-
-def _fenced_lines(lines: list[str]) -> set[int]:
-    """Indexes of lines inside (or delimiting) fenced code blocks."""
-    fenced: set[int] = set()
-    marker = ""
-    for index, line in enumerate(lines):
-        match = FENCE.match(line)
-        if not marker:
-            if match:
-                marker = match.group(1)
-                fenced.add(index)
-        else:
-            fenced.add(index)
-            if (
-                match
-                and match.group(1)[0] == marker[0]
-                and len(match.group(1)) >= len(marker)
-                and not match.group(2).strip()
-            ):
-                marker = ""
-    return fenced
 
 
 def _table_cells(line: str) -> list[str]:
@@ -127,6 +110,11 @@ def _table_requirements(lines: list[str]):
                 if title and criterion:
                     yield row + 1, lines[row], title[:240], criterion[:500]
             row += 1
+
+
+def repository_root(path: str | Path) -> Path:
+    """Top-level folder of the Git repository containing ``path``."""
+    return _repository(path)
 
 
 def _hash(data: bytes) -> str:
@@ -270,9 +258,12 @@ def extract_requirements(path: str | Path, selected: list[str]) -> dict:
             match = CHECKBOX.match(line)
             if not match:
                 continue
-            title = match.group(1).strip()[:240]
+            title = match.group(2).strip()[:240]
             if title:
-                add(_item(relative, line_no, line, title, heading, doc_hashes[relative]), line)
+                candidate = _item(relative, line_no, line, title, heading, doc_hashes[relative])
+                # The document's own claim; never evidence, only compared with evidence later.
+                candidate["doc_marked_done"] = match.group(1) in "xX"
+                add(candidate, line)
             if len(requirements) >= MAX_REQUIREMENTS:
                 break
         found = contributed(relative)
@@ -437,6 +428,8 @@ def _item_errors(
             source["line"] - 1
         ].strip() != source.get("excerpt"):
             errors.append(("source", "기능의 문서 위치가 변경됐습니다."))
+    if not isinstance(item.get("doc_marked_done", False), bool):
+        errors.append(("source", "문서의 완료 표시 정보가 올바르지 않습니다."))
     duplicates = item.get("duplicates", [])
     if not isinstance(duplicates, list) or len(duplicates) > MAX_DUPLICATES or not all(
         isinstance(place, dict)
@@ -618,6 +611,8 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
             )
             item["effective_status"] = effective
             counts[effective] += 1
+            if item.get("doc_marked_done") and effective != "implemented" and not stale_docs:
+                item["doc_claim"] = "unbacked"
             if (
                 effective == "implemented"
                 and item["verification_status"] == "verified"
@@ -625,6 +620,7 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
             ):
                 counts["complete"] += 1
         items.append(item)
+    unbacked = sum(1 for entry in items if entry.get("doc_claim") == "unbacked")
     head = subprocess.run(
         ["git", "-C", str(root), "rev-parse", "HEAD"],
         capture_output=True,
@@ -642,6 +638,7 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
         "counts": counts,
         "total": total,
         "items": items,
+        "doc_claims_unbacked": unbacked,
         "limitations": "상태는 사용자가 확정한 코드 근거와 수동 검증 기록 기준입니다. 자동 의미 판정이나 테스트 실행은 아직 제공하지 않습니다.",
     }
 
@@ -674,3 +671,33 @@ def evidence_candidates(path: str | Path, item: dict) -> list[dict]:
         if first:
             candidates.append({"path": token, "line": first[0], "excerpt": first[1]})
     return candidates[:10]
+
+
+def check_references(path: str | Path, data_dir: Path) -> dict:
+    """Broken links and file paths in the baseline's documents (read-only)."""
+    root = _repository(path)
+    baseline = load_baseline(root, data_dir)
+    if baseline is None:
+        raise ValueError("기준 문서를 선택하고 기능 목록을 확정해 주세요.")
+    tracked, untracked = _git_files(root)
+    files = tracked | untracked
+    checked = 0
+    issues: list[dict] = []
+    for relative in baseline["documents"]:
+        try:
+            target = _safe_file(root, relative, {".md"}, MAX_DOC_BYTES)
+        except ValueError:
+            issues.append({"path": relative, "line": 0, "target": relative, "kind": "document",
+                           "message": "기준 문서를 읽을 수 없습니다"})
+            continue
+        lines = target.read_text(encoding="utf-8-sig", errors="replace").splitlines()
+        count, found = find_broken_references(relative, lines, root, files)
+        checked += count
+        issues.extend(found)
+    return {
+        "documents": list(baseline["documents"]),
+        "checked": checked,
+        "issues": issues[:MAX_ISSUES],
+        "truncated": len(issues) > MAX_ISSUES,
+        "limitations": "링크 대상의 존재만 확인합니다. #제목 앵커와 웹 주소는 검사하지 않습니다. 백틱 경로는 `폴더/파일.확장자` 형태만 대상입니다.",
+    }

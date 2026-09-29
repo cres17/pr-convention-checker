@@ -146,3 +146,46 @@ def test_progress_requests_run_off_the_ui_thread_in_request_order(tmp_path, monk
     settle(bridge)
     assert threads and threads[0] is not threading.main_thread()
     assert messages == ['progressDocs', 'progressPreview', 'progressError']
+
+
+def _saved_baseline(tmp_path, monkeypatch):
+    repo = project(tmp_path)
+    (repo / "README.md").write_text(
+        "# Service\n- [x] 로그인 화면을 `src/login.py`에 만든다\n[가이드](docs/gone.md)\n", encoding="utf-8")
+    bridge = DesktopBridge()
+    monkeypatch.setattr(bridge, '_progress_dir', lambda: tmp_path / 'app-data')
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    bridge.previewProgress(str(repo), json.dumps(['README.md']))
+    settle(bridge)
+    bridge.saveProgress(str(repo), json.dumps(messages[-1]))
+    settle(bridge)
+    assert messages[-1]['type'] == 'progressReport'
+    return repo, bridge, messages
+
+
+def test_progress_link_check_runs_on_the_saved_baseline(tmp_path, monkeypatch):
+    QApplication.instance() or QApplication([])
+    repo, bridge, messages = _saved_baseline(tmp_path, monkeypatch)
+    bridge.checkProgressLinks(str(repo))
+    settle(bridge)
+    result = messages[-1]
+    assert result['type'] == 'progressLinks'
+    assert [(i['target'], i['confidence']) for i in result['issues']] == [('docs/gone.md', 'high')]
+
+
+@pytest.mark.parametrize('kind,marker', [('md', '# 프로젝트 현황'), ('json', '"doc_claims_unbacked": 1')])
+def test_progress_report_export_uses_project_file_name(tmp_path, monkeypatch, kind, marker):
+    QApplication.instance() or QApplication([])
+    repo, bridge, messages = _saved_baseline(tmp_path, monkeypatch)
+    suggested = []
+    target = tmp_path / f'out.{kind}'
+    monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getSaveFileName',
+                        lambda *args: (suggested.append(args[2]), (str(target), ''))[1])
+    bridge.exportProgress(str(repo), kind)
+    settle(bridge)
+    assert re.fullmatch(rf'.*[\\/]repo_(?:[\w.-]+_)?progress_\d{{8}}-\d{{6}}\.{kind}', suggested[0])
+    assert messages[-1] == {'type': 'progressExported', 'requested_path': str(repo), 'file': str(target)}
+    assert marker in target.read_text(encoding='utf-8')
+    bridge.exportProgress(str(repo), 'exe')  # unknown kinds are ignored
+    assert len(suggested) == 1

@@ -277,3 +277,31 @@ def test_repository_without_a_usable_remote_still_keys_by_path(tmp_path):
     moved = tmp_path / "moved"
     shutil.copytree(repo, moved)
     assert load_baseline(moved, tmp_path / "state") is None
+
+
+def test_document_done_mark_without_backing_evidence_is_reported_not_trusted(tmp_path):
+    repo = project(tmp_path)  # README: "- [x] 로그인 ..." and "- [ ] 요청과 세션 ..."
+    draft = extract_requirements(repo, ["README.md"])
+    assert [i.get("doc_marked_done") for i in draft["requirements"]] == [True, False]
+    save_baseline(repo, tmp_path / "state", draft)
+    report = inspect_progress(repo, tmp_path / "state")
+    assert [i.get("doc_claim") for i in report["items"]] == ["unbacked", None]
+    assert report["doc_claims_unbacked"] == 1
+    assert report["counts"]["implemented"] == 0  # the checkmark counts for nothing
+
+    draft["requirements"][0]["implementation_status"] = "implemented"
+    draft["requirements"][0]["evidence"] = {"path": "src/login.py", "line": 1, "note": "함수 정의 확인"}
+    save_baseline(repo, tmp_path / "state", draft)
+    backed = inspect_progress(repo, tmp_path / "state")
+    assert backed["doc_claims_unbacked"] == 0
+    (repo / "src/login.py").write_text("def login():\n    pass\n# changed\n", encoding="utf-8")
+    stale = inspect_progress(repo, tmp_path / "state")
+    assert stale["items"][0]["doc_claim"] == "unbacked"  # evidence became stale
+
+
+def test_invalid_document_mark_is_rejected(tmp_path):
+    repo = project(tmp_path)
+    draft = extract_requirements(repo, ["README.md"])
+    draft["requirements"][0]["doc_marked_done"] = "yes"
+    with pytest.raises(BaselineError):
+        save_baseline(repo, tmp_path / "state", draft)

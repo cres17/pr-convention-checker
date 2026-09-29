@@ -18,6 +18,8 @@ const api = vi.hoisted(() => ({
   cancelReview: vi.fn(),
   exportReport: vi.fn(),
   openDocument: vi.fn(),
+  checkProgressLinks: vi.fn(),
+  exportProgress: vi.fn(),
   listProjectDocs: vi.fn(),
   previewProgress: vi.fn(),
   saveProgress: vi.fn(),
@@ -247,4 +249,48 @@ it("applies progress events that arrive in the same render batch", async () => {
   });
   expect(screen.getByText("서버가 정규화한 제목", { selector: "strong" })).toBeTruthy();
   expect(screen.getAllByText("0 / 1").length).toBe(2);
+});
+
+it("flags document checkmarks without evidence, checks links and exports the report", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  const { act } = await import("react");
+  const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
+  const make = (id: string, title: string) => ({
+    id, title, criterion: title, area: "계정", included: true, source, doc_marked_done: true,
+    implementation_status: "unknown" as const, evidence: null,
+    verification_status: "unverified" as const, verification_note: "",
+  });
+  const items = [make("one", "로그인"), { ...make("two", "가입"), doc_marked_done: false }];
+  act(() => emit({ type: "progressSaved", requested_path: "/sample/project",
+    baseline: { repository: "/sample/project", documents: { "README.md": "abc" }, requirements: items, version: 1 } }));
+  expect(screen.queryByText(/코드 근거가 확인되지 않은 항목이/)).toBeNull();
+  act(() => emit({ type: "progressReport", requested_path: "/sample/project", report: {
+    repository: "/sample/project", version: 1, at: "2026-09-29T00:00:00Z", head: "abc",
+    stale_documents: [], total: 2, limitations: "", doc_claims_unbacked: 1,
+    items: [{ ...items[0], effective_status: "unknown", doc_claim: "unbacked" }, { ...items[1], effective_status: "unknown" }],
+    counts: { implemented: 0, partial: 0, not_implemented: 0, unknown: 2, complete: 0, excluded: 0 },
+  } }));
+  expect(screen.getByText(/코드 근거가 확인되지 않은 항목이 1개/)).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "해당 항목 보기" }));
+  const list = screen.getByLabelText("기능 목록");
+  expect(list.textContent).toContain("로그인");
+  expect(list.textContent).toContain("문서는 완료 표시, 근거 없음");
+  expect(list.textContent).not.toContain("가입");
+
+  fireEvent.click(screen.getByRole("button", { name: "문서 링크 점검" }));
+  expect(api.checkProgressLinks).toHaveBeenCalledWith("/sample/project");
+  act(() => emit({ type: "progressLinks", requested_path: "/sample/project", documents: ["README.md"], checked: 3,
+    truncated: false, limitations: "앵커는 검사하지 않습니다.", issues: [
+      { path: "README.md", line: 5, target: "docs/gone.md", kind: "link", confidence: "high", message: "대상을 찾을 수 없습니다" },
+      { path: "README.md", line: 6, target: "app/main.py", kind: "path", confidence: "low", message: "대상을 찾을 수 없습니다" },
+    ] }));
+  expect(screen.getByText(/docs\/gone\.md · 대상을 찾을 수 없습니다/)).toBeTruthy();
+  expect(screen.getByText(/확인이 필요한 파일 경로 1개/)).toBeTruthy();
+
+  fireEvent.click(screen.getByRole("button", { name: "Markdown 저장" }));
+  expect(api.exportProgress).toHaveBeenCalledWith("/sample/project", "md");
+  act(() => emit({ type: "progressExported", requested_path: "/sample/project", file: "/tmp/x.md" }));
+  expect(screen.getByText("저장했습니다 · /tmp/x.md")).toBeTruthy();
 });
