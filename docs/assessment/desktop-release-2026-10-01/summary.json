@@ -1,0 +1,117 @@
+{
+  "baseline_commit": "b13d73f41008439616236af8cb7412c5565a2560",
+  "release_candidate": "working tree after b13d73f; product hashes in release-audit.json identify the tested code",
+  "python": "Python 3.11.15",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "python_tests": {
+    "before": {
+      "passed": 662
+    },
+    "after": {
+      "passed": 668
+    }
+  },
+  "ui_tests": {
+    "existing_before": 21,
+    "controlled_before": {
+      "passed": 21,
+      "failed": 6,
+      "total": 27
+    },
+    "after": {
+      "passed": 27,
+      "failed": 0,
+      "total": 27
+    }
+  },
+  "ui_regression_input_sha256": "4cc658a13cf9ea836030e9d8d61a2b099472fd6973f1ee869988e6e46854f274",
+  "benchmark": {
+    "cases": 22,
+    "path_only_matched": 19,
+    "patch_aware_matched": 22,
+    "semantic_aware_matched": 22
+  },
+  "controlled_git_changes": {
+    "support": {
+      "total": 11,
+      "matched": 11,
+      "tp": 6,
+      "tn": 5,
+      "fp": 0,
+      "fn": 0,
+      "error_or_skip": 0
+    },
+    "boundary": {
+      "total": 1,
+      "matched": 1,
+      "tp": 0,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_or_skip": 0
+    },
+    "repeat_same": 12
+  },
+  "generalization": {
+    "same_suite": true,
+    "same_case_results": true,
+    "counts": {
+      "supported": {
+        "total": 24,
+        "matched": 21,
+        "tp": 11,
+        "tn": 10,
+        "fp": 2,
+        "fn": 1,
+        "errors": 0
+      },
+      "boundary": {
+        "total": 8,
+        "matched": 1,
+        "tp": 0,
+        "tn": 1,
+        "fp": 1,
+        "fn": 6,
+        "errors": 0
+      }
+    },
+    "remaining_mismatches": [
+      "A09-stale-route-retained",
+      "E04-existing-token-key",
+      "E05-env-access-in-string",
+      "B01-multiline-route",
+      "B03-openapi-yaml",
+      "B04-router-prefix",
+      "B05-dynamic-environment-key",
+      "B06-aliased-environment-getter",
+      "B07-response-schema",
+      "B08-chained-router"
+    ]
+  },
+  "checks": {
+    "typescript": "passed",
+    "production_ui_build": "passed; pre-existing large bundle warnings remain",
+    "critical_python_lint": "passed",
+    "desktop_unused_imports": "passed",
+    "vulture_80_percent": "passed after naming unused Qt override parameters explicitly"
+  },
+  "limits": [
+    "Author-created fixed cases, not independent production accuracy.",
+    "Subscription tests use controlled responses; no new external LLM calls.",
+    "Native release workflow results are recorded separately after publication."
+  ],
+  "packaged_evaluation": {
+    "controlled_before": {
+      "passed": 0,
+      "failed": 6
+    },
+    "after": {
+      "passed": 6,
+      "failed": 0
+    },
+    "fresh_wheel_default_cases": 21,
+    "fresh_wheel_recursive_cases": 22,
+    "empty_input_exit_code": 2,
+    "bundled_ui": "present"
+  }
+}

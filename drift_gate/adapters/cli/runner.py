@@ -20,10 +20,11 @@ import webbrowser
 from pathlib import Path
 
 from drift_gate.adapters.eval.runner import (
+    DEFAULT_FIXTURE_PATH,
+    require_fixture_paths,
     benchmark_gate_failures,
     compare_engines,
     compare_paths,
-    discover_fixture_paths,
     evaluate_paths,
     render_comparison_html,
     render_comparison_markdown,
@@ -428,7 +429,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     demo.add_argument(
         "--fixtures",
-        default="drift_gate/tests/fixtures",
+        default=str(DEFAULT_FIXTURE_PATH),
         help="Fixture JSON file or directory",
     )
     demo.add_argument("--html-out", default="benchmark.html")
@@ -665,7 +666,7 @@ def _add_eval_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "path",
         nargs="?",
-        default="drift_gate/tests/fixtures",
+        default=str(DEFAULT_FIXTURE_PATH),
         help="Fixture JSON file or directory",
     )
     parser.add_argument(
@@ -801,7 +802,7 @@ def _run_check(args) -> None:
 
 
 def _run_demo(args) -> None:
-    paths = discover_fixture_paths(Path(args.fixtures))
+    paths = require_fixture_paths(Path(args.fixtures))
     comparison = compare_paths(paths)
 
     Path(args.html_out).write_text(
@@ -818,7 +819,7 @@ def _run_demo(args) -> None:
 
 
 def _run_eval(args) -> None:
-    paths = discover_fixture_paths(Path(args.path), recursive=args.recursive)
+    paths = require_fixture_paths(Path(args.path), recursive=args.recursive)
     report = (
         compare_engines(paths, args.engines.split(","))
         if args.engines
@@ -1308,7 +1309,7 @@ def _render_self_audit_html(audit_result) -> str:
 
     def _item_rows(items, badge_class, badge_label):
         if not items:
-            return f"<tr><td colspan='3'><em>None</em></td></tr>"
+            return "<tr><td colspan='3'><em>None</em></td></tr>"
         rows = ""
         for item in items:
             ev = ", ".join(_html.escape(e) for e in item.evidence) or "—"

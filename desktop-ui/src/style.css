@@ -1188,3 +1188,4 @@ button.progress-stat[aria-pressed="true"] { border-color: #2f6f5e; box-shadow: i
 button.progress-stat:focus-visible, .progress-doc select:focus-visible, .progress-guidance button:focus-visible { outline: 3px solid #2f6f5e; outline-offset: 3px; }
 .progress-guidance { padding: 16px 20px; border: 1px solid #d1dfd6; border-radius: 12px; background: #f7f9f6; }
 .progress-guidance p { margin: 8px 0 12px; color: #5b574f; font-size: 13px; line-height: 1.6; }
+.progress-detail-fields { border: 0; padding: 0; margin: 0; min-width: 0; }

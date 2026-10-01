@@ -48,7 +48,7 @@ class LocalOnly(QWebEngineUrlRequestInterceptor):
 
 
 class LocalPage(QWebEnginePage):
-    def acceptNavigationRequest(self, url, nav_type, is_main_frame):
+    def acceptNavigationRequest(self, url, _nav_type, _is_main_frame):
         return url.scheme() == 'file' and Path(url.toLocalFile()).resolve().is_relative_to(WEB_ROOT.resolve())
 
 

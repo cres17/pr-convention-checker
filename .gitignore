@@ -34,6 +34,8 @@ benchmark-reports/
 trend.html
 
 # IDE
+.DS_Store
+.local-archives/
 .vscode/
 .idea/
 *.swp
@@ -41,3 +43,10 @@ trend.html
 # Desktop web build
 node_modules/
 drift_gate/desktop/web/
+
+# Native packages belong in GitHub Releases, not Git history.
+/DriftGate.spec
+/DriftGate-*.dmg
+/DriftGate-Windows-Setup.exe
+/DriftGate-Windows-portable.zip
+/SHA256SUMS.txt

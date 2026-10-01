@@ -32,3 +32,5 @@ python_functions = ["test_*"]
 
 [tool.setuptools.package-data]
 "drift_gate.desktop" = ["web/**/*", "web/*"]
+
+"drift_gate.tests" = ["fixtures/*.json", "fixtures/**/*.json"]
