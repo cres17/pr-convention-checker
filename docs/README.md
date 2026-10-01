@@ -9,7 +9,7 @@
 | 문서 기준의 구현 현황을 확장하려는 계획 | [프로젝트 현황 계획](../계획.md) |
 | 최신 구조 보완·기능 회귀·릴리스 검증 | [2026-10-01 검증 보고서](review/release-readiness-2026-10-01.md) |
 | 문서 종류와 V5·V6·V7 구현 | [기능별 변경과 검증](review/document-kinds-v5-v7-2026-10-01.md) |
-| 다음 대화에서 이어갈 상태 | [작업 인계](handoff-2026-10-01.md) |
+| 다음 대화에서 이어갈 상태 | [작업 인계](handoff-2026-10-01.md) · [대화 압축본](conversation-summary-2026-10-01.md) |
 | 빌드·설치 프로그램·릴리스 운영 | [데스크톱 CI](ops/desktop-ci.md) |
 | 원본 버전과 개선본의 차이 | [12개 통제 사례](v1-ver2-controlled-comparison-2026-09-23.md) |
 | P06·P10·Markdown 표 오류의 실제 수정 | [수정 후 재검증](v1-ver2-contract-fix-results-2026-09-23.md) |
