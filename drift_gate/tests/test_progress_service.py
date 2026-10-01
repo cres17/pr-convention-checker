@@ -557,7 +557,7 @@ def test_invalid_document_roles_are_rejected_cleanly(tmp_path, selected):
 
 def test_remaining_current_duplicate_keeps_goal_in_scope(tmp_path):
     repo = project(tmp_path)
-    (repo / "goals.md").write_text((repo / "README.md").read_text(), encoding="utf-8")
+    (repo / "goals.md").write_text((repo / "README.md").read_text(encoding="utf-8"), encoding="utf-8")
     draft = extract_requirements(repo, ["README.md", "goals.md"])
     assert len(draft["requirements"]) == 2
     draft["document_kinds"]["README.md"] = "past"
