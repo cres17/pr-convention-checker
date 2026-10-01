@@ -44,3 +44,19 @@ it("accepts the backend's first history snapshot with no preceding comparison", 
     since_save: null };
   expect(decodeDesktopEvent(JSON.stringify(event))).toEqual(event);
 });
+it("keeps valid documents when a malformed recovery copy is rejected", () => {
+  const event = decodeDesktopEvent(JSON.stringify({ type: "progressDocs", requested_path: "/repo", request_id: "docs:1",
+    documents: [], omitted: 0, baseline: null, recovery: { documents: {}, requirements: [{ id: "x" }] } }));
+  expect(event).toMatchObject({ type: "progressDocs", recovery: null, recovery_warning: expect.any(String) });
+});
+it("recovers invalid evidence inputs without treating them as a confirmed baseline", () => {
+  const draft = { repository: "/repo", documents: { "a.md": "h" }, requirements: [{
+    id: "x", title: "x", criterion: "", area: "x", included: true,
+    source: { path: "a.md", line: 1, excerpt: "x", sha256: "h" },
+    implementation_status: "implemented", evidence: { path: "", line: -1, note: "" },
+    verification_status: "unverified", verification_note: "",
+  }] };
+  const result = decodeDesktopEvent(JSON.stringify({ type: "progressDocs", requested_path: "/repo", request_id: "docs:1",
+    documents: [], omitted: 0, baseline: null, recovery: draft }));
+  expect(result).toMatchObject({ type: "progressDocs", recovery: draft });
+});

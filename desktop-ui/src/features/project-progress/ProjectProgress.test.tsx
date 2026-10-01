@@ -31,6 +31,8 @@ function harness() {
     suggestProgressEvidence: vi.fn(),
     previewProgress: vi.fn(),
     loadTestResults: vi.fn(),
+    cacheProgressDraft: vi.fn(),
+    discardProgressDraft: vi.fn(),
   } as unknown as Bridge;
   let events: QueuedProgressEvent[] = [];
   let path = "/sample/one";
@@ -67,6 +69,47 @@ function harness() {
     },
   };
 }
+
+it("offers recovery without overwriting the confirmed baseline, then preserves incomplete edits", () => {
+  const page = harness();
+  const recovery = makeBaseline();
+  recovery.requirements[0] = { ...recovery.requirements[0], title: "복구할 제목", criterion: "" };
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline: makeBaseline(), recovery,
+    recovery_warning: "확정된 기준이 달라졌습니다." });
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("첫 기능");
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "선택 전 덮어쓰기" } });
+  expect(page.bridge.cacheProgressDraft).not.toHaveBeenCalled();
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("첫 기능");
+  fireEvent.click(screen.getByRole("button", { name: "초안 복구" }));
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("복구할 제목");
+  const cached = vi.mocked(page.bridge.cacheProgressDraft!).mock.calls.at(-1)!;
+  expect(JSON.parse(cached[1]).requirements[0].criterion).toBe("");
+  expect(page.bridge.saveProgress).not.toHaveBeenCalled();
+  page.emit({ type: "progressDraftCached", request_id: cached[2], requested_path: cached[0], request_done: true });
+  expect(screen.getByText(/이 기기에 보관했습니다/)).toBeTruthy();
+});
+
+it("deletes only the recovery copy after a correlated confirmation", () => {
+  const page = harness();
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline: makeBaseline(), recovery: makeBaseline() });
+  fireEvent.click(screen.getByRole("button", { name: "보관된 초안 삭제" }));
+  expect(screen.getByText("이전 편집 초안이 있습니다.")).toBeTruthy();
+  const [path, request_id] = vi.mocked(page.bridge.discardProgressDraft!).mock.calls.at(-1)!;
+  page.emit({ type: "progressDraftDiscarded", requested_path: path, request_id, request_done: true });
+  expect(screen.queryByText("이전 편집 초안이 있습니다.")).toBeNull();
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("첫 기능");
+});
+
+it("shows an autosave failure without unlocking a confirmed save in progress", () => {
+  const page = harness();
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline: makeBaseline() });
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "새 제목" } });
+  const [path, , request_id] = vi.mocked(page.bridge.cacheProgressDraft!).mock.calls.at(-1)!;
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  page.emit({ type: "progressDraftError", requested_path: path, request_id, request_done: true, message: "디스크 오류" });
+  expect(screen.getByText(/초안 자동 보관에 실패했습니다/)).toBeTruthy();
+  expect((screen.getByRole("button", { name: "저장 중…" }) as HTMLButtonElement).disabled).toBe(true);
+});
 
 it("clears errors when moving to another repository and ignores the old repository's reply", () => {
   const page = harness();

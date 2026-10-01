@@ -58,6 +58,12 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
   }, [events]);
   useEffect(() => { operation.current = state.busy; }, [state.busy]);
   useEffect(() => {
+    if (!connected || !bridge?.cacheProgressDraft || !state.path || !state.draft || !state.dirty) return;
+    const token = requests.current.start("draft");
+    dispatch({ type: "cache-draft" });
+    bridge.cacheProgressDraft(state.path, JSON.stringify(state.draft), token);
+  }, [state.draft, state.dirty, state.path, connected, bridge]);
+  useEffect(() => {
     if (state.path) sessions.current.set(state.path, state);
     for (const [repository, cached] of sessions.current)
       if (repository !== state.path && !cached.dirty) sessions.current.delete(repository);
@@ -88,6 +94,7 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
 
   const begin = (purpose: Exclude<ProgressOperation, "">, run: (bridge: Bridge, requestId: string) => void) => {
     if (!connected || !path || !bridge || state.path !== path || state.busy || operation.current) return;
+    if (view.recoveryPending && purpose !== "discard") return;
     operation.current = purpose;
     if (purpose === "save" || purpose === "extract") requests.current.invalidateReads();
     dispatch({ type: "begin", operation: purpose });
@@ -103,6 +110,11 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
     dispatch({ type: "edit", id, patch });
   };
   const actions = {
+    recoverDraft: () => dispatch({ type: "recover-draft" }),
+    discardDraft: () => {
+      if (!state.dirty && bridge?.discardProgressDraft)
+        begin("discard", (bridge, token) => bridge.discardProgressDraft?.(path, token));
+    },
     selectFilter: (value: string) => { if (isProgressFilter(value)) dispatch({ type: "filter", value }); },
     search: (value: string) => dispatch({ type: "query", value }),
     selectItem: (id: string) => dispatch({ type: "select", id }),

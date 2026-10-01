@@ -398,6 +398,55 @@ def test_cancel_and_failed_progress_requests_keep_their_request_id(tmp_path, mon
     assert messages[-1]['request_done']
 
 
+def test_draft_recovers_on_a_new_bridge_and_clears_only_after_successful_save(tmp_path, monkeypatch):
+    from drift_gate.desktop.progress_drafts import recovery_copy
+    from drift_gate.desktop.progress_service import extract_requirements, save_baseline
+    QApplication.instance() or QApplication([])
+    repo = project(tmp_path)
+    directory = tmp_path / 'recovery-data'
+    baseline = save_baseline(repo, directory, extract_requirements(repo, ['README.md']))
+    draft = json.loads(json.dumps(baseline))
+    draft['requirements'][0].update(title='재시작 전 편집', criterion='')
+    first = DesktopBridge()
+    monkeypatch.setattr(first, '_progress_dir', lambda: directory)
+    first.cacheProgressDraft(str(repo), json.dumps(draft), 'first:draft')
+    settle(first)
+    second = DesktopBridge()
+    monkeypatch.setattr(second, '_progress_dir', lambda: directory)
+    messages = []
+    second.event.connect(lambda raw: messages.append(json.loads(raw)))
+    second.listProjectDocs(str(repo), 'second:docs')
+    settle(second)
+    docs = of_type(messages, 'progressDocs')
+    assert docs['baseline']['requirements'][0]['title'] != '재시작 전 편집'
+    assert docs['recovery']['requirements'][0]['title'] == '재시작 전 편집'
+    second.saveProgress(str(repo), json.dumps(draft), 'second:bad-save')
+    settle(second)
+    assert recovery_copy(repo, directory, baseline)['recovery']
+    draft['requirements'][0]['criterion'] = '다시 입력한 완료 조건'
+    second.saveProgress(str(repo), json.dumps(draft), 'second:save')
+    settle(second)
+    assert of_type(messages, 'progressSaved')['baseline']['version'] == 2
+    assert recovery_copy(repo, directory, baseline) == {}
+
+
+def test_draft_write_error_and_explicit_discard_have_correlated_responses(tmp_path, monkeypatch):
+    QApplication.instance() or QApplication([])
+    repo = project(tmp_path)
+    bridge = DesktopBridge()
+    monkeypatch.setattr(bridge, '_progress_dir', lambda: tmp_path / 'draft-data')
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    bridge.cacheProgressDraft(str(repo), '{}', 'draft:bad')
+    settle(bridge)
+    assert messages[-1]['type'] == 'progressDraftError'
+    assert messages[-1]['request_id'] == 'draft:bad' and messages[-1]['request_done']
+    bridge.discardProgressDraft(str(repo), 'draft:delete')
+    settle(bridge)
+    assert messages[-1]['type'] == 'progressDraftDiscarded'
+    assert messages[-1]['request_id'] == 'draft:delete'
+
+
 @pytest.mark.parametrize('discard', [False, True])
 def test_native_close_protects_unsaved_progress(monkeypatch, discard):
     from types import SimpleNamespace

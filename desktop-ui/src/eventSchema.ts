@@ -24,6 +24,11 @@ const baseline = z.object({
     repository: text, documents: z.record(text, text), document_kinds: kinds.optional(),
     requirements: z.array(item).max(120), version: nonnegative.optional(),
 }).passthrough();
+// Draft inputs can be incomplete; e.g. a negative evidence line must survive recovery.
+const recoveryBaseline = baseline.extend({ requirements: z.array(item.extend({
+    evidence: z.object({ path: text, line: z.number().int(), note: text,
+        excerpt: text.optional(), sha256: text.optional() }).nullable(),
+})).max(120) });
 const report = z.object({
     repository: text, version: nonnegative, at: text, head: text, total: nonnegative,
     stale_documents: strings, counts: numbers, items: z.array(item), limitations: text,
@@ -56,7 +61,11 @@ const scan = z.object({ repository: text, base: text, at: text, changed_file_cou
     files: z.array(z.object({ path: text, patch: text, status: text })),
     result: z.object({ result: text, rule_decisions: z.array(decision), violations: z.array(violation).optional() }).passthrough() });
 const schema = z.discriminatedUnion("type", [
-    z.object({ type: z.literal("progressDocs"), ...progressMeta, documents: z.array(document), omitted: nonnegative, repository: text.optional(), baseline: baseline.nullable().optional() }),
+    z.object({ type: z.literal("progressDocs"), ...progressMeta, documents: z.array(document), omitted: nonnegative, repository: text.optional(), baseline: baseline.nullable().optional(),
+        recovery: recoveryBaseline.nullable().optional().catch(null), recovery_warning: text.optional() }),
+    z.object({ type: z.literal("progressDraftCached"), ...progressMeta }),
+    z.object({ type: z.literal("progressDraftDiscarded"), ...progressMeta }),
+    z.object({ type: z.literal("progressDraftError"), ...progressMeta, message: text }),
     z.object({ type: z.literal("progressPreview"), ...progressMeta, repository: text.optional(), truncated: z.boolean().optional(),
         documents: z.record(text, text), document_kinds: kinds.optional(), requirements: z.array(item).max(120) }),
     z.object({ type: z.literal("progressSaved"), ...progressMeta, baseline }),
@@ -99,8 +108,12 @@ export function decodeDesktopEvent(raw: string): DesktopEvent {
         return { type: "error", message: "앱 응답을 읽지 못했습니다." };
     }
     const parsed = schema.safeParse(value);
-    if (parsed.success)
+    if (parsed.success) {
+        if (parsed.data.type === "progressDocs" && value && typeof value === "object" && "recovery" in value
+            && value.recovery && parsed.data.recovery === null)
+            return { ...parsed.data, recovery_warning: "보관된 초안의 형식이 올바르지 않습니다. 확정된 기준은 유지했습니다." };
         return parsed.data;
+    }
     if (value && typeof value === "object" && "type" in value && typeof value.type === "string" && value.type.startsWith("progress")
         && "requested_path" in value && typeof value.requested_path === "string"
         && "request_id" in value && typeof value.request_id === "string") {

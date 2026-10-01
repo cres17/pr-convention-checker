@@ -1,11 +1,12 @@
 import type { ProgressEvent } from "../../events";
-export type ProgressRequest = "documents" | "extract" | "save" | "inspect" | "links" | "tests" | "evidence" | "export";
+export type ProgressRequest = "documents" | "extract" | "save" | "inspect" | "links" | "tests" | "evidence" | "export" | "draft" | "discard";
 const responses: Record<ProgressEvent["type"], ProgressRequest[]> = {
     progressDocs: ["documents"], progressPreview: ["extract"], progressSaved: ["save"],
     progressReport: ["save", "inspect"], progressHistory: ["save", "inspect"],
     progressTests: ["tests", "inspect"], progressTestsCancelled: ["tests"],
     progressLinks: ["links"], progressEvidence: ["evidence"], progressExported: ["export"],
-    progressError: ["documents", "extract", "save", "inspect", "links", "tests", "evidence", "export"],
+    progressDraftCached: ["draft"], progressDraftError: ["draft"], progressDraftDiscarded: ["discard"],
+    progressError: ["documents", "extract", "save", "inspect", "links", "tests", "evidence", "export", "discard"],
 };
 /** Requests are scoped to one editor visit, and only the latest request per purpose wins. */
 export class ProgressRequests {

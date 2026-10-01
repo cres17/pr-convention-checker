@@ -19,6 +19,7 @@ from drift_gate.desktop.review_dialog import ReviewWorker, review_html
 from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
 from drift_gate.adapters.report_naming import default_report_path, detect_project
 from drift_gate.desktop.progress_report import render_markdown
+from drift_gate.desktop.progress_drafts import cache_draft, recovery_copy, discard_draft
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
     BaselineError, check_references, evidence_candidates, extract_requirements, inspect_progress,
@@ -118,6 +119,7 @@ class DesktopBridge(QObject):
         def work():
             result = list_documents(path)
             result['baseline'] = load_baseline(path, directory)
+            result.update(recovery_copy(repository_root(path), directory, result['baseline']))
             return [('progressDocs', result)]
         self._run_progress(path, work, request_id=request_id)
 
@@ -134,10 +136,29 @@ class DesktopBridge(QObject):
 
         def work():
             baseline = save_baseline(path, directory, json.loads(payload_json))
+            discard_draft(repository_root(path), directory)
             report = inspect_progress(path, directory)
             return [('progressSaved', {'baseline': baseline}),
                     ('progressReport', {'report': report}),
                     ('progressHistory', record_snapshot(path, directory, report))]
+        self._run_progress(path, work, request_id=request_id)
+
+    @Slot(str, str, str)
+    def cacheProgressDraft(self, path, payload_json, request_id):
+        directory = self._progress_dir()
+        def work():
+            if len(payload_json.encode('utf-8')) > 2_000_000:
+                raise ValueError('편집 초안이 보관 상한을 넘었습니다.')
+            cache_draft(repository_root(path), directory, json.loads(payload_json))
+            return [('progressDraftCached', {})]
+        self._run_progress(path, work, error_type='progressDraftError', request_id=request_id)
+
+    @Slot(str, str)
+    def discardProgressDraft(self, path, request_id):
+        directory = self._progress_dir()
+        def work():
+            discard_draft(repository_root(path), directory)
+            return [('progressDraftDiscarded', {})]
         self._run_progress(path, work, request_id=request_id)
 
     @Slot(str)
@@ -415,7 +436,7 @@ class WebDesktopWindow(QMainWindow):
         if self.bridge.progress_dirty:
             answer = QMessageBox.question(
                 self, '저장 전 변경 사항',
-                '현황에 저장하지 않은 변경이 있습니다. 변경을 버리고 앱을 닫을까요?',
+                '현황에 확정하지 않은 변경이 있습니다. 앱을 닫을까요? 자동 보관된 초안은 다음 실행에서 복구할 수 있습니다.',
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 QMessageBox.StandardButton.No,
             )
