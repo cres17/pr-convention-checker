@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AlertCircle, BookOpen, Check, ChevronRight, FileSearch, Plus, RefreshCw } from "lucide-react";
+import { AlertCircle, BookOpen, ChevronRight, FileSearch, Plus, RefreshCw } from "lucide-react";
 import type { Bridge, LinkReport, ProgressHistory, TestLinks, ProgressBaseline, ProgressFieldError, ProgressItem, ProgressReport } from "../../bridge";
 import History from "./History";
 import { docClaimUnbacked, effectiveStatus, isStaleEvidence } from "./status";
