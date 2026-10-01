@@ -4,11 +4,8 @@ No network, no subprocess. All I/O is mocked via string content.
 """
 from __future__ import annotations
 
-import pytest
 
 from drift_gate.adapters.docs.readme_contract import (
-    DocsCheckResult,
-    DocsWarning,
     check_docs,
     extract_cli_commands_from_docs,
     extract_json_keys_from_docs,

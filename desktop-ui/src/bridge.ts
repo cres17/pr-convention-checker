@@ -173,6 +173,8 @@ export interface Bridge {
   exportProgress: (path: string, kind: string, requestId?: string) => void;
   openDocument: (relative: string) => void;
   listProjectDocs: (path: string, requestId?: string) => void;
+  cacheProgressDraft?: (path: string, payloadJson: string, requestId: string) => void;
+  discardProgressDraft?: (path: string, requestId: string) => void;
   previewProgress: (path: string, selectedJson: string, requestId?: string) => void;
   saveProgress: (path: string, payloadJson: string, requestId?: string) => void;
   inspectProgress: (path: string, requestId?: string) => void;

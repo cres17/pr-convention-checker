@@ -1,0 +1,37 @@
+drift_gate/adapters/docs/checklist.py:12:26: F401 [*] `typing.Optional` imported but unused
+drift_gate/adapters/docs/checklist.py:80:5: F841 Local variable `current_section` is assigned to but never used
+drift_gate/adapters/docs/readme_contract.py:170:27: F401 [*] `drift_gate.core.models.result.ScanMetrics` imported but unused
+drift_gate/adapters/docs/readme_contract.py:170:40: F401 [*] `drift_gate.core.models.result.SkippedRule` imported but unused
+drift_gate/adapters/docs/readme_contract.py:170:53: F401 [*] `drift_gate.core.models.result.RejectedIgnore` imported but unused
+drift_gate/core/self_audit/matcher.py:10:26: F401 [*] `typing.Optional` imported but unused
+drift_gate/core/self_audit/matcher.py:112:5: F841 Local variable `evidence_files_lower` is assigned to but never used
+drift_gate/tests/test_desktop_ui.py:16:5: F841 Local variable `app` is assigned to but never used
+drift_gate/tests/test_desktop_ui.py:44:5: F841 Local variable `app` is assigned to but never used
+drift_gate/tests/test_desktop_ui.py:61:5: F841 Local variable `app` is assigned to but never used
+drift_gate/tests/test_docs_check.py:7:8: F401 [*] `pytest` imported but unused
+drift_gate/tests/test_docs_check.py:10:5: F401 [*] `drift_gate.adapters.docs.readme_contract.DocsCheckResult` imported but unused
+drift_gate/tests/test_docs_check.py:11:5: F401 [*] `drift_gate.adapters.docs.readme_contract.DocsWarning` imported but unused
+drift_gate/tests/test_engine.py:739:51: F401 [*] `drift_gate.core.models.result.DriftIgnoreDirective` imported but unused
+drift_gate/tests/test_enricher.py:22:49: F401 [*] `drift_gate.core.models.policy.Policy` imported but unused
+drift_gate/tests/test_enricher.py:237:9: F841 Local variable `original_request` is assigned to but never used
+drift_gate/tests/test_github_client.py:9:27: F401 [*] `unittest.mock.MagicMock` imported but unused
+drift_gate/tests/test_github_client.py:9:38: F401 [*] `unittest.mock.call` imported but unused
+drift_gate/tests/test_github_client.py:179:64: F841 Local variable `mock_get` is assigned to but never used
+drift_gate/tests/test_github_client.py:193:9: F841 Local variable `original_get` is assigned to but never used
+drift_gate/tests/test_history.py:277:16: F401 [*] `json` imported but unused
+drift_gate/tests/test_history.py:278:29: F401 [*] `pathlib.Path` imported but unused
+drift_gate/tests/test_html_reporter.py:7:8: F401 [*] `html` imported but unused
+drift_gate/tests/test_html_reporter.py:8:8: F401 [*] `json` imported but unused
+drift_gate/tests/test_html_reporter.py:9:8: F401 [*] `re` imported but unused
+drift_gate/tests/test_html_reporter.py:11:8: F401 [*] `pytest` imported but unused
+drift_gate/tests/test_html_reporter.py:20:5: F401 [*] `drift_gate.core.models.result.SatisfiedGroup` imported but unused
+drift_gate/tests/test_html_reporter.py:21:5: F401 [*] `drift_gate.core.models.result.SkippedRule` imported but unused
+drift_gate/tests/test_intensity_classifier.py:5:8: F401 [*] `pytest` imported but unused
+drift_gate/tests/test_review.py:7:8: F401 [*] `pytest` imported but unused
+drift_gate/tests/test_self_audit.py:8:8: F401 [*] `pytest` imported but unused
+drift_gate/tests/test_self_audit.py:13:5: F401 [*] `drift_gate.adapters.docs.checklist._extract_hints` imported but unused
+drift_gate/tests/test_self_audit.py:16:5: F401 [*] `drift_gate.core.self_audit.matcher.AuditedItem` imported but unused
+drift_gate/tests/test_self_audit.py:18:5: F401 [*] `drift_gate.core.self_audit.matcher.SelfAuditResult` imported but unused
+drift_gate/tests/test_self_audit.py:19:5: F401 [*] `drift_gate.core.self_audit.matcher.SelfAuditWarning` imported but unused
+Found 35 errors.
+[*] 27 fixable with the `--fix` option (8 hidden fixes can be enabled with the `--unsafe-fixes` option).

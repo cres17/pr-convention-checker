@@ -60,6 +60,7 @@ jobs:
           drift_gate/tests/test_desktop_web.py
           drift_gate/tests/test_subscription_review.py
           drift_gate/tests/test_progress_service.py
+          drift_gate/tests/test_progress_drafts.py
           drift_gate/tests/test_progress_history.py
           drift_gate/tests/test_progress_report.py
           drift_gate/tests/test_doc_links.py

@@ -274,8 +274,6 @@ class TestTemporalGateE2E:
 
     def test_e2e_cli_check_with_temporal_gate(self, tmp_path, capsys):
         """CLI check --temporal-gate reads history and upgrades warn."""
-        import json
-        from pathlib import Path
 
         history_path = tmp_path / "history.jsonl"
         policy_path = tmp_path / ".drift-gate.yml"

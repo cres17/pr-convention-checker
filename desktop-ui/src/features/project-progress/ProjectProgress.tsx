@@ -27,9 +27,26 @@ export default function ProjectProgress(props: ProjectProgressProps) {
     );
   return (
     <div className="progress-page">
+      {!state.dirty && (state.recovery || state.recoveryWarning) && <div className="notice" role="status">
+        <div>
+          <strong>이전 편집 초안이 있습니다.</strong>
+          <p>{state.recoveryWarning || "초안을 복구해서 이어서 편집할 수 있습니다. 확정된 기준은 저장 버튼을 누를 때 바뀝니다."}</p>
+          <div className="progress-actions">
+            {state.recovery && <button className="primary" disabled={!!busy} onClick={actions.recoverDraft}>초안 복구</button>}
+            <button className="secondary" disabled={!!busy} onClick={actions.discardDraft}>보관된 초안 삭제</button>
+          </div>
+        </div>
+      </div>}
+      {state.dirty && state.recoveryWarning && <div className="notice" role="status">{state.recoveryWarning}</div>}
+      {state.dirty && state.draftStatus && <div className={`notice${state.draftStatus === "error" ? " error" : ""}`} role={state.draftStatus === "error" ? "alert" : "status"}>
+        {state.draftStatus === "saving" ? "복구용 초안을 자동 보관하는 중입니다." : state.draftStatus === "cached"
+          ? "복구용 초안을 이 기기에 보관했습니다. 다음 실행에서 복구할 수 있습니다. 현황 확정은 기준과 근거 저장을 눌러 주세요."
+          : `초안 자동 보관에 실패했습니다. ${state.draftError} 앱을 닫기 전에 기준과 근거 저장을 사용하거나 다시 편집해 재시도해 주세요.`}
+      </div>}
       {pendingElsewhere > 0 && <div className="notice" role="status">
         다른 프로젝트 {pendingElsewhere}개에 저장하지 않은 현황 편집이 있습니다. 해당 프로젝트를 다시 연결하면 이어서 편집할 수 있습니다.
       </div>}
+      <fieldset className="progress-page" disabled={view.recoveryPending} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
       <DocumentSetup
         path={path}
         documents={documents}
@@ -172,6 +189,7 @@ export default function ProjectProgress(props: ProjectProgressProps) {
           </p>
         </>
       )}
+      </fieldset>
     </div>
   );
 }

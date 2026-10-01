@@ -6,7 +6,9 @@ import type {
 
 type Requested = { requested_path?: string; request_id?: string; request_done?: boolean };
 export type ProgressEvent = Requested & (
-  | { type: "progressDocs"; documents: ProjectDocument[]; omitted: number; repository?: string; baseline?: ProgressBaseline | null }
+  | { type: "progressDocs"; documents: ProjectDocument[]; omitted: number; repository?: string; baseline?: ProgressBaseline | null; recovery?: ProgressBaseline | null; recovery_warning?: string }
+  | { type: "progressDraftCached" | "progressDraftDiscarded" }
+  | { type: "progressDraftError"; message: string }
   | ({ type: "progressPreview"; repository?: string; truncated?: boolean } & Pick<ProgressBaseline, "documents" | "document_kinds" | "requirements">)
   | { type: "progressTestsCancelled" }
   | { type: "progressSaved"; baseline: ProgressBaseline }
@@ -39,7 +41,8 @@ export function isProgressEvent(event: DesktopEvent): event is ProgressEvent {
     case "progressDocs": case "progressPreview": case "progressSaved":
     case "progressReport": case "progressTests": case "progressHistory":
     case "progressLinks": case "progressExported": case "progressEvidence":
-    case "progressError": case "progressTestsCancelled": return true;
+    case "progressError": case "progressTestsCancelled":
+    case "progressDraftCached": case "progressDraftDiscarded": case "progressDraftError": return true;
     default: return false;
   }
 }

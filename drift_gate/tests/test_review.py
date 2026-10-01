@@ -4,7 +4,6 @@ No network, no subprocess. Pure unit tests on file content strings.
 """
 from __future__ import annotations
 
-import pytest
 
 from drift_gate.core.review.heuristics import (
     ReviewFinding,

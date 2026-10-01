@@ -4,11 +4,7 @@ No network, no subprocess. All I/O is pure string assertions.
 """
 from __future__ import annotations
 
-import html
-import json
-import re
 
-import pytest
 
 from drift_gate.adapters.history.store import render_history_html
 from drift_gate.core.models.changed_file import ChangedFile
@@ -17,8 +13,6 @@ from drift_gate.core.models.result import (
     EnrichmentMetrics,
     EvaluationResult,
     RuleDecision,
-    SatisfiedGroup,
-    SkippedRule,
     TemporalWarning,
     UnsatisfiedGroup,
     Violation,

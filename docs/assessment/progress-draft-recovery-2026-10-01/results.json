@@ -1,0 +1,15 @@
+{
+  "baseline_commit": "637fe13c63c36b544fd309f703fa3de358438e42",
+  "python_tests": 693,
+  "react_tests": 77,
+  "lint_scope": "drift_gate --select E9,F",
+  "lint_before": 35,
+  "lint_test_files_before": 28,
+  "lint_after": 0,
+  "native_fresh_process_phases": [
+    "edit",
+    "recover",
+    "confirm"
+  ],
+  "new_preview_tag": "desktop-v1.0.2-preview.20261001"
+}

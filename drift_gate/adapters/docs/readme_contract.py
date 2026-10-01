@@ -167,7 +167,7 @@ def extract_json_keys_from_docs(content: str) -> List[str]:
 def get_evaluation_result_keys() -> List[str]:
     """Return the top-level keys from EvaluationResult.to_dict()."""
     from drift_gate.core.models.result import (
-        EvaluationResult, ScanMetrics, SkippedRule, RejectedIgnore,
+        EvaluationResult,
     )
     from drift_gate.core.models.policy import Gate
     result = EvaluationResult(

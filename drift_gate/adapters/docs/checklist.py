@@ -9,7 +9,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 
 _CHECKBOX_RE = re.compile(
@@ -77,7 +77,6 @@ def parse_checklist(path: Path) -> List[ChecklistItem]:
 def parse_checklist_text(content: str) -> List[ChecklistItem]:
     """Parse checkbox items from a Markdown string."""
     items: List[ChecklistItem] = []
-    current_section = ""
 
     lines = content.splitlines()
     line_starts: dict[int, int] = {}  # offset -> line_number

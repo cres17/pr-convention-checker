@@ -19,7 +19,7 @@ from drift_gate.adapters.claude.enricher import (
     _fallback_draft,
 )
 from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.models.policy import Gate, Policy
+from drift_gate.core.models.policy import Gate
 from drift_gate.core.models.result import (
     EnrichmentMetrics,
     EvaluationResult,
@@ -234,7 +234,6 @@ class TestPromptCachingPayload:
             def __enter__(self): return self
             def __exit__(self, *a): return False
 
-        original_request = urllib.request.Request
 
         def fake_urlopen(req):
             captured["payload"] = json.loads(req.data.decode())

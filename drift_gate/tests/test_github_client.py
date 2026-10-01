@@ -6,7 +6,7 @@ All tests use monkeypatching — no real network calls.
 """
 import json
 from io import BytesIO
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import patch
 import urllib.error
 
 import pytest
@@ -176,7 +176,7 @@ class TestPaginationEdgeCases:
     def test_empty_first_page_returns_empty_list(self):
         adapter = _make_adapter()
 
-        with patch.object(adapter, "_get", return_value=[]) as mock_get:
+        with patch.object(adapter, "_get", return_value=[]):
             files = adapter.get_pr_files(1)
 
         assert files == []
@@ -189,8 +189,6 @@ class TestPaginationEdgeCases:
 
         call_urls: list = []
         responses = iter([page1, page2])
-
-        original_get = adapter._get.__func__ if hasattr(adapter._get, '__func__') else None
 
         def fake_get(url: str):
             call_urls.append(url)

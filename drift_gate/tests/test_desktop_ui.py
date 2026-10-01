@@ -13,7 +13,7 @@ from drift_gate.desktop.app import DesktopWindow, _detail_html
 
 
 def test_window_has_clear_initial_action():
-    app = QApplication.instance() or QApplication([])
+    _app = QApplication.instance() or QApplication([])
     window = DesktopWindow()
     try:
         assert window.scan_button.text() == "검사 시작"
@@ -41,7 +41,7 @@ def test_rule_detail_escapes_repository_content():
 def test_llm_dialog_does_not_send_until_requested(monkeypatch):
     from drift_gate.desktop.review_dialog import ReviewDialog
     from drift_gate.tests.test_subscription_review import scan
-    app = QApplication.instance() or QApplication([])
+    _app = QApplication.instance() or QApplication([])
     calls = []
     monkeypatch.setattr("drift_gate.desktop.review_dialog.review_with_subscription", lambda *a, **k: calls.append(a))
     dialog = ReviewDialog(scan())
@@ -58,7 +58,7 @@ def test_export_keeps_gate_separate_from_llm(tmp_path, monkeypatch, suffix):
     import json
     from drift_gate.desktop.subscription_review import parse_review
     from drift_gate.tests.test_subscription_review import response, scan
-    app = QApplication.instance() or QApplication([])
+    _app = QApplication.instance() or QApplication([])
     window = DesktopWindow()
     window._scan = scan()
     window._llm_review = parse_review(response("fail"), "claude")

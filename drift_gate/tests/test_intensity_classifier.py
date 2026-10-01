@@ -2,7 +2,6 @@
 Unit tests for intensity classifier.
 Covers every classification branch to ensure individual pattern accuracy.
 """
-import pytest
 
 from drift_gate.core.classification.intensity import (
     classify_file_intensity,
