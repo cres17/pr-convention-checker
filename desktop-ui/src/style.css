@@ -1008,7 +1008,7 @@ td {
 .progress-doc span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .progress-doc small { flex: none; color: #746c5d; font-size: 11px; }
 .progress-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.progress-overview { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.progress-overview { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .progress-stat { display: grid; gap: 5px; padding: 17px 20px; border: 1px solid #e4e0d8; border-radius: 12px; background: #fff; }
 .progress-stat > span { color: #5b574f; font-size: 12px; }
 .progress-stat strong { font-size: 24px; line-height: 1.3; }
@@ -1018,6 +1018,7 @@ td {
 .progress-segment.partial { background: #b57c24; }
 .progress-segment.not_implemented { background: #9b1c13; }
 .progress-segment.unknown { background: #77756f; }
+.progress-segment.recheck { background: #b57c24; }
 .progress-legend { font-size: 12px; }
 .progress-workspace { display: grid; gap: 12px; }
 .progress-toolbar { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -1033,6 +1034,7 @@ td {
 .progress-status.implemented { background: #e6eee9; color: #255746; }
 .progress-status.partial { background: #f8eddb; color: #815718; }
 .progress-status.not_implemented { background: #f9e7e4; color: #882319; }
+.progress-status.recheck { background: #f8eddb; color: #815718; }
 .progress-detail { display: grid; align-content: start; gap: 13px; min-width: 0; padding: 18px; border: 1px solid #e4e0d8; border-radius: 10px; background: #faf9f6; }
 .progress-detail .field { display: grid; gap: 5px; }
 .progress-detail textarea { width: 100%; resize: vertical; border: 1px solid #d8d3c9; border-radius: 8px; background: #fff; padding: 10px 12px; color: inherit; font: inherit; }
@@ -1048,6 +1050,7 @@ td {
 .progress-candidate:hover { background: #e6eee9; }
 .progress-code { display: block; overflow-wrap: anywhere; border: 1px solid #e4e0d8; border-radius: 7px; padding: 9px; background: #fff; }
 @media (max-width: 1050px) {
+  .progress-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .progress-grid { grid-template-columns: 1fr; }
   .progress-list { max-height: 300px; }
 }

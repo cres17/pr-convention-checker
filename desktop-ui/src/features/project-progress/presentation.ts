@@ -1,9 +1,15 @@
-import type { DocumentKind, ProgressItem, ProgressReport } from "../../bridge";
-import { effectiveStatus, isStaleEvidence } from "./status";
+import type {
+  DocumentKind, ProgressBaseline, ProgressItem, ProgressReport,
+} from "../../bridge";
+import {
+  effectiveStatus, inCurrentScope, isStaleEvidence, isStaleRequirement,
+  type DisplayStatus,
+} from "./status";
 
-export const statusText: Record<ProgressItem["implementation_status"], string> =
+export const statusText: Record<DisplayStatus, string> =
   {
     unknown: "근거 없음",
+    recheck: "재확인 필요",
     partial: "부분 구현",
     implemented: "구현 확인",
     not_implemented: "미구현 확인",
@@ -17,8 +23,14 @@ export const documentKindText: Record<DocumentKind, string> = {
 export function nextAction(
   item: ProgressItem,
   report: ProgressReport | null,
+  baseline: ProgressBaseline,
 ): string {
-  if (!item.included) return "이번 범위에서 제외";
+  if (!inCurrentScope(item, baseline))
+    return "현재 목표 집계에서 제외 (기존 근거 유지)";
+  if (
+    report?.stale_documents.length || isStaleRequirement(item, baseline, report)
+  )
+    return "변경된 기준 문서 다시 확인";
   if (isStaleEvidence(item, report)) return "변경된 코드를 다시 확인";
   const status = effectiveStatus(item, report);
   if (status === "unknown") return "코드 근거 확인";

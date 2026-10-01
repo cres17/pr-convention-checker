@@ -282,9 +282,10 @@ def test_test_results_are_linked_to_items_after_the_user_picks_a_file(tmp_path, 
     assert (only['passed'], only['failed']) == (1, 1)
     monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getOpenFileName', lambda *args: ('', ''))
     count = len(messages)
-    bridge.loadTestResults(str(repo))  # cancelled dialog: nothing happens
+    bridge.loadTestResults(str(repo))  # cancellation completes loading without replacing records
     settle(bridge)
-    assert len(messages) == count
+    assert len(messages) == count + 1
+    assert messages[-1] == {"type": "progressTestsCancelled", "requested_path": str(repo)}
     results.write_text('not a result file', encoding='utf-8')
     monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getOpenFileName', lambda *args: (str(results), ''))
     bridge.loadTestResults(str(repo))
@@ -345,3 +346,19 @@ def test_progress_bridge_roundtrips_document_roles_and_context_only_baseline(tmp
     bridge.listProjectDocs(str(repo))
     settle(bridge)
     assert of_type(messages, 'progressDocs')['baseline']['document_kinds'] == {'README.md': 'past'}
+
+
+def test_test_picker_cancel_completes_without_changing_remembered_file(tmp_path, monkeypatch):
+    from PySide6.QtCore import QSettings
+    QApplication.instance() or QApplication([])
+    repo = project(tmp_path)
+    bridge = DesktopBridge()
+    bridge.settings = QSettings(str(tmp_path / "cancel.ini"), QSettings.Format.IniFormat)
+    key = bridge._results_key(str(repo))
+    bridge.settings.setValue(key, "old.xml")
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    monkeypatch.setattr("drift_gate.desktop.web_app.QFileDialog.getOpenFileName", lambda *args: ("", ""))
+    bridge.loadTestResults(str(repo))
+    assert messages == [{"type": "progressTestsCancelled", "requested_path": str(repo)}]
+    assert bridge.settings.value(key) == "old.xml"

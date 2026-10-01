@@ -167,6 +167,7 @@ class DesktopBridge(QObject):
         filename, _ = QFileDialog.getOpenFileName(
             self.parent(), '테스트 결과 파일 선택', str(root), '테스트 결과 (*.xml *.json)')
         if not filename:
+            self.emit("progressTestsCancelled", requested_path=path)
             return
         directory = self._progress_dir()
         self.settings.setValue(self._results_key(path), filename)  # re-read next time this project opens

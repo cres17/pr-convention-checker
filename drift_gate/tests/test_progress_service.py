@@ -2,6 +2,7 @@
 
 import shutil
 import subprocess
+from copy import deepcopy
 
 import pytest
 
@@ -586,3 +587,97 @@ def test_review_impact_does_not_claim_context_evidence_changes_affect_counts(tmp
     ])
     assert impact['items'] == []
     assert impact['documents'] == [{'path': 'README.md', 'invalidated': True, 'kind': 'past'}]
+
+
+def test_merged_reextraction_adds_past_goals_without_losing_evidence_or_history(tmp_path):
+    repo = project(tmp_path)
+    state = tmp_path / "state"
+    (repo / "past.md").write_text("- [ ] 알림 기능\n", encoding="utf-8")
+    draft = extract_requirements(repo, ["README.md", {"path": "past.md", "kind": "past"}])
+    item = draft["requirements"][0]
+    item.update(implementation_status="implemented",
+                evidence={"path": "src/login.py", "line": 1, "note": "확인"},
+                verification_status="verified", verification_note="직접 검증")
+    saved = save_baseline(repo, state, draft)
+    record_snapshot(repo, state, inspect_progress(repo, state))
+    old = deepcopy(saved["requirements"])
+    preview = extract_requirements(repo, ["README.md", "past.md"])
+    preview["requirements"] = old + [entry for entry in preview["requirements"]
+                                    if entry["id"] not in {i["id"] for i in old}]
+    merged = save_baseline(repo, state, preview)
+    assert merged["requirements"][:2] == old
+    assert merged["version"] == 2
+    report = inspect_progress(repo, state)
+    assert report["total"] == 3 and report["counts"]["complete"] == 1
+    changes = record_snapshot(repo, state, report)["snapshots"][0]["changes"]
+    assert changes["added"] == 1 and changes.get("regressed", 0) == 0
+    assert save_baseline(repo, state, deepcopy(merged))["version"] == 2
+
+
+def test_saving_retained_evidence_does_not_refresh_changed_code_without_review(tmp_path):
+    repo = project(tmp_path)
+    state = tmp_path / "state"
+    draft = extract_requirements(repo, ["README.md"])
+    draft["requirements"][0].update(implementation_status="implemented",
+        evidence={"path": "src/login.py", "line": 1, "note": "확인"},
+        verification_status="verified", verification_note="직접 검증")
+    saved = save_baseline(repo, state, draft)
+    old_evidence = deepcopy(saved["requirements"][0]["evidence"])
+    (repo / "src/login.py").write_text("def login():\n    return False\n", encoding="utf-8")
+    saved["requirements"][1]["title"] = "편집된 제목"
+    retained = save_baseline(repo, state, saved)
+    assert retained["requirements"][0]["evidence"] == old_evidence
+    report = inspect_progress(repo, state)
+    assert report["counts"]["complete"] == 0
+    assert report["items"][0]["stale_evidence"]
+    # Editing/reviewing evidence explicitly requests a fresh snapshot.
+    retained["requirements"][0]["evidence"].pop("sha256")
+    refreshed = save_baseline(repo, state, retained)
+    assert refreshed["requirements"][0]["evidence"]["sha256"] != old_evidence["sha256"]
+
+
+def test_reextracted_document_preserves_review_but_requires_explicit_reconfirmation(tmp_path):
+    repo = project(tmp_path)
+    state = tmp_path / "state"
+    draft = extract_requirements(repo, ["README.md"])
+    draft["requirements"][0].update(implementation_status="implemented",
+        evidence={"path": "src/login.py", "line": 1, "note": "확인"},
+        verification_status="verified", verification_note="검증 기록")
+    saved = save_baseline(repo, state, draft)
+    (repo / "README.md").write_text((repo / "README.md").read_text() + "설명 변경\n", encoding="utf-8")
+    preview = extract_requirements(repo, ["README.md"])
+    fresh = {item["id"]: item for item in preview["requirements"]}
+    preview["requirements"] = deepcopy(saved["requirements"])
+    for item in preview["requirements"]:
+        item["source"] = fresh[item["id"]]["source"]
+        item["reviewed_documents"] = saved["documents"]
+    merged = save_baseline(repo, state, preview)
+    assert merged["requirements"][0]["verification_note"] == "검증 기록"
+    assert inspect_progress(repo, state)["counts"]["complete"] == 0
+    assert inspect_progress(repo, state)["items"][0]["stale_requirement"]
+    from drift_gate.desktop.progress_report import render_markdown
+    assert "재확인 필요" in render_markdown(inspect_progress(repo, state))
+    merged["requirements"][0]["reviewed_documents"] = merged["documents"]
+    save_baseline(repo, state, merged)
+    assert inspect_progress(repo, state)["counts"]["complete"] == 1
+
+
+def test_retained_removed_source_is_not_dropped_or_counted_as_reviewed(tmp_path):
+    repo = project(tmp_path)
+    state = tmp_path / "state"
+    draft = extract_requirements(repo, ["README.md"])
+    draft["requirements"][0].update(implementation_status="not_implemented", implementation_note="확인 기록")
+    saved = save_baseline(repo, state, draft)
+    (repo / "README.md").write_text("# 새 계획\n- [ ] 새 기능\n", encoding="utf-8")
+    preview = extract_requirements(repo, ["README.md"])
+    preview["requirements"] = deepcopy(saved["requirements"]) + preview["requirements"]
+    merged = save_baseline(repo, state, preview)
+    report = inspect_progress(repo, state)
+    assert len(merged["requirements"]) == 3
+    assert report["items"][0]["implementation_note"] == "확인 기록"
+    assert report["items"][0]["stale_requirement"]
+    assert report["counts"]["not_implemented"] == 0
+    # A forged/stale source on a new item is still rejected.
+    merged["requirements"][-1]["source"]["line"] = 999
+    with pytest.raises(BaselineError):
+        save_baseline(repo, state, merged)

@@ -1,8 +1,8 @@
 import { BookOpen, FileSearch, RefreshCw } from "lucide-react";
-import type { DocumentKind, ProgressBaseline } from "../../bridge";
+import type { DocumentKind, ProgressBaseline, ProjectDocument } from "../../bridge";
 import { documentKindText } from "./presentation";
 
-export type ProjectDocument = { path: string; tracked: boolean; bytes: number };
+export type { ProjectDocument } from "../../bridge";
 type Props = {
   path: string;
   documents: ProjectDocument[];
@@ -93,7 +93,7 @@ export default function DocumentSetup({
                       <input
                         type="checkbox"
                         checked={selectedDocs.includes(doc.path)}
-                        disabled={busy === "save"}
+                        disabled={busy === "save" || busy === "extract"}
                         onChange={(e) => onSelect(doc.path, e.target.checked)}
                       />
                       <span title={doc.path}>{doc.path}</span>
@@ -102,7 +102,7 @@ export default function DocumentSetup({
                     <select
                       aria-label={`${doc.path}의 문서 종류`}
                       disabled={
-                        !selectedDocs.includes(doc.path) || busy === "save"
+                        !selectedDocs.includes(doc.path) || busy === "save" || busy === "extract"
                       }
                       value={documentKinds[doc.path] ?? "current"}
                       onChange={(e) =>
@@ -136,9 +136,9 @@ export default function DocumentSetup({
                   {busy === "extract" ? "후보 추출 중…" : "기능 후보 추출"}
                 </button>
                 <span className="hint">
-                  최대 10개 문서 · 재추출은 기존 근거를 초기화합니다. 저장된
-                  문서의 종류만 바꾸면 근거는 유지됩니다. 새 현재 목표의 기능을
-                  추가하려면 재추출하세요.
+                  최대 10개 문서 · 재추출은 기존 편집과 근거를 보존하고 새
+                  후보를 추가합니다. 선택 해제한 문서는 참고로 보관합니다.
+                  새 현재 목표의 기능을 추가하려면 재추출하세요.
                 </span>
               </div>
             </>

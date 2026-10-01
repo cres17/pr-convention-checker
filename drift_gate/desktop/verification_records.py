@@ -15,6 +15,8 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
+from drift_gate.desktop.progress_scope import in_current_scope as in_current_scope
+
 MAX_BYTES = 20_000_000
 MAX_TESTS = 50_000
 MAX_PATTERNS = 5
@@ -138,8 +140,14 @@ def _code_newer(root: Path | None, item: dict, results_mtime: float | None) -> b
         return False
 
 
-def link_tests(parsed: dict, items: list[dict], root: Path | None = None) -> dict:
-    """Attach matching tests to each included item (patterns plus the ``req-`` marker).
+
+def link_tests(
+    parsed: dict,
+    items: list[dict],
+    root: Path | None = None,
+    document_kinds: dict[str, str] | None = None,
+) -> dict:
+    """Attach matching tests to current-scope items (patterns plus the ``req-`` marker).
 
     With ``root``, an item is also flagged ``code_newer`` when its evidence file was
     changed after the result file was written, i.e. the results may predate the code.
@@ -147,7 +155,7 @@ def link_tests(parsed: dict, items: list[dict], root: Path | None = None) -> dic
     tests = parsed["tests"]
     linked = {}
     for item in items:
-        if not item.get("included"):
+        if not in_current_scope(item, document_kinds):
             continue
         patterns = clean_patterns(item.get("test_patterns")) or []
         needles = [*patterns, marker(item["id"])]
@@ -180,7 +188,12 @@ def is_test_source(path: str) -> bool:
     )
 
 
-def find_unmatched_patterns(root: Path, files: set[str], items: list[dict]) -> dict[str, list[str]]:
+def find_unmatched_patterns(
+    root: Path,
+    files: set[str],
+    items: list[dict],
+    document_kinds: dict[str, str] | None = None,
+) -> dict[str, list[str]]:
     """Per item, the user's test-name patterns that appear in no test file of the repository.
 
     Catches typos before any result file exists. A pattern counts as found when the
@@ -190,7 +203,7 @@ def find_unmatched_patterns(root: Path, files: set[str], items: list[dict]) -> d
     wanted = {
         item["id"]: patterns
         for item in items
-        if item.get("included") and (patterns := clean_patterns(item.get("test_patterns")))
+        if in_current_scope(item, document_kinds) and (patterns := clean_patterns(item.get("test_patterns")))
     }
     if not wanted:
         return {}

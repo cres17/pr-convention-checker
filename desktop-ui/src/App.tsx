@@ -19,7 +19,9 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   ChartNoAxesCombined,
+  type LucideIcon,
 } from "lucide-react";
+import { isProgressEvent, type QueuedProgressEvent } from "./events";
 import ProjectProgress from "./features/project-progress/ProjectProgress";
 import ViolationGuide from "./features/review/ViolationGuide";
 import ScanImpact from "./features/review/ScanImpact";
@@ -123,7 +125,7 @@ export default function App({
   const [policyPreview, setPolicyPreview] = useState<PolicyPreview | null>(null);
   const [rescan, setRescan] = useState(0);
   const [progressFocus, setProgressFocus] = useState<{ id: string; n: number } | null>(null);
-  const [progressEvents, setProgressEvents] = useState<any[]>([]);
+  const [progressEvents, setProgressEvents] = useState<QueuedProgressEvent[]>([]);
   const progressSeq = useRef(0);
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -131,7 +133,7 @@ export default function App({
     let active = true;
     connect((event) => {
       if (!active) return;
-      if (String(event.type).startsWith("progress")) {
+      if (isProgressEvent(event)) {
         // Queue, never overwrite: two events in one render batch must both be handled.
         const seq = ++progressSeq.current;
         setProgressEvents((old) => [...old.slice(-49), { ...event, _seq: seq }]);
@@ -169,7 +171,7 @@ export default function App({
           bridge.current?.previewPolicy(event.repository, "auto");
           break;
         case "policyPreview":
-          setPolicyPreview(event as PolicyPreview);
+          setPolicyPreview(event);
           break;
         case "policyCreated":
           setPolicyRepo("");
@@ -178,7 +180,7 @@ export default function App({
           setRescan((n) => n + 1);
           break;
         case "scanImpact":
-          setImpact(event as Impact);
+          setImpact(event);
           break;
         case "preview":
           setPrompt(event.prompt);
@@ -300,13 +302,13 @@ export default function App({
         </button>
         <div className="nav-caption">{!collapsed && "WORKSPACE"}</div>
         <nav aria-label="주 메뉴">
-          {[
+          {([
             ["review", "리뷰", LayoutList],
             ["progress", "프로젝트 현황", ChartNoAxesCombined],
             ["rules", "규칙", ShieldCheck],
             ["history", "히스토리", History],
             ["settings", "설정", SlidersHorizontal],
-          ].map(([id, title, Icon]: any) => (
+          ] satisfies [string, string, LucideIcon][]).map(([id, title, Icon]) => (
             <button
               key={id}
               aria-current={page === id ? "page" : undefined}

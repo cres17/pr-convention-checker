@@ -9,7 +9,8 @@ import {
 } from "@testing-library/react";
 import App from "./App";
 import fixture from "./preview-fixture.json";
-import type { Scan } from "./bridge";
+import type { Scan, ProgressItem, ProgressReport } from "./bridge";
+import type { DesktopEvent } from "./events";
 const api = vi.hoisted(() => ({
   startScan: vi.fn(),
   previewReview: vi.fn(),
@@ -38,9 +39,9 @@ beforeAll(() => {
     this.removeAttribute("open");
   };
 });
-let emit: (event: any) => void;
+let emit: (event: DesktopEvent) => void;
 vi.mock("./bridge", () => ({
-  connect: (fn: any) => {
+  connect: (fn: (event: DesktopEvent) => void) => {
     emit = fn;
     fn({
       type: "ready",
@@ -52,7 +53,7 @@ vi.mock("./bridge", () => ({
   },
 }));
 vi.mock("./components/tool-ui/code-diff", () => ({
-  CodeDiff: ({ patch }: any) => <pre>{patch}</pre>,
+  CodeDiff: ({ patch }: { patch: string }) => <pre>{patch}</pre>,
 }));
 afterEach(() => {
   cleanup();
@@ -171,8 +172,8 @@ it("uses one effective status for badge, filter and summary when evidence became
       { ...saved[1], stale_evidence: false, effective_status: "implemented" }],
     counts: { implemented: 1, partial: 0, not_implemented: 0, unknown: 1, complete: 0, excluded: 0 },
   } }));
-  expect(screen.getAllByText("재확인 필요").length).toBe(1);
-  fireEvent.change(screen.getByLabelText("목록 필터"), { target: { value: "unknown" } });
+  expect(screen.getByLabelText("기능 목록").querySelectorAll(".progress-status.recheck").length).toBe(1);
+  fireEvent.change(screen.getByLabelText("목록 필터"), { target: { value: "recheck" } });
   const list = screen.getByLabelText("기능 목록");
   expect(list.textContent).toContain("로그인");
   expect(list.textContent).not.toContain("가입");
@@ -237,7 +238,7 @@ it("applies progress events that arrive in the same render batch", async () => {
   await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
-  const item = {
+  const item: ProgressItem = {
     id: "one", title: "서버가 정규화한 제목", criterion: "로그인", area: "계정", included: true, source,
     implementation_status: "unknown" as const, evidence: null,
     verification_status: "unverified" as const, verification_note: "",
@@ -304,7 +305,7 @@ it("tells the review screen which saved evidence a scan touches and opens that i
   render(<App initialScan={value} />);
   await waitFor(() => expect(screen.getByText("데스크톱 연결됨")).toBeTruthy());
   const { act } = await import("react");
-  const impact = { type: "scanImpact", requested_path: "/sample/project", version: 2, documents: [
+  const impact = { type: "scanImpact" as const, requested_path: "/sample/project", version: 2, documents: [
     { path: "README.md", invalidated: false }], items: [
     { id: "two", title: "가입", path: "src/routes/users.py", line: 3, change: "modified", invalidated: true },
     { id: "one", title: "로그인", path: "src/login.py", line: 1, change: "deleted", invalidated: false }] };
@@ -336,7 +337,7 @@ it("offers to create a starter policy when the repository has none, then scans a
   act(() => emit({ type: "policyMissing", repository: "/sample/project" }));
   expect(api.previewPolicy).toHaveBeenCalledWith("/sample/project", "auto");
   expect(screen.getByText("저장소를 살펴보는 중…")).toBeTruthy();
-  const preview = { type: "policyPreview", repository: "/sample/project", exists: false, preset: "api",
+  const preview = { type: "policyPreview" as const, repository: "/sample/project", exists: false, preset: "api",
     presets: ["auto", "api", "db"], policy: "rules:\n  - id: api-contract-sync\n",
     recommendations: { presets: ["api"], frameworks: ["FastAPI"], docs_paths: ["docs/api/**"] } };
   act(() => emit(preview));
@@ -359,7 +360,7 @@ it("shows what changed since the last save and the list of saved states", async 
   await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
-  const item = { id: "one", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
+  const item: ProgressItem = { id: "one", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
     implementation_status: "unknown" as const, evidence: null,
     verification_status: "unverified" as const, verification_note: "" };
   act(() => emit({ type: "progressSaved", requested_path: "/sample/project",
@@ -389,7 +390,7 @@ it("links a test-result file to items without changing the progress counts", asy
   await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
-  const item = { id: "abcdef1234567890", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
+  const item: ProgressItem = { id: "abcdef1234567890", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
     implementation_status: "implemented" as const, evidence: null, test_patterns: ["test_login"],
     verification_status: "verified" as const, verification_note: "수동 확인" };
   act(() => emit({ type: "progressSaved", requested_path: "/sample/project",
@@ -431,7 +432,7 @@ it("warns about test-name patterns that no repository test file contains", async
   await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
-  const item = { id: "one", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
+  const item: ProgressItem = { id: "one", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
     implementation_status: "unknown" as const, evidence: null, test_patterns: ["test_logn"],
     verification_status: "unverified" as const, verification_note: "" };
   act(() => emit({ type: "progressSaved", requested_path: "/sample/project",
@@ -449,7 +450,7 @@ it("sends explicit document roles and preserves evidence when changing a saved r
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
   await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalled());
   const { act } = await import("react");
-  const item = { id: "role-one", title: "로그인", criterion: "로그인", included: true, area: "계정",
+  const item: ProgressItem = { id: "role-one", title: "로그인", criterion: "로그인", included: true, area: "계정",
     source: { path: "README.md", line: 1, excerpt: "- [ ] 로그인", sha256: "h" },
     implementation_status: "implemented", evidence: { path: "src/login.py", line: 1, note: "정의 확인", sha256: "code" },
     verification_status: "unverified", verification_note: "" };
@@ -480,7 +481,7 @@ it("filters summary cards by effective status, clears search and includes verifi
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
   await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalled());
   const { act } = await import("react");
-  const make = (id: string, status: string, verified = false, sourcePath = "README.md") => ({
+  const make = (id: string, status: ProgressItem["implementation_status"], verified = false, sourcePath = "README.md"): ProgressItem => ({
     id, title: id, criterion: id, area: "기능", included: true,
     source: { path: sourcePath, line: 1, excerpt: id, sha256: "h" }, implementation_status: status,
     verification_status: verified ? "verified" : "unverified", verification_note: verified ? "확인" : "",
@@ -503,9 +504,14 @@ it("filters summary cards by effective status, clears search and includes verifi
   fireEvent.click(screen.getByRole("button", { name: /^구현 확인 2/ }));
   expect(screen.getByLabelText("기능 목록").querySelectorAll("button").length).toBe(2);
   expect(screen.getByLabelText("기능 목록").textContent).not.toContain("변경기능");
-  fireEvent.click(screen.getByRole("button", { name: /^근거 없음·재확인 2/ }));
-  expect(screen.getByLabelText("기능 목록").querySelectorAll("button").length).toBe(2);
+  fireEvent.click(screen.getByRole("button", { name: /^재확인 필요 1/ }));
+  expect(screen.getByLabelText("기능 목록").querySelectorAll("button").length).toBe(1);
   expect(screen.getByLabelText("기능 목록").textContent).toContain("변경기능");
+  expect(screen.getByLabelText("기능 목록").textContent).not.toContain("미확인기능");
+  fireEvent.click(screen.getByRole("button", { name: /^근거 없음 1/ }));
+  expect(screen.getByLabelText("기능 목록").querySelectorAll("button").length).toBe(1);
+  expect(screen.getByLabelText("기능 목록").textContent).toContain("미확인기능");
+  expect(screen.getByLabelText("기능 목록").textContent).not.toContain("변경기능");
   expect(screen.getByLabelText("기능 목록").textContent).not.toContain("과거기능");
   expect(screen.getByTitle("구현 확인 2개")).toBeTruthy();
 });
@@ -515,11 +521,11 @@ it("guides first evidence input without implying real development progress, then
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
   await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalled());
   const { act } = await import("react");
-  const item = { id: "first", title: "첫기능", criterion: "조건", included: true, area: "기능",
+  const item: ProgressItem = { id: "first", title: "첫기능", criterion: "조건", included: true, area: "기능",
     source: { path: "README.md", line: 1, excerpt: "조건", sha256: "h" }, implementation_status: "unknown", evidence: null,
     verification_status: "unverified", verification_note: "" };
   act(() => emit({ type: "progressSaved", baseline: { repository: "/sample/project", documents: { "README.md": "h" }, requirements: [item] } }));
-  const report = { repository: "/sample/project", version: 1, at: "2026-10-01", head: "abc", stale_documents: [], total: 1,
+  const report: ProgressReport = { repository: "/sample/project", version: 1, at: "2026-10-01", head: "abc", stale_documents: [], total: 1,
     counts: { complete: 0, implemented: 0, partial: 0, not_implemented: 0, unknown: 1, excluded: 0 }, items: [item], limitations: "수동 기준" };
   act(() => emit({ type: "progressReport", report }));
   expect(screen.queryByRole("img", { name: /총 1개/ })).toBeNull();
