@@ -29,4 +29,14 @@
 
 ## 릴리스 범위
 
-이번 소스로 `desktop-v1.0.2-preview.20261001` 미리보기를 준비한다. 프로젝트의 Desktop release 워크플로가 세 플랫폼을 다시 빌드하고 설치·실행 검증을 거쳐 초안 릴리스를 만든다. 정확한 커밋·성공 실행·설치 파일 해시를 확인한 뒤 미리보기로 게시한다. 최종 게시 결과는 완료 채팅에 기록한다. 기존 릴리스와 GitHub Action 버전 태그는 유지한다.
+[desktop-v1.0.2-preview.20261001](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.2-preview.20261001)을 게시했다. 제품 소스와 태그는 `916c4ba2a2f1537b02fc6fbc366d7d16388fcd67`이다. [릴리스 실행 36832261072](https://github.com/cres17/pr-convention-checker/actions/runs/36832261072)의 세 플랫폼에서 각각 화면 77개·데스크톱 151개 검사와 앱 실행, 두 Mac DMG 마운트 및 Windows 설치·실행·제거가 성공했다.
+
+초안 릴리스에서 네 설치 파일과 체크섬을 전체 다운로드해 파일 크기·SHA-256을 `SHA256SUMS.txt`와 GitHub asset digest에 대조했다. 게시 후에는 공개 주소 5개의 HTTP 200·크기, 공개 메타데이터의 digest가 내려받은 파일과 동일함을 확인했다. 공개 주소에서 파일 전체를 다시 다운로드한 것은 아니다. [다운로드 검증 원본](../assessment/progress-draft-recovery-2026-10-01/release-downloads.json)에 각 단계와 결과를 구분해 보존했다.
+
+[푸시 CI 36832235190](https://github.com/cres17/pr-convention-checker/actions/runs/36832235190)·[PR CI 36832240778](https://github.com/cres17/pr-convention-checker/actions/runs/36832240778)는 성공했으며, 9개 OS·Python 조합 각각 664개 통과·3개 건너뜀이다. Qt 포함 로컬 전체와 검사 범위가 다르다.
+
+개발용 [Desktop app build 36832235133](https://github.com/cres17/pr-convention-checker/actions/runs/36832235133)의 첫 Intel Mac 시도에서 기존 화면 테스트 하나가 기본 5초 제한을 넘겨 76개 통과·1개 시간 초과였다. 같은 커밋의 릴리스용 Intel 검사에서는 77개가 통과했고, 실패한 개발 작업만 같은 커밋으로 재실행하여 세 플랫폼 개발 빌드도 성공했다. 제품 코드·테스트 제한을 변경해서 통과시킨 것은 아니다. 최초 실패 로그를 별도로 보존했다. 간헐적인 검사 시간 초과의 가능성이 완전히 없어진다고 주장하지 않는다.
+
+README·설치 안내의 고정 다운로드 링크를 1.0.2로 갱신했다. 기존 릴리스와 GitHub Action 버전 태그는 유지한다. 이번 설치 검증은 CI에서 수행했으며 실제 사용자 Windows·Mac에서 전체 사용성을 평가한 것은 아니다.
+
+게시 후 추가 [CI 36833865274](https://github.com/cres17/pr-convention-checker/actions/runs/36833865274)의 첫 Ubuntu/Python 3.11 시도에서 문법 분석기가 초기화되지 않아 기존 3개 검사가 실패했다(661개 통과·3개 실패·3개 건너뜀). 실패한 작업만 같은 커밋으로 재실행한 결과 성공했다. 예외의 상세 원인이 로그에 남아 있지 않아 특정 외부 원인으로 단정하지 않는다. 최초 실패 로그를 보존하며, 초기화가 간헐적으로 실패할 가능성까지 해결했다고 주장하지 않는다. 게시 후 Benchmark와 기존 릴리스 중복 빌드 방지 실행도 성공했다.

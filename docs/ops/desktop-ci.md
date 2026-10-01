@@ -10,7 +10,7 @@ macOS Apple Silicon(`macos-latest`), macOS Intel(`macos-15-intel`), Windows(`win
 2. **앱 설치**: `pip install -e ".[dev,desktop]" pyinstaller`.
 3. **데스크톱 동작 검사**: 아래 테스트 파일만 실행합니다. 전체 테스트가 아니라 **데스크톱 앱과 프로젝트 현황이 쓰는 파일**로 범위를 제한했습니다.
    - `test_desktop_service.py`, `test_desktop_ui.py`, `test_desktop_web.py`, `test_subscription_review.py`
-   - `test_progress_service.py`, `test_progress_history.py`, `test_progress_report.py`
+   - `test_progress_service.py`, `test_progress_drafts.py`, `test_progress_history.py`, `test_progress_report.py`
    - `test_doc_links.py`, `test_verification_records.py`, `test_policy_setup.py`, `test_report_naming.py`
 4. **앱 빌드와 확인**: PyInstaller로 `DriftGate` 앱을 만든 뒤 실행 파일과 번들된 UI가 있는지 확인하고, 앱을 화면 없이(offscreen) 12초간 실행해 시작 직후 종료하지 않는지 봅니다(`packaging/smoke_launch.py`).
 5. **배포 파일 만들기**:
@@ -52,6 +52,7 @@ cd desktop-ui && npm ci && npx tsc --noEmit && npx vitest run && npm run build &
 QT_QPA_PLATFORM=offscreen python -m pytest -q drift_gate/tests/test_desktop_service.py \
   drift_gate/tests/test_desktop_ui.py drift_gate/tests/test_desktop_web.py \
   drift_gate/tests/test_subscription_review.py drift_gate/tests/test_progress_service.py \
+  drift_gate/tests/test_progress_drafts.py \
   drift_gate/tests/test_progress_history.py drift_gate/tests/test_progress_report.py \
   drift_gate/tests/test_doc_links.py drift_gate/tests/test_verification_records.py \
   drift_gate/tests/test_policy_setup.py drift_gate/tests/test_report_naming.py
@@ -64,9 +65,13 @@ Linux 컨테이너에서 `libEGL.so.1`을 찾지 못해 Qt WebEngine 테스트�
 - 이 워크플로는 테스트 통과, 앱 실행 시작, DMG 생성·마운트, Windows 설치 프로그램의 설치·실행 시작·제거 단계를 확인합니다. 전체 기능, 자동 업데이트, 공식 코드 서명·Apple 공증, 실제 사용자 PC에서의 실행은 검증하지 않습니다. Windows 제거 단계는 제거 프로그램 실행까지 확인하며, 모든 파일·설정의 제거 여부를 별도로 비교하지는 않습니다.
 
 
+## 2026-10-01 1.0.2 미리보기
+
+현재 공개본은 [desktop-v1.0.2-preview.20261001](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.2-preview.20261001), 제품 소스 `916c4ba`다. [릴리스 실행 36832261072](https://github.com/cres17/pr-convention-checker/actions/runs/36832261072)의 세 플랫폼에서 화면 77개·데스크톱 151개 검사, 앱 실행, 두 DMG 마운트와 Windows 설치·실행·제거가 성공했다. 초안에서 네 설치 파일을 전체 다운로드해 체크섬·GitHub digest와 대조하고, 게시 후 공개 주소의 HTTP 200·크기를 확인했다. [검증 원본](../assessment/progress-draft-recovery-2026-10-01/release-downloads.json)을 보존한다. 일반 CI는 9개 조합에서 각각 664개 통과·3개 건너뜀이며 Qt 포함 로컬 693개와 범위가 다르다. CI는 이제 Ruff `E9,F` 전체를 검사한다.
+
 ## 2026-10-01 게시한 설치 파일
 
-현재 공개 미리보기는 [desktop-v1.0.1-preview.20261001](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.1-preview.20261001)이다. 제품 커밋은 `6445879`이며, [릴리스 워크플로 36804667492](https://github.com/cres17/pr-convention-checker/actions/runs/36804667492)의 세 플랫폼 빌드와 게시 준비가 성공했다. 각 플랫폼에서 화면 27개·데스크톱 126개 검사를 통과하고 패키지 실행 시작을 확인했다. DMG 두 개의 마운트와 Windows 설치·실행 시작·제거도 통과했다.
+이전 1.0.1 미리보기는 [desktop-v1.0.1-preview.20261001](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.1-preview.20261001)이다. 제품 커밋은 `6445879`이며, [릴리스 워크플로 36804667492](https://github.com/cres17/pr-convention-checker/actions/runs/36804667492)의 세 플랫폼 빌드와 게시 준비가 성공했다. 각 플랫폼에서 화면 27개·데스크톱 126개 검사를 통과하고 패키지 실행 시작을 확인했다. DMG 두 개의 마운트와 Windows 설치·실행 시작·제거도 통과했다.
 
 문서 종류와 V5·V6·V7, 현황 편집 보존 수정이 포함됐다. 과거 1.0.0 미리보기는 그대로 보존하며 README의 고정 다운로드 링크는 1.0.1로 갱신했다. 일반 CI는 Qt 없이 9개 OS·Python 조합에서 각각 646개 통과·3개 건너뜀이다. 전체 Qt 포함 로컬 검사는 668개로 검사 환경과 범위가 다르다.
 

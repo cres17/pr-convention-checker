@@ -1,0 +1,75 @@
+{
+  "tag": "desktop-v1.0.2-preview.20261001",
+  "source_commit": "916c4ba2a2f1537b02fc6fbc366d7d16388fcd67",
+  "downloaded_from": "authenticated draft release assets before publication",
+  "assets": [
+    {
+      "name": "DriftGate-macOS-arm64.dmg",
+      "bytes": 238874595,
+      "sha256": "caecc6669d585e3a59e81d12c590cd7a0f4f76d5d143b4e22133fe01f0bfb9de",
+      "github_digest_matches": true,
+      "checksum_matches": true
+    },
+    {
+      "name": "DriftGate-macOS-intel.dmg",
+      "bytes": 248170200,
+      "sha256": "a056a7941da7618b043eb266b7ebe71b88263c001da2bea83b74fffa8b2771ad",
+      "github_digest_matches": true,
+      "checksum_matches": true
+    },
+    {
+      "name": "DriftGate-Windows-portable.zip",
+      "bytes": 232168396,
+      "sha256": "7680e95a867d88c576c116da0c3858da8326344cc231dd232e407e8cc75ed592",
+      "github_digest_matches": true,
+      "checksum_matches": true
+    },
+    {
+      "name": "DriftGate-Windows-Setup.exe",
+      "bytes": 152761535,
+      "sha256": "6423ae03688bd3446d46f3de741adfc1b8943ae54480322f71f7918c51d3df6d",
+      "github_digest_matches": true,
+      "checksum_matches": true
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 375,
+      "sha256": "7be00e04c198bf8a4949331eae80e8ace7d42f1bb2696dbef661d01d401e534f",
+      "github_digest_matches": true,
+      "checksum_matches": false
+    }
+  ],
+  "published_at": "2026-10-01T08:02:13Z",
+  "public_downloads": [
+    {
+      "name": "DriftGate-macOS-arm64.dmg",
+      "url": "https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-macOS-arm64.dmg",
+      "http_status": 200,
+      "content_length": 238874595
+    },
+    {
+      "name": "DriftGate-macOS-intel.dmg",
+      "url": "https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-macOS-intel.dmg",
+      "http_status": 200,
+      "content_length": 248170200
+    },
+    {
+      "name": "DriftGate-Windows-portable.zip",
+      "url": "https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-Windows-portable.zip",
+      "http_status": 200,
+      "content_length": 232168396
+    },
+    {
+      "name": "DriftGate-Windows-Setup.exe",
+      "url": "https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-Windows-Setup.exe",
+      "http_status": 200,
+      "content_length": 152761535
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "url": "https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/SHA256SUMS.txt",
+      "http_status": 200,
+      "content_length": 375
+    }
+  ]
+}

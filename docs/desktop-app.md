@@ -17,13 +17,13 @@
 
 ### 설치 파일로 사용하기
 
-앱을 빌드하지 않고 사용하려면 [데스크톱 미리보기 배포](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.1-preview.20261001)에서 운영체제에 맞는 파일을 받습니다. 설치 파일에는 Python·Qt와 앱 화면이 포함되어 있어 Python이나 Node.js를 별도로 설치할 필요가 없습니다. **저장소 검사에는 Git**, 구독 LLM 검토에는 해당 CLI 설치·로그인이 필요합니다.
+앱을 빌드하지 않고 사용하려면 [데스크톱 미리보기 배포](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.2-preview.20261001)에서 운영체제에 맞는 파일을 받습니다. 설치 파일에는 Python·Qt와 앱 화면이 포함되어 있어 Python이나 Node.js를 별도로 설치할 필요가 없습니다. **저장소 검사에는 Git**, 구독 LLM 검토에는 해당 CLI 설치·로그인이 필요합니다.
 
 | 컴퓨터 | 다운로드 | 설치 방법 |
 |---|---|---|
-| Windows Intel·AMD 64비트 | [DriftGate-Windows-Setup.exe](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.1-preview.20261001/DriftGate-Windows-Setup.exe) | 실행 후 설치, 시작 메뉴의 Cross Agent로 실행 |
-| Apple Silicon Mac | [DriftGate-macOS-arm64.dmg](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.1-preview.20261001/DriftGate-macOS-arm64.dmg) | DMG를 열고 앱을 Applications 폴더로 드래그 |
-| Intel Mac | [DriftGate-macOS-intel.dmg](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.1-preview.20261001/DriftGate-macOS-intel.dmg) | DMG를 열고 앱을 Applications 폴더로 드래그 |
+| Windows Intel·AMD 64비트 | [DriftGate-Windows-Setup.exe](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-Windows-Setup.exe) | 실행 후 설치, 시작 메뉴의 Cross Agent로 실행 |
+| Apple Silicon Mac | [DriftGate-macOS-arm64.dmg](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-macOS-arm64.dmg) | DMG를 열고 앱을 Applications 폴더로 드래그 |
+| Intel Mac | [DriftGate-macOS-intel.dmg](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-macOS-intel.dmg) | DMG를 열고 앱을 Applications 폴더로 드래그 |
 
 Windows 설치는 기본적으로 현재 사용자 영역에서 진행됩니다. 설치 중 바탕 화면 바로가기를 선택할 수 있으며, 삭제는 **Windows 설정 → 앱 → Cross Agent (Drift Gate) → 제거**에서 합니다. 앱 버전을 올릴 때는 새 설치 파일을 실행해 덮어 설치합니다. Windows ARM PC의 실제 동작은 검증하지 않았습니다.
 
@@ -108,7 +108,7 @@ report:
 
 ![문서 종류를 구분한 실제 macOS 앱의 예제 화면](assets/project-progress-document-kinds.png)
 
-*현재 목표 2개와 향후 계획·과거 결과·참고 문서를 둔 임시 저장소로 캡처했습니다. 실제 제품 완성도 측정 결과가 아닙니다. 이 변경은 `ver2` 후속 소스에 있으며 `desktop-v1.0.1-preview.20261001` 설치 파일에는 포함되지 않습니다.*
+*현재 목표 2개와 향후 계획·과거 결과·참고 문서를 둔 임시 저장소로 캡처했습니다. 실제 제품 완성도 측정 결과가 아닙니다. 문서 종류 기능과 후속 카드·편집 보존·초안 복구 수정은 `desktop-v1.0.2-preview.20261001` 설치 파일에 포함되어 있습니다.*
 
 각 기능에 코드 경로·줄과 완료 조건을 충족하는 이유를 기록하면 ‘부분 구현’ 또는 ‘구현 확인’으로 표시합니다. 코드를 실제로 검토하기 전에는 파일 후보만으로 구현 확인을 하지 않습니다. 수동 검증의 방법과 결과까지 적은 항목만 ‘완료 확인’에 포함합니다. 근거 코드·현재 목표 문서가 바뀌면 이전 확인을 현황 수치에서 제외합니다. 향후 계획·과거 결과·참고 문서의 변경은 따로 알리고 현재 목표 수치는 유지합니다. 기준은 저장소 밖의 앱 데이터 폴더에 보관되며 앱을 다시 열어도 복원됩니다.
 

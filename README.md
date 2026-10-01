@@ -138,7 +138,7 @@ Python 3.10 이상과 Git이 필요합니다. 아래는 macOS·Linux 기준입�
 
 명령어 출력이 낯설다면 저장소를 선택하고 **상태 → 변경 파일 → 규칙별 근거** 순서로 읽을 수 있는 앱을 실행하세요.
 
-**[Windows 설치 EXE 다운로드](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.1-preview.20261001/DriftGate-Windows-Setup.exe)** · **[Mac DMG 다운로드](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.1-preview.20261001)**
+**[Windows 설치 EXE 다운로드](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-Windows-Setup.exe)** · **[Mac DMG 다운로드](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.2-preview.20261001)**
 
 설치 파일은 Python·Node.js를 따로 설치하지 않고 사용합니다. Windows는 설치 후 시작 메뉴의 **Cross Agent**에서 실행하고, Mac은 DMG 안의 앱을 **Applications** 폴더로 드래그합니다. 현재는 공식 코드 서명·Apple 공증 전 미리보기이며 보안 경고가 표시될 수 있습니다. Git 설치 등 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다.
 
@@ -310,6 +310,8 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 문자열 속 가짜 라우트, HEAD 라우트, 두 열 Markdown 표의 알려진 세 오류는 [제품 코드 수정과 재검증](docs/v1-ver2-contract-fix-results-2026-09-23.md)을 마쳤습니다. 남은 반례와 실제 PR 평가는 계속 보완할 항목입니다.
 
 ## 검증 결과
+
+**2026-10-01 데스크톱 1.0.2 미리보기:** 재시작 후 초안 복구, 재추출 근거 보존, 요약 카드 분리, 범위·응답 처리와 화면 구조를 보완했습니다. Python **693개**·화면 **77개**, 전체 Ruff `F` 검사가 통과했습니다. 세 플랫폼 릴리스 빌드에서 앱 실행·설치 검증을 마치고 네 설치 파일의 크기·해시를 대조했습니다. [초안 복구와 릴리스 검증](docs/review/progress-draft-recovery-2026-10-01.md)
 
 **2026-10-01 데스크톱 1.0.1 검증:** Python **668개**, 화면 **27개**가 통과했습니다. 새 화면 흐름 6개와 패키지 평가 6개는 각각 같은 입력에서 **0/6 → 6/6**으로 개선됐습니다. 기존 12개 계약 변경은 **12/12**, 32개 반례는 지원 **21/24**·경계 **1/8**로 유지됐습니다. 세 플랫폼의 앱 빌드·실행 시작, DMG 마운트와 Windows 설치·실행 시작·제거도 확인했습니다. [구조 보완과 검증 보고서](docs/review/release-readiness-2026-10-01.md) · [다음 작업 인계](docs/handoff-2026-10-01.md)
 

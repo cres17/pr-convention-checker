@@ -7,6 +7,9 @@
 - `python-all.log`, `ui-final.log`, `build-final.log`, `lint-after.log`: 검사 결과.
 - `native-restart.py`: 실제 Qt 앱을 새 프로세스로 실행하는 입력.
 - `native.log`, `native-edit.json`, `native-recover.json`, `native-confirm.json`: 3개 서로 다른 PID와 각 단계의 성공 결과.
+- `release-downloads.json`, `SHA256SUMS.txt`: 초안의 전체 파일 다운로드와 크기·해시 확인, 게시 후 공개 주소의 HTTP 200·크기·digest 대조. 공개 주소에서 전체를 재다운로드한 기록은 아니다.
+- `desktop-first-attempt-failure.log`: 개발용 Intel Mac의 기존 화면 검사 1개가 기본 5초 제한을 넘긴 최초 실패. 같은 소스의 릴리스 검사와 실패 작업 재실행은 성공했다.
+- `release-ci-first-attempt-failure.log`: 게시 후 Ubuntu/Python 3.11에서 문법 분석기가 초기화되지 않아 기존 3개 검사가 실패한 기록. 동일 커밋에서 실패 작업만 재실행해 성공했으며 상세 초기화 예외 원인은 기록되지 않았다.
 
 현재 UI를 빌드한 뒤 같은 임시 폴더를 전달해 순서대로 실행한다. `edit`에서 생성하므로 처음에는 존재하지 않는 폴더를 선택한다. 실제 사용자 설정·저장소는 사용하지 않는다.
 
