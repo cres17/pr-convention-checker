@@ -105,7 +105,7 @@ it("merges a newly current past document into the edited draft and saves the exi
   fireEvent.click(screen.getByRole("button", { name: "기능 후보 추출" }));
   expect(page.bridge.previewProgress).toHaveBeenCalledWith("/sample/one", JSON.stringify([
     { path: "README.md", kind: "current" }, { path: "past.md", kind: "current" },
-  ]));
+  ]), expect.any(String));
   // Editing while extraction runs must also survive its eventual reply.
   fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "저장 전 편집" } });
   const added = makeItem("추가 기능");
@@ -378,4 +378,19 @@ it("does not restore obsolete test links when a delayed result arrives after edi
   });
   expect(screen.queryByLabelText("자동 검증 기록")).toBeNull();
   expect((screen.getByLabelText("관련 테스트 이름 (쉼표로 구분, 이름의 일부)") as HTMLInputElement).value).toBe("test_new");
+});
+
+it("finishes a pending test read without applying its obsolete result after an edit", () => {
+  const page = harness();
+  const baseline = makeBaseline();
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline });
+  page.emit({ type: "progressReport", report: { repository: "/sample/one", version: 1, at: "now", head: "h",
+    stale_documents: [], total: 1, items: baseline.requirements, counts: { unknown: 1 }, limitations: "수동 기준" } });
+  fireEvent.click(screen.getByRole("button", { name: "테스트 결과 불러오기" }));
+  const request_id = vi.mocked(page.bridge.loadTestResults).mock.calls.at(-1)?.[1];
+  fireEvent.change(screen.getByLabelText("관련 테스트 이름 (쉼표로 구분, 이름의 일부)"), { target: { value: "new_test" } });
+  page.emit({ type: "progressTests", request_id, request_done: true, format: "junit", file: "old.xml", modified: "now", total: 1,
+    items: { "첫 기능": { patterns: ["old_test"], matched: 1, passed: 1, failed: 0, skipped: 0, failing: [], no_match: false } } });
+  expect(screen.queryByLabelText("자동 검증 기록")).toBeNull();
+  expect(screen.getByRole("button", { name: "기준과 근거 저장" }).matches(":disabled")).toBe(false);
 });

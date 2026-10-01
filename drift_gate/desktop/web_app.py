@@ -59,10 +59,10 @@ class _ProgressSignals(QObject):
 class ProgressTask(QRunnable):
     """Runs one project-progress request off the UI thread and emits ready-made events."""
 
-    def __init__(self, signals, path, work, error_type='progressError'):
+    def __init__(self, signals, path, work, error_type='progressError', request_id=''):
         super().__init__()
         self.signals, self.path, self.work = signals, path, work
-        self.error_type = error_type
+        self.error_type, self.request_id = error_type, request_id
 
     def run(self):
         try:
@@ -72,7 +72,9 @@ class ProgressTask(QRunnable):
                        'message': str(exc), 'errors': exc.errors}]
         except (ValueError, OSError, json.JSONDecodeError, KeyError) as exc:
             events = [{'type': self.error_type, 'requested_path': self.path, 'message': str(exc)}]
-        for event in events:
+        for index, event in enumerate(events):
+            event['request_id'] = self.request_id
+            event['request_done'] = index == len(events) - 1
             self.signals.raw.emit(json.dumps(event, ensure_ascii=False))
 
 
@@ -87,6 +89,7 @@ class DesktopBridge(QObject):
         self.scan_thread = None
         self.scan_worker = None
         self.review_worker = None
+        self.progress_dirty = False
         self.history = []  # Session-only: no hidden persistence of source diffs.
         # One thread keeps progress results in request order (save -> report).
         self.progress_pool = QThreadPool(self)
@@ -94,8 +97,8 @@ class DesktopBridge(QObject):
         self._progress_signals = _ProgressSignals(self)
         self._progress_signals.raw.connect(self.event)
 
-    def _run_progress(self, path, work, error_type='progressError'):
-        self.progress_pool.start(ProgressTask(self._progress_signals, path, work, error_type))
+    def _run_progress(self, path, work, error_type='progressError', request_id=''):
+        self.progress_pool.start(ProgressTask(self._progress_signals, path, work, error_type, request_id))
 
     def emit(self, kind, **data):
         self.event.emit(json.dumps({'type': kind, **data}, ensure_ascii=False))
@@ -108,22 +111,25 @@ class DesktopBridge(QObject):
         return Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)) / 'progress'
 
     @Slot(str)
-    def listProjectDocs(self, path):
+    @Slot(str, str)
+    def listProjectDocs(self, path, request_id=""):
         directory = self._progress_dir()
 
         def work():
             result = list_documents(path)
             result['baseline'] = load_baseline(path, directory)
             return [('progressDocs', result)]
-        self._run_progress(path, work)
+        self._run_progress(path, work, request_id=request_id)
 
     @Slot(str, str)
-    def previewProgress(self, path, selected_json):
+    @Slot(str, str, str)
+    def previewProgress(self, path, selected_json, request_id=""):
         self._run_progress(path, lambda: [
-            ('progressPreview', extract_requirements(path, json.loads(selected_json)))])
+            ('progressPreview', extract_requirements(path, json.loads(selected_json)))], request_id=request_id)
 
     @Slot(str, str)
-    def saveProgress(self, path, payload_json):
+    @Slot(str, str, str)
+    def saveProgress(self, path, payload_json, request_id=""):
         directory = self._progress_dir()
 
         def work():
@@ -132,10 +138,11 @@ class DesktopBridge(QObject):
             return [('progressSaved', {'baseline': baseline}),
                     ('progressReport', {'report': report}),
                     ('progressHistory', record_snapshot(path, directory, report))]
-        self._run_progress(path, work)
+        self._run_progress(path, work, request_id=request_id)
 
     @Slot(str)
-    def inspectProgress(self, path):
+    @Slot(str, str)
+    def inspectProgress(self, path, request_id=""):
         directory = self._progress_dir()
         remembered = str(self.settings.value(self._results_key(path), '') or '')
 
@@ -150,35 +157,42 @@ class DesktopBridge(QObject):
                 except (ValueError, OSError):
                     pass
             return events
-        self._run_progress(path, work)
+        self._run_progress(path, work, request_id=request_id)
 
     @Slot(str)
-    def checkProgressLinks(self, path):
+    @Slot(str, str)
+    def checkProgressLinks(self, path, request_id=""):
         directory = self._progress_dir()
-        self._run_progress(path, lambda: [('progressLinks', check_references(path, directory))])
+        self._run_progress(path, lambda: [('progressLinks', check_references(path, directory))], request_id=request_id)
 
     @Slot(str)
-    def loadTestResults(self, path):
+    @Slot(str, str)
+    def loadTestResults(self, path, request_id=""):
         try:
             root = repository_root(path)
         except (ValueError, OSError) as exc:
-            self.emit('progressError', requested_path=path, message=str(exc))
+            self.emit('progressError', requested_path=path, request_id=request_id, request_done=True, message=str(exc))
             return
         filename, _ = QFileDialog.getOpenFileName(
             self.parent(), '테스트 결과 파일 선택', str(root), '테스트 결과 (*.xml *.json)')
         if not filename:
-            self.emit("progressTestsCancelled", requested_path=path)
+            self.emit("progressTestsCancelled", requested_path=path, request_id=request_id, request_done=True)
             return
         directory = self._progress_dir()
         self.settings.setValue(self._results_key(path), filename)  # re-read next time this project opens
-        self._run_progress(path, lambda: [('progressTests', link_test_results(path, directory, filename))])
+        self._run_progress(path, lambda: [('progressTests', link_test_results(path, directory, filename))], request_id=request_id)
+
+    @Slot(bool)
+    def setProgressDirty(self, dirty):
+        self.progress_dirty = dirty
 
     @Slot(str)
     def forgetTestResults(self, path):
         self.settings.remove(self._results_key(path))
 
     @Slot(str, str)
-    def exportProgress(self, path, kind):
+    @Slot(str, str, str)
+    def exportProgress(self, path, kind, request_id=""):
         if kind not in {'md', 'json'}:
             return
         directory = self._progress_dir()
@@ -188,7 +202,7 @@ class DesktopBridge(QObject):
             policy_source = policy.read_text(encoding='utf-8') if policy.is_file() else ''
             suggested = default_report_path(root, 'progress', kind, policy_source)
         except (ValueError, OSError) as exc:
-            self.emit('progressError', requested_path=path, message=str(exc))
+            self.emit('progressError', requested_path=path, request_id=request_id, request_done=True, message=str(exc))
             return
         filename, _ = QFileDialog.getSaveFileName(
             self.parent(), '현황 저장', str(suggested), f'{"Markdown" if kind == "md" else "JSON"} (*.{kind})')
@@ -208,14 +222,15 @@ class DesktopBridge(QObject):
                 content = render_markdown(report, identity, history)
             Path(filename).write_text(content, encoding='utf-8')
             return [('progressExported', {'file': filename})]
-        self._run_progress(path, work)
+        self._run_progress(path, work, request_id=request_id)
 
     @Slot(str, str)
-    def suggestProgressEvidence(self, path, item_json):
+    @Slot(str, str, str)
+    def suggestProgressEvidence(self, path, item_json, request_id=""):
         def work():
             item = json.loads(item_json)
             return [('progressEvidence', {'id': item['id'], 'candidates': evidence_candidates(path, item)})]
-        self._run_progress(path, work)
+        self._run_progress(path, work, request_id=request_id)
 
     def _emit_scan_impact(self, scan, scan_at):
         """Tell the review screen which saved progress evidence this scan's changes touch."""
@@ -397,6 +412,16 @@ class WebDesktopWindow(QMainWindow):
         self.view.load(QUrl.fromLocalFile(str((WEB_ROOT / 'index.html').resolve())))
 
     def closeEvent(self, event):
+        if self.bridge.progress_dirty:
+            answer = QMessageBox.question(
+                self, '저장 전 변경 사항',
+                '현황에 저장하지 않은 변경이 있습니다. 변경을 버리고 앱을 닫을까요?',
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
+            )
+            if answer != QMessageBox.StandardButton.Yes:
+                event.ignore()
+                return
         if self.bridge.scan_thread:
             QMessageBox.information(self, '검사 진행 중', '현재 검사가 끝난 뒤 앱을 닫아 주세요.')
             event.ignore()

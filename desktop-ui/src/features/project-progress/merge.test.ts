@@ -99,3 +99,47 @@ it("rejects duplicate provenance overflow instead of dropping preserved context 
   expect(() => mergeProgressPreview(previous, preview)).toThrow(/중복 출처 20개/);
   expect(previous.requirements[0].duplicates).toHaveLength(20);
 });
+
+it("keeps the old ID and reviewed evidence when the original document line moves", () => {
+  const old = item("legacy");
+  old.title = "사용자가 붙인 이름";
+  old.source.excerpt = "- [ ] 로그인";
+  old.evidence = { path: "src/login.py", line: 1, note: "확인", sha256: "code" };
+  old.implementation_status = "implemented";
+  old.verification_status = "verified";
+  old.verification_note = "검증 기록";
+  const candidate = item("new-line-id");
+  candidate.source = { ...candidate.source, line: 8, excerpt: "- [x] 로그인", sha256: "new" };
+  const preview = baseline([candidate]);
+  preview.documents["plan.md"] = "new";
+  const merged = mergeProgressPreview(baseline([old]), preview);
+  expect(merged.requirements).toHaveLength(1);
+  expect(merged.requirements[0]).toMatchObject({ id: "legacy", title: old.title, evidence: old.evidence,
+    verification_note: old.verification_note, source: candidate.source, stale_requirement: true });
+  expect(mergeProgressPreview(merged, preview)).toEqual(merged);
+});
+it("adopts a stable document marker and preserves the same item after a document title change", () => {
+  const old = item("legacy");
+  old.source.excerpt = "- [ ] 로그인";
+  const first = item("stable-id");
+  first.source_key = "plan.md:login";
+  first.source.excerpt = "- [ ] 로그인 <!-- progress-id: login -->";
+  const adopted = mergeProgressPreview(baseline([old]), baseline([first]));
+  expect(adopted.requirements).toHaveLength(1);
+  expect(adopted.requirements[0].id).toBe("legacy");
+  const renamed = structuredClone(first);
+  renamed.title = "회원 로그인";
+  renamed.source.line = 5;
+  renamed.source.excerpt = "- [ ] 회원 로그인 <!-- progress-id: login -->";
+  expect(mergeProgressPreview(adopted, baseline([renamed])).requirements)
+    .toMatchObject([{ id: "legacy", source: renamed.source }]);
+});
+it("never guesses between ambiguous old items or merges different stable markers", () => {
+  const old = [item("old-1"), item("old-2")];
+  old.forEach((entry) => { entry.source.excerpt = "same"; });
+  const candidate = item("new"); candidate.source.excerpt = "same";
+  expect(mergeProgressPreview(baseline(old), baseline([candidate])).requirements).toHaveLength(3);
+  old[0].source_key = "plan.md:first";
+  candidate.source_key = "plan.md:second";
+  expect(mergeProgressPreview(baseline([old[0]]), baseline([candidate])).requirements).toHaveLength(2);
+});

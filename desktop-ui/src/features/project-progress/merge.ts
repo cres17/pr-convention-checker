@@ -13,6 +13,15 @@ function mergeDuplicates(item: ProgressItem, candidate: ProgressItem, kinds: Rec
   return unique;
 }
 
+function sameExtractedGoal(previous: ProgressItem, candidate: ProgressItem) {
+  if (!previous.source.line || !candidate.source.line) return false;
+  if (previous.source_key) return previous.source_key === candidate.source_key;
+  const content = (item: ProgressItem) => item.source.excerpt
+    .replace(/<!--\s*progress-id:\s*[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}\s*-->/g, "")
+    .replace(/^\s*[-*+]\s+\[[ xX]\]\s*/, "").trim();
+  return previous.source.path === candidate.source.path && content(previous) === content(candidate);
+}
+
 /** Extraction adds candidates; it never discards the user's working baseline. */
 export function mergeProgressPreview(
   previous: ProgressBaseline | null,
@@ -25,9 +34,16 @@ export function mergeProgressPreview(
     document_kinds[path] ??= path in preview.documents ? "current" : "reference";
   }
   const candidates = new Map(preview.requirements.map((item) => [item.id, item]));
+  const previousIds = new Set(previous.requirements.map((item) => item.id));
+  const unmatched = previous.requirements.filter((item) => !candidates.has(item.id));
   const requirements = previous.requirements.map((item): ProgressItem => {
-    const candidate = candidates.get(item.id);
-    candidates.delete(item.id);
+    let candidate = candidates.get(item.id);
+    if (!candidate) {
+      const matches = [...candidates.values()].filter((entry) => !previousIds.has(entry.id) && sameExtractedGoal(item, entry));
+      if (matches.length === 1 && unmatched.filter((old) => sameExtractedGoal(old, matches[0])).length === 1)
+        candidate = matches[0];
+    }
+    if (candidate) candidates.delete(candidate.id);
     const reviewed_documents =
       item.reviewed_documents ??
       documentReview(item, previous.documents);
@@ -39,6 +55,7 @@ export function mergeProgressPreview(
       ...(candidate
         ? {
             source: candidate.source,
+            ...(candidate.source_key ? { source_key: candidate.source_key } : {}),
             ...(candidate.doc_marked_done !== undefined
               ? { doc_marked_done: candidate.doc_marked_done }
               : {}),

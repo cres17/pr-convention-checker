@@ -681,3 +681,37 @@ def test_retained_removed_source_is_not_dropped_or_counted_as_reviewed(tmp_path)
     merged["requirements"][-1]["source"]["line"] = 999
     with pytest.raises(BaselineError):
         save_baseline(repo, state, merged)
+
+
+def test_document_marker_keeps_identity_across_line_and_title_changes(tmp_path):
+    repo = project(tmp_path)
+    (repo / "README.md").write_text("- [ ] 로그인 <!-- progress-id: login -->\n", encoding="utf-8")
+    first = extract_requirements(repo, ["README.md"])["requirements"][0]
+    assert first["title"] == "로그인"
+    assert first["source_key"] == "README.md:login"
+    (repo / "README.md").write_text("# 새 제목\n\n- [ ] 회원 로그인 <!-- progress-id: login -->\n", encoding="utf-8")
+    second = extract_requirements(repo, ["README.md"])["requirements"][0]
+    assert first["id"] == second["id"]
+    assert second["title"] == "회원 로그인"
+    assert second["source"]["line"] == 3
+    assert save_baseline(repo, tmp_path / "data", extract_requirements(repo, ["README.md"]))["requirements"][0]["source_key"] == second["source_key"]
+
+
+@pytest.mark.parametrize("content", [
+    "- [ ] 첫 기능 <!-- progress-id: duplicate -->\n- [ ] 다른 기능 <!-- progress-id: duplicate -->\n",
+    "- [ ] 기능 <!-- progress-id: first --> <!-- progress-id: second -->\n",
+])
+def test_duplicate_or_multiple_document_markers_are_rejected(tmp_path, content):
+    repo = project(tmp_path)
+    (repo / "README.md").write_text(content, encoding="utf-8")
+    with pytest.raises(ValueError, match="progress-id"):
+        extract_requirements(repo, ["README.md"])
+
+
+def test_document_marker_cannot_be_changed_without_its_source(tmp_path):
+    repo = project(tmp_path)
+    (repo / "README.md").write_text("- [ ] 로그인 <!-- progress-id: login -->\n", encoding="utf-8")
+    draft = extract_requirements(repo, ["README.md"])
+    draft["requirements"][0]["source_key"] = "README.md:different"
+    with pytest.raises(BaselineError, match="고유 표시"):
+        save_baseline(repo, tmp_path / "data", draft)

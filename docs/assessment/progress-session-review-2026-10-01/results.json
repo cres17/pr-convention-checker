@@ -1,0 +1,23 @@
+{
+  "before_commit": "244bf3274c8ec0bb462ae6ff6255a427ab32b6cf",
+  "python": "3.11.15",
+  "pyside6": "6.11.2",
+  "platform": "macOS offscreen Qt",
+  "python_tests": 686,
+  "react_tests": 72,
+  "initial_js_kb": {
+    "before": 1466.48,
+    "after": 528.69
+  },
+  "gzip_kb": {
+    "before": 420.51,
+    "after": 149.72
+  },
+  "controlled_session_cases": {
+    "before_passed": 0,
+    "after_passed": 2,
+    "total": 2
+  },
+  "qt_events": 10,
+  "events_fixture_sha256": "d26687286eaae7eacbf51e501b70410fe2f190bc364a3a50ba43373b81bf346a"
+}

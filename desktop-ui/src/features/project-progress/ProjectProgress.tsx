@@ -10,7 +10,7 @@ import useProjectProgress, { type ProjectProgressProps } from "./useProjectProgr
 
 export default function ProjectProgress(props: ProjectProgressProps) {
   const { path, connected } = props;
-  const { state, view, actions } = useProjectProgress(props);
+  const { state, view, actions, pendingElsewhere } = useProjectProgress(props);
   const {
     documents, selectedDocs, documentKinds, draft, report, selectedId, filter, query,
     error, busy, candidates, omitted, showDocuments, fieldErrors, links, history,
@@ -27,6 +27,9 @@ export default function ProjectProgress(props: ProjectProgressProps) {
     );
   return (
     <div className="progress-page">
+      {pendingElsewhere > 0 && <div className="notice" role="status">
+        다른 프로젝트 {pendingElsewhere}개에 저장하지 않은 현황 편집이 있습니다. 해당 프로젝트를 다시 연결하면 이어서 편집할 수 있습니다.
+      </div>}
       <DocumentSetup
         path={path}
         documents={documents}

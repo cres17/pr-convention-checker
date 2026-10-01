@@ -1,4 +1,5 @@
 import type { DesktopEvent } from "./events";
+import { decodeDesktopEvent } from "./eventSchema";
 
 export type Group = { name: string; required?: string[]; evidence?: string };
 export type Decision = {
@@ -58,6 +59,7 @@ export type Review = {
 };
 export type ProgressItem = {
   id: string;
+  source_key?: string;
   title: string;
   criterion: string;
   area: string;
@@ -86,8 +88,8 @@ export type ProgressHistory = {
     head: string;
     total: number;
     counts: Record<string, number>;
-    changes?: ChangeCounts;
-    complete_delta?: number;
+    changes?: ChangeCounts | null;
+    complete_delta?: number | null;
   }[];
   since_save: null | ({
     since: string;
@@ -156,6 +158,7 @@ export type ProgressReport = {
 };
 export interface Bridge {
   initialize: () => void;
+  setProgressDirty?: (dirty: boolean) => void;
   chooseRepository: () => void;
   startScan: (path: string, base: string) => void;
   previewReview: () => void;
@@ -164,16 +167,16 @@ export interface Bridge {
   exportReport: (kind: string) => void;
   previewPolicy: (path: string, preset: string) => void;
   createPolicy: (path: string, preset: string) => void;
-  checkProgressLinks: (path: string) => void;
-  loadTestResults: (path: string) => void;
+  checkProgressLinks: (path: string, requestId?: string) => void;
+  loadTestResults: (path: string, requestId?: string) => void;
   forgetTestResults: (path: string) => void;
-  exportProgress: (path: string, kind: string) => void;
+  exportProgress: (path: string, kind: string, requestId?: string) => void;
   openDocument: (relative: string) => void;
-  listProjectDocs: (path: string) => void;
-  previewProgress: (path: string, selectedJson: string) => void;
-  saveProgress: (path: string, payloadJson: string) => void;
-  inspectProgress: (path: string) => void;
-  suggestProgressEvidence: (path: string, itemJson: string) => void;
+  listProjectDocs: (path: string, requestId?: string) => void;
+  previewProgress: (path: string, selectedJson: string, requestId?: string) => void;
+  saveProgress: (path: string, payloadJson: string, requestId?: string) => void;
+  inspectProgress: (path: string, requestId?: string) => void;
+  suggestProgressEvidence: (path: string, itemJson: string, requestId?: string) => void;
   event: { connect: (fn: (message: string) => void) => void };
 }
 declare global {
@@ -196,11 +199,7 @@ export function connect(onEvent: (event: DesktopEvent) => void): Promise<Bridge 
       new window.QWebChannel!(window.qt!.webChannelTransport, (channel) => {
         const bridge = channel.objects.desktop;
         bridge.event.connect((raw) => {
-          try {
-            onEvent(JSON.parse(raw));
-          } catch {
-            onEvent({ type: "error", message: "앱 응답을 읽지 못했습니다." });
-          }
+          onEvent(decodeDesktopEvent(raw));
         });
         resolve(bridge);
         bridge.initialize();

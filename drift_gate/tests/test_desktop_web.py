@@ -190,7 +190,7 @@ def test_progress_report_export_uses_project_file_name(tmp_path, monkeypatch, ki
     bridge.exportProgress(str(repo), kind)
     settle(bridge)
     assert re.fullmatch(rf'.*[\\/]repo_(?:[\w.-]+_)?progress_\d{{8}}-\d{{6}}\.{kind}', suggested[0])
-    assert messages[-1] == {'type': 'progressExported', 'requested_path': str(repo), 'file': str(target)}
+    assert messages[-1] == {'type': 'progressExported', 'requested_path': str(repo), 'file': str(target), 'request_id': '', 'request_done': True}
     assert marker in target.read_text(encoding='utf-8')
     bridge.exportProgress(str(repo), 'exe')  # unknown kinds are ignored
     assert len(suggested) == 1
@@ -285,7 +285,7 @@ def test_test_results_are_linked_to_items_after_the_user_picks_a_file(tmp_path, 
     bridge.loadTestResults(str(repo))  # cancellation completes loading without replacing records
     settle(bridge)
     assert len(messages) == count + 1
-    assert messages[-1] == {"type": "progressTestsCancelled", "requested_path": str(repo)}
+    assert messages[-1] == {"type": "progressTestsCancelled", "requested_path": str(repo), "request_id": "", "request_done": True}
     results.write_text('not a result file', encoding='utf-8')
     monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getOpenFileName', lambda *args: (str(results), ''))
     bridge.loadTestResults(str(repo))
@@ -360,5 +360,54 @@ def test_test_picker_cancel_completes_without_changing_remembered_file(tmp_path,
     bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
     monkeypatch.setattr("drift_gate.desktop.web_app.QFileDialog.getOpenFileName", lambda *args: ("", ""))
     bridge.loadTestResults(str(repo))
-    assert messages == [{"type": "progressTestsCancelled", "requested_path": str(repo)}]
+    assert messages == [{"type": "progressTestsCancelled", "requested_path": str(repo), "request_id": "", "request_done": True}]
     assert bridge.settings.value(key) == "old.xml"
+
+
+def test_progress_request_id_is_echoed_on_every_save_response(tmp_path, monkeypatch):
+    QApplication.instance() or QApplication([])
+    repo = project(tmp_path)
+    bridge = DesktopBridge()
+    monkeypatch.setattr(bridge, '_progress_dir', lambda: tmp_path / 'data')
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    bridge.previewProgress(str(repo), json.dumps(['README.md']), 'session:extract')
+    settle(bridge)
+    assert messages[-1]['request_id'] == 'session:extract'
+    assert messages[-1]['request_done']
+    bridge.saveProgress(str(repo), json.dumps(messages[-1]), 'session:save')
+    settle(bridge)
+    assert [message['request_id'] for message in messages[-3:]] == ['session:save'] * 3
+    assert [message['request_done'] for message in messages[-3:]] == [False, False, True]
+
+
+def test_cancel_and_failed_progress_requests_keep_their_request_id(tmp_path, monkeypatch):
+    QApplication.instance() or QApplication([])
+    repo = project(tmp_path)
+    bridge = DesktopBridge()
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getOpenFileName', lambda *args: ('', ''))
+    bridge.loadTestResults(str(repo), 'session:cancel')
+    assert messages[-1]['type'] == 'progressTestsCancelled'
+    assert messages[-1]['request_id'] == 'session:cancel'
+    bridge.listProjectDocs(str(tmp_path / 'missing'), 'session:error')
+    settle(bridge)
+    assert messages[-1]['type'] == 'progressError'
+    assert messages[-1]['request_id'] == 'session:error'
+    assert messages[-1]['request_done']
+
+
+@pytest.mark.parametrize('discard', [False, True])
+def test_native_close_protects_unsaved_progress(monkeypatch, discard):
+    from types import SimpleNamespace
+    from PySide6.QtWidgets import QMessageBox
+    from drift_gate.desktop.web_app import WebDesktopWindow
+    answer = QMessageBox.StandardButton.Yes if discard else QMessageBox.StandardButton.No
+    monkeypatch.setattr(QMessageBox, 'question', lambda *args: answer)
+    window = SimpleNamespace(bridge=SimpleNamespace(progress_dirty=True, scan_thread=None, review_worker=None,
+        progress_pool=SimpleNamespace(waitForDone=lambda timeout: True)))
+    results = []
+    event = SimpleNamespace(ignore=lambda: results.append('ignored'), accept=lambda: results.append('accepted'))
+    WebDesktopWindow.closeEvent(window, event)
+    assert results == ['accepted' if discard else 'ignored']

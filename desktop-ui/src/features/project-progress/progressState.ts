@@ -42,7 +42,9 @@ export function initialProgressState(path = "", busy: ProgressOperation = ""): P
 }
 export type ProgressAction =
   | { type: "reset"; path: string; connected: boolean }
+  | { type: "restore"; path: string; retained?: ProgressState; connected: boolean }
   | { type: "event"; event: ProgressEvent }
+  | { type: "end"; operation: ProgressOperation }
   | { type: "begin"; operation: Exclude<ProgressOperation, ""> }
   | { type: "edit"; id: string; patch: Partial<ProgressItem> }
   | { type: "kind"; path: string; kind: DocumentKind }
@@ -122,7 +124,12 @@ function receive(state: ProgressState, event: ProgressEvent): ProgressState {
 function transition(state: ProgressState, action: ProgressAction): ProgressState {
   switch (action.type) {
     case "reset": return initialProgressState(action.path, action.connected && action.path ? "documents" : "");
+    case "restore":
+      return action.retained
+        ? { ...action.retained, path: action.path, busy: action.connected ? "documents" : "", candidates: [], error: "", inspections: 0 }
+        : initialProgressState(action.path, action.connected && action.path ? "documents" : "");
     case "event": return receive(state, action.event);
+    case "end": return { ...state, busy: finish(state, action.operation) };
     case "begin":
       if (state.busy) return state;
       return {
