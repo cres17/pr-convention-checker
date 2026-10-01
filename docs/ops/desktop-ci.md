@@ -71,3 +71,5 @@ Linux 컨테이너에서 `libEGL.so.1`을 찾지 못해 Qt WebEngine 테스트�
 문서 종류와 V5·V6·V7, 현황 편집 보존 수정이 포함됐다. 과거 1.0.0 미리보기는 그대로 보존하며 README의 고정 다운로드 링크는 1.0.1로 갱신했다. 일반 CI는 Qt 없이 9개 OS·Python 조합에서 각각 646개 통과·3개 건너뜀이다. 전체 Qt 포함 로컬 검사는 668개로 검사 환경과 범위가 다르다.
 
 Benchmark는 수동 실행도 지원한다. Action 릴리스의 평가 보고서 첨부에는 `contents: write`가 필요하며, 데스크톱 릴리스는 설치 파일과 체크섬만 제공하고 평가 원본은 Actions 아티팩트·문서에 둔다.
+
+기존 공개 태그로 수정 워크플로를 실행한 [36805844364](https://github.com/cres17/pr-convention-checker/actions/runs/36805844364)는 사전 검사만 실행하고 앱 빌드·업로드 없이 성공했다. [Benchmark 36805846668](https://github.com/cres17/pr-convention-checker/actions/runs/36805846668)도 성공했다. Action 릴리스의 실제 보고서 업로드는 이 수동 검증에 포함되지 않는다.
