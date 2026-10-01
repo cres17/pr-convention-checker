@@ -29,7 +29,7 @@ PyInstaller 결과에 먼저 적용하고, Mac은 DMG 안의 앱, Windows는 Set
 
 - Python 712개, React 77개 통과. TypeScript와 UI 빌드, Ruff `E9,F` 통과.
 - Mac ARM 실제 설치본에서 UI·QWebChannel·8개 언어 오프라인 분석과 API 문서 누락 `warn` 판정 통과. 외부 송신은 거부됐고 새 사용자 파서 캐시의 파일 수는 0이다.
-- Mac ARM DMG 안의 앱도 같은 검사에 통과했다. [로컬 앱 결과](../assessment/offline-packaged-analysis-2026-10-01/local-package.json)와 [DMG 결과](../assessment/offline-packaged-analysis-2026-10-01/local-dmg.json), [변경 전 원본](../assessment/offline-packaged-analysis-2026-10-01/)을 별도로 보존한다. 원격 세 플랫폼 CI는 실행 후 기록한다.
+- Mac ARM DMG 안의 앱도 같은 검사에 통과했다. [로컬 앱 결과](../assessment/offline-packaged-analysis-2026-10-01/local-package.json)와 [DMG 결과](../assessment/offline-packaged-analysis-2026-10-01/local-dmg.json), [변경 전 원본](../assessment/offline-packaged-analysis-2026-10-01/)을 별도로 보존한다. 원격 결과도 아래처럼 확인했다.
 
 ![DMG 안의 앱에서 오프라인 검사 완료](../assets/offline-packaged-analysis-2026-10-01.png)
 
@@ -38,3 +38,24 @@ PyInstaller 결과에 먼저 적용하고, Mac은 DMG 안의 앱, Windows는 Set
 고정 합성 저장소의 패키지 연결·문법 분석·정책 흐름을 확인한다. 32개 반례·12개 통제 사례를 다시 평가하지 않았고, 실제 프로젝트의 판정 정확도나 전체 UI 흐름을 증명하지 않는다. 파서는 지원하는 8개 언어만 포함하며 새 언어를 지원하려면 준비 목록·검증 입력도 확장해야 한다.
 
 공개 `desktop-v1.0.2-preview.20261001` 설치 파일은 그대로이며 이 수정은 새 CI 산출물에 적용한다. 기존 태그·릴리스를 덮어쓰거나 새 공개 릴리스를 게시하지 않는다. 공식 인증서 서명·공증과 사용자 PC 전체 환경 검증은 포함하지 않는다.
+
+
+## 원격 CI와 설치본 결과
+
+제품 수정 커밋은 `ac87685bad8cfe1d2140479ad52bbe32c34a9c6b`이며 `ver2`에 푸시했다.
+
+- [일반 push CI 36850803003](https://github.com/cres17/pr-convention-checker/actions/runs/36850803003), [PR CI 36850807424](https://github.com/cres17/pr-convention-checker/actions/runs/36850807424): 모두 attempt 1 성공. 9개 OS·Python 조합의 테스트, 린트와 기존 고정 벤치마크가 통과했다. Qt 없는 일반 검사에는 682개 통과·3개 파일 건너뜀이며 로컬 Qt 포함 712개와 범위가 다르다.
+- [Desktop build 36850803111](https://github.com/cres17/pr-convention-checker/actions/runs/36850803111): 세 플랫폼 모두 attempt 1 성공. 각 플랫폼에서 React 77개·데스크톱 170개 검사와 빌드가 통과했다.
+- 성공 아티팩트의 JSON을 실제로 내려받아 여섯 결과 모두 `frozen=true`, `bridge_ready=true`, 8개 `grammar+heuristic`, API 문서 누락의 `warn`, 파서 캐시 파일 0개임을 대조했다. 화면 텍스트에도 `offline-api-docs`와 `docs/api.md`가 있어 결과 표시를 확인했다.
+
+| 플랫폼 | 첫 번들 실행 | 배포·설치 후 실행 | 네트워크 차단 관측 |
+|---|---|---|---|
+| Mac ARM | 8개 언어·warn 통과 | DMG 안의 앱 동일 통과 | 두 연결 모두 errno 1 |
+| Mac Intel | 8개 언어·warn 통과 | DMG 안의 앱 동일 통과 | 두 연결 모두 errno 1 |
+| Windows x64 | 8개 언어·warn 통과 | Setup.exe로 설치된 앱 동일 통과 | 두 연결 모두 WinError 10013 |
+
+같은 합성 입력을 플랫폼과 패키지 단계별로 반복한 것이며 여섯 번을 독립 정확도 평가로 세지 않는다. Windows 방화벽은 앱과 Qt WebEngine의 enabled outbound block 규칙 두 개를 기록했고 검사 후 제거했다.
+
+[CI 원본 결과](../assessment/offline-packaged-analysis-2026-10-01/ci/summary.json), [실행·아티팩트 정보](../assessment/offline-packaged-analysis-2026-10-01/ci/run.json), 플랫폼별 JSON·manifest·검사 로그를 보존한다. 실제 Windows 설치본 화면도 확인했지만 CI의 offscreen 실행이며 사용자 PC 실사용 검증은 아니다.
+
+![Windows 설치본의 오프라인 분석 결과](../assets/offline-installed-windows-2026-10-01.png)
