@@ -22,7 +22,7 @@ def _cell(value: object) -> str:
 def _status(item: dict, stale_documents: list[str]) -> str:
     if not item.get("included", True) or item.get("effective_status") == "excluded":
         return STATUS_LABELS["excluded"]
-    if item.get("stale_evidence") or stale_documents:
+    if item.get("stale_evidence") or item.get("stale_requirement") or stale_documents:
         return "재확인 필요"
     status = item.get("effective_status") or item["implementation_status"]
     label = "근거 없음" if status == "unknown" else STATUS_LABELS.get(status, "근거 없음")

@@ -2,6 +2,7 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { Bridge, ProgressBaseline, ProgressItem } from "../../bridge";
+import type { ProgressEvent, QueuedProgressEvent } from "../../events";
 import ProjectProgress from "./ProjectProgress";
 
 afterEach(cleanup);
@@ -28,15 +29,17 @@ function harness() {
     inspectProgress: vi.fn(),
     saveProgress: vi.fn(),
     suggestProgressEvidence: vi.fn(),
+    previewProgress: vi.fn(),
+    loadTestResults: vi.fn(),
   } as unknown as Bridge;
-  let events: { type: string; _seq: number; [key: string]: unknown }[] = [];
+  let events: QueuedProgressEvent[] = [];
   let path = "/sample/one";
   const view = render(
     <ProjectProgress path={path} connected bridge={bridge} events={events} />,
   );
   return {
     bridge,
-    emit(event: { type: string; [key: string]: unknown }) {
+    emit(event: ProgressEvent) {
       events = [...events, { ...event, _seq: events.length + 1 }];
       view.rerender(
         <ProjectProgress
@@ -46,6 +49,10 @@ function harness() {
           events={events}
         />,
       );
+    },
+    emitBatch(batch: ProgressEvent[]) {
+      events = [...events, ...batch.map((event, n) => ({ ...event, _seq: events.length + n + 1 }))];
+      view.rerender(<ProjectProgress path={path} connected bridge={bridge} events={events} />);
     },
     move(next: string) {
       path = next;
@@ -77,6 +84,62 @@ it("clears errors when moving to another repository and ignores the old reposito
     message: "늦게 도착한 오류",
   });
   expect(screen.queryByText("늦게 도착한 오류")).toBeNull();
+});
+
+it("merges a newly current past document into the edited draft and saves the existing evidence", () => {
+  const page = harness();
+  const baseline = makeBaseline();
+  baseline.documents["past.md"] = "past-h";
+  baseline.document_kinds = { "README.md": "current", "past.md": "past" };
+  const old = baseline.requirements[0];
+  old.implementation_status = "implemented";
+  old.evidence = { path: "src/first.py", line: 1, note: "확인", sha256: "code" };
+  old.verification_status = "verified";
+  old.verification_note = "직접 검증";
+  page.emit({ type: "progressDocs", documents: [
+    { path: "README.md", tracked: true, bytes: 10 },
+    { path: "past.md", tracked: true, bytes: 10 },
+  ], omitted: 0, baseline });
+  fireEvent.click(screen.getByRole("button", { name: "기준 문서 변경" }));
+  fireEvent.change(screen.getByLabelText("past.md의 문서 종류"), { target: { value: "current" } });
+  fireEvent.click(screen.getByRole("button", { name: "기능 후보 추출" }));
+  expect(page.bridge.previewProgress).toHaveBeenCalledWith("/sample/one", JSON.stringify([
+    { path: "README.md", kind: "current" }, { path: "past.md", kind: "current" },
+  ]));
+  // Editing while extraction runs must also survive its eventual reply.
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "저장 전 편집" } });
+  const added = makeItem("추가 기능");
+  added.source.path = "past.md";
+  added.source.sha256 = "past-h";
+  page.emit({ type: "progressPreview", documents: baseline.documents,
+    document_kinds: { "README.md": "current", "past.md": "current" },
+    requirements: [makeItem(old.id), added] });
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("저장 전 편집");
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  const saved = JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls[0][1]);
+  expect(saved.requirements[0]).toMatchObject({
+    title: "저장 전 편집", implementation_status: "implemented", evidence: old.evidence,
+    verification_status: "verified", verification_note: "직접 검증",
+  });
+  expect(saved.requirements.map((entry: ProgressItem) => entry.id)).toEqual([old.id, "제외 기능", added.id]);
+});
+
+it("keeps changed document reviews stale until the user explicitly confirms the new conditions", () => {
+  const page = harness();
+  const baseline = makeBaseline();
+  baseline.requirements[0].implementation_status = "not_implemented";
+  baseline.requirements[0].implementation_note = "확인 기록";
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline });
+  const fresh = makeItem("첫 기능");
+  fresh.source.sha256 = "new";
+  page.emit({ type: "progressPreview", documents: { "README.md": "new" },
+    document_kinds: { "README.md": "current" }, requirements: [fresh] });
+  expect(screen.getAllByText("재확인 필요").length).toBeGreaterThan(0);
+  fireEvent.click(screen.getByRole("button", { name: "변경된 문서와 완료 조건 확인" }));
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  const saved = JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls[0][1]);
+  expect(saved.requirements[0].reviewed_documents).toEqual({ "README.md": "new" });
+  expect(saved.requirements[0].implementation_note).toBe("확인 기록");
 });
 
 it("does not carry an evidence candidate into another item selected by a filter", () => {
@@ -215,4 +278,104 @@ it("refreshes document choices without replacing an edited baseline", () => {
     "보존할 편집",
   );
   expect(screen.getByText("기준 저장 필요")).toBeTruthy();
+});
+
+it("hides prior test links and hints immediately when a goal document leaves current scope", () => {
+  const page = harness();
+  const baseline = makeBaseline();
+  baseline.requirements[0].test_patterns = ["test_first"];
+  page.emit({ type: "progressDocs", documents: [{ path: "README.md", tracked: true, bytes: 10 }], omitted: 0, baseline });
+  page.emit({ type: "progressReport", report: {
+    repository: "/sample/one", version: 1, at: "2026-10-01", head: "abc", stale_documents: [],
+    total: 1, items: baseline.requirements,
+    counts: { complete: 0, implemented: 0, partial: 0, not_implemented: 0, unknown: 1, excluded: 1 },
+    test_pattern_hints: { "첫 기능": ["test_first"] }, limitations: "수동 기준",
+  } });
+  page.emit({ type: "progressTests", format: "junit", file: "r.xml", modified: "now", total: 1,
+    items: { "첫 기능": { patterns: ["test_first"], matched: 1, passed: 1, failed: 0, skipped: 0, failing: [], no_match: false } },
+  });
+  expect(screen.getByLabelText("자동 검증 기록")).toBeTruthy();
+  expect(screen.getByText(/저장소의 테스트 파일에서 찾지 못한 이름/)).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "기준 문서 변경" }));
+  fireEvent.change(screen.getByLabelText("README.md의 문서 종류"), { target: { value: "past" } });
+  fireEvent.change(screen.getByLabelText("목록 필터"), { target: { value: "excluded" } });
+  expect(screen.queryByLabelText("자동 검증 기록")).toBeNull();
+  expect(screen.queryByText(/저장소의 테스트 파일에서 찾지 못한 이름/)).toBeNull();
+  expect(screen.getByText(/현재 목표 범위 밖이므로 테스트 힌트와 결과 연결을 적용하지 않습니다/)).toBeTruthy();
+  expect((screen.getByLabelText("관련 테스트 이름 (쉼표로 구분, 이름의 일부)") as HTMLInputElement).value).toBe("test_first");
+  expect(screen.getByLabelText("기능 목록").textContent).not.toContain("자동 검증:");
+  expect(screen.getAllByText(/현재 목표 집계에서 제외/).length).toBeGreaterThan(0);
+  expect(screen.getByLabelText("기능 목록").textContent).not.toContain("다음: 코드 근거 확인");
+});
+
+it("preserves evidence when baseline and extraction replies arrive in one render batch", () => {
+  const page = harness();
+  const baseline = makeBaseline();
+  Object.assign(baseline.requirements[0], {
+    implementation_status: "implemented", evidence: { path: "src/x.py", line: 1, note: "확인", sha256: "code" },
+    verification_status: "verified", verification_note: "기존 검증",
+  });
+  page.emitBatch([
+    { type: "progressDocs", documents: [], omitted: 0, baseline },
+    { type: "progressPreview", documents: baseline.documents, requirements: [makeItem("첫 기능"), makeItem("새 기능")] },
+  ]);
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  const saved = JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls[0][1]);
+  expect(saved.requirements[0].evidence).toEqual(baseline.requirements[0].evidence);
+  expect(saved.requirements[0].verification_note).toBe("기존 검증");
+  expect(saved.requirements.map((entry: ProgressItem) => entry.id)).toEqual(["첫 기능", "제외 기능", "새 기능"]);
+});
+
+it("merges successive extraction replies against the preceding state in one batch", () => {
+  const page = harness();
+  const baseline = makeBaseline();
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline });
+  page.emitBatch([
+    { type: "progressPreview", documents: baseline.documents, requirements: [makeItem("추가 A")] },
+    { type: "progressPreview", documents: baseline.documents, requirements: [makeItem("추가 B")] },
+  ]);
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  const saved = JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls[0][1]);
+  expect(saved.requirements.map((entry: ProgressItem) => entry.id)).toEqual(["첫 기능", "제외 기능", "추가 A", "추가 B"]);
+});
+
+it("releases loading on a cancelled test picker and keeps the previous result", () => {
+  const page = harness();
+  const baseline = makeBaseline();
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline });
+  page.emit({ type: "progressReport", report: {
+    repository: "/sample/one", version: 1, at: "2026-10-01", head: "abc", stale_documents: [],
+    total: 1, items: baseline.requirements, counts: { unknown: 1 }, limitations: "수동 기준",
+  } });
+  page.emit({ type: "progressTests", format: "junit", file: "old.xml", modified: "now", total: 1,
+    items: { "첫 기능": { patterns: [], matched: 1, passed: 1, failed: 0, skipped: 0, failing: [], no_match: false } },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "테스트 결과 불러오기" }));
+  expect(screen.getByRole("button", { name: "기준과 근거 저장" }).matches(":disabled")).toBe(true);
+  page.emit({ type: "progressTestsCancelled" });
+  expect(screen.getByRole("button", { name: "기준과 근거 저장" }).matches(":disabled")).toBe(false);
+  expect(screen.getByLabelText("자동 검증 기록").textContent).toContain("old.xml");
+});
+
+it("invalidates old test links when their matching input is edited", () => {
+  const page = harness();
+  const baseline = makeBaseline();
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline });
+  page.emit({ type: "progressTests", format: "junit", file: "old.xml", modified: "now", total: 1,
+    items: { "첫 기능": { patterns: ["test_old"], matched: 1, passed: 1, failed: 0, skipped: 0, failing: [], no_match: false } },
+  });
+  expect(screen.getByLabelText("자동 검증 기록")).toBeTruthy();
+  fireEvent.change(screen.getByLabelText("관련 테스트 이름 (쉼표로 구분, 이름의 일부)"), { target: { value: "test_new" } });
+  expect(screen.queryByLabelText("자동 검증 기록")).toBeNull();
+});
+
+it("does not restore obsolete test links when a delayed result arrives after editing their input", () => {
+  const page = harness();
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline: makeBaseline() });
+  fireEvent.change(screen.getByLabelText("관련 테스트 이름 (쉼표로 구분, 이름의 일부)"), { target: { value: "test_new" } });
+  page.emit({ type: "progressTests", format: "junit", file: "old.xml", modified: "now", total: 1,
+    items: { "첫 기능": { patterns: ["test_old"], matched: 1, passed: 1, failed: 0, skipped: 0, failing: [], no_match: false } },
+  });
+  expect(screen.queryByLabelText("자동 검증 기록")).toBeNull();
+  expect((screen.getByLabelText("관련 테스트 이름 (쉼표로 구분, 이름의 일부)") as HTMLInputElement).value).toBe("test_new");
 });

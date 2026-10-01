@@ -1,23 +1,23 @@
 import type {
-  Bridge,
   ProgressBaseline,
   ProgressFieldError,
   ProgressItem,
+  EvidenceCandidate,
   ProgressReport,
   TestLinks,
 } from "../../bridge";
 import { documentKindText, nextAction, testSummary } from "./presentation";
-import { docClaimUnbacked, inCurrentScope, isStaleEvidence } from "./status";
+import { docClaimUnbacked, inCurrentScope, isStaleEvidence, isStaleRequirement } from "./status";
 
 type Props = {
   item?: ProgressItem;
   draft: ProgressBaseline;
   report: ProgressReport | null;
   tests: TestLinks | null;
-  candidates: { path: string; line: number; excerpt: string }[];
+  candidates: EvidenceCandidate[];
   errors: ProgressFieldError[];
-  bridge: Bridge | null;
-  path: string;
+  onFindEvidence: (id: string) => void;
+  onConfirmRequirement: (id: string) => void;
   disabled: boolean;
   edit: (id: string, patch: Partial<ProgressItem>) => void;
 };
@@ -36,11 +36,13 @@ export default function RequirementDetail({
   tests,
   candidates,
   errors,
-  bridge,
-  path,
+  onFindEvidence,
+  onConfirmRequirement,
   disabled,
   edit,
 }: Props) {
+  const included = !!item && inCurrentScope(item, draft);
+  const test = item && included ? tests?.items[item.id] : undefined;
   const fieldError = (field: string) =>
     errors.find((entry) => entry.id === item?.id && entry.field === field)
       ?.message;
@@ -117,12 +119,21 @@ export default function RequirementDetail({
             )}
             <p className="progress-next">
               <strong>다음 할 일</strong>{" "}
-              {!inCurrentScope(item, draft)
-                ? "현재 목표 집계에서 제외 (기존 근거 유지)"
-                : report?.stale_documents.length
-                  ? "변경된 기준 문서 다시 확인"
-                  : nextAction(item, report)}
+              {nextAction(item, report, draft)}
             </p>
+            {included && isStaleRequirement(item, draft, report) && (
+              <div className="hint">
+                문서가 변경되어 기존 구현·검증 기록은 재확인 전까지 집계하지
+                않습니다.
+                <button
+                  className="secondary"
+                  type="button"
+                  onClick={() => onConfirmRequirement(item.id)}
+                >
+                  변경된 문서와 완료 조건 확인
+                </button>
+              </div>
+            )}
             <label className="field">
               구현 상태
               <select
@@ -149,12 +160,7 @@ export default function RequirementDetail({
                   <h3>코드 근거</h3>
                   <button
                     className="text-button"
-                    onClick={() =>
-                      bridge?.suggestProgressEvidence(
-                        path,
-                        JSON.stringify(item),
-                      )
-                    }
+                    onClick={() => onFindEvidence(item.id)}
                   >
                     문서에 명시된 파일 찾기
                   </button>
@@ -306,7 +312,8 @@ export default function RequirementDetail({
               />
               <FieldMessage text={fieldError("test_patterns")} />
             </label>
-            {!!report?.test_pattern_hints?.[item.id]?.length && (
+            {included &&
+              !!report?.test_pattern_hints?.[item.id]?.length && (
               <p className="notice" role="status">
                 저장소의 테스트 파일에서 찾지 못한 이름:{" "}
                 {report.test_pattern_hints[item.id].join(", ")}. 오타인지 확인해
@@ -314,28 +321,34 @@ export default function RequirementDetail({
               </p>
             )}
             <p className="hint">
-              테스트 이름에 <code>req-{item.id.slice(0, 8)}</code>를 넣으면 이
-              기능에 자동으로 연결됩니다.
+              {included ? (
+                <>
+                  테스트 이름에 <code>req-{item.id.slice(0, 8)}</code>를 넣으면 이
+                  기능에 자동으로 연결됩니다.
+                </>
+              ) : (
+                "현재 목표 범위 밖이므로 테스트 힌트와 결과 연결을 적용하지 않습니다. 입력한 이름은 보존됩니다."
+              )}
             </p>
-            {tests?.items[item.id] && (
+            {test && (
               <div className="progress-tests" aria-label="자동 검증 기록">
                 <h3>
-                  자동 검증 기록 <small>{tests.file}</small>
+                  자동 검증 기록 <small>{tests?.file}</small>
                 </h3>
                 <p>
-                  {tests.items[item.id].no_match
-                    ? `입력한 이름과 일치하는 테스트가 결과 파일에 없습니다: ${tests.items[item.id].patterns.join(", ")}`
-                    : `연결된 테스트 ${tests.items[item.id].matched}개 · ${testSummary(tests.items[item.id])}`}
+                  {test.no_match
+                    ? `입력한 이름과 일치하는 테스트가 결과 파일에 없습니다: ${test.patterns.join(", ")}`
+                    : `연결된 테스트 ${test.matched}개 · ${testSummary(test)}`}
                 </p>
-                {tests.items[item.id].code_newer && (
+                {test.code_newer && (
                   <p className="notice" role="status">
                     결과 파일보다 근거 코드가 나중에 바뀌었습니다. 테스트를 다시
                     실행해 결과 파일을 새로 만들어 주세요.
                   </p>
                 )}
-                {tests.items[item.id].failing.length > 0 && (
+                {test.failing.length > 0 && (
                   <ul>
-                    {tests.items[item.id].failing.map((name) => (
+                    {test.failing.map((name) => (
                       <li key={name}>
                         <code>{name}</code>
                       </li>
@@ -343,7 +356,7 @@ export default function RequirementDetail({
                   </ul>
                 )}
                 {item.verification_status === "verified" &&
-                  tests.items[item.id].failed > 0 && (
+                  test.failed > 0 && (
                     <p className="notice error" role="alert">
                       수동 확인으로 기록됐지만 연결된 테스트가 실패했습니다.
                       결과가 최신인지 확인해 주세요.

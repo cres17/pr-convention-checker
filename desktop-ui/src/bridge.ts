@@ -1,3 +1,5 @@
+import type { DesktopEvent } from "./events";
+
 export type Group = { name: string; required?: string[]; evidence?: string };
 export type Decision = {
   rule_id: string;
@@ -67,6 +69,8 @@ export type ProgressItem = {
   verification_status: "unverified" | "verified";
   verification_note: string;
   stale_evidence?: boolean;
+  reviewed_documents?: Record<string, string>;
+  stale_requirement?: boolean;
   doc_marked_done?: boolean;
   test_patterns?: string[];
   doc_claim?: "unbacked" | null;
@@ -125,6 +129,8 @@ export type LinkReport = {
   truncated: boolean;
   limitations: string;
 };
+export type ProjectDocument = { path: string; tracked: boolean; bytes: number };
+export type EvidenceCandidate = { path: string; line: number; excerpt: string };
 export type DocumentKind = "current" | "future" | "past" | "reference";
 export type ProgressBaseline = {
   repository: string;
@@ -179,7 +185,7 @@ declare global {
     ) => void;
   }
 }
-export function connect(onEvent: (event: any) => void): Promise<Bridge | null> {
+export function connect(onEvent: (event: DesktopEvent) => void): Promise<Bridge | null> {
   if (!window.qt) return Promise.resolve(null);
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");

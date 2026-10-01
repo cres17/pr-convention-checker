@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-01",
+  "baseline_commit": "f0fda3cf4595d7760ae18a7800c1013cd06388dd",
+  "modified_source": "uncommitted local changes",
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.15",
+    "pyside6": "6.11.2",
+    "node": "v26.7.0"
+  },
+  "input_sha256": {
+    "drift_gate/tests/test_progress_service.py": "84d048e9d571f5fa4e748f79c44c53574a02ce8636d737513451c4a5fe0e29f6",
+    "desktop-ui/src/features/project-progress/ProjectProgress.test.tsx": "00454041bfcd1c1b834e5975243f30689ff84276e6a073404f13b92fd56557af",
+    "desktop-ui/src/features/project-progress/merge.test.ts": "b9347e71c24ae37fba613b78e136c94fd86c9e898c3efff0b3f4df72ba1596ac"
+  },
+  "controlled_comparison": {
+    "ui_flow": {
+      "before": {
+        "passed": 0,
+        "total": 2
+      },
+      "after": {
+        "passed": 2,
+        "total": 2
+      }
+    },
+    "backend": {
+      "before": {
+        "passed": 1,
+        "total": 4
+      },
+      "after": {
+        "passed": 4,
+        "total": 4
+      }
+    },
+    "merge_unit_tests": {
+      "after": {
+        "passed": 4,
+        "total": 4
+      },
+      "baseline_comparable": false
+    }
+  },
+  "full_validation": {
+    "python_passed": 672,
+    "react_passed": 33,
+    "typescript": "passed",
+    "ui_build": "passed",
+    "fatal_python_lint": "passed"
+  },
+  "qt_smoke": {
+    "passed": true,
+    "total": 4,
+    "complete": 1,
+    "retained": 3,
+    "version_after_repeat": 2
+  },
+  "limits": [
+    "author-controlled synthetic tests; not production accuracy",
+    "Qt offscreen macOS; no Windows device/package verification",
+    "same-ID merge; moved/renamed goals may yield new IDs",
+    "deleted selected document files still fail baseline save validation"
+  ],
+  "raw_logs": [
+    "/private/tmp/driftgate-merge-python-before.log",
+    "/private/tmp/driftgate-merge-python-after.log",
+    "/private/tmp/driftgate-merge-ui-before.log",
+    "/private/tmp/driftgate-merge-ui-tests.log",
+    "/private/tmp/driftgate-merge-python-tests.log",
+    "/private/tmp/driftgate-merge-build.log",
+    "/private/tmp/driftgate-merge-native.log"
+  ]
+}

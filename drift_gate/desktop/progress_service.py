@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from drift_gate.desktop import progress_history, verification_records
+from drift_gate.desktop.progress_scope import in_current_scope as _in_current_scope, requirement_sources
 from drift_gate.desktop.doc_links import (
     MAX_ISSUES,
     fenced_lines as _fenced_lines,
@@ -217,13 +218,6 @@ def _document_kinds(documents: dict, kinds: object = None) -> dict[str, str]:
     return {relative: kinds.get(relative, "current") for relative in documents}
 
 
-def _in_current_scope(item: dict, kinds: dict[str, str]) -> bool:
-    return item["included"] and any(
-        kinds[place["path"]] == "current"
-        for place in [item["source"], *item.get("duplicates", [])]
-    )
-
-
 def extract_requirements(path: str | Path, selected: list) -> dict:
     root = _repository(path)
     available = {entry["path"] for entry in _documents(root, *_git_files(root))["documents"]}
@@ -268,7 +262,7 @@ def extract_requirements(path: str | Path, selected: list) -> dict:
         return any(
             place["path"] == relative
             for item in requirements
-            for place in [item["source"], *item.get("duplicates", [])]
+            for place in requirement_sources(item)
         )
 
     for relative in paths:
@@ -440,6 +434,7 @@ def _item_errors(
     docs: dict,
     doc_lines: dict[str, list[str]],
     evidence_files: dict[str, tuple[list[str], str]],
+    previous: dict | None = None,
 ) -> list[tuple[str, str]]:
     """Validate one requirement; return every (field, message) problem found."""
     errors: list[tuple[str, str]] = []
@@ -450,6 +445,10 @@ def _item_errors(
     source = item.get("source")
     if not isinstance(source, dict) or source.get("path") not in docs:
         errors.append(("source", "기능의 문서 출처가 올바르지 않습니다."))
+    elif previous and source == previous.get("source"):
+        # A retained, previously validated source can be stale or removed.
+        # Keep its review snapshot; inspection must not count it as current proof.
+        pass
     elif (
         source.get("sha256") != docs[source["path"]]
         or type(source.get("line")) is not int
@@ -472,6 +471,16 @@ def _item_errors(
             errors.append(("source", "기능의 문서 위치가 변경됐습니다."))
     if not isinstance(item.get("doc_marked_done", False), bool):
         errors.append(("source", "문서의 완료 표시 정보가 올바르지 않습니다."))
+    reviewed = item.get("reviewed_documents")
+    if reviewed is not None and (
+        not isinstance(reviewed, dict)
+        or not reviewed
+        or any(
+            path not in docs or not isinstance(digest, str)
+            for path, digest in reviewed.items()
+        )
+    ):
+        errors.append(("source", "기능의 문서 재확인 정보가 올바르지 않습니다."))
     patterns = verification_records.clean_patterns(item.get("test_patterns"))
     if patterns is None:
         errors.append(("test_patterns", "관련 테스트 이름은 200자 이하로 최대 5개까지 입력할 수 있습니다."))
@@ -495,7 +504,12 @@ def _item_errors(
         errors.append(("included", "기능의 포함 여부가 올바르지 않습니다."))
     if status in {"partial", "implemented"}:
         try:
-            item["evidence"] = _evidence(root, item.get("evidence"), evidence_files)
+            if not (
+                previous
+                and item.get("evidence")
+                and item["evidence"] == previous.get("evidence")
+            ):
+                item["evidence"] = _evidence(root, item.get("evidence"), evidence_files)
         except FieldError as exc:
             errors.append((exc.field, str(exc)))
         except ValueError as exc:
@@ -523,6 +537,11 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
     if not isinstance(items, list) or len(items) > MAX_REQUIREMENTS:
         raise ValueError("기능 목록을 확인해 주세요.")
     kinds = _document_kinds(docs, payload.get("document_kinds"))
+    remote = _remote_identity(root)
+    previous = _load_baseline(root, data_dir, remote)
+    previous_items = (
+        {item["id"]: item for item in previous["requirements"]} if previous else {}
+    )
     available = {entry["path"] for entry in _documents(root, *_git_files(root))["documents"]}
     for relative, digest in docs.items():
         if (
@@ -544,12 +563,12 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
     evidence_files: dict[str, tuple[list[str], str]] = {}
     errors = []
     for item in items:
-        for field, message in _item_errors(root, item, docs, doc_lines, evidence_files):
+        for field, message in _item_errors(
+            root, item, docs, doc_lines, evidence_files, previous_items.get(item["id"])
+        ):
             errors.append({"id": item["id"], "field": field, "message": message})
     if errors:
         raise BaselineError(errors)
-    remote = _remote_identity(root)
-    previous = _load_baseline(root, data_dir, remote)
     target = _store_file(root, data_dir, remote)
     # A baseline still stored under the old path key is rewritten under the remote key.
     if (
@@ -765,6 +784,21 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
             evidence = item["evidence"]
             stale_evidence = current_digest(evidence.get("path")) != evidence.get("sha256")
         item["stale_evidence"] = stale_evidence
+        reviewed = item.get(
+            "reviewed_documents",
+            {item["source"]["path"]: item["source"]["sha256"]},
+        )
+        stale_requirement = (
+            item["source"]["sha256"]
+            != baseline["documents"][item["source"]["path"]]
+            or any(
+                digest != baseline["documents"].get(relative)
+                or relative in stale_docs
+                or relative in stale_context
+                for relative, digest in reviewed.items()
+            )
+        )
+        item["stale_requirement"] = stale_requirement
         item["document_kind"] = kinds[item["source"]["path"]]
         in_scope = _in_current_scope(item, kinds)
         item["in_current_scope"] = in_scope
@@ -774,12 +808,17 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
         else:
             effective = (
                 "unknown"
-                if stale_evidence or stale_docs
+                if stale_evidence or stale_docs or stale_requirement
                 else item["implementation_status"]
             )
             item["effective_status"] = effective
             counts[effective] += 1
-            if item.get("doc_marked_done") and effective != "implemented" and not stale_docs:
+            if (
+                item.get("doc_marked_done")
+                and effective != "implemented"
+                and not stale_docs
+                and not stale_requirement
+            ):
                 item["doc_claim"] = "unbacked"
             if (
                 effective == "implemented"
@@ -790,9 +829,11 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
         items.append(item)
     unbacked = sum(1 for entry in items if entry.get("doc_claim") == "unbacked")
     pattern_hints = {}
-    if any(entry.get("test_patterns") for entry in items):
+    if any(entry.get("test_patterns") and entry["in_current_scope"] for entry in items):
         tracked, untracked = _git_files(root)
-        pattern_hints = verification_records.find_unmatched_patterns(root, tracked | untracked, items)
+        pattern_hints = verification_records.find_unmatched_patterns(
+            root, tracked | untracked, items, document_kinds=kinds
+        )
     head = subprocess.run(
         ["git", "-C", str(root), "rev-parse", "HEAD"],
         capture_output=True,
@@ -884,6 +925,10 @@ def link_test_results(path: str | Path, data_dir: Path, results_file: str | Path
     baseline = _load_baseline(root, data_dir, _remote_identity(root))
     if baseline is None:
         raise ValueError("기준 문서를 선택하고 기능 목록을 확정해 주세요.")
+    kinds = _document_kinds(baseline["documents"], baseline.get("document_kinds"))
     return verification_records.link_tests(
-        verification_records.parse_results(results_file), baseline["requirements"], root
+        verification_records.parse_results(results_file),
+        baseline["requirements"],
+        root,
+        document_kinds=kinds,
     )

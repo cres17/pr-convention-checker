@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-01",
+  "base_commit": "f0fda3c",
+  "branch": "ver2",
+  "scope": "Review of cumulative local progress feature fixes, state encapsulation, adapters and shared domain rules",
+  "baseline": "/private/tmp/driftgate-structure-review-baseline-20261001",
+  "source_comparison": [
+    {
+      "file": "desktop-ui/src/features/project-progress/useProjectProgress.ts",
+      "before_sha256": "dbebc2ef9d3f5e4e0611d509d95844251bce7dbfdbb7adc96d697db22be679f4",
+      "after_sha256": "1611716cb9742a2bc12bb265be891414653effb917de7a5de04368372f7e5bf1"
+    },
+    {
+      "file": "desktop-ui/src/features/project-progress/progressState.ts",
+      "before_sha256": null,
+      "after_sha256": "0e72d7e572cfa063f87259f3f24421ca6845663d58ae9b8d9473bee165d45757"
+    },
+    {
+      "file": "desktop-ui/src/features/project-progress/requirement.ts",
+      "before_sha256": null,
+      "after_sha256": "693ede1a2f746d2cec64adca1074bb2f1450ca9576729a8b8870634d27446072"
+    },
+    {
+      "file": "desktop-ui/src/features/project-progress/merge.ts",
+      "before_sha256": "ce1341430a1a45f1c0b31a2ec05df87b15e77ef93d60bafd058504232e4fb3fd",
+      "after_sha256": "f4d179c64213ab40e959308dd6608ffab337e9fd58b42ea857c59dd1ba698e45"
+    },
+    {
+      "file": "drift_gate/desktop/progress_scope.py",
+      "before_sha256": null,
+      "after_sha256": "f669717ff48d27a32362a676ae0de3489cae66acd526039b578af4b4b6fbd0cb"
+    },
+    {
+      "file": "drift_gate/desktop/web_app.py",
+      "before_sha256": "eb40a9ee18e4b31d55562bbb9742e1dbea492b1f694a0d980732448bc8d0daec",
+      "after_sha256": "11af971fef43bd38f176d4821668966f3589f07d52221950c6a34a5205755935"
+    }
+  ],
+  "regression_inputs": {
+    "desktop-ui/src/features/project-progress/ProjectProgress.test.tsx": {
+      "same_regression_input": true,
+      "sha256": "e2a0564a6e36cc2beb1bc8b5cfa44dad75312af5b5f5569deadeff76306a938a"
+    },
+    "desktop-ui/src/features/project-progress/merge.test.ts": {
+      "same_regression_input": true,
+      "sha256": "cda3b9266a633f6811f6ce37748e503a210a2974fb20b4b43b4d85902826d9ef"
+    },
+    "test_test_picker_cancel_completes_without_changing_remembered_file": {
+      "same_regression_input": true,
+      "ast_sha256": "1ac85e31654ac8bf060226ea80a997d9cdd5ea5cba88a97c2581abee3895b88e"
+    }
+  },
+  "comparison": {
+    "new_ui_cases": {
+      "before_passed": 0,
+      "after_passed": 7,
+      "total": 7
+    },
+    "previous_ui_cases": {
+      "before_passed": 47,
+      "after_passed": 47
+    },
+    "new_qt_bridge_case": {
+      "before_passed": 0,
+      "after_passed": 1,
+      "total": 1
+    }
+  },
+  "validation": {
+    "python": 678,
+    "react": 54,
+    "typescript": "passed",
+    "ui_build": "passed",
+    "ruff_fatal_checks": "passed",
+    "git_diff_check": "passed"
+  },
+  "qt_native": {
+    "passed": true,
+    "test_picker_cancelled_without_lock": true,
+    "cards_toggled": 4,
+    "restored_current_items": 3,
+    "excluded_item": "과거 기능",
+    "excluded_links": false,
+    "excluded_hints": false,
+    "excluded_next_action": "다음 할 일 현재 목표 집계에서 제외 (기존 근거 유지)",
+    "test_patterns_retained": [
+      "test_past_typo"
+    ]
+  },
+  "logs": {
+    "before-ui": "/private/tmp/driftgate-structure-before-ui.log",
+    "after-ui": "/private/tmp/driftgate-structure-after-ui.log",
+    "before-python": "/private/tmp/driftgate-structure-before-python.log",
+    "python": "/private/tmp/driftgate-structure-python.log",
+    "build": "/private/tmp/driftgate-structure-build.log",
+    "native": "/private/tmp/driftgate-structure-native.log"
+  },
+  "limits": [
+    "Author-controlled regression inputs, not accuracy evaluation",
+    "No semantic item matching across changed IDs",
+    "No full runtime JSON payload validation",
+    "No App.tsx-wide screen split",
+    "No package release, remote CI, commit or push"
+  ]
+}

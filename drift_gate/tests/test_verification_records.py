@@ -6,6 +6,7 @@ from drift_gate.desktop import verification_records as vr
 from drift_gate.desktop.progress_service import (
     BaselineError,
     extract_requirements,
+    inspect_progress,
     link_test_results,
     save_baseline,
 )
@@ -153,3 +154,58 @@ def test_pattern_typos_are_found_without_a_result_file(tmp_path):
     ]
     assert vr.find_unmatched_patterns(tmp_path, files, items) == {"a": ["test_logni"], "b": ["test_secret_name"]}
     assert vr.find_unmatched_patterns(tmp_path, files, [items[2]]) == {}
+
+
+@pytest.mark.parametrize("kind", ["past", "future", "reference"])
+def test_test_links_and_hints_follow_document_role_changes(tmp_path, kind):
+    repo = project(tmp_path)
+    state = tmp_path / "state"
+    draft = extract_requirements(repo, ["README.md"])
+    first = draft["requirements"][0]
+    first["test_patterns"] = ["test_login", "test_login_typo"]
+    saved = save_baseline(repo, state, draft)
+    results = write(tmp_path, "r.xml", JUNIT)
+    hints = inspect_progress(repo, state)["test_pattern_hints"]
+    links = link_test_results(repo, state, results)
+    assert hints == {first["id"]: ["test_login", "test_login_typo"]}
+    assert links["items"][first["id"]]["matched"] == 3
+    saved["document_kinds"]["README.md"] = kind
+    excluded = save_baseline(repo, state, saved)
+    assert inspect_progress(repo, state)["test_pattern_hints"] == {}
+    assert link_test_results(repo, state, results)["items"] == {}
+    assert excluded["requirements"][0]["test_patterns"] == first["test_patterns"]
+    excluded["document_kinds"]["README.md"] = "current"
+    save_baseline(repo, state, excluded)
+    assert inspect_progress(repo, state)["test_pattern_hints"] == hints
+    assert link_test_results(repo, state, results)["items"] == links["items"]
+
+
+def test_test_links_and_hints_keep_shared_goal_in_current_scope(tmp_path):
+    repo = project(tmp_path)
+    state = tmp_path / "state"
+    (repo / "goals.md").write_text((repo / "README.md").read_text(), encoding="utf-8")
+    draft = extract_requirements(repo, ["README.md", "goals.md"])
+    draft["document_kinds"]["README.md"] = "past"
+    first = draft["requirements"][0]
+    first["test_patterns"] = ["test_login_typo"]
+    draft["requirements"][1].update(included=False, test_patterns=["test_login"])
+    saved = save_baseline(repo, state, draft)
+    results = write(tmp_path, "r.xml", JUNIT.format(marker=first["id"][:8]))
+    assert inspect_progress(repo, state)["test_pattern_hints"] == {first["id"]: ["test_login_typo"]}
+    assert set(link_test_results(repo, state, results)["items"]) == {first["id"]}
+    assert link_test_results(repo, state, results)["items"][first["id"]]["matched"] == 1
+    saved["document_kinds"]["goals.md"] = "future"
+    save_baseline(repo, state, saved)
+    assert inspect_progress(repo, state)["test_pattern_hints"] == {}
+    assert link_test_results(repo, state, results)["items"] == {}
+
+
+def test_test_links_and_hints_respect_inspected_scope_metadata(tmp_path):
+    parsed = vr.parse_results(write(tmp_path, "r.xml", JUNIT))
+    items = [
+        {"id": "active", "included": True, "test_patterns": ["test_login"], "in_current_scope": True},
+        {"id": "context", "included": True, "test_patterns": ["test_login"], "in_current_scope": False},
+        {"id": "excluded", "included": True, "test_patterns": ["test_login"], "effective_status": "excluded"},
+    ]
+    assert set(vr.link_tests(parsed, items)["items"]) == {"active"}
+    assert vr.find_unmatched_patterns(tmp_path, set(), items) == {"active": ["test_login"]}

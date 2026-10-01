@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-01",
+  "baseline": "working UI source with prior uncommitted reextraction-preservation changes",
+  "source_status": "uncommitted local changes",
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.15",
+    "pyside6": "6.11.2"
+  },
+  "new_test_input": {
+    "path": "desktop-ui/src/features/project-progress/ProgressOverview.test.tsx",
+    "sha256": "36eef04eb0144a23d8cf08e9bbdcb91befc4ccd119154e00714a12f20df0fa1a"
+  },
+  "baseline_source_sha256": {
+    "src/features/project-progress/DocumentSetup.tsx": "c437f07552df776fe261fa44d7319ca2906e62488cd1041366354cd7599dd1d2",
+    "src/features/project-progress/History.tsx": "7e015065fe033777b2acbdff81459c0330963f01edeb2cf25be2e71d2c2d8779",
+    "src/features/project-progress/ProgressOverview.tsx": "1e85abdc29fc4dd72475233abe1e56ca730e1dbf491f2d1796fbb2c1f79e7e27",
+    "src/features/project-progress/ProjectProgress.test.tsx": "00454041bfcd1c1b834e5975243f30689ff84276e6a073404f13b92fd56557af",
+    "src/features/project-progress/ProjectProgress.tsx": "ffeed0aad0efa71bc17512123671ea14c710b04fc1b183616107fbc7d24a5491",
+    "src/features/project-progress/RequirementDetail.tsx": "dd45ed7a6d1848323d3a82be772a37ac4b096c5335e053a4b21623002d6770f6"
+  },
+  "comparison": {
+    "before": {
+      "passed": 0,
+      "total": 4
+    },
+    "after": {
+      "passed": 4,
+      "total": 4
+    }
+  },
+  "validation": {
+    "baseline_react": 33,
+    "current_react": 37,
+    "python_passed": 672,
+    "typescript": "passed",
+    "ui_build": "passed"
+  },
+  "qt_smoke": {
+    "passed": true,
+    "missing_evidence": 1,
+    "recheck": 1,
+    "excluded": 1,
+    "wide_columns": 4,
+    "narrow_columns": 2,
+    "filtered_lists": {
+      "unknown": [
+        "알림"
+      ],
+      "recheck": [
+        "결제"
+      ]
+    },
+    "search_cleared": true,
+    "horizontal_overflow": false
+  },
+  "limits": [
+    "author-controlled synthetic checks; not production accuracy",
+    "macOS Qt offscreen; no Windows device or installation-package verification",
+    "backend counts.unknown remains combined for compatibility"
+  ],
+  "logs": [
+    "/private/tmp/driftgate-v5-cards-baseline-ui.log",
+    "/private/tmp/driftgate-v5-cards-before.log",
+    "/private/tmp/driftgate-v5-cards-ui.log",
+    "/private/tmp/driftgate-v5-cards-python.log",
+    "/private/tmp/driftgate-v5-cards-build.log",
+    "/private/tmp/driftgate-v5-cards-native.log"
+  ]
+}

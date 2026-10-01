@@ -47,7 +47,12 @@ desktop-ui/src/
 ├── components/tool-ui/ ← 재사용한 UI 요소
 ├── features/review/    ← 규칙·수정 안내·현황 영향
 └── features/project-progress/
-    ├── ProjectProgress.tsx  ← 상태와 Qt 이벤트 연결
+    ├── ProjectProgress.tsx  ← 현황 화면 구성
+    ├── useProjectProgress.ts← Qt 명령·이벤트·포커스 연결
+    ├── progressState.ts     ← 순수 상태 전이·화면용 조회
+    ├── requirement.ts       ← 출처·편집·재확인 규칙
+    ├── RequirementList.tsx  ← 범위·상태에 따른 기능 목록
+    ├── ReferenceChecks.tsx  ← 테스트 결과·문서 링크 점검 표시
     ├── DocumentSetup.tsx    ← 문서 선택·종류 지정
     ├── ProgressOverview.tsx ← 요약·안내·필터 진입점
     ├── RequirementDetail.tsx← 요구사항·근거·검증 편집
