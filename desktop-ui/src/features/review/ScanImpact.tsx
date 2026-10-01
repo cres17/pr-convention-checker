@@ -30,9 +30,9 @@ export default function ScanImpact({ impact, onOpen }: { impact: Impact; onOpen:
         ))}
         {impact.documents.map((doc) => (
           <li key={doc.path}>
-            <span className={`badge ${doc.invalidated ? "fail" : "pass"}`}>{doc.invalidated ? "기준 문서 변경" : "기준 문서 동일"}</span>
+            <span className={`badge ${doc.invalidated ? doc.kind && doc.kind !== "current" ? "warn" : "fail" : "pass"}`}>{doc.invalidated ? doc.kind && doc.kind !== "current" ? "참고 범위 문서 변경" : "기준 문서 변경" : "기준 문서 동일"}</span>
             <code>{doc.path}</code>
-            <small>{doc.invalidated ? "기준 문서가 바뀌어 현황 전체를 다시 확정해야 합니다." : "저장된 기준과 내용이 같습니다."}</small>
+            <small>{doc.invalidated ? doc.kind && doc.kind !== "current" ? "현재 목표 수치에는 영향을 주지 않습니다." : "기준 문서가 바뀌어 현황 전체를 다시 확정해야 합니다." : "저장된 기준과 내용이 같습니다."}</small>
           </li>
         ))}
       </ul>

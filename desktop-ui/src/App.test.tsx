@@ -541,3 +541,15 @@ it("calls a review warning 주의 so it differs from progress evidence states", 
   expect(screen.getAllByText("주의").length).toBeGreaterThan(0);
   expect(screen.queryByText("확인 필요")).toBeNull();
 });
+
+it("keeps context-document changes from claiming the current progress needs resetting", async () => {
+  render(<App initialScan={fixture as Scan} />);
+  await waitFor(() => expect(screen.getByText("데스크톱 연결됨")).toBeTruthy());
+  const { act } = await import("react");
+  act(() => emit({ type: "scanImpact", scan_at: fixture.at, version: 1, items: [], documents: [
+    { path: "past.md", invalidated: true, kind: "past" },
+  ] }));
+  expect(screen.getByText("참고 범위 문서 변경")).toBeTruthy();
+  expect(screen.getByText("현재 목표 수치에는 영향을 주지 않습니다.")).toBeTruthy();
+  expect(screen.queryByText("기준 문서가 바뀌어 현황 전체를 다시 확정해야 합니다.")).toBeNull();
+});

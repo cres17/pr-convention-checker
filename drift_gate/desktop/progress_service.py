@@ -217,6 +217,13 @@ def _document_kinds(documents: dict, kinds: object = None) -> dict[str, str]:
     return {relative: kinds.get(relative, "current") for relative in documents}
 
 
+def _in_current_scope(item: dict, kinds: dict[str, str]) -> bool:
+    return item["included"] and any(
+        kinds[place["path"]] == "current"
+        for place in [item["source"], *item.get("duplicates", [])]
+    )
+
+
 def extract_requirements(path: str | Path, selected: list) -> dict:
     root = _repository(path)
     available = {entry["path"] for entry in _documents(root, *_git_files(root))["documents"]}
@@ -676,6 +683,7 @@ def scan_impact(path: str | Path, data_dir: Path, changes: list[dict]) -> dict |
     baseline = _load_baseline(root, data_dir, _remote_identity(root))
     if baseline is None:
         return None
+    kinds = _document_kinds(baseline["documents"], baseline.get("document_kinds"))
     changed: dict[str, dict] = {}
     for change in changes:
         for name in (change.get("path"), change.get("previous_path")):
@@ -688,12 +696,15 @@ def scan_impact(path: str | Path, data_dir: Path, changes: list[dict]) -> dict |
                 current = _hash(_safe_file(root, relative, {".md"}, MAX_DOC_BYTES).read_bytes())
             except (ValueError, OSError):
                 current = None
-            documents.append({"path": relative, "invalidated": current != digest})
+            document = {"path": relative, "invalidated": current != digest}
+            if kinds[relative] != "current":
+                document["kind"] = kinds[relative]
+            documents.append(document)
     digests: dict[str, str | None] = {}
     items = []
     for item in baseline["requirements"]:
         evidence = item.get("evidence")
-        if not item.get("included") or not evidence or evidence.get("path") not in changed:
+        if not _in_current_scope(item, kinds) or not evidence or evidence.get("path") not in changed:
             continue
         relative = evidence["path"]
         if relative not in digests:
@@ -755,10 +766,7 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
             stale_evidence = current_digest(evidence.get("path")) != evidence.get("sha256")
         item["stale_evidence"] = stale_evidence
         item["document_kind"] = kinds[item["source"]["path"]]
-        in_scope = item["included"] and any(
-            kinds[place["path"]] == "current"
-            for place in [item["source"], *item.get("duplicates", [])]
-        )
+        in_scope = _in_current_scope(item, kinds)
         item["in_current_scope"] = in_scope
         if not in_scope:
             item["effective_status"] = "excluded"
