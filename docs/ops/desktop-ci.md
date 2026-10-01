@@ -1,22 +1,22 @@
 # 데스크톱 앱 CI (`desktop-build.yml`)
 
-`ver2` 브랜치에 `drift_gate/**`, `desktop-ui/**`, `pyproject.toml`, 워크플로 파일이 바뀐 push가 들어오면 실행됩니다. 수동 실행(`workflow_dispatch`)도 가능합니다.
+`ver2` 브랜치에 `drift_gate/**`, `desktop-ui/**`, `packaging/**`, `pyproject.toml`, 워크플로 파일이 바뀐 push가 들어오면 실행됩니다. 수동 실행(`workflow_dispatch`)도 가능합니다.
 
 ## 무엇을 하는가
 
 macOS Apple Silicon(`macos-latest`), macOS Intel(`macos-15-intel`), Windows(`windows-latest`) 세 곳에서 각각 다음을 순서대로 실행합니다. 한쪽이 실패해도 다른 쪽은 계속 실행합니다(`fail-fast: false`).
 
 1. **React UI**: `desktop-ui`에서 `npm ci` → `npm test`(vitest) → `npm run build`. 빌드 결과는 `drift_gate/desktop/web`에 만들어지며 저장소에는 포함하지 않습니다.
-2. **앱 설치**: `pip install -e ".[dev,desktop]" pyinstaller`.
+2. **앱 설치·파서 준비**: `pip install -e ".[dev,desktop]" pyinstaller` 후 `packaging/prepare_parsers.py`로 Python·TypeScript·TSX·JavaScript·Go·Java·Kotlin·Ruby 파서를 내려받아 `build/parser-libraries`에 준비합니다. 언어팩 버전·OS·아키텍처별 캐시를 쓰며 다운로드 실패는 두 번 재시도하고 최종 실패하면 빌드를 중단합니다. 빌드에만 인터넷이 필요합니다.
 3. **데스크톱 동작 검사**: 아래 테스트 파일만 실행합니다. 전체 테스트가 아니라 **데스크톱 앱과 프로젝트 현황이 쓰는 파일**로 범위를 제한했습니다.
    - `test_desktop_service.py`, `test_desktop_ui.py`, `test_desktop_web.py`, `test_subscription_review.py`
    - `test_progress_service.py`, `test_progress_drafts.py`, `test_progress_history.py`, `test_progress_report.py`
-   - `test_doc_links.py`, `test_verification_records.py`, `test_policy_setup.py`, `test_report_naming.py`
-4. **앱 빌드와 확인**: PyInstaller로 `DriftGate` 앱을 만든 뒤 실행 파일과 번들된 UI가 있는지 확인하고, 앱을 화면 없이(offscreen) 12초간 실행해 시작 직후 종료하지 않는지 봅니다(`packaging/smoke_launch.py`).
+   - `test_doc_links.py`, `test_verification_records.py`, `test_policy_setup.py`, `test_report_naming.py`, `test_packaging.py`
+4. **앱 빌드와 실제 오프라인 검사**: UI와 8개 파서를 PyInstaller 설치본에 함께 넣습니다. `packaging/verify_package.py`는 파서 포함 여부를 확인하고, 빈 사용자 파서 캐시와 OS의 송신 차단 상태에서 설치본을 실행합니다. Mac은 `sandbox-exec`, Windows는 앱과 Qt WebEngine 실행 파일에 임시 Windows Defender Firewall 규칙을 적용하며 검사 후 제거합니다. 실제 React 화면·QWebChannel 연결, 8개 언어의 `grammar+heuristic` 분석, API 문서 누락의 `warn` 판정까지 확인합니다. 연결 차단도 앱 안에서 확인하며, 화면·분석이 끝나지 않거나 휴리스틱으로 내려가면 실패합니다.
 5. **배포 파일 만들기**:
-   - macOS: 앱을 임시 서명(ad-hoc, 개발자 인증서 없음)한 뒤 `Applications` 바로가기가 든 **`.dmg`**를 만듭니다(`DriftGate-macOS-arm64.dmg`, `DriftGate-macOS-intel.dmg`). 만든 `.dmg`를 마운트해 앱이 들어 있는지 확인합니다.
-   - Windows: Inno Setup(`packaging/windows/DriftGate.iss`)으로 **`DriftGate-Windows-Setup.exe`** 설치 프로그램을, 설치 없이 쓰는 `DriftGate-Windows-portable.zip`도 만듭니다. CI에서 설치 프로그램을 조용히 설치해 앱이 시작되는지 확인하고 제거합니다. 설치는 기본적으로 현재 사용자 영역이라 관리자 권한이 필요 없습니다.
-6. 결과를 아티팩트로 올립니다. 서명·공증은 하지 않습니다.
+   - macOS: 앱을 임시 서명(ad-hoc, 개발자 인증서 없음)한 뒤 `Applications` 바로가기가 든 **`.dmg`**를 만듭니다(`DriftGate-macOS-arm64.dmg`, `DriftGate-macOS-intel.dmg`). DMG 안의 앱에서도 새 빈 캐시와 네트워크 차단으로 같은 실제 검사를 반복합니다.
+   - Windows: Inno Setup(`packaging/windows/DriftGate.iss`)으로 **`DriftGate-Windows-Setup.exe`** 설치 프로그램을, 설치 없이 쓰는 `DriftGate-Windows-portable.zip`도 만듭니다. CI에서 설치 프로그램을 조용히 설치해 설치된 앱에서 같은 오프라인 검사를 수행하고 제거합니다. 앱 설치는 현재 사용자 영역이며 관리자 권한이 필요 없지만, **CI 검증용 방화벽 규칙에는 관리자 권한이 필요합니다.**
+6. 설치 파일과 `Offline-check-*` 검증 아티팩트를 올립니다. 후자는 결과 JSON·화면 캡처·앱 로그·파서 목록을 포함하며 실패한 실행도 남깁니다. 공식 인증서 서명·공증은 하지 않습니다.
 
 새 데스크톱 기능의 테스트 파일을 추가하면 **3번의 목록에도 추가해야** 두 OS에서 실행됩니다. 목록에 없는 파일은 이 워크플로에서 실행되지 않습니다.
 
@@ -62,10 +62,12 @@ Linux 컨테이너에서 `libEGL.so.1`을 찾지 못해 Qt WebEngine 테스트�
 
 ## 알려진 한계
 
-- 이 워크플로는 테스트 통과, 앱 실행 시작, DMG 생성·마운트, Windows 설치 프로그램의 설치·실행 시작·제거 단계를 확인합니다. 전체 기능, 자동 업데이트, 공식 코드 서명·Apple 공증, 실제 사용자 PC에서의 실행은 검증하지 않습니다. Windows 제거 단계는 제거 프로그램 실행까지 확인하며, 모든 파일·설정의 제거 여부를 별도로 비교하지는 않습니다.
+- 이 워크플로는 고정 합성 저장소의 화면 로드·8개 언어 문법 분석·문서 누락 판정과 DMG·설치 프로그램에서의 동일 동작을 확인합니다. 전체 기능, 실제 프로젝트 판정 정확도, 자동 업데이트, 공식 코드 서명·Apple 공증, 실제 사용자 PC의 모든 환경은 검증하지 않습니다. Windows 제거 단계는 제거 프로그램 실행까지 확인하며, 모든 파일·설정의 제거 여부를 별도로 비교하지는 않습니다.
 
 
 ## 2026-10-01 1.0.2 미리보기
+
+이 공개본의 기존 검사는 프로세스 생존만 확인했다. 후속 확인에서 화면 파일 경로 불일치와 언어별 파서 미포함을 발견했다. 위의 강화한 검사는 다음 빌드부터 적용하며 기존 공개 설치 파일을 자동으로 교체하지 않는다. [수정과 오프라인 검증](../review/offline-packaged-analysis-2026-10-01.md)을 참고한다.
 
 현재 공개본은 [desktop-v1.0.2-preview.20261001](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.2-preview.20261001), 제품 소스 `916c4ba`다. [릴리스 실행 36832261072](https://github.com/cres17/pr-convention-checker/actions/runs/36832261072)의 세 플랫폼에서 화면 77개·데스크톱 151개 검사, 앱 실행, 두 DMG 마운트와 Windows 설치·실행·제거가 성공했다. 초안에서 네 설치 파일을 전체 다운로드해 체크섬·GitHub digest와 대조하고, 게시 후 공개 주소의 HTTP 200·크기를 확인했다. [검증 원본](../assessment/progress-draft-recovery-2026-10-01/release-downloads.json)을 보존한다. 일반 CI는 9개 조합에서 각각 664개 통과·3개 건너뜀이며 Qt 포함 로컬 693개와 범위가 다르다. CI는 이제 Ruff `E9,F` 전체를 검사한다.
 

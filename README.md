@@ -140,6 +140,8 @@ Python 3.10 이상과 Git이 필요합니다. 아래는 macOS·Linux 기준입�
 
 **[Windows 설치 EXE 다운로드](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-Windows-Setup.exe)** · **[Mac DMG 다운로드](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.2-preview.20261001)**
 
+공개 1.0.2 미리보기에는 화면 파일 경로와 오프라인 파서 포함 문제가 확인됐습니다. 수정본은 `ver2`의 새 빌드부터 적용되며, 기존 공개 설치 파일은 아직 교체하지 않았습니다. [설치본 수정·검증](docs/review/offline-packaged-analysis-2026-10-01.md)을 확인하세요.
+
 설치 파일은 Python·Node.js를 따로 설치하지 않고 사용합니다. Windows는 설치 후 시작 메뉴의 **Cross Agent**에서 실행하고, Mac은 DMG 안의 앱을 **Applications** 폴더로 드래그합니다. 현재는 공식 코드 서명·Apple 공증 전 미리보기이며 보안 경고가 표시될 수 있습니다. Git 설치 등 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다.
 
 소스에서 직접 실행하려면 다음을 사용합니다.

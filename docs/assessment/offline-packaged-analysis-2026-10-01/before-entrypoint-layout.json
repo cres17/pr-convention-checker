@@ -1,0 +1,20 @@
+[
+  {
+    "platform": "arm",
+    "entrypoint": "web_app.py",
+    "expected_ui_exists": false,
+    "actual_ui_exists": true
+  },
+  {
+    "platform": "intel",
+    "entrypoint": "web_app.py",
+    "expected_ui_exists": false,
+    "actual_ui_exists": true
+  },
+  {
+    "platform": "windows-portable",
+    "entrypoint": "web_app.py",
+    "expected_ui_exists": false,
+    "actual_ui_exists": true
+  }
+]

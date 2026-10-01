@@ -5,7 +5,7 @@ records recovery and failures separately from the deterministic gate result.
 """
 
 try:
-    from tree_sitter_language_pack import get_parser
+    from drift_gate.adapters.grammar_resources import get_parser
 
     get_parser("python")
     TREE_SITTER_AVAILABLE: bool = True

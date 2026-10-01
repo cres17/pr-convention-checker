@@ -13,6 +13,7 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 
 from drift_gate.desktop.app import ScanWorker
+from drift_gate.desktop.resources import WEB_ROOT
 from drift_gate.desktop.policy_setup import create_policy, preview_policy
 from drift_gate.desktop.service import resolve_document
 from drift_gate.desktop.review_dialog import ReviewWorker, review_html
@@ -26,8 +27,6 @@ from drift_gate.desktop.progress_service import (
     link_test_results, list_documents, load_baseline, progress_history_view, record_snapshot, repository_root,
     save_baseline, scan_impact,
 )
-
-WEB_ROOT = Path(__file__).parent / 'web'
 
 
 def scan_payload(scan):
@@ -462,10 +461,20 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName('Cross Agent')
     app.setOrganizationName('Drift Gate')
+    package_check = len(sys.argv) == 4 and sys.argv[1] == '--verify-package'
+    if package_check:
+        from drift_gate.desktop.package_check import prepare_check
+        prepare_check(Path(sys.argv[3]).parent)
     if not (WEB_ROOT / 'index.html').is_file():
+        if package_check:
+            print(f'Missing bundled UI: {WEB_ROOT / "index.html"}', file=sys.stderr)
+            sys.exit(1)
         QMessageBox.critical(None, '화면 빌드 필요', 'desktop-ui에서 npm ci 및 npm run build를 실행해 주세요.')
         return
     window = WebDesktopWindow()
+    if package_check:
+        from drift_gate.desktop.package_check import PackageCheck
+        window.package_check = PackageCheck(app, window, sys.argv[2], sys.argv[3])
     window.show()
     sys.exit(app.exec())
 

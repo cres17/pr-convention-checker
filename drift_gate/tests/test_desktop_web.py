@@ -31,6 +31,21 @@ def test_payload_uses_engine_result_without_reclassification():
     assert payload['files'] == []
 
 
+def test_package_check_can_receive_native_qt_events(tmp_path, monkeypatch):
+    from PySide6.QtCore import QObject
+    from drift_gate.desktop import package_check
+    _app = QApplication.instance() or QApplication([])
+    window = QObject()
+    window.bridge = DesktopBridge(window)
+    monkeypatch.setattr(package_check, 'network_probe', lambda: [])
+    check = package_check.PackageCheck(_app, window, str(tmp_path), str(tmp_path / 'result.json'))
+    # Constructing its child timer sends QObject events, not bridge JSON events.
+    assert check.timeout.isActive()
+    QApplication.processEvents()
+    assert not check.started
+    check.timeout.stop()
+
+
 def test_bridge_keeps_llm_separate_and_exports(tmp_path, monkeypatch):
     QApplication.instance() or QApplication([])
     bridge = DesktopBridge()

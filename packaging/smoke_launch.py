@@ -1,4 +1,6 @@
-"""Start a packaged app, let it run for a few seconds and stop it.
+"""Legacy process-liveness probe; use verify_package.py for real verification.
+
+An error dialog can pass this probe. It does not prove UI or analysis readiness.
 
 Exit code 1 (with the app's output) if it dies early, which catches missing
 libraries, broken bundles and import errors that unit tests cannot see. It runs

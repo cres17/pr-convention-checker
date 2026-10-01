@@ -1,0 +1,252 @@
+{
+  "arm": [
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/RECORD",
+      "size": 1738
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/WHEEL",
+      "size": 104
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/INSTALLER",
+      "size": 4
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/METADATA",
+      "size": 713
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/licenses/LICENSE",
+      "size": 1060
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/sboms/ts-pack-core-py.cyclonedx.json",
+      "size": 234670
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/options.py",
+      "size": 24738
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/__init__.py",
+      "size": 3374
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/_native.abi3.so",
+      "size": 4839152
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/api.py",
+      "size": 8222
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/_supported_languages.py",
+      "size": 5321
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/py.typed",
+      "size": 0
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/exceptions.py",
+      "size": 1247
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/_native.pyi",
+      "size": 16810
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/options.py",
+      "size": 24738
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/__init__.py",
+      "size": 3374
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/_native.abi3.so",
+      "size": 4839152
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/api.py",
+      "size": 8222
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/_supported_languages.py",
+      "size": 5321
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/py.typed",
+      "size": 0
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/exceptions.py",
+      "size": 1247
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/_native.pyi",
+      "size": 16810
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter/_binding.cpython-311-darwin.so",
+      "size": 355824
+    }
+  ],
+  "intel": [
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/RECORD",
+      "size": 1738
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/WHEEL",
+      "size": 106
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/INSTALLER",
+      "size": 4
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/METADATA",
+      "size": 713
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/licenses/LICENSE",
+      "size": 1060
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack-1.20.0.dist-info/sboms/ts-pack-core-py.cyclonedx.json",
+      "size": 234670
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/options.py",
+      "size": 24738
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/__init__.py",
+      "size": 3374
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/_native.abi3.so",
+      "size": 5313520
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/api.py",
+      "size": 8222
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/_supported_languages.py",
+      "size": 5321
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/py.typed",
+      "size": 0
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/exceptions.py",
+      "size": 1247
+    },
+    {
+      "path": "Contents/Resources/tree_sitter_language_pack/_native.pyi",
+      "size": 16810
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/options.py",
+      "size": 24738
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/__init__.py",
+      "size": 3374
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/_native.abi3.so",
+      "size": 5313520
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/api.py",
+      "size": 8222
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/_supported_languages.py",
+      "size": 5321
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/py.typed",
+      "size": 0
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/exceptions.py",
+      "size": 1247
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter_language_pack/_native.pyi",
+      "size": 16810
+    },
+    {
+      "path": "Contents/Frameworks/tree_sitter/_binding.cpython-311-darwin.so",
+      "size": 342960
+    }
+  ],
+  "windows": [
+    {
+      "path": "DriftGate/_internal/tree_sitter/_binding.cp311-win_amd64.pyd",
+      "size": 239616
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack/__init__.py",
+      "size": 3542
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack/_native.pyd",
+      "size": 5497344
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack/_native.pyi",
+      "size": 17374
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack/_supported_languages.py",
+      "size": 5700
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack/api.py",
+      "size": 8462
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack/exceptions.py",
+      "size": 1293
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack/options.py",
+      "size": 25546
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack/py.typed",
+      "size": 0
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack-1.20.0.dist-info/INSTALLER",
+      "size": 4
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack-1.20.0.dist-info/METADATA",
+      "size": 713
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack-1.20.0.dist-info/RECORD",
+      "size": 1733
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack-1.20.0.dist-info/WHEEL",
+      "size": 96
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack-1.20.0.dist-info/licenses/LICENSE",
+      "size": 1067
+    },
+    {
+      "path": "DriftGate/_internal/tree_sitter_language_pack-1.20.0.dist-info/sboms/ts-pack-core-py.cyclonedx.json",
+      "size": 234593
+    }
+  ]
+}

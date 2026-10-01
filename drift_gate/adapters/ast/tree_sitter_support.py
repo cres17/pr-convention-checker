@@ -6,7 +6,7 @@ from functools import lru_cache
 
 @lru_cache(maxsize=16)
 def _parser(language: str):
-    from tree_sitter_language_pack import get_parser
+    from drift_gate.adapters.grammar_resources import get_parser
 
     return get_parser(language)
 
