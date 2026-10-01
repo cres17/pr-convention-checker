@@ -31,7 +31,20 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -e ".[dev]"
 
+      - name: Restore grammar downloads
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/driftgate-parser-cache
+          key: grammars-${{ runner.os }}-${{ runner.arch }}-language-pack-1.20.0
+
+      - name: Prepare grammars before semantic tests
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: python packaging/prepare_parsers.py
+
       - name: Run pytest
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
         run: pytest drift_gate/tests/ -v --tb=short
 
   lint:
