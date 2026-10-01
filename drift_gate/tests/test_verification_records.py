@@ -183,7 +183,7 @@ def test_test_links_and_hints_follow_document_role_changes(tmp_path, kind):
 def test_test_links_and_hints_keep_shared_goal_in_current_scope(tmp_path):
     repo = project(tmp_path)
     state = tmp_path / "state"
-    (repo / "goals.md").write_text((repo / "README.md").read_text(), encoding="utf-8")
+    (repo / "goals.md").write_text((repo / "README.md").read_text(encoding="utf-8"), encoding="utf-8")
     draft = extract_requirements(repo, ["README.md", "goals.md"])
     draft["document_kinds"]["README.md"] = "past"
     first = draft["requirements"][0]

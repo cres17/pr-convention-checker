@@ -644,7 +644,7 @@ def test_reextracted_document_preserves_review_but_requires_explicit_reconfirmat
         evidence={"path": "src/login.py", "line": 1, "note": "확인"},
         verification_status="verified", verification_note="검증 기록")
     saved = save_baseline(repo, state, draft)
-    (repo / "README.md").write_text((repo / "README.md").read_text() + "설명 변경\n", encoding="utf-8")
+    (repo / "README.md").write_text((repo / "README.md").read_text(encoding="utf-8") + "설명 변경\n", encoding="utf-8")
     preview = extract_requirements(repo, ["README.md"])
     fresh = {item["id"]: item for item in preview["requirements"]}
     preview["requirements"] = deepcopy(saved["requirements"])
