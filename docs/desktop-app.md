@@ -15,6 +15,22 @@
 
 ## 실행
 
+### 설치 파일로 사용하기
+
+앱을 빌드하지 않고 사용하려면 [데스크톱 미리보기 배포](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.0-preview.20261001)에서 운영체제에 맞는 파일을 받습니다. 설치 파일에는 Python·Qt와 앱 화면이 포함되어 있어 Python이나 Node.js를 별도로 설치할 필요가 없습니다. **저장소 검사에는 Git**, 구독 LLM 검토에는 해당 CLI 설치·로그인이 필요합니다.
+
+| 컴퓨터 | 다운로드 | 설치 방법 |
+|---|---|---|
+| Windows Intel·AMD 64비트 | [DriftGate-Windows-Setup.exe](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.0-preview.20261001/DriftGate-Windows-Setup.exe) | 실행 후 설치, 시작 메뉴의 Cross Agent로 실행 |
+| Apple Silicon Mac | [DriftGate-macOS-arm64.dmg](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.0-preview.20261001/DriftGate-macOS-arm64.dmg) | DMG를 열고 앱을 Applications 폴더로 드래그 |
+| Intel Mac | [DriftGate-macOS-intel.dmg](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.0-preview.20261001/DriftGate-macOS-intel.dmg) | DMG를 열고 앱을 Applications 폴더로 드래그 |
+
+Windows 설치는 기본적으로 현재 사용자 영역에서 진행됩니다. 설치 중 바탕 화면 바로가기를 선택할 수 있으며, 삭제는 **Windows 설정 → 앱 → Cross Agent (Drift Gate) → 제거**에서 합니다. 앱 버전을 올릴 때는 새 설치 파일을 실행해 덮어 설치합니다. Windows ARM PC의 실제 동작은 검증하지 않았습니다.
+
+현재는 **공식 코드 서명·Apple 공증 전 미리보기**입니다. 다운로드 후 실행할 때 Windows SmartScreen 또는 macOS Gatekeeper가 경고하거나 기기의 정책에 따라 차단할 수 있습니다. 공개 배포는 실제 사용자 컴퓨터의 모든 환경에서 동작한다는 보장이 아닙니다. [검증 범위와 배포 절차](ops/desktop-ci.md)를 확인하세요.
+
+### 소스에서 실행하기
+
 소스 빌드에는 Node.js 22, Python 3.10 이상과 Git이 필요합니다. 프로젝트 루트에서 다음을 실행합니다.
 
 ```bash
@@ -28,7 +44,7 @@ Windows PowerShell에서도 설치 명령은 같으며, Python 실행 명령이 
 
 ## 독립 실행 앱 만들기
 
-`ver2`의 데스크톱 앱 코드가 바뀌면 [Desktop app build](../.github/workflows/desktop-build.yml) 워크플로가 운영체제별 압축 파일을 CI 실행 결과의 아티팩트로 보관합니다. macOS 아티팩트는 `.app`, Windows 아티팩트는 `.exe`와 필요한 파일이 든 폴더입니다. 각 운영체제에서 별도로 빌드합니다. 실행 대상 컴퓨터에도 **Git은 설치되어 있어야** 합니다.
+`ver2`의 데스크톱 앱 코드가 바뀌면 [Desktop app build](../.github/workflows/desktop-build.yml) 워크플로가 운영체제별 파일을 CI 실행 결과의 아티팩트로 보관합니다. macOS는 Apple Silicon·Intel용 DMG를 각각 생성하고, Windows는 설치 EXE와 포터블 ZIP을 생성합니다. 각 운영체제에서 별도로 빌드합니다. 실행 대상 컴퓨터에도 **Git은 설치되어 있어야** 합니다.
 
 [현재 Cross Agent UI의 Windows·macOS 빌드와 다운로드](https://github.com/cres17/pr-convention-checker/actions/runs/36540953698)에서 두 아티팩트가 생성된 것을 확인할 수 있습니다.
 
@@ -41,7 +57,7 @@ npm run build --prefix desktop-ui
 pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack --add-data "drift_gate/desktop/web:drift_gate/desktop/web" drift_gate/desktop/web_app.py
 ```
 
-현재 macOS에서는 앱 번들 생성과 실행 시작, 합성 Git 저장소 검사와 diff 표시를 확인했습니다. Windows에서는 CI의 화면 테스트와 패키지 빌드·업로드를 확인했으며, 실제 사용자 PC에서의 실행은 아직 검증하지 않았습니다. 서명·공증, 설치 프로그램, 자동 업데이트도 아직 제공하지 않습니다. 서명되지 않은 개발 빌드는 OS 보안 안내가 표시될 수 있습니다.
+현재 macOS에서는 앱 번들 생성과 실행 시작, 합성 Git 저장소 검사와 diff 표시를 확인했습니다. [설치 파일 빌드 기록](https://github.com/cres17/pr-convention-checker/actions/runs/36558685569)에서는 macOS DMG 생성·마운트와 Windows 설치 EXE 생성·설치·실행 시작·제거 단계가 통과했습니다. Windows의 실행 확인은 CI에서 화면 없이 12초 동안 프로세스가 유지되는지 보는 검사이며, 실제 사용자 PC에서의 전체 기능 검증은 아직 하지 않았습니다. 공식 코드 서명·Apple 공증과 자동 업데이트는 아직 제공하지 않습니다.
 
 ## 보고서 파일 이름
 
