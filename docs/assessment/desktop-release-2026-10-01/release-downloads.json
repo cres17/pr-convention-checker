@@ -1,0 +1,48 @@
+{
+  "release_tag": "desktop-v1.0.1-preview.20261001",
+  "release_url": "https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.1-preview.20261001",
+  "published_at": "2026-10-01T02:21:27Z",
+  "prerelease": true,
+  "source_commit": "644587996ccdf9572ea7ed88dc99ea88e52bdb1c",
+  "release_workflow": "https://github.com/cres17/pr-convention-checker/actions/runs/36804667492",
+  "verification": "Full public downloads, byte counts, SHA256SUMS.txt and GitHub asset digests agree.",
+  "assets": [
+    {
+      "name": "DriftGate-Windows-Setup.exe",
+      "size": 152744196,
+      "sha256": "91b6784031640e7422859a2e97b7758774358be31ea9ce6f7fc8332c739b6f6b",
+      "http_status": 200,
+      "manifest_match": true,
+      "github_digest_match": true,
+      "url": "https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.1-preview.20261001/DriftGate-Windows-Setup.exe"
+    },
+    {
+      "name": "DriftGate-Windows-portable.zip",
+      "size": 232155379,
+      "sha256": "924d85c980778f029f62fb1c08b17bee812222d575afbbd474f7023295891ad7",
+      "http_status": 200,
+      "manifest_match": true,
+      "github_digest_match": true,
+      "url": "https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.1-preview.20261001/DriftGate-Windows-portable.zip"
+    },
+    {
+      "name": "DriftGate-macOS-arm64.dmg",
+      "size": 234966934,
+      "sha256": "04c7a5e6010a997518c521562d1f9faaf8c2f42fda403b9148a479b319cf4e97",
+      "http_status": 200,
+      "manifest_match": true,
+      "github_digest_match": true,
+      "url": "https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.1-preview.20261001/DriftGate-macOS-arm64.dmg"
+    },
+    {
+      "name": "DriftGate-macOS-intel.dmg",
+      "size": 247776784,
+      "sha256": "5a7ec13ff9c8cc4656de60fb50f16722beba6c99a9632271bf7b63b86374ae12",
+      "http_status": 200,
+      "manifest_match": true,
+      "github_digest_match": true,
+      "url": "https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.1-preview.20261001/DriftGate-macOS-intel.dmg"
+    }
+  ],
+  "manifest_sha256": "7caf86a98b2485350feace40df5c47090c697e8555862f5950fe495c100c08bc"
+}

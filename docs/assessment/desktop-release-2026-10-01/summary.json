@@ -113,5 +113,8 @@
     "fresh_wheel_recursive_cases": 22,
     "empty_input_exit_code": 2,
     "bundled_ui": "present"
-  }
+  },
+  "verified_source_commit": "644587996ccdf9572ea7ed88dc99ea88e52bdb1c",
+  "published_source_audit": "published-source-audit.json",
+  "python_regression_input_sha256": "14c7d882114fdd44bc74d878cb616936fdf73598fd54a4fe9456cbc0f4b9d616"
 }

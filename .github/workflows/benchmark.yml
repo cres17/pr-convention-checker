@@ -3,11 +3,18 @@ name: Benchmark
 on:
   push:
     branches: [main]
+  workflow_dispatch:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
 jobs:
   benchmark:
+    # Release report upload requires this permission; no untrusted PR trigger.
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -58,7 +65,7 @@ jobs:
             benchmark-engine-reports-${{ github.sha }}/
 
       - name: Attach benchmark report to release
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' && !startsWith(github.ref_name, 'desktop-v')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

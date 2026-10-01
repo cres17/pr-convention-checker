@@ -138,7 +138,7 @@ Python 3.10 이상과 Git이 필요합니다. 아래는 macOS·Linux 기준입�
 
 명령어 출력이 낯설다면 저장소를 선택하고 **상태 → 변경 파일 → 규칙별 근거** 순서로 읽을 수 있는 앱을 실행하세요.
 
-**[Windows 설치 EXE 다운로드](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.0-preview.20261001/DriftGate-Windows-Setup.exe)** · **[Mac DMG 다운로드](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.0-preview.20261001)**
+**[Windows 설치 EXE 다운로드](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.1-preview.20261001/DriftGate-Windows-Setup.exe)** · **[Mac DMG 다운로드](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.1-preview.20261001)**
 
 설치 파일은 Python·Node.js를 따로 설치하지 않고 사용합니다. Windows는 설치 후 시작 메뉴의 **Cross Agent**에서 실행하고, Mac은 DMG 안의 앱을 **Applications** 폴더로 드래그합니다. 현재는 공식 코드 서명·Apple 공증 전 미리보기이며 보안 경고가 표시될 수 있습니다. Git 설치 등 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다.
 
@@ -151,7 +151,7 @@ python -m pip install -e '.[desktop]'
 drift-gate-desktop
 ```
 
-`.drift-gate.yml`이 있는 Git 저장소를 고른 뒤 `HEAD` 또는 `main` 등을 비교 기준으로 입력합니다. [Windows·macOS 앱 빌드 및 다운로드](https://github.com/cres17/pr-convention-checker/actions/runs/36540953698)와 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다. 로컬 규칙 검사 후 구독 계정으로 LLM 의견을 추가할 수 있습니다.
+`.drift-gate.yml`이 있는 Git 저장소를 고른 뒤 `HEAD` 또는 `main` 등을 비교 기준으로 입력합니다. [Windows·macOS 앱 빌드 및 다운로드](https://github.com/cres17/pr-convention-checker/actions/runs/36804667492)와 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다. 로컬 규칙 검사 후 구독 계정으로 LLM 의견을 추가할 수 있습니다.
 
 ![데스크톱 앱의 합성 검사 예시 화면](docs/assets/cross-agent-desktop.png)
 
@@ -289,7 +289,7 @@ Claude 연결은 필수가 아닙니다. API 키를 설정하지 않아도 정�
 | 설치 | Action에서 PyYAML 설치 | Action에서 패키지와 선언된 의존성을 함께 설치 |
 | 검증 | 기존 테스트·합성 벤치마크 | 개선 목표·새 반례 비교 자료 추가, Windows 테스트 출력 인코딩 수정 |
 | 로컬 사용 화면 | CLI·HTML 보고서 | PySide6 · Qt WebEngine · React · TypeScript · tool-ui 데스크톱 앱에서 저장소 선택, 규칙별 근거 확인, 보고서 저장 |
-| 프로젝트 현황 | 기능 목록과 전체 진척 화면 없음 | Markdown에서 기능 후보를 정리하고 코드 근거·수동 검증 기록을 바탕으로 현황 표시 |
+| 프로젝트 현황 | 기능 목록과 전체 진척 화면 없음 | 문서를 현재 목표·향후 계획·과거 결과·참고로 구분. 현재 목표의 코드 근거·수동 검증 현황과 카드 필터 제공 |
 | 구독 LLM 검토 | 별도 API 키로 Claude 설명 보완 | 공식 Codex·Claude Code 구독 로그인으로 추가 판정, 전송 미리보기와 중지 |
 
 <details>
@@ -311,6 +311,9 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 
 ## 검증 결과
 
+**2026-10-01 데스크톱 1.0.1 검증:** Python **668개**, 화면 **27개**가 통과했습니다. 새 화면 흐름 6개와 패키지 평가 6개는 각각 같은 입력에서 **0/6 → 6/6**으로 개선됐습니다. 기존 12개 계약 변경은 **12/12**, 32개 반례는 지원 **21/24**·경계 **1/8**로 유지됐습니다. 세 플랫폼의 앱 빌드·실행 시작, DMG 마운트와 Windows 설치·실행 시작·제거도 확인했습니다. [구조 보완과 검증 보고서](docs/review/release-readiness-2026-10-01.md) · [다음 작업 인계](docs/handoff-2026-10-01.md)
+
+
 **기존 테스트 통과와 새 사례에 대한 탐지 성능을 나눠 확인했습니다.** 기존 커밋과 개선본을 같은 환경·입력으로 실행했습니다. 아래 수치는 각각의 평가셋에만 해당하며, 서로 합산하지 않습니다.
 
 **2026-09-29 공개본 재검증:** `5d6fb01`을 별도로 추출해 지원 범위 **21/24**, 경계 **1/8**, 전체 테스트 **542개 통과**를 다시 확인했습니다. [시점별 비교와 남은 실패 10개](docs/published-recheck-2026-09-29.md)를 함께 공개합니다. 알려진 사례를 수정한 뒤의 회귀 결과이며 새로운 독립 평가가 아닙니다.
@@ -329,7 +332,7 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 
 새 반례는 처음에 제품 코드를 바꾸지 않은 채 두 버전에 적용했고, 이후 알려진 오류 세 가지를 수정해 같은 입력에 재검증했습니다. 작성자가 만든 합성 데이터이므로 독립·블라인드 검증은 아닙니다. **8/8이나 21/24를 실제 PR의 정확도로 해석할 수 없습니다.**
 
-[기능 커밋 CI (`88da119`)](https://github.com/cres17/pr-convention-checker/actions/runs/36540953593)에서 Ubuntu·Windows·macOS × Python 3.10·3.11·3.12의 9개 조합과 코드 검사·벤치마크가 통과했습니다. [데스크톱 빌드](https://github.com/cres17/pr-convention-checker/actions/runs/36540953698)에서는 React UI 검사 후 Windows·macOS 패키지를 각각 생성·업로드했습니다.
+[기능 커밋 CI (`88da119`)](https://github.com/cres17/pr-convention-checker/actions/runs/36540953593)에서 Ubuntu·Windows·macOS × Python 3.10·3.11·3.12의 9개 조합과 코드 검사·벤치마크가 통과했습니다. [데스크톱 빌드](https://github.com/cres17/pr-convention-checker/actions/runs/36804667492)에서는 React UI 검사 후 Windows·macOS 패키지를 각각 생성·업로드했습니다.
 
 실행 환경과 첫 평가 원본은 [과적합 점검](docs/generalization-audit-2026-09-22.md), 수정 뒤 사례별 판정과 해시는 [재검증 보고서](docs/v1-ver2-contract-fix-results-2026-09-23.md)에 있습니다. 전체 테스트 통과와 실제 GitHub 권한 환경의 정상 동작 여부는 별개의 검증입니다.
 
@@ -347,6 +350,7 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 
 | 목적 | 문서 |
 |---|---|
+| 최신 기능·구조·릴리스 검증과 다음 작업 | [문서 안내](docs/README.md) · [작업 인계](docs/handoff-2026-10-01.md) |
 | 실제 `v1` 태그와 `ver2`의 설계·실행 경로를 비교하고 싶을 때 | [통제 실험과 사례별 결과](docs/v1-ver2-controlled-comparison-2026-09-23.md) |
 | 개선 전후 결과를 검토하고 싶을 때 | [세 오류 수정 후 재검증](docs/v1-ver2-contract-fix-results-2026-09-23.md) · [첫 사후 검증](docs/generalization-audit-2026-09-22.md) |
 | 로컬 변경을 화면에서 검사하고 싶을 때 | [데스크톱 앱 사용·빌드 안내](docs/desktop-app.md) |
