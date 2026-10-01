@@ -6,7 +6,7 @@ STATUS_LABELS = {
     "implemented": "구현 확인",
     "partial": "부분 구현",
     "not_implemented": "미구현 확인",
-    "unknown": "확인 필요",
+    "unknown": "근거 없음·재확인",
     "excluded": "제외",
 }
 _MAX_CELL = 160
@@ -20,11 +20,12 @@ def _cell(value: object) -> str:
 
 
 def _status(item: dict, stale_documents: list[str]) -> str:
-    if not item.get("included", True):
+    if not item.get("included", True) or item.get("effective_status") == "excluded":
         return STATUS_LABELS["excluded"]
     if item.get("stale_evidence") or stale_documents:
         return "재확인 필요"
-    label = STATUS_LABELS.get(item.get("effective_status") or item["implementation_status"], "확인 필요")
+    status = item.get("effective_status") or item["implementation_status"]
+    label = "근거 없음" if status == "unknown" else STATUS_LABELS.get(status, "근거 없음")
     return label
 
 
@@ -65,6 +66,13 @@ def render_markdown(report: dict, project: dict | None = None, history: dict | N
     for key in ("implemented", "partial", "not_implemented", "unknown"):
         lines.append(f"| {STATUS_LABELS[key]} | {counts[key]} / {total} |")
     lines.append(f"| 제외 | {counts['excluded']} |")
+    kinds = report.get("document_kinds", {})
+    labels = {"current": "현재 목표", "future": "향후 계획", "past": "과거 결과", "reference": "참고"}
+    if kinds:
+        lines += ["", "## 문서 범위", "", "현재 목표의 포함 항목만 현황에 집계합니다.", "", "| 문서 | 종류 |", "|---|---|"]
+        lines += [f"| {_cell(path)} | {labels[kind]} |" for path, kind in kinds.items()]
+    if report.get("stale_context_documents"):
+        lines += ["", "> 참고 범위 문서 변경: " + ", ".join(_cell(d) for d in report["stale_context_documents"]) + ". 현재 목표의 집계에는 영향을 주지 않습니다."]
     if stale_docs:
         lines += ["", "> 기준 문서가 변경됐습니다: " + ", ".join(f"`{d}`" for d in stale_docs)
                   + ". 기능 후보를 다시 추출해 확정하기 전까지 이전 확인은 집계에서 제외했습니다."]

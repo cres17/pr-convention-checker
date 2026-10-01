@@ -123,7 +123,7 @@ it("keeps project progress unconfirmed until the user saves reviewed evidence", 
     { path: "README.md", tracked: true, bytes: 100 },
   ], omitted: 0, baseline: null }));
   fireEvent.click(screen.getByRole("button", { name: "기능 후보 추출" }));
-  expect(api.previewProgress).toHaveBeenCalledWith("/sample/project", '["README.md"]');
+  expect(api.previewProgress).toHaveBeenCalledWith("/sample/project", '[{"path":"README.md","kind":"current"}]');
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
   act(() => emit({ type: "progressPreview", repository: "/sample/project",
     documents: { "README.md": "abc" }, requirements: [{
@@ -132,7 +132,7 @@ it("keeps project progress unconfirmed until the user saves reviewed evidence", 
       verification_status: "unverified", verification_note: "",
     }], truncated: false }));
   expect(screen.getByText("기준 저장 필요")).toBeTruthy();
-  expect(screen.getAllByText("확인 필요").length).toBeGreaterThan(0);
+  expect(screen.getAllByText("근거 없음").length).toBeGreaterThan(0);
   fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
   expect(api.saveProgress).toHaveBeenCalledOnce();
   const saved = JSON.parse(api.saveProgress.mock.calls[0][1]);
@@ -442,4 +442,102 @@ it("warns about test-name patterns that no repository test file contains", async
     counts: { implemented: 0, partial: 0, not_implemented: 0, unknown: 1, complete: 0, excluded: 0 } } }));
   fireEvent.click(screen.getByText(/로그인/, { selector: "strong" }));
   expect(screen.getByText(/저장소의 테스트 파일에서 찾지 못한 이름: test_logn/)).toBeTruthy();
+});
+
+it("sends explicit document roles and preserves evidence when changing a saved role", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalled());
+  const { act } = await import("react");
+  const item = { id: "role-one", title: "로그인", criterion: "로그인", included: true, area: "계정",
+    source: { path: "README.md", line: 1, excerpt: "- [ ] 로그인", sha256: "h" },
+    implementation_status: "implemented", evidence: { path: "src/login.py", line: 1, note: "정의 확인", sha256: "code" },
+    verification_status: "unverified", verification_note: "" };
+  act(() => emit({ type: "progressDocs", documents: [
+    { path: "README.md", tracked: true, bytes: 100 }, { path: "past.md", tracked: true, bytes: 100 },
+  ], omitted: 0, baseline: { repository: "/sample/project", documents: { "README.md": "h", "past.md": "p" },
+    document_kinds: { "README.md": "current", "past.md": "past" }, requirements: [item], version: 1 } }));
+  fireEvent.click(screen.getByRole("button", { name: "기준 문서 변경" }));
+  expect((screen.getByLabelText("past.md의 문서 종류") as HTMLSelectElement).value).toBe("past");
+  fireEvent.change(screen.getByLabelText("README.md의 문서 종류"), { target: { value: "future" } });
+  expect(screen.getByLabelText("기능 목록").textContent).not.toContain("로그인");
+  fireEvent.change(screen.getByLabelText("목록 필터"), { target: { value: "excluded" } });
+  expect(screen.getByLabelText("기능 목록").textContent).toContain("로그인");
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  const saved = JSON.parse(api.saveProgress.mock.calls[0][1]);
+  expect(saved.document_kinds).toEqual({ "README.md": "future", "past.md": "past" });
+  expect(saved.requirements[0].evidence).toEqual(item.evidence);
+  act(() => emit({ type: "progressSaved", baseline: saved }));
+  fireEvent.click(screen.getByRole("button", { name: "기준 문서 변경" }));
+  fireEvent.click(screen.getByRole("button", { name: "기능 후보 추출" }));
+  expect(JSON.parse(api.previewProgress.mock.calls[0][1])).toEqual([
+    { path: "README.md", kind: "future" }, { path: "past.md", kind: "past" },
+  ]);
+});
+
+it("filters summary cards by effective status, clears search and includes verified subset only", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalled());
+  const { act } = await import("react");
+  const make = (id: string, status: string, verified = false, sourcePath = "README.md") => ({
+    id, title: id, criterion: id, area: "기능", included: true,
+    source: { path: sourcePath, line: 1, excerpt: id, sha256: "h" }, implementation_status: status,
+    verification_status: verified ? "verified" : "unverified", verification_note: verified ? "확인" : "",
+    evidence: status === "implemented" ? { path: "src/x.py", line: 1, note: "확인" } : null,
+  });
+  const items = [make("완료기능", "implemented", true), make("구현기능", "implemented"),
+    make("변경기능", "implemented", true), make("미확인기능", "unknown"), make("과거기능", "implemented", true, "past.md")];
+  act(() => emit({ type: "progressSaved", baseline: { repository: "/sample/project", documents: { "README.md": "h", "past.md": "h" },
+    document_kinds: { "README.md": "current", "past.md": "past" }, requirements: items } }));
+  act(() => emit({ type: "progressReport", report: { repository: "/sample/project", version: 1, at: "2026-10-01", head: "abc", stale_documents: [], total: 4,
+    counts: { complete: 1, implemented: 2, partial: 0, not_implemented: 0, unknown: 2, excluded: 1 },
+    items: items.map((item) => ({ ...item, effective_status: item.id === "변경기능" ? "unknown" : item.id === "과거기능" ? "excluded" : item.implementation_status, stale_evidence: item.id === "변경기능" })), limitations: "수동 기준" } }));
+  fireEvent.change(screen.getByLabelText("기능 검색"), { target: { value: "없는 검색어" } });
+  const complete = screen.getByRole("button", { name: /^완료 확인 1/ });
+  fireEvent.click(complete);
+  expect(complete.getAttribute("aria-pressed")).toBe("true");
+  expect((screen.getByLabelText("기능 검색") as HTMLInputElement).value).toBe("");
+  expect(screen.getByLabelText("기능 목록").querySelectorAll("button").length).toBe(1);
+  expect(screen.getByLabelText("기능 목록").textContent).toContain("완료기능");
+  fireEvent.click(screen.getByRole("button", { name: /^구현 확인 2/ }));
+  expect(screen.getByLabelText("기능 목록").querySelectorAll("button").length).toBe(2);
+  expect(screen.getByLabelText("기능 목록").textContent).not.toContain("변경기능");
+  fireEvent.click(screen.getByRole("button", { name: /^근거 없음·재확인 2/ }));
+  expect(screen.getByLabelText("기능 목록").querySelectorAll("button").length).toBe(2);
+  expect(screen.getByLabelText("기능 목록").textContent).toContain("변경기능");
+  expect(screen.getByLabelText("기능 목록").textContent).not.toContain("과거기능");
+  expect(screen.getByTitle("구현 확인 2개")).toBeTruthy();
+});
+
+it("guides first evidence input without implying real development progress, then guides stale evidence separately", async () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalled());
+  const { act } = await import("react");
+  const item = { id: "first", title: "첫기능", criterion: "조건", included: true, area: "기능",
+    source: { path: "README.md", line: 1, excerpt: "조건", sha256: "h" }, implementation_status: "unknown", evidence: null,
+    verification_status: "unverified", verification_note: "" };
+  act(() => emit({ type: "progressSaved", baseline: { repository: "/sample/project", documents: { "README.md": "h" }, requirements: [item] } }));
+  const report = { repository: "/sample/project", version: 1, at: "2026-10-01", head: "abc", stale_documents: [], total: 1,
+    counts: { complete: 0, implemented: 0, partial: 0, not_implemented: 0, unknown: 1, excluded: 0 }, items: [item], limitations: "수동 기준" };
+  act(() => emit({ type: "progressReport", report }));
+  expect(screen.queryByRole("img", { name: /총 1개/ })).toBeNull();
+  expect(screen.getByText(/이 수치는 실제 개발률이 아닙니다/)).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "첫 기능의 코드 근거 연결" }));
+  expect(document.activeElement).toBe(screen.getByLabelText("코드 파일 경로"));
+  act(() => emit({ type: "progressReport", report: { ...report, items: [{ ...item, stale_evidence: true }] } }));
+  expect(screen.queryByRole("button", { name: "첫 기능의 코드 근거 연결" })).toBeNull();
+  expect(screen.getByRole("button", { name: "재확인할 기능 보기" })).toBeTruthy();
+  act(() => emit({ type: "progressReport", report: { ...report, total: 0, counts: { ...report.counts, unknown: 0, excluded: 1 } } }));
+  expect(screen.getByText(/집계할 현재 목표가 없습니다/)).toBeTruthy();
+  expect(screen.getAllByText(/대상 없음/).length).toBe(2);
+});
+
+it("calls a review warning 주의 so it differs from progress evidence states", () => {
+  const value = structuredClone(fixture) as Scan;
+  value.result.result = "warn";
+  render(<App initialScan={value} />);
+  expect(screen.getAllByText("주의").length).toBeGreaterThan(0);
+  expect(screen.queryByText("확인 필요")).toBeNull();
 });

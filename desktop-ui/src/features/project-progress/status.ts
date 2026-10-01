@@ -1,4 +1,10 @@
-import type { ProgressItem, ProgressReport } from "../../bridge";
+import type { ProgressBaseline, ProgressItem, ProgressReport } from "../../bridge";
+
+export function inCurrentScope(item: ProgressItem, baseline: ProgressBaseline): boolean {
+  return item.included && [item.source, ...(item.duplicates ?? [])].some(
+    (source) => (baseline.document_kinds?.[source.path] ?? "current") === "current",
+  );
+}
 
 export type EffectiveStatus = ProgressItem["implementation_status"];
 

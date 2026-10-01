@@ -204,15 +204,36 @@ def _documents(root: Path, tracked: set[str], untracked: set[str]) -> dict:
     return {"repository": str(root), "documents": docs, "omitted": omitted}
 
 
-def extract_requirements(path: str | Path, selected: list[str]) -> dict:
+DOCUMENT_KINDS = {"current", "future", "past", "reference"}
+
+
+def _document_kinds(documents: dict, kinds: object = None) -> dict[str, str]:
+    # Older saved baselines treated every selected document as a current goal.
+    if kinds is None:
+        return {relative: "current" for relative in documents}
+    if (not isinstance(kinds, dict) or set(kinds) - set(documents)
+            or any(not isinstance(kind, str) or kind not in DOCUMENT_KINDS for kind in kinds.values())):
+        raise ValueError("문서 종류는 현재 목표·향후 계획·과거 결과·참고 중에서 선택해 주세요.")
+    return {relative: kinds.get(relative, "current") for relative in documents}
+
+
+def extract_requirements(path: str | Path, selected: list) -> dict:
     root = _repository(path)
     available = {entry["path"] for entry in _documents(root, *_git_files(root))["documents"]}
     if not isinstance(selected, list) or not selected or len(selected) > 10:
         raise ValueError("기준 Markdown을 1~10개 선택해 주세요.")
-    if len(set(selected)) != len(selected) or not all(
-        item in available for item in selected
-    ):
+    paths = []
+    kinds = {}
+    for entry in selected:
+        relative = entry if isinstance(entry, str) else entry.get("path") if isinstance(entry, dict) else None
+        kind = entry.get("kind", "current") if isinstance(entry, dict) else "current"
+        if not isinstance(relative, str) or relative not in available:
+            raise ValueError("선택한 Markdown 파일을 찾지 못했습니다.")
+        paths.append(relative)
+        kinds[relative] = kind
+    if len(set(paths)) != len(paths):
         raise ValueError("선택한 Markdown 파일을 찾지 못했습니다.")
+    kinds = _document_kinds(dict.fromkeys(paths), kinds)
     requirements: list[dict] = []
     seen: dict[str, dict] = {}
     doc_hashes = {}
@@ -243,11 +264,11 @@ def extract_requirements(path: str | Path, selected: list[str]) -> dict:
             for place in [item["source"], *item.get("duplicates", [])]
         )
 
-    for relative in selected:
+    for relative in paths:
         target = _safe_file(root, relative, {".md"}, MAX_DOC_BYTES)
         raw = target.read_bytes()
         doc_hashes[relative] = _hash(raw)
-        if len(requirements) >= MAX_REQUIREMENTS:
+        if kinds[relative] != "current" or len(requirements) >= MAX_REQUIREMENTS:
             continue
         heading = ""
         fallback = []
@@ -292,6 +313,7 @@ def extract_requirements(path: str | Path, selected: list[str]) -> dict:
     return {
         "repository": str(root),
         "documents": doc_hashes,
+        "document_kinds": kinds,
         "requirements": requirements,
         "truncated": len(requirements) >= MAX_REQUIREMENTS,
     }
@@ -493,6 +515,7 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
         raise ValueError("기준 문서를 선택해 주세요.")
     if not isinstance(items, list) or len(items) > MAX_REQUIREMENTS:
         raise ValueError("기능 목록을 확인해 주세요.")
+    kinds = _document_kinds(docs, payload.get("document_kinds"))
     available = {entry["path"] for entry in _documents(root, *_git_files(root))["documents"]}
     for relative, digest in docs.items():
         if (
@@ -526,6 +549,7 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
         previous
         and previous["documents"] == docs
         and previous["requirements"] == items
+        and _document_kinds(previous["documents"], previous.get("document_kinds")) == kinds
         and (remote is None or target.is_file())
     ):
         return previous
@@ -533,6 +557,7 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
         previous
         and previous["documents"] == docs
         and previous["requirements"] == items
+        and _document_kinds(previous["documents"], previous.get("document_kinds")) == kinds
     )
     version = (previous["version"] + (0 if unchanged else 1)) if previous else 1
     saved = {
@@ -541,6 +566,7 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
         "version": version,
         "saved_at": datetime.now(timezone.utc).isoformat(),
         "documents": docs,
+        "document_kinds": kinds,
         "requirements": items,
     }
     if remote is not None:
@@ -691,6 +717,8 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
     if baseline is None:
         raise ValueError("기준 문서를 선택하고 기능 목록을 확정해 주세요.")
     stale_docs = []
+    stale_context = []
+    kinds = _document_kinds(baseline["documents"], baseline.get("document_kinds"))
     for relative, digest in baseline["documents"].items():
         try:
             current = _hash(
@@ -699,7 +727,7 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
         except ValueError:
             current = None
         if current != digest:
-            stale_docs.append(relative)
+            (stale_docs if kinds[relative] == "current" else stale_context).append(relative)
     items = []
     counts = {
         "implemented": 0,
@@ -726,7 +754,13 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
             evidence = item["evidence"]
             stale_evidence = current_digest(evidence.get("path")) != evidence.get("sha256")
         item["stale_evidence"] = stale_evidence
-        if not item["included"]:
+        item["document_kind"] = kinds[item["source"]["path"]]
+        in_scope = item["included"] and any(
+            kinds[place["path"]] == "current"
+            for place in [item["source"], *item.get("duplicates", [])]
+        )
+        item["in_current_scope"] = in_scope
+        if not in_scope:
             item["effective_status"] = "excluded"
             counts["excluded"] += 1
         else:
@@ -764,7 +798,9 @@ def inspect_progress(path: str | Path, data_dir: Path) -> dict:
         "at": datetime.now(timezone.utc).isoformat(),
         "head": head.stdout.strip() if head.returncode == 0 else "커밋 없음",
         "documents": baseline["documents"],
+        "document_kinds": kinds,
         "stale_documents": stale_docs,
+        "stale_context_documents": stale_context,
         "counts": counts,
         "total": total,
         "items": items,
