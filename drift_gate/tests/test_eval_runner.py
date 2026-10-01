@@ -378,3 +378,38 @@ gate:
 
         assert warnings
         assert "dead-rule" in warnings[0]
+
+
+@pytest.mark.parametrize("command", ["demo", "eval", "standalone"])
+def test_default_evaluation_works_outside_checkout(command, tmp_path, monkeypatch, capfd):
+    from drift_gate.adapters.eval.runner import run_eval
+
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(SystemExit) as result:
+        if command == "standalone":
+            run_eval([])
+        else:
+            run_cli([command])
+    assert result.value.code == 0
+    output = capfd.readouterr().out
+    assert "pr_api_change" in output
+    assert "| Path-only baseline | 0 |" not in output
+
+
+@pytest.mark.parametrize("command", ["demo", "eval", "standalone"])
+def test_empty_evaluation_fails_before_writing_reports(command, tmp_path, monkeypatch, capfd):
+    from drift_gate.adapters.eval.runner import run_eval
+
+    monkeypatch.chdir(tmp_path)
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    with pytest.raises(SystemExit) as result:
+        if command == "standalone":
+            run_eval([str(empty)])
+        else:
+            args = ["demo", "--fixtures", str(empty)] if command == "demo" else ["eval", str(empty)]
+            run_cli(args)
+    assert result.value.code == 2
+    assert "No evaluation fixtures found" in capfd.readouterr().err
+    assert not (tmp_path / "benchmark.html").exists()
+    assert not (tmp_path / "benchmark-reports").exists()
