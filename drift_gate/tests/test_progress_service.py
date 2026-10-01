@@ -572,3 +572,17 @@ def test_save_rejects_unknown_or_unselected_document_roles(tmp_path):
         draft["document_kinds"] = kinds
         with pytest.raises(ValueError):
             save_baseline(repo, tmp_path / "state", draft)
+
+
+def test_review_impact_does_not_claim_context_evidence_changes_affect_counts(tmp_path):
+    repo, state = _baseline_with_evidence(tmp_path)
+    baseline = load_baseline(repo, state)
+    baseline['document_kinds'] = {'README.md': 'past'}
+    save_baseline(repo, state, baseline)
+    (repo / 'README.md').write_text('# 과거 결과 변경\n', encoding='utf-8')
+    (repo / 'src/login.py').write_text('def login():\n    return False\n', encoding='utf-8')
+    impact = scan_impact(repo, state, [
+        {'path': 'README.md', 'status': 'modified'}, {'path': 'src/login.py', 'status': 'modified'},
+    ])
+    assert impact['items'] == []
+    assert impact['documents'] == [{'path': 'README.md', 'invalidated': True, 'kind': 'past'}]

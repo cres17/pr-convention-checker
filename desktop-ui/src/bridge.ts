@@ -31,7 +31,7 @@ export type ScanImpact = {
   scan_at: string;
   version: number;
   items: { id: string; title: string; path: string; line?: number; change: string; invalidated: boolean }[];
-  documents: { path: string; invalidated: boolean }[];
+  documents: { path: string; invalidated: boolean; kind?: DocumentKind }[];
 };
 export type Scan = {
   repository: string;
