@@ -1,0 +1,259 @@
+package (macos-15-intel, macOS-intel)	Build and test React UI	﻿2026-10-01T07:46:25.9272470Z ##[group]Run npm ci
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9274550Z ^[[36;1mnpm ci^[[0m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9275280Z ^[[36;1mnpm test^[[0m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9276340Z ^[[36;1mnpm run build^[[0m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9454390Z shell: /bin/bash -e {0}
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9455870Z env:
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9456970Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.11.9/x64
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9458530Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.11.9/x64/lib/pkgconfig
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9459970Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.11.9/x64
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9461290Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.11.9/x64
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9463040Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.11.9/x64
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:25.9464440Z ##[endgroup]
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:53.7593990Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:53.8223580Z added 232 packages, and audited 233 packages in 27s
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:53.9226590Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:53.9763120Z 59 packages are looking for funding
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:53.9768290Z   run `npm fund` for details
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:53.9770120Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:53.9771840Z found 0 vulnerabilities
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:54.5979970Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:54.6055590Z > drift-gate-desktop-ui@0.1.0 test
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:54.6057990Z > vitest run
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:54.6063930Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:56.1174830Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:56.1186940Z ^[[1m^[[30m^[[46m RUN ^[[49m^[[39m^[[22m ^[[36mv4.1.11 ^[[39m^[[90m/Users/runner/work/pr-convention-checker/pr-convention-checker/desktop-ui^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:46:56.1191380Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:03.1897470Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mdesktop review flow^[[2m > ^[[22m^[[2mdoes not request LLM until preview confirmation
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:03.1923670Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:03.1928200Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:08.8674030Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mdesktop review flow^[[2m > ^[[22m^[[2mdisplays backend errors and keeps the next action available
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:08.8743080Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:08.8908680Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:12.7494340Z  ^[[32m✓^[[39m src/features/project-progress/ProgressOverview.test.tsx ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[33m 11229^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:12.8491430Z    ^[[33m^[[2m✓^[[22m^[[39m separates missing evidence and stale evidence cards and matches each count to its filter ^[[33m 2128^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:12.9502830Z    ^[[33m^[[2m✓^[[22m^[[39m classifies stale document review separately even without code evidence and directs both next actions ^[[33m 1972^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:12.9635800Z    ^[[33m^[[2m✓^[[22m^[[39m puts all items invalidated by a current document change into recheck and allows a zero-count filter ^[[33m 755^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:12.9707140Z    ^[[33m^[[2m✓^[[22m^[[39m shows zero for both cards when there are no current goals and excludes stale context items ^[[33m 967^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:12.9986370Z    ^[[33m^[[2m✓^[[22m^[[39m toggles the 완료 확인 card back to all items and clears search ^[[33m 1227^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:13.0994830Z    ^[[33m^[[2m✓^[[22m^[[39m toggles the 구현 확인 card back to all items and clears search ^[[33m 954^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:13.1999130Z    ^[[33m^[[2m✓^[[22m^[[39m toggles the 근거 없음 card back to all items and clears search ^[[33m 1252^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:13.3005310Z    ^[[33m^[[2m✓^[[22m^[[39m toggles the 재확인 필요 card back to all items and clears search ^[[33m 1150^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:13.4007650Z    ^[[33m^[[2m✓^[[22m^[[39m also releases a zero-count card without creating a current-scope item ^[[33m 819^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:13.7479190Z  ^[[32m✓^[[39m src/features/project-progress/merge.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[32m 25^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.5203030Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mkeeps project progress unconfirmed until the user saves reviewed evidence
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.5212700Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.5500740Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.5704650Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.5941030Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.6046600Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.6069450Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.6076360Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.6085800Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.6091780Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.6190390Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.6206110Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:14.7204940Z  ^[[32m✓^[[39m src/eventSchema.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[32m 57^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:15.2244040Z  ^[[32m✓^[[39m src/features/project-progress/requestSession.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 14^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:15.3423540Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2muses one effective status for badge, filter and summary when evidence became stale
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:15.3430120Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:15.3763870Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:15.3787000Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:15.3792830Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:15.3810420Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:15.6001860Z  ^[[32m✓^[[39m src/features/project-progress/presentation.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 9^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.0593770Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mmarks every invalid item after a failed save and jumps to the first one
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.1019890Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.1023360Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.1026550Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.1029720Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.1031630Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.5399400Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mapplies progress events that arrive in the same render batch
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.5412230Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.5516920Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.5533870Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.5960530Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.5963600Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.9883700Z  ^[[32m✓^[[39m src/features/project-progress/ProjectProgress.test.tsx ^[[2m(^[[22m^[[2m18 tests^[[22m^[[2m)^[[22m^[[33m 16514^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.9906870Z    ^[[33m^[[2m✓^[[22m^[[39m offers recovery without overwriting the confirmed baseline, then preserves incomplete edits ^[[33m 1884^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.9912570Z    ^[[33m^[[2m✓^[[22m^[[39m deletes only the recovery copy after a correlated confirmation ^[[33m 779^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.9950110Z    ^[[33m^[[2m✓^[[22m^[[39m shows an autosave failure without unlocking a confirmed save in progress ^[[33m 1747^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.9955530Z    ^[[33m^[[2m✓^[[22m^[[39m merges a newly current past document into the edited draft and saves the existing evidence ^[[33m 2728^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.9960070Z    ^[[33m^[[2m✓^[[22m^[[39m keeps changed document reviews stale until the user explicitly confirms the new conditions ^[[33m 1609^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.9966380Z    ^[[33m^[[2m✓^[[22m^[[39m does not carry an evidence candidate into another item selected by a filter ^[[33m 1462^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.9970770Z    ^[[33m^[[2m✓^[[22m^[[39m locks the submitted fields until a save reply so edits cannot be silently overwritten ^[[33m 1294^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.9975020Z    ^[[33m^[[2m✓^[[22m^[[39m ignores an inspection reply for a baseline that the user has already edited ^[[33m 789^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:17.9978920Z    ^[[33m^[[2m✓^[[22m^[[39m keeps save fields locked when an earlier inspection finishes first ^[[33m 868^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:18.0114640Z    ^[[33m^[[2m✓^[[22m^[[39m hides prior test links and hints immediately when a goal document leaves current scope ^[[33m 642^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:18.0120630Z    ^[[33m^[[2m✓^[[22m^[[39m preserves evidence when baseline and extraction replies arrive in one render batch ^[[33m 314^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:18.0125320Z    ^[[33m^[[2m✓^[[22m^[[39m merges successive extraction replies against the preceding state in one batch ^[[33m 325^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:18.0129450Z    ^[[33m^[[2m✓^[[22m^[[39m releases loading on a cancelled test picker and keeps the previous result ^[[33m 1000^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:18.0133130Z    ^[[33m^[[2m✓^[[22m^[[39m finishes a pending test read without applying its obsolete result after an edit ^[[33m 740^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.0822430Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mflags document checkmarks without evidence, checks links and exports the report
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.0827230Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.0893660Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.0916910Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.0919490Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.0921840Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.0935720Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.0941290Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.0943500Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.0944550Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.8837160Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mtells the review screen which saved evidence a scan touches and opens that item in progress
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:20.9852440Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.0942410Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.0943970Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.1948090Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mtells the review screen which saved evidence a scan touches and opens that item in progress
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.2203230Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.2383670Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.2830160Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.2862220Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3066350Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2moffers to create a starter policy when the repository has none, then scans again
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3069490Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3071260Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3072950Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3074570Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3076200Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3078150Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3080960Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3082740Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3084410Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.3085210Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.5944760Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mshows what changed since the last save and the list of saved states
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.5947400Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.5949750Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.5951860Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.5953520Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:21.5954650Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.0677390Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mlinks a test-result file to items without changing the progress counts
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.0724270Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.0735190Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.0738250Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.0811830Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.0820320Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.0824720Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.0834710Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.0844840Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.0846450Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.4158690Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mwarns about test-name patterns that no repository test file contains
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.4162270Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.4164990Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.4167330Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.4169790Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:23.4171000Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:26.2061460Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2msends explicit document roles and preserves evidence when changing a saved role
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:26.2067570Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:26.2072390Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:26.2076390Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:26.2079180Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:26.2081780Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:26.2082990Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:28.6386980Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mfilters summary cards by effective status, clears search and includes verified subset only
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:28.7388300Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:28.8195660Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:28.8266000Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:28.8385930Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:28.8510180Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:30.8902850Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mguides first evidence input without implying real development progress, then guides stale evidence separately
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:30.8991900Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:30.9070790Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.0051750Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.0149340Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.0269020Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.0335650Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.0678880Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.0822490Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.0894360Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.1037410Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mkeeps context-document changes from claiming the current progress needs resetting
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.1115740Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.1160320Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.5450570Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mpreserves unsaved edits across page navigation
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.5496530Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.5566590Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:31.5617380Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:32.7341710Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mpreserves unsaved edits across page navigation
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:32.7450910Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:32.7548850Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:32.7652860Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:33.1878530Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mignores an earlier save after returning to the same repository and retains the new draft
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:33.2898210Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:33.3372960Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:33.4372840Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.6359920Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2mignores an earlier save after returning to the same repository and retains the new draft
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7242960Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7326270Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7388070Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7428430Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7478950Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7513510Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7549420Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7577140Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7671300Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7759280Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7817270Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7893090Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7967590Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:34.7997550Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:35.3435920Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2monly accepts the current save and clears the unsaved-close warning
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:35.3778720Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:35.4049450Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:35.4079760Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.5352820Z ^[[90mstderr^[[2m | src/App.test.tsx^[[2m > ^[[22m^[[2monly accepts the current save and clears the unsaved-close warning
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.5359080Z  ^[[31m❯^[[39m src/App.test.tsx ^[[2m(^[[22m^[[2m24 tests^[[22m^[[2m | ^[[22m^[[31m1 failed^[[39m^[[2m)^[[22m^[[33m 34157^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.5937070Z ^[[22m^[[39mThe current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.5940000Z      ^[[33m^[[2m✓^[[22m^[[39m does not request LLM until preview confirmation ^[[33m 875^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.5996680Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.5999640Z      ^[[33m^[[2m✓^[[22m^[[39m filters findings without changing the gate ^[[33m 2541^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6037400Z The current testing environment is not configured to support act(...)
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6040530Z      ^[[33m^[[2m✓^[[22m^[[39m shows session history honestly and the policy snapshot ^[[33m 2483^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6088250Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6090890Z      ^[[33m^[[2m✓^[[22m^[[39m displays backend errors and keeps the next action available ^[[33m 614^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6140480Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6144000Z    ^[[32m✓^[[39m preserves a complete Git patch without duplicating file headers^[[32m 127^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6182040Z ^[[31m⎯⎯⎯⎯⎯⎯⎯^[[39m^[[1m^[[41m Failed Tests 1 ^[[49m^[[22m^[[31m⎯⎯⎯⎯⎯⎯⎯^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6190680Z ^[[31m   ^[[31m×^[[31m keeps project progress unconfirmed until the user saves reviewed evidence^[[39m^[[33m 5579^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6192630Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6229760Z    ^[[33m^[[2m✓^[[22m^[[39m uses one effective status for badge, filter and summary when evidence became stale ^[[33m 777^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6302560Z ^[[41m^[[1m FAIL ^[[22m^[[49m src/App.test.tsx^[[2m > ^[[22mkeeps project progress unconfirmed until the user saves reviewed evidence
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6310220Z    ^[[33m^[[2m✓^[[22m^[[39m shows how to fix a violation and opens the required document ^[[33m 632^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6434520Z ^[[31m^[[1mError^[[22m: Test timed out in 5000ms.
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6452110Z    ^[[33m^[[2m✓^[[22m^[[39m marks every invalid item after a failed save and jumps to the first one ^[[33m 1132^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6456380Z If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6532890Z ^[[36m ^[[2m❯^[[22m src/App.test.tsx:^[[2m119:1^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6534490Z     ^[[90m117|^[[39m })^[[33m;^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6535630Z     ^[[90m118|^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6537470Z     ^[[90m119|^[[39m it("keeps project progress unconfirmed until the user saves reviewed e…
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6539730Z     ^[[90m   |^[[39m ^[[31m^^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6542310Z     ^[[90m120|^[[39m   ^[[34mrender^[[39m(^[[33m<^[[39m^[[33mApp^[[39m ^[[33m/^[[39m^[[33m>^[[39m)^[[33m;^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6546350Z     ^[[90m121|^[[39m   fireEvent^[[33m.^[[39m^[[34mclick^[[39m(screen^[[33m.^[[39m^[[34mgetByRole^[[39m(^[[32m"button"^[[39m^[[33m,^[[39m { name^[[33m:^[[39m ^[[32m"프로젝트 현황"^[[39m }))^[[33m;^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6548530Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6549480Z ^[[31m^[[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6552410Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6554170Z    ^[[33m^[[2m✓^[[22m^[[39m applies progress events that arrive in the same render batch ^[[33m 451^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6587950Z    ^[[33m^[[2m✓^[[22m^[[39m flags document checkmarks without evidence, checks links and exports the report ^[[33m 2542^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6634670Z    ^[[33m^[[2m✓^[[22m^[[39m tells the review screen which saved evidence a scan touches and opens that item in progress ^[[33m 737^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6681250Z    ^[[33m^[[2m✓^[[22m^[[39m offers to create a starter policy when the repository has none, then scans again ^[[33m 493^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6713900Z    ^[[32m✓^[[39m shows what changed since the last save and the list of saved states^[[32m 280^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6726570Z    ^[[33m^[[2m✓^[[22m^[[39m links a test-result file to items without changing the progress counts ^[[33m 1474^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6747570Z    ^[[33m^[[2m✓^[[22m^[[39m warns about test-name patterns that no repository test file contains ^[[33m 348^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6757240Z    ^[[33m^[[2m✓^[[22m^[[39m sends explicit document roles and preserves evidence when changing a saved role ^[[33m 2790^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6781600Z    ^[[33m^[[2m✓^[[22m^[[39m filters summary cards by effective status, clears search and includes verified subset only ^[[33m 2377^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6796560Z    ^[[33m^[[2m✓^[[22m^[[39m guides first evidence input without implying real development progress, then guides stale evidence separately ^[[33m 2253^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6878560Z    ^[[32m✓^[[39m calls a review warning 주의 so it differs from progress evidence states^[[32m 89^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6914590Z    ^[[32m✓^[[39m keeps context-document changes from claiming the current progress needs resetting^[[32m 179^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6952500Z    ^[[33m^[[2m✓^[[22m^[[39m preserves unsaved edits across page navigation ^[[33m 1601^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.6977360Z    ^[[33m^[[2m✓^[[22m^[[39m ignores an earlier save after returning to the same repository and retains the new draft ^[[33m 1871^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.7009240Z    ^[[33m^[[2m✓^[[22m^[[39m only accepts the current save and clears the unsaved-close warning ^[[33m 1903^[[2mms^[[22m^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.7041090Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.7096310Z ^[[2m Test Files ^[[22m ^[[1m^[[31m1 failed^[[39m^[[22m^[[2m | ^[[22m^[[1m^[[32m6 passed^[[39m^[[22m^[[90m (7)^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.7129250Z ^[[2m      Tests ^[[22m ^[[1m^[[31m1 failed^[[39m^[[22m^[[2m | ^[[22m^[[1m^[[32m76 passed^[[39m^[[22m^[[90m (77)^[[39m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.7166750Z ^[[2m   Start at ^[[22m 07:46:56
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.7226440Z ^[[2m   Duration ^[[22m 40.37s^[[2m (transform 3.81s, setup 0ms, import 9.32s, tests 62.00s, environment 6.63s)^[[22m
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.7259360Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.7284140Z
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.7378180Z ##[error]Error: Test timed out in 5000ms.
+package (macos-15-intel, macOS-intel)	Build and test React UI	If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+package (macos-15-intel, macOS-intel)	Build and test React UI	 ❯ src/App.test.tsx:119:1
+package (macos-15-intel, macOS-intel)	Build and test React UI
+package (macos-15-intel, macOS-intel)	Build and test React UI
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-01T07:47:36.7417830Z ##[error]Process completed with exit code 1.
