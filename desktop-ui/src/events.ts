@@ -4,7 +4,7 @@ import type {
   ProjectDocument, Review, Scan, ScanImpact, TestLinks,
 } from "./bridge";
 
-type Requested = { requested_path?: string };
+type Requested = { requested_path?: string; request_id?: string; request_done?: boolean };
 export type ProgressEvent = Requested & (
   | { type: "progressDocs"; documents: ProjectDocument[]; omitted: number; repository?: string; baseline?: ProgressBaseline | null }
   | ({ type: "progressPreview"; repository?: string; truncated?: boolean } & Pick<ProgressBaseline, "documents" | "document_kinds" | "requirements">)

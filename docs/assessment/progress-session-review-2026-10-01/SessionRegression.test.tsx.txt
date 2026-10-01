@@ -1,0 +1,126 @@
+// @vitest-environment jsdom
+import { beforeAll, afterEach, describe, it, expect, vi } from "vitest";
+import {
+  render,
+  screen,
+  fireEvent,
+  cleanup,
+  waitFor,
+} from "@testing-library/react";
+import App from "./App";
+import fixture from "./preview-fixture.json";
+import type { Scan, ProgressItem, ProgressReport } from "./bridge";
+import type { DesktopEvent } from "./events";
+const api = vi.hoisted(() => ({
+  setProgressDirty: vi.fn(),
+  startScan: vi.fn(),
+  previewReview: vi.fn(),
+  startReview: vi.fn(),
+  chooseRepository: vi.fn(),
+  cancelReview: vi.fn(),
+  exportReport: vi.fn(),
+  openDocument: vi.fn(),
+  checkProgressLinks: vi.fn(),
+  loadTestResults: vi.fn(),
+  forgetTestResults: vi.fn(),
+  previewPolicy: vi.fn(),
+  createPolicy: vi.fn(),
+  exportProgress: vi.fn(),
+  listProjectDocs: vi.fn(),
+  previewProgress: vi.fn(),
+  saveProgress: vi.fn(),
+  inspectProgress: vi.fn(),
+  suggestProgressEvidence: vi.fn(),
+}));
+beforeAll(() => {
+  HTMLDialogElement.prototype.showModal = function () {
+    this.setAttribute("open", "");
+  };
+  HTMLDialogElement.prototype.close = function () {
+    this.removeAttribute("open");
+  };
+});
+let emit: (event: DesktopEvent) => void;
+vi.mock("./bridge", () => ({
+  connect: (fn: (event: DesktopEvent) => void) => {
+    emit = fn;
+    fn({
+      type: "ready",
+      repository: "/sample/project",
+      base: "HEAD",
+      installed: {},
+    });
+    return Promise.resolve(api);
+  },
+}));
+vi.mock("./components/tool-ui/code-diff", () => ({
+  CodeDiff: ({ patch }: { patch: string }) => <pre>{patch}</pre>,
+}));
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
+const sessionBaseline = {
+  repository: "/sample/project", version: 1, documents: { "README.md": "abc" },
+  document_kinds: { "README.md": "current" as const }, requirements: [{
+    id: "one", title: "기존 제목", criterion: "로그인", area: "계정", included: true,
+    source: { path: "README.md", line: 2, excerpt: "로그인", sha256: "abc" },
+    implementation_status: "unknown" as const, evidence: null,
+    verification_status: "unverified" as const, verification_note: "",
+  }],
+};
+async function openSessionEditor() {
+  render(<App />);
+  await waitFor(() => expect(screen.getByText("데스크톱 연결됨")).toBeTruthy());
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  const { act } = await import("react");
+  act(() => emit({ type: "progressDocs", requested_path: "/sample/project",
+    request_id: api.listProjectDocs.mock.calls.at(-1)?.[1], documents: [], omitted: 0, baseline: sessionBaseline }));
+  return act;
+}
+it("preserves unsaved edits across page navigation", async () => {
+  const act = await openSessionEditor();
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "저장 전 수정" } });
+  fireEvent.click(screen.getByRole("button", { name: "규칙" }));
+  const showedWarning = !!screen.queryByText(/현황에 저장하지 않은 변경/);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  act(() => emit({ type: "progressDocs", requested_path: "/sample/project", documents: [], omitted: 0, baseline: sessionBaseline }));
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("저장 전 수정");
+  expect(api.saveProgress).not.toHaveBeenCalled();
+  expect(showedWarning).toBe(true);
+  expect(api.setProgressDirty).toHaveBeenLastCalledWith(true);
+});
+it("ignores an earlier save after returning to the same repository and retains the new draft", async () => {
+  const act = await openSessionEditor();
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  const earlier = api.saveProgress.mock.calls.at(-1)?.[2];
+  act(() => emit({ type: "repository", path: "/sample/other" }));
+  act(() => emit({ type: "repository", path: "/sample/project" }));
+  const current = api.listProjectDocs.mock.calls.at(-1)?.[1];
+  act(() => emit({ type: "progressDocs", requested_path: "/sample/project", request_id: current,
+    documents: [], omitted: 0, baseline: sessionBaseline }));
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "돌아온 뒤 새 수정" } });
+  act(() => emit({ type: "progressSaved", requested_path: "/sample/project", request_id: earlier,
+    baseline: { ...sessionBaseline, version: 2 } }));
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("돌아온 뒤 새 수정");
+  act(() => emit({ type: "repository", path: "/sample/other" }));
+  act(() => emit({ type: "repository", path: "/sample/project" }));
+  act(() => emit({ type: "progressDocs", requested_path: "/sample/project", request_id: api.listProjectDocs.mock.calls.at(-1)?.[1],
+    documents: [], omitted: 0, baseline: sessionBaseline }));
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("돌아온 뒤 새 수정");
+});
+it("only accepts the current save and clears the unsaved-close warning", async () => {
+  const act = await openSessionEditor();
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "최신 편집" } });
+  const unload = new Event("beforeunload", { cancelable: true });
+  window.dispatchEvent(unload);
+  expect(unload.defaultPrevented).toBe(true);
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  const [path, json, request_id] = api.saveProgress.mock.calls.at(-1)!;
+  act(() => emit({ type: "progressSaved", requested_path: path, request_id,
+    baseline: { ...JSON.parse(json), version: 2 } }));
+  expect(api.setProgressDirty).toHaveBeenLastCalledWith(false);
+  const cleanUnload = new Event("beforeunload", { cancelable: true });
+  window.dispatchEvent(cleanUnload);
+  expect(cleanUnload.defaultPrevented).toBe(false);
+});

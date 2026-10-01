@@ -12,6 +12,7 @@ import fixture from "./preview-fixture.json";
 import type { Scan, ProgressItem, ProgressReport } from "./bridge";
 import type { DesktopEvent } from "./events";
 const api = vi.hoisted(() => ({
+  setProgressDirty: vi.fn(),
   startScan: vi.fn(),
   previewReview: vi.fn(),
   startReview: vi.fn(),
@@ -118,13 +119,13 @@ it("preserves a complete Git patch without duplicating file headers", () => {
 it("keeps project progress unconfirmed until the user saves reviewed evidence", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
-  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project", expect.any(String)));
   const { act } = await import("react");
   act(() => emit({ type: "progressDocs", repository: "/sample/project", documents: [
     { path: "README.md", tracked: true, bytes: 100 },
   ], omitted: 0, baseline: null }));
   fireEvent.click(screen.getByRole("button", { name: "기능 후보 추출" }));
-  expect(api.previewProgress).toHaveBeenCalledWith("/sample/project", '[{"path":"README.md","kind":"current"}]');
+  expect(api.previewProgress).toHaveBeenCalledWith("/sample/project", '[{"path":"README.md","kind":"current"}]', expect.any(String));
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
   act(() => emit({ type: "progressPreview", repository: "/sample/project",
     documents: { "README.md": "abc" }, requirements: [{
@@ -153,7 +154,7 @@ it("keeps project progress unconfirmed until the user saves reviewed evidence", 
 it("uses one effective status for badge, filter and summary when evidence became stale", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
-  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project", expect.any(String)));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
   const make = (id: string, title: string) => ({
@@ -204,7 +205,7 @@ it("shows how to fix a violation and opens the required document", async () => {
 it("marks every invalid item after a failed save and jumps to the first one", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
-  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project", expect.any(String)));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
   const make = (id: string, title: string) => ({
@@ -235,7 +236,7 @@ it("marks every invalid item after a failed save and jumps to the first one", as
 it("applies progress events that arrive in the same render batch", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
-  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project", expect.any(String)));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
   const item: ProgressItem = {
@@ -259,7 +260,7 @@ it("applies progress events that arrive in the same render batch", async () => {
 it("flags document checkmarks without evidence, checks links and exports the report", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
-  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project", expect.any(String)));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
   const make = (id: string, title: string) => ({
@@ -285,7 +286,7 @@ it("flags document checkmarks without evidence, checks links and exports the rep
   expect(list.textContent).not.toContain("가입");
 
   fireEvent.click(screen.getByRole("button", { name: "문서 링크 점검" }));
-  expect(api.checkProgressLinks).toHaveBeenCalledWith("/sample/project");
+  expect(api.checkProgressLinks).toHaveBeenCalledWith("/sample/project", expect.any(String));
   act(() => emit({ type: "progressLinks", requested_path: "/sample/project", documents: ["README.md"], checked: 3,
     truncated: false, limitations: "앵커는 검사하지 않습니다.", issues: [
       { path: "README.md", line: 5, target: "docs/gone.md", kind: "link", confidence: "high", message: "대상을 찾을 수 없습니다" },
@@ -295,7 +296,7 @@ it("flags document checkmarks without evidence, checks links and exports the rep
   expect(screen.getByText(/확인이 필요한 파일 경로 1개/)).toBeTruthy();
 
   fireEvent.click(screen.getByRole("button", { name: "Markdown 저장" }));
-  expect(api.exportProgress).toHaveBeenCalledWith("/sample/project", "md");
+  expect(api.exportProgress).toHaveBeenCalledWith("/sample/project", "md", expect.any(String));
   act(() => emit({ type: "progressExported", requested_path: "/sample/project", file: "/tmp/x.md" }));
   expect(screen.getByText("저장했습니다 · /tmp/x.md")).toBeTruthy();
 });
@@ -317,7 +318,7 @@ it("tells the review screen which saved evidence a scan touches and opens that i
   expect(section.textContent).toContain("근거 무효");
   expect(section.textContent).toContain("삭제");
   fireEvent.click(screen.getAllByRole("button", { name: "현황에서 보기" })[0]);
-  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project", expect.any(String)));
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
   const make = (id: string, title: string) => ({
     id, title, criterion: title, area: "계정", included: true, source,
@@ -357,7 +358,7 @@ it("offers to create a starter policy when the repository has none, then scans a
 it("shows what changed since the last save and the list of saved states", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
-  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project", expect.any(String)));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
   const item: ProgressItem = { id: "one", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
@@ -387,7 +388,7 @@ it("shows what changed since the last save and the list of saved states", async 
 it("links a test-result file to items without changing the progress counts", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
-  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project", expect.any(String)));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
   const item: ProgressItem = { id: "abcdef1234567890", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
@@ -402,7 +403,7 @@ it("links a test-result file to items without changing the progress counts", asy
   fireEvent.click(screen.getByText(/로그인/, { selector: "strong" }));
   expect(screen.getByText("req-abcdef12")).toBeTruthy();
   fireEvent.click(screen.getByRole("button", { name: "테스트 결과 불러오기" }));
-  expect(api.loadTestResults).toHaveBeenCalledWith("/sample/project");
+  expect(api.loadTestResults).toHaveBeenCalledWith("/sample/project", expect.any(String));
   act(() => emit({ type: "progressTests", requested_path: "/sample/project", format: "junit", file: "junit.xml",
     modified: "2026-09-29T00:00:00Z", total: 9, items: { abcdef1234567890: { patterns: ["test_login"], matched: 3,
       passed: 2, failed: 1, skipped: 0, failing: ["tests.test_auth::test_login_bad"], no_match: false } } }));
@@ -429,7 +430,7 @@ it("links a test-result file to items without changing the progress counts", asy
 it("warns about test-name patterns that no repository test file contains", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
-  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project"));
+  await waitFor(() => expect(api.listProjectDocs).toHaveBeenCalledWith("/sample/project", expect.any(String)));
   const { act } = await import("react");
   const source = { path: "README.md", line: 2, excerpt: "- [x] 로그인", sha256: "abc" };
   const item: ProgressItem = { id: "one", title: "로그인", criterion: "로그인", area: "계정", included: true, source,
@@ -558,4 +559,69 @@ it("keeps context-document changes from claiming the current progress needs rese
   expect(screen.getByText("참고 범위 문서 변경")).toBeTruthy();
   expect(screen.getByText("현재 목표 수치에는 영향을 주지 않습니다.")).toBeTruthy();
   expect(screen.queryByText("기준 문서가 바뀌어 현황 전체를 다시 확정해야 합니다.")).toBeNull();
+});
+
+const sessionBaseline = {
+  repository: "/sample/project", version: 1, documents: { "README.md": "abc" },
+  document_kinds: { "README.md": "current" as const }, requirements: [{
+    id: "one", title: "기존 제목", criterion: "로그인", area: "계정", included: true,
+    source: { path: "README.md", line: 2, excerpt: "로그인", sha256: "abc" },
+    implementation_status: "unknown" as const, evidence: null,
+    verification_status: "unverified" as const, verification_note: "",
+  }],
+};
+async function openSessionEditor() {
+  render(<App />);
+  await waitFor(() => expect(screen.getByText("데스크톱 연결됨")).toBeTruthy());
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  const { act } = await import("react");
+  act(() => emit({ type: "progressDocs", requested_path: "/sample/project",
+    request_id: api.listProjectDocs.mock.calls.at(-1)?.[1], documents: [], omitted: 0, baseline: sessionBaseline }));
+  return act;
+}
+it("preserves unsaved edits across page navigation", async () => {
+  const act = await openSessionEditor();
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "저장 전 수정" } });
+  fireEvent.click(screen.getByRole("button", { name: "규칙" }));
+  const showedWarning = !!screen.queryByText(/현황에 저장하지 않은 변경/);
+  fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+  act(() => emit({ type: "progressDocs", requested_path: "/sample/project", documents: [], omitted: 0, baseline: sessionBaseline }));
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("저장 전 수정");
+  expect(api.saveProgress).not.toHaveBeenCalled();
+  expect(showedWarning).toBe(true);
+  expect(api.setProgressDirty).toHaveBeenLastCalledWith(true);
+});
+it("ignores an earlier save after returning to the same repository and retains the new draft", async () => {
+  const act = await openSessionEditor();
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  const earlier = api.saveProgress.mock.calls.at(-1)?.[2];
+  act(() => emit({ type: "repository", path: "/sample/other" }));
+  act(() => emit({ type: "repository", path: "/sample/project" }));
+  const current = api.listProjectDocs.mock.calls.at(-1)?.[1];
+  act(() => emit({ type: "progressDocs", requested_path: "/sample/project", request_id: current,
+    documents: [], omitted: 0, baseline: sessionBaseline }));
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "돌아온 뒤 새 수정" } });
+  act(() => emit({ type: "progressSaved", requested_path: "/sample/project", request_id: earlier,
+    baseline: { ...sessionBaseline, version: 2 } }));
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("돌아온 뒤 새 수정");
+  act(() => emit({ type: "repository", path: "/sample/other" }));
+  act(() => emit({ type: "repository", path: "/sample/project" }));
+  act(() => emit({ type: "progressDocs", requested_path: "/sample/project", request_id: api.listProjectDocs.mock.calls.at(-1)?.[1],
+    documents: [], omitted: 0, baseline: sessionBaseline }));
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("돌아온 뒤 새 수정");
+});
+it("only accepts the current save and clears the unsaved-close warning", async () => {
+  const act = await openSessionEditor();
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "최신 편집" } });
+  const unload = new Event("beforeunload", { cancelable: true });
+  window.dispatchEvent(unload);
+  expect(unload.defaultPrevented).toBe(true);
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  const [path, json, request_id] = api.saveProgress.mock.calls.at(-1)!;
+  act(() => emit({ type: "progressSaved", requested_path: path, request_id,
+    baseline: { ...JSON.parse(json), version: 2 } }));
+  expect(api.setProgressDirty).toHaveBeenLastCalledWith(false);
+  const cleanUnload = new Event("beforeunload", { cancelable: true });
+  window.dispatchEvent(cleanUnload);
+  expect(cleanUnload.defaultPrevented).toBe(false);
 });

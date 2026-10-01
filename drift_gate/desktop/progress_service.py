@@ -51,6 +51,7 @@ SOURCE_SUFFIXES = {
     ".rs",
     ".vue",
 }
+STABLE_ID = re.compile(r"<!--\s*progress-id:\s*([A-Za-z0-9][A-Za-z0-9_.:-]{0,63})\s*-->")
 CHECKBOX = re.compile(r"^\s*[-*+]\s+\[([ xX])\]\s+(.+?)\s*$")
 HEADING = re.compile(r"^#{2,3}\s+(.+?)\s*#*\s*$")
 BACKTICK = re.compile(r"`([^`\n]+)`")
@@ -237,11 +238,17 @@ def extract_requirements(path: str | Path, selected: list) -> dict:
     kinds = _document_kinds(dict.fromkeys(paths), kinds)
     requirements: list[dict] = []
     seen: dict[str, dict] = {}
+    stable_sources: set[str] = set()
     doc_hashes = {}
 
     def add(item: dict, original: str) -> None:
         """Keep repeated titles as locations of the first item, never drop them."""
-        key = re.sub(r"\W+", "", item["title"]).casefold()
+        stable = item.get("source_key")
+        if stable:
+            if stable in stable_sources:
+                raise ValueError("같은 문서의 progress-id가 중복됩니다. 기능마다 고유한 값을 지정해 주세요.")
+            stable_sources.add(stable)
+        key = stable or re.sub(r"\W+", "", item["title"]).casefold()
         if not key:
             return
         first = seen.get(key)
@@ -280,7 +287,7 @@ def extract_requirements(path: str | Path, selected: list) -> dict:
         for line_no, line in enumerate(lines, 1):
             match = HEADING.match(line)
             if match:
-                heading = match.group(1).strip()
+                heading = STABLE_ID.sub("", match.group(1)).strip()
                 fallback.append((line_no, heading, line))
             match = CHECKBOX.match(line)
             if not match:
@@ -301,7 +308,7 @@ def extract_requirements(path: str | Path, selected: list) -> dict:
                 candidate = _item(
                     relative, line_no, original, title, "완료 조건 표", doc_hashes[relative]
                 )
-                candidate["criterion"] = criterion
+                candidate["criterion"] = STABLE_ID.sub("", criterion).strip()
                 add(candidate, original)
                 if len(requirements) >= MAX_REQUIREMENTS:
                     break
@@ -323,8 +330,16 @@ def extract_requirements(path: str | Path, selected: list) -> dict:
 def _item(
     path: str, line: int, excerpt: str, title: str, area: str, digest: str
 ) -> dict:
-    identity = hashlib.sha256(f"{path}\0{line}\0{title}".encode()).hexdigest()[:16]
+    markers = STABLE_ID.findall(excerpt)
+    if len(markers) > 1:
+        raise ValueError("한 기능에는 progress-id를 하나만 지정해 주세요.")
+    title = STABLE_ID.sub("", title).strip()
+    if not title:
+        raise ValueError("progress-id 앞에 기능 이름을 입력해 주세요.")
+    identity_source = f"{path}\0progress-id:{markers[0]}" if markers else f"{path}\0{line}\0{title}"
+    identity = hashlib.sha256(identity_source.encode()).hexdigest()[:16]
     return {
+        **({"source_key": f"{path}:{markers[0]}"} if markers else {}),
         "id": identity,
         "title": title,
         "criterion": title,
@@ -469,6 +484,10 @@ def _item_errors(
             source["line"] - 1
         ].strip() != source.get("excerpt"):
             errors.append(("source", "기능의 문서 위치가 변경됐습니다."))
+    if "source_key" in item:
+        marker = STABLE_ID.findall(source.get("excerpt", "")) if isinstance(source, dict) and isinstance(source.get("excerpt"), str) else []
+        if len(marker) != 1 or item["source_key"] != f"{source.get('path')}:{marker[0]}":
+            errors.append(("source", "기능의 고유 표시와 문서 출처가 일치하지 않습니다."))
     if not isinstance(item.get("doc_marked_done", False), bool):
         errors.append(("source", "문서의 완료 표시 정보가 올바르지 않습니다."))
     reviewed = item.get("reviewed_documents")
