@@ -44,7 +44,7 @@ import {
 const labels: Record<string, string> = {
   pass: "통과",
   fail: "수정 필요",
-  warn: "확인 필요",
+  warn: "주의",
   skipped: "제외",
   unmatched: "대상 아님",
   "rejected-ignore": "예외 거절",

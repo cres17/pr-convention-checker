@@ -470,3 +470,105 @@ def test_report_flags_test_names_missing_from_the_repository_test_files(tmp_path
     saved = save_baseline(repo, state, draft)
     hints = inspect_progress(repo, state)["test_pattern_hints"]
     assert hints == {saved["requirements"][0]["id"]: ["test_logn_flow"]}
+
+
+def test_document_roles_extract_only_current_and_context_changes_keep_counts(tmp_path):
+    repo = project(tmp_path)
+    for name in ("future", "past", "reference"):
+        (repo / f"{name}.md").write_text(f"- [x] {name} 전용 기능\n", encoding="utf-8")
+    selected = [{"path": "README.md", "kind": "current"}] + [
+        {"path": f"{kind}.md", "kind": kind} for kind in ("future", "past", "reference")
+    ]
+    draft = extract_requirements(repo, selected)
+    assert len(draft["documents"]) == 4
+    assert len(draft["requirements"]) == 2
+    assert draft["document_kinds"]["past.md"] == "past"
+    item = draft["requirements"][0]
+    item.update(implementation_status="implemented", evidence={"path": "src/login.py", "line": 1, "note": "로그인 정의 확인"})
+    state = tmp_path / "state"
+    save_baseline(repo, state, draft)
+    (repo / "past.md").write_text("- [x] 수정된 결과\n", encoding="utf-8")
+    report = inspect_progress(repo, state)
+    assert report["stale_documents"] == []
+    assert report["stale_context_documents"] == ["past.md"]
+    assert report["counts"]["implemented"] == 1 and report["total"] == 2
+    (repo / "README.md").write_text("- [ ] 목표 변경\n", encoding="utf-8")
+    assert inspect_progress(repo, state)["counts"]["implemented"] == 0
+
+
+def test_role_changes_preserve_evidence_version_and_history(tmp_path):
+    repo = project(tmp_path)
+    state = tmp_path / "state"
+    draft = extract_requirements(repo, ["README.md"])
+    draft["requirements"][0].update(implementation_status="implemented", evidence={"path": "src/login.py", "line": 1, "note": "정의 확인"})
+    saved = save_baseline(repo, state, draft)
+    evidence = dict(saved["requirements"][0]["evidence"])
+    record_snapshot(repo, state, inspect_progress(repo, state))
+    saved["document_kinds"] = {"README.md": "past"}
+    excluded = save_baseline(repo, state, saved)
+    assert excluded["version"] == 2
+    assert excluded["requirements"][0]["evidence"] == evidence
+    report = inspect_progress(repo, state)
+    assert report["total"] == 0 and report["counts"]["excluded"] == 2
+    assert report["counts"]["implemented"] == 0
+    history = record_snapshot(repo, state, report)
+    assert history["snapshots"][0]["changes"]["excluded"] == 2
+    assert history["snapshots"][0]["changes"]["regressed"] == 0
+    assert save_baseline(repo, state, excluded)["version"] == 2
+    excluded["document_kinds"]["README.md"] = "current"
+    restored = save_baseline(repo, state, excluded)
+    assert restored["version"] == 3
+    assert inspect_progress(repo, state)["counts"]["implemented"] == 1
+
+
+def test_legacy_baseline_defaults_to_current_without_version_bump(tmp_path):
+    import json
+    repo = project(tmp_path)
+    state = tmp_path / "state"
+    saved = save_baseline(repo, state, extract_requirements(repo, ["README.md"]))
+    target = next(state.glob("*.json"))
+    saved.pop("document_kinds")
+    target.write_text(json.dumps(saved), encoding="utf-8")
+    assert inspect_progress(repo, state)["total"] == 2
+    saved["document_kinds"] = {"README.md": "current"}
+    assert save_baseline(repo, state, saved)["version"] == 1
+
+
+def test_only_context_selection_is_valid_and_has_no_current_goals(tmp_path):
+    repo = project(tmp_path)
+    draft = extract_requirements(repo, [{"path": "README.md", "kind": "reference"}])
+    assert draft["requirements"] == []
+    save_baseline(repo, tmp_path / "state", draft)
+    report = inspect_progress(repo, tmp_path / "state")
+    assert report["total"] == 0
+    assert sum(report["counts"].values()) == 0
+
+
+@pytest.mark.parametrize("selected", [
+    [{"path": "README.md", "kind": "guess"}],
+    [{"path": ["README.md"], "kind": "current"}],
+    [{"path": "README.md", "kind": []}],
+    ["README.md", {"path": "README.md", "kind": "past"}],
+])
+def test_invalid_document_roles_are_rejected_cleanly(tmp_path, selected):
+    with pytest.raises(ValueError):
+        extract_requirements(project(tmp_path), selected)
+
+
+def test_remaining_current_duplicate_keeps_goal_in_scope(tmp_path):
+    repo = project(tmp_path)
+    (repo / "goals.md").write_text((repo / "README.md").read_text(), encoding="utf-8")
+    draft = extract_requirements(repo, ["README.md", "goals.md"])
+    assert len(draft["requirements"]) == 2
+    draft["document_kinds"]["README.md"] = "past"
+    save_baseline(repo, tmp_path / "state", draft)
+    assert inspect_progress(repo, tmp_path / "state")["total"] == 2
+
+
+def test_save_rejects_unknown_or_unselected_document_roles(tmp_path):
+    repo = project(tmp_path)
+    draft = extract_requirements(repo, ["README.md"])
+    for kinds in ({"README.md": "wrong"}, {"missing.md": "past"}, []):
+        draft["document_kinds"] = kinds
+        with pytest.raises(ValueError):
+            save_baseline(repo, tmp_path / "state", draft)

@@ -58,3 +58,13 @@ def test_markdown_includes_history_and_changes_since_the_last_save():
     assert "| v3 | 2026-09-29 | 1 / 2 | 1 | 새로 구현 확인 2 · 회귀(구현 확인 → 아님) 1 |" in text
     assert "| v2 | 2026-09-28 | 0 / 2 | 0 | 첫 기록 |" in text
     assert "## 진행 이력" not in render_markdown(report())
+
+
+def test_report_shows_document_roles_and_keeps_context_excluded_when_stale():
+    data = report(document_kinds={"README.md": "current", "past.md": "past"}, stale_context_documents=["past.md"])
+    data["items"][2].update(included=True, stale_evidence=True)
+    text = render_markdown(data)
+    assert "| past.md | 과거 결과 |" in text
+    assert "현재 목표의 집계에는 영향을 주지 않습니다" in text
+    assert "| 제외 항목 | 제외 |" in text
+    assert "| 가입 | 근거 없음 |" in text

@@ -125,9 +125,11 @@ export type LinkReport = {
   truncated: boolean;
   limitations: string;
 };
+export type DocumentKind = "current" | "future" | "past" | "reference";
 export type ProgressBaseline = {
   repository: string;
   documents: Record<string, string>;
+  document_kinds?: Record<string, DocumentKind>;
   requirements: ProgressItem[];
   version?: number;
 };
@@ -137,6 +139,8 @@ export type ProgressReport = {
   at: string;
   head: string;
   stale_documents: string[];
+  document_kinds?: Record<string, DocumentKind>;
+  stale_context_documents?: string[];
   total: number;
   counts: Record<string, number>;
   items: ProgressItem[];

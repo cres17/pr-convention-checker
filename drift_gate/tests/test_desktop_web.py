@@ -325,3 +325,23 @@ def test_chosen_result_file_is_remembered_and_read_again_when_the_project_opens(
     bridge.inspectProgress(str(repo))
     settle(bridge)
     assert 'progressTests' not in [m['type'] for m in messages]
+
+
+def test_progress_bridge_roundtrips_document_roles_and_context_only_baseline(tmp_path, monkeypatch):
+    QApplication.instance() or QApplication([])
+    repo = project(tmp_path)
+    bridge = DesktopBridge()
+    monkeypatch.setattr(bridge, '_progress_dir', lambda: tmp_path / 'app-data')
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    bridge.previewProgress(str(repo), json.dumps([{'path': 'README.md', 'kind': 'past'}]))
+    settle(bridge)
+    preview = of_type(messages, 'progressPreview')
+    assert preview['document_kinds'] == {'README.md': 'past'}
+    assert preview['requirements'] == []
+    bridge.saveProgress(str(repo), json.dumps(preview))
+    settle(bridge)
+    assert of_type(messages, 'progressReport')['report']['total'] == 0
+    bridge.listProjectDocs(str(repo))
+    settle(bridge)
+    assert of_type(messages, 'progressDocs')['baseline']['document_kinds'] == {'README.md': 'past'}
