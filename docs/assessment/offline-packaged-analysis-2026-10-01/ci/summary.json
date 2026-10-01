@@ -1,0 +1,128 @@
+[
+  {
+    "platform": "arm64",
+    "stage": "offline-dmg",
+    "frozen": true,
+    "bridge_ready": true,
+    "gate": "warn",
+    "grammar_analyses": 8,
+    "cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      }
+    ]
+  },
+  {
+    "platform": "arm64",
+    "stage": "offline-package",
+    "frozen": true,
+    "bridge_ready": true,
+    "gate": "warn",
+    "grammar_analyses": 8,
+    "cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      }
+    ]
+  },
+  {
+    "platform": "intel",
+    "stage": "offline-dmg",
+    "frozen": true,
+    "bridge_ready": true,
+    "gate": "warn",
+    "grammar_analyses": 8,
+    "cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      }
+    ]
+  },
+  {
+    "platform": "intel",
+    "stage": "offline-package",
+    "frozen": true,
+    "bridge_ready": true,
+    "gate": "warn",
+    "grammar_analyses": 8,
+    "cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      }
+    ]
+  },
+  {
+    "platform": "windows",
+    "stage": "offline-installer",
+    "frozen": true,
+    "bridge_ready": true,
+    "gate": "warn",
+    "grammar_analyses": 8,
+    "cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions",
+        "errno": 13
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions",
+        "errno": 13
+      }
+    ]
+  },
+  {
+    "platform": "windows",
+    "stage": "offline-package",
+    "frozen": true,
+    "bridge_ready": true,
+    "gate": "warn",
+    "grammar_analyses": 8,
+    "cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions",
+        "errno": 13
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions",
+        "errno": 13
+      }
+    ]
+  }
+]
