@@ -118,6 +118,7 @@ jobs:
         run: |
           if [ "$RUNNER_OS" = "macOS" ]; then
             python packaging/verify_package.py dist/DriftGate.app/Contents/MacOS/DriftGate --output build/offline-package
+            codesign --verify --deep --strict dist/DriftGate.app
           else
             python packaging/verify_package.py dist/DriftGate/DriftGate.exe --output build/offline-package
           fi

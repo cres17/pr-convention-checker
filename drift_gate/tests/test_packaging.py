@@ -220,3 +220,32 @@ def test_candidate_collection_never_extracts_unsafe_archive_entries(tmp_path, mo
         module.download_libraries()
     assert not (tmp_path / name).exists()
     assert not (tmp_path / 'escape').exists()
+
+@pytest.mark.skipif(sys.platform == 'win32', reason='Unix directory write permissions')
+def test_mac_framework_versions_stay_immutable_after_packaging(tmp_path, monkeypatch):
+    module = packaging_module('seal_parsers', monkeypatch)
+    directory = tmp_path / 'QtWebEngineCore.framework/Versions'
+    resources = directory / 'A/Resources'
+    resources.mkdir(parents=True)
+    (resources / 'resource.pak').write_bytes(b'resource')
+    (directory / 'Resources').mkdir()
+    monkeypatch.setattr(module.sys, 'platform', 'darwin')
+    module.protect_webengine_versions(tmp_path)
+    try:
+        assert not (directory.stat().st_mode & 0o222)
+        assert not (directory / 'Resources').exists()
+        assert (resources / 'resource.pak').read_bytes() == b'resource'
+    finally:
+        directory.chmod(0o755)
+
+
+def test_mac_framework_cleanup_never_discards_real_resources(tmp_path, monkeypatch):
+    module = packaging_module('seal_parsers', monkeypatch)
+    directory = tmp_path / 'QtWebEngineCore.framework/Versions/Resources'
+    directory.mkdir(parents=True)
+    target = directory / 'keep.pak'
+    target.write_bytes(b'keep')
+    monkeypatch.setattr(module.sys, 'platform', 'darwin')
+    with pytest.raises(OSError):
+        module.protect_webengine_versions(tmp_path)
+    assert target.read_bytes() == b'keep'
