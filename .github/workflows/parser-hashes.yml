@@ -1,5 +1,10 @@
 name: Collect parser hash candidates
 on:
+  push:
+    branches: [ver2]
+    paths:
+      - .github/workflows/parser-hashes.yml
+      - packaging/collect_parser_hashes.py
   workflow_dispatch:
 permissions:
   contents: read
