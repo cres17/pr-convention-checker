@@ -1,0 +1,30 @@
+name: Collect parser hash candidates
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  collect:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: macos-latest, label: macOS-arm64}
+          - {os: macos-15-intel, label: macOS-intel}
+          - {os: windows-latest, label: Windows}
+          - {os: ubuntu-latest, label: Linux}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e .
+      - name: Download and hash without loading native parsers
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/candidate-parsers
+        run: python packaging/collect_parser_hashes.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Parser-hashes-${{ matrix.label }}
+          path: build/parser-hash-candidate.json
