@@ -2,6 +2,7 @@
 import hashlib
 import json
 import sys
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -20,10 +21,10 @@ from drift_gate.desktop.review_dialog import ReviewWorker, review_html
 from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
 from drift_gate.adapters.report_naming import default_report_path, detect_project
 from drift_gate.desktop.progress_report import render_markdown
-from drift_gate.desktop.progress_drafts import cache_draft, recovery_copy, discard_draft
+from drift_gate.desktop.progress_drafts import cache_draft, recovery_copy, discard_draft, discard_recovery
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
-    BaselineError, check_references, evidence_candidates, extract_requirements, inspect_progress,
+    BaselineConflict, BaselineError, check_references, evidence_candidates, extract_requirements, inspect_progress,
     link_test_results, list_documents, load_baseline, progress_history_view, record_snapshot, repository_root,
     save_baseline, scan_impact,
 )
@@ -67,6 +68,9 @@ class ProgressTask(QRunnable):
     def run(self):
         try:
             events = [{'type': kind, 'requested_path': self.path, **data} for kind, data in self.work()]
+        except BaselineConflict as exc:
+            events = [{'type': 'progressError', 'requested_path': self.path,
+                       'message': str(exc), 'current_baseline': exc.baseline}]
         except BaselineError as exc:
             events = [{'type': self.error_type, 'requested_path': self.path,
                        'message': str(exc), 'errors': exc.errors}]
@@ -90,6 +94,7 @@ class DesktopBridge(QObject):
         self.scan_worker = None
         self.review_worker = None
         self.progress_dirty = False
+        self._draft_owner = uuid.uuid4().hex
         self.progress_recovery_ready = False
         self.history = []  # Session-only: no hidden persistence of source diffs.
         # One thread keeps progress results in request order (save -> report).
@@ -113,13 +118,14 @@ class DesktopBridge(QObject):
 
     @Slot(str)
     @Slot(str, str)
-    def listProjectDocs(self, path, request_id=""):
+    @Slot(str, str, str)
+    def listProjectDocs(self, path, request_id="", recovery_key=""):
         directory = self._progress_dir()
 
         def work():
             result = list_documents(path)
             result['baseline'] = load_baseline(path, directory)
-            result.update(recovery_copy(repository_root(path), directory, result['baseline']))
+            result.update(recovery_copy(repository_root(path), directory, result['baseline'], recovery_key))
             return [('progressDocs', result)]
         self._run_progress(path, work, request_id=request_id)
 
@@ -135,11 +141,15 @@ class DesktopBridge(QObject):
         directory = self._progress_dir()
 
         def work():
-            baseline = save_baseline(path, directory, json.loads(payload_json))
+            payload = json.loads(payload_json)
+            baseline = save_baseline(path, directory, payload)
             warning = ''
             try:
-                discard_draft(repository_root(path), directory)
-            except OSError:
+                discard_draft(repository_root(path), directory, self._draft_owner)
+                key, revision = payload.get('recovery_key'), payload.get('recovery_revision')
+                if isinstance(key, str) and key and isinstance(revision, str) and revision:
+                    discard_recovery(repository_root(path), directory, key, revision)
+            except (OSError, ValueError):
                 warning = '기준과 근거는 저장했습니다. 이전 초안 파일을 지우지 못했습니다. 다음 실행에서 오래된 초안이 보이면 삭제해 주세요.'
             events = [('progressSaved', {'baseline': baseline, 'warning': warning})]
             try:
@@ -157,16 +167,24 @@ class DesktopBridge(QObject):
         def work():
             if len(payload_json.encode('utf-8')) > 2_000_000:
                 raise ValueError('편집 초안이 보관 상한을 넘었습니다.')
-            cache_draft(repository_root(path), directory, json.loads(payload_json))
+            cache_draft(repository_root(path), directory, json.loads(payload_json), self._draft_owner)
             return [('progressDraftCached', {})]
         self._run_progress(path, work, error_type='progressDraftError', request_id=request_id)
 
     @Slot(str, str)
-    def discardProgressDraft(self, path, request_id):
+    @Slot(str, str, str)
+    @Slot(str, str, str, str)
+    def discardProgressDraft(self, path, request_id, recovery_key="", revision=""):
         directory = self._progress_dir()
         def work():
-            discard_draft(repository_root(path), directory)
-            return [('progressDraftDiscarded', {})]
+            if recovery_key:
+                discard_recovery(repository_root(path), directory, recovery_key, revision)
+            else:
+                discard_draft(repository_root(path), directory, self._draft_owner)
+            result = list_documents(path)
+            result['baseline'] = load_baseline(path, directory)
+            result.update(recovery_copy(repository_root(path), directory, result['baseline']))
+            return [('progressDraftDiscarded', {}), ('progressDocs', result)]
         self._run_progress(path, work, request_id=request_id)
 
     @Slot(str)

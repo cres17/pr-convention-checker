@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from drift_gate.desktop.progress_drafts import cache_draft, discard_draft, draft_file, recovery_copy, prune_abandoned_drafts
+from drift_gate.desktop.progress_drafts import cache_draft, discard_draft, discard_recovery, draft_file, recovery_copy
 from drift_gate.desktop.progress_service import extract_requirements, save_baseline
 from drift_gate.tests.test_progress_service import project
 
@@ -75,7 +75,7 @@ def test_unfinished_numeric_input_survives_recovery_but_cannot_confirm_implement
         save_baseline(root, data, draft)
 
 
-def test_pruning_preserves_active_and_recent_drafts(tmp_path):
+def test_old_draft_survives_temporarily_missing_repository(tmp_path):
     root = project(tmp_path)
     data = tmp_path / 'data'
     draft = extract_requirements(root, ['README.md'])
@@ -84,15 +84,54 @@ def test_pruning_preserves_active_and_recent_drafts(tmp_path):
     payload = json.loads(current.read_text(encoding='utf-8'))
     payload['updated_at'] = '2020-01-01T00:00:00+00:00'
     current.write_text(json.dumps(payload), encoding='utf-8')
-    abandoned = tmp_path / 'deleted-repository'
-    old = draft_file(abandoned, data)
-    payload['repository'] = str(abandoned.resolve())
-    old.write_text(json.dumps(payload), encoding='utf-8')
-    fresh = draft_file(tmp_path / 'recent-repository', data)
-    payload['repository'] = str((tmp_path / 'recent-repository').resolve())
-    from datetime import datetime, timezone
-    payload['updated_at'] = datetime.now(timezone.utc).isoformat()
-    fresh.write_text(json.dumps(payload), encoding='utf-8')
-    prune_abandoned_drafts(data)
-    assert not old.exists()
-    assert current.exists() and fresh.exists()
+    original = current.read_bytes()
+    offline = tmp_path / 'offline-repository'
+    root.rename(offline)
+    other = tmp_path / 'other'
+    other.mkdir()
+    cache_draft(other, data, draft)
+    offline.rename(root)
+    assert current.read_bytes() == original
+    assert recovery_copy(root, data, None)['recovery']['requirements'] == draft['requirements']
+
+
+def test_recovery_keeps_edit_ancestry_for_a_safe_merge_after_restart(tmp_path):
+    from copy import deepcopy
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    baseline = save_baseline(root, data, extract_requirements(root, ['README.md']))
+    draft = deepcopy(baseline)
+    draft['requirements'][0]['title'] = '내 편집'
+    draft['edit_base'] = baseline
+    cache_draft(root, data, draft)
+    baseline = deepcopy(baseline)
+    baseline['requirements'][1]['title'] = '다른 창의 편집'
+    latest = save_baseline(root, data, baseline)
+    recovered = recovery_copy(root, data, latest)
+    assert recovered['recovery']['edit_base']['version'] == 1
+    assert recovered['recovery']['edit_base']['requirements'][0]['title'] != '내 편집'
+    assert recovered['recovery_warning']
+
+
+def test_multiple_copies_are_selectable_and_changed_copies_cannot_be_deleted(tmp_path):
+    from copy import deepcopy
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    first = extract_requirements(root, ['README.md'])
+    second = deepcopy(first)
+    second['requirements'][0]['title'] = '두 번째 창의 편집'
+    cache_draft(root, data, first, 'a' * 32)
+    cache_draft(root, data, second, 'b' * 32)
+    selected = draft_file(root, data, 'a' * 32)
+    result = recovery_copy(root, data, None, selected.name)
+    assert len(result['recovery_options']) == 2 and result['recovery'] == first
+    first['requirements'][0]['title'] = '목록을 읽은 뒤 수정한 새 제목'
+    cache_draft(root, data, first, 'a' * 32)
+    with pytest.raises(ValueError, match='새 편집'):
+        discard_recovery(root, data, selected.name, result['recovery_revision'])
+    assert selected.is_file() and draft_file(root, data, 'b' * 32).is_file()
+    refreshed = recovery_copy(root, data, None, selected.name)
+    discard_recovery(root, data, selected.name, refreshed['recovery_revision'])
+    assert recovery_copy(root, data, None)['recovery'] == second
+    with pytest.raises(ValueError):
+        discard_recovery(root, data, '../outside.json')

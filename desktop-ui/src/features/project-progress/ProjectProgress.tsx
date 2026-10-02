@@ -28,13 +28,42 @@ export default function ProjectProgress(props: ProjectProgressProps) {
   return (
     <div className="progress-page">
       {state.saveWarning && <div className="notice" role="status">{state.saveWarning}</div>}
+      {state.conflict && view.merge && <div className="notice error" role="alert">
+        <div>
+          <strong>다른 편집기에서 저장한 최신 기준이 있습니다.</strong>
+          <p>서로 다른 부분의 변경은 모두 보존합니다. 합친 뒤 내용을 검토하고 다시 저장해 주세요.</p>
+          {view.merge.conflicts.length > 0 && <>
+            <p>같은 부분을 다르게 편집한 변경 {view.merge.conflicts.length}개는 적용할 값을 선택해야 합니다.</p>
+            <ul>{view.merge.conflicts.slice(0, 10).map((label) => <li key={label}>{label}</li>)}</ul>
+            {view.merge.conflicts.length > 10 && <p>외 {view.merge.conflicts.length - 10}개</p>}
+          </>}
+          {view.merge.overflow ? <p>합친 결과가 문서 10개·기능 120개 상한을 넘습니다. 기존 편집은 유지했습니다. 다른 편집기의 목록을 정리한 뒤 다시 불러와 주세요.</p> :
+            <div className="progress-actions">
+              {view.merge.conflicts.length === 0
+                ? <button className="primary" disabled={!!busy} onClick={() => actions.rebase('latest')}>최신 기준과 합치기</button>
+                : <>
+                  <button className="secondary" disabled={!!busy} onClick={() => actions.rebase('local')}>겹치는 변경은 내 편집으로 합치기</button>
+                  <button className="secondary" disabled={!!busy} onClick={() => actions.rebase('latest')}>겹치는 변경은 최신 기준으로 합치기</button>
+                </>}
+            </div>}
+        </div>
+      </div>}
       {!state.dirty && (state.recovery || state.recoveryWarning) && <div className="notice" role="status">
         <div>
           <strong>이전 편집 초안이 있습니다.</strong>
           <p>{state.recoveryWarning || "초안을 복구해서 이어서 편집할 수 있습니다. 확정된 기준은 저장 버튼을 누를 때 바뀝니다."}</p>
+          {state.recoveryOptions.length > 1 && <label>복구할 초안{' '}
+            <select aria-label="복구할 초안" value={state.recoveryKey} disabled={!!busy}
+              onChange={(event) => actions.chooseRecovery(event.target.value)}>
+              {state.recoveryOptions.map((option, index) => <option key={option.key} value={option.key}>
+                {index === 0 ? '가장 최근' : `이전 사본 ${index}`} · {new Date(option.updated_at).toLocaleString('ko-KR')}
+              </option>)}
+            </select>
+          </label>}
           <div className="progress-actions">
             {state.recovery && <button className="primary" disabled={!!busy} onClick={actions.recoverDraft}>초안 복구</button>}
             <button className="secondary" disabled={!!busy} onClick={actions.discardDraft}>보관된 초안 삭제</button>
+            <button className="text-button" disabled={!!busy} onClick={() => actions.chooseRecovery(state.recoveryKey)}>초안 목록 새로고침</button>
           </div>
         </div>
       </div>}
@@ -101,7 +130,7 @@ export default function ProjectProgress(props: ProjectProgressProps) {
                 >
                   <Plus size={15} /> 직접 추가
                 </button>
-                <button className="primary" onClick={actions.save} disabled={!!busy}>
+                <button className="primary" onClick={actions.save} disabled={!!busy || !!state.conflict}>
                   {busy === "save" ? "저장 중…" : "기준과 근거 저장"}
                 </button>
               </div>
