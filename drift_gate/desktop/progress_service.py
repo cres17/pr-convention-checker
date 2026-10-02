@@ -11,11 +11,11 @@ import json
 import os
 import re
 import subprocess
-import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
 from drift_gate.desktop import progress_history, verification_records
+from drift_gate.desktop.json_store import write_json
 from drift_gate.desktop.progress_scope import in_current_scope as _in_current_scope, requirement_sources
 from drift_gate.desktop.doc_links import (
     MAX_ISSUES,
@@ -616,22 +616,9 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
     }
     if remote is not None:
         saved["remote"] = remote
-    _write_json(target, saved)
+    write_json(target, saved)
     return saved
 
-
-def _write_json(target: Path, data: dict) -> None:
-    """Atomic replace, so a crash never leaves a half-written file."""
-    target.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(
-        "w", encoding="utf-8", dir=target.parent, delete=False
-    ) as stream:
-        json.dump(data, stream, ensure_ascii=False, indent=2)
-        temporary = Path(stream.name)
-    try:
-        temporary.replace(target)
-    finally:
-        temporary.unlink(missing_ok=True)
 
 
 def _history_file(root: Path, data_dir: Path, remote: str | None) -> Path:
@@ -658,7 +645,7 @@ def record_snapshot(path: str | Path, data_dir: Path, report: dict) -> dict:
     snapshots = progress_history.append_snapshot(
         _load_snapshots(root, data_dir, remote), progress_history.make_snapshot(report)
     )
-    _write_json(_history_file(root, data_dir, remote), {"schema": 1, "snapshots": snapshots})
+    write_json(_history_file(root, data_dir, remote), {"schema": 1, "snapshots": snapshots})
     return progress_history.summarize(snapshots, report)
 
 

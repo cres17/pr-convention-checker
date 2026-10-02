@@ -28,6 +28,7 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
   const handledSeq = useRef(events.at(-1)?._seq ?? 0);
   const handledFocus = useRef(0);
   const handledInspection = useRef(0);
+  const queuedDraft = useRef<{ path: string; draft: NonNullable<ProgressState["draft"]>; timer: ReturnType<typeof setTimeout> } | null>(null);
 
   useEffect(() => {
     const previous = latestState.current;
@@ -58,17 +59,33 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
   }, [events]);
   useEffect(() => { operation.current = state.busy; }, [state.busy]);
   useEffect(() => {
-    if (!connected || !bridge?.cacheProgressDraft || !state.path || !state.draft || !state.dirty) return;
-    const token = requests.current.start("draft");
+    if (!connected || !bridge?.cacheProgressDraft || !state.path || !state.draft || !state.dirty || state.busy === "save") return;
+    requests.current.cancel("draft");
     dispatch({ type: "cache-draft" });
-    bridge.cacheProgressDraft(state.path, JSON.stringify(state.draft), token);
-  }, [state.draft, state.dirty, state.path, connected, bridge]);
+    const draft = state.draft;
+    const timer = setTimeout(() => {
+      queuedDraft.current = null;
+      bridge.cacheProgressDraft?.(state.path, JSON.stringify(draft), requests.current.start("draft"));
+    }, 650);
+    queuedDraft.current = { path: state.path, draft, timer };
+    return () => clearTimeout(timer);
+  }, [state.draft, state.dirty, state.path, state.busy, connected, bridge]);
+  // A repository switch/unmount flushes the last edit; a confirmed save cancels it below.
+  useEffect(() => () => {
+    const queued = queuedDraft.current;
+    if (!queued) return;
+    clearTimeout(queued.timer);
+    queuedDraft.current = null;
+    bridge?.cacheProgressDraft?.(queued.path, JSON.stringify(queued.draft), requests.current.start("draft"));
+  }, [path, bridge]);
   useEffect(() => {
     if (state.path) sessions.current.set(state.path, state);
     for (const [repository, cached] of sessions.current)
       if (repository !== state.path && !cached.dirty) sessions.current.delete(repository);
     const pending = [...sessions.current.values()].some((session) => session.dirty);
     bridge?.setProgressDirty?.(pending);
+    bridge?.setProgressRecoveryReady?.([...sessions.current.values()].filter((session) => session.dirty)
+      .every((session) => session.draftStatus === "cached"));
     onPendingChange?.(pending);
     if (!pending) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
@@ -96,6 +113,10 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
     if (!connected || !path || !bridge || state.path !== path || state.busy || operation.current) return;
     if (view.recoveryPending && purpose !== "discard") return;
     operation.current = purpose;
+    if (purpose === "save" && queuedDraft.current) {
+      clearTimeout(queuedDraft.current.timer);
+      queuedDraft.current = null;
+    }
     if (purpose === "save" || purpose === "extract") requests.current.invalidateReads();
     dispatch({ type: "begin", operation: purpose });
     operationToken.current = requests.current.start(purpose);

@@ -33,6 +33,7 @@ export type ProgressState = {
   inspections: number;
   recovery: ProgressBaseline | null;
   recoveryWarning: string;
+  saveWarning: string;
   draftStatus: "" | "saving" | "cached" | "error";
   draftError: string;
 };
@@ -42,7 +43,7 @@ export function initialProgressState(path = "", busy: ProgressOperation = ""): P
     selectedId: "", filter: "all", query: "", error: "", busy, candidates: [], omitted: 0,
     showDocuments: true, fieldErrors: [], focusField: "", links: null, history: null,
     tests: null, exported: "", dirty: false, inspections: 0,
-    recovery: null, recoveryWarning: "", draftStatus: "", draftError: "",
+    recovery: null, recoveryWarning: "", saveWarning: "", draftStatus: "", draftError: "",
   };
 }
 export type ProgressAction =
@@ -108,7 +109,7 @@ function receive(state: ProgressState, event: ProgressEvent): ProgressState {
     }
     case "progressSaved":
       return {
-        ...state, dirty: false, draftStatus: "", draftError: "", recovery: null, recoveryWarning: "",
+        ...state, dirty: false, draftStatus: "", draftError: "", recovery: null, recoveryWarning: "", saveWarning: event.warning ?? "",
         busy: state.busy === "documents" ? "" : finish(state, "save"), fieldErrors: [], draft: event.baseline,
         selectedDocs: Object.keys(event.baseline.documents), documentKinds: event.baseline.document_kinds ?? {},
         showDocuments: false,
@@ -156,7 +157,7 @@ function transition(state: ProgressState, action: ProgressAction | DraftAction):
     case "begin":
       if (state.busy) return state;
       return {
-        ...state, busy: action.operation, error: "",
+        ...state, busy: action.operation, error: "", saveWarning: "",
         ...(action.operation === "save" ? { fieldErrors: [], links: null, exported: "" } : {}),
       };
     case "edit": {
@@ -218,8 +219,9 @@ function transition(state: ProgressState, action: ProgressAction | DraftAction):
 }
 /** React may batch replies: each event must observe the preceding transition. */
 export function progressReducer(state: ProgressState, action: ProgressAction | DraftAction): ProgressState {
-  const next = transition(state, action);
+  let next = transition(state, action);
   if (next === state) return state;
+  if (next.dirty && next.draft !== state.draft) next = { ...next, draftStatus: "saving", draftError: "" };
   const visible = filterProgressItems(next.draft, next.report, next.filter, next.query);
   if (visible.some((item) => item.id === next.selectedId)) return next;
   return { ...next, selectedId: visible[0]?.id ?? "", candidates: [] };

@@ -15,7 +15,7 @@ from dataclasses import replace
 from typing import Iterable
 
 from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.adapters.ast import TREE_SITTER_AVAILABLE
+from drift_gate.adapters.ast import TREE_SITTER_AVAILABLE, TREE_SITTER_ERROR
 from drift_gate.adapters.ast.typescript_adapter import TypeScriptAdapter
 from drift_gate.adapters.ast.python_adapter import PythonAdapter
 from drift_gate.adapters.ast.go_adapter import GoAdapter
@@ -91,7 +91,7 @@ def _analysis_status(file, suffix, added_lines, removed_lines):
     if not language:
         return "heuristic", "No grammar-backed detector for this file type"
     if not TREE_SITTER_AVAILABLE:
-        return "heuristic", "Tree-sitter unavailable; using patch heuristics"
+        return "heuristic", f"Tree-sitter unavailable ({TREE_SITTER_ERROR}); using patch heuristics"
     try:
         for lines in (added_lines, removed_lines):
             if not lines:

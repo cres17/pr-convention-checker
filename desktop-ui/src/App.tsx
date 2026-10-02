@@ -25,6 +25,7 @@ import { isProgressEvent, type QueuedProgressEvent } from "./events";
 import ProjectProgress from "./features/project-progress/ProjectProgress";
 import ViolationGuide from "./features/review/ViolationGuide";
 import ScanImpact from "./features/review/ScanImpact";
+import AnalysisNotice from "./features/review/AnalysisNotice";
 import PolicySetup from "./features/review/PolicySetup";
 import { findViolation, problemSummary, problemTitle } from "./features/review/violations";
 import { StatsDisplay } from "./components/tool-ui/stats-display";
@@ -509,6 +510,7 @@ export default function App({
                       </button>
                     </div>
                   )}
+                  <AnalysisNotice scan={current} />
                   <div className="summary-row">
                     <section
                       className={`verdict-card ${current.result.result}`}

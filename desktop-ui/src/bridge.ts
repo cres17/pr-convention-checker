@@ -44,6 +44,7 @@ export type Scan = {
   policy: string;
   files: { path: string; patch: string; status: string }[];
   result: {
+    scan_metrics?: { analysis_notes?: { path: string; method: string; reason?: string }[] };
     result: string;
     rule_decisions: Decision[];
     violations?: Violation[];
@@ -67,7 +68,7 @@ export type ProgressItem = {
   source: { path: string; line: number; excerpt: string; sha256: string };
   implementation_status: "unknown" | "partial" | "implemented" | "not_implemented";
   implementation_note?: string;
-  evidence: { path: string; line: number; excerpt?: string; sha256?: string; note: string } | null;
+  evidence: { path: string; line: number | null; excerpt?: string; sha256?: string; note: string } | null;
   verification_status: "unverified" | "verified";
   verification_note: string;
   stale_evidence?: boolean;
@@ -159,6 +160,7 @@ export type ProgressReport = {
 export interface Bridge {
   initialize: () => void;
   setProgressDirty?: (dirty: boolean) => void;
+  setProgressRecoveryReady?: (ready: boolean) => void;
   chooseRepository: () => void;
   startScan: (path: string, base: string) => void;
   previewReview: () => void;

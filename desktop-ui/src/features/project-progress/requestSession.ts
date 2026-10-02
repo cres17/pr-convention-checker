@@ -19,6 +19,7 @@ export class ProgressRequests {
         this.latest.set(purpose, id);
         return id;
     }
+    cancel(purpose: ProgressRequest) { this.latest.delete(purpose); }
     invalidateReads() {
         for (const purpose of ["inspect", "links", "tests", "evidence"] as const)
             this.latest.delete(purpose);

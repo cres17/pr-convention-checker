@@ -60,6 +60,8 @@ def network_block(executable, directory):
         profile.write_text('(version 1)\n(allow default)\n(deny network-outbound)\n', encoding="utf-8")
         yield ["/usr/bin/sandbox-exec", "-f", str(profile)], "macOS sandbox-exec outbound deny"
     elif sys.platform == "win32":
+        if os.environ.get("GITHUB_ACTIONS") != "true":
+            raise RuntimeError("Firewall-changing installed-app checks are restricted to GitHub CI")
         name = "DriftGate-package-check-" + uuid.uuid4().hex
         programs = [executable, *executable.parent.rglob("QtWebEngineProcess.exe")]
         try:

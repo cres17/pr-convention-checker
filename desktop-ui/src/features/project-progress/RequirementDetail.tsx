@@ -196,7 +196,7 @@ export default function RequirementDetail({
                         edit(item.id, {
                           evidence: {
                             path: e.target.value,
-                            line: item.evidence?.line ?? 1,
+                            line: item.evidence ? item.evidence.line : 1,
                             note: item.evidence?.note ?? "",
                           },
                         })
@@ -211,12 +211,12 @@ export default function RequirementDetail({
                       {...mark("evidence.line")}
                       type="number"
                       min={1}
-                      value={item.evidence?.line ?? 1}
+                      value={item.evidence ? item.evidence.line ?? "" : 1}
                       onChange={(e) =>
                         edit(item.id, {
                           evidence: {
                             path: item.evidence?.path ?? "",
-                            line: Number(e.target.value),
+                            line: e.target.value === "" ? null : e.target.valueAsNumber,
                             note: item.evidence?.note ?? "",
                           },
                         })
@@ -235,7 +235,7 @@ export default function RequirementDetail({
                       edit(item.id, {
                         evidence: {
                           path: item.evidence?.path ?? "",
-                          line: item.evidence?.line ?? 1,
+                          line: item.evidence ? item.evidence.line : 1,
                           note: e.target.value,
                         },
                       })

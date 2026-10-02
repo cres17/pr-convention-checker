@@ -1,5 +1,6 @@
 """Regression checks for package paths and a smoke check that must really scan."""
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -38,8 +39,12 @@ def bundled(tmp_path, monkeypatch):
     names = [resources.grammar_library_name(lang) for lang in resources.SUPPORTED_GRAMMARS]
     for name in names:
         (directory / name).write_bytes(b"grammar")
+    digest = hashlib.sha256(b"grammar").hexdigest()
+    monkeypatch.setattr(resources, "expected_hashes", lambda version: (
+        {name: digest for name in names} if version == "1.20.0" else {}))
     manifest = {"languages": list(resources.SUPPORTED_GRAMMARS), "version": "1.20.0",
-                "libraries": [{"name": name} for name in names]}
+                "platform": resources.platform_key(),
+                "libraries": [{"name": name, "source_sha256": digest, "sha256": digest} for name in names]}
     (directory / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     yield directory, manifest
     resources.bundled_grammar_directory.cache_clear()
@@ -63,9 +68,65 @@ def test_frozen_parser_configures_bundled_library_before_loading(bundled, monkey
                         SimpleNamespace(__version__="1.20.0", get_parser=get_parser))
     assert resources.get_parser("typescript") == "parser"
     assert seen == [("typescript", str(directory))]
+    assert os.environ["TREE_SITTER_LANGUAGE_PACK_LIBS_DIR"].endswith("user-libraries")
 
 
-@pytest.mark.parametrize("damage", ["missing-file", "missing-language", "missing-entry", "wrong-version"])
+def packaging_module(name, monkeypatch):
+    directory = Path(__file__).resolve().parents[2] / "packaging"
+    monkeypatch.syspath_prepend(str(directory))
+    spec = importlib.util.spec_from_file_location(name, directory / f"{name}.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_downloaded_bytes_are_checked_before_any_native_load(tmp_path, monkeypatch):
+    module = packaging_module("prepare_parsers", monkeypatch)
+    names = [resources.grammar_library_name(lang) for lang in resources.SUPPORTED_GRAMMARS]
+    digest = hashlib.sha256(b"reviewed").hexdigest()
+    for name in names:
+        (tmp_path / name).write_bytes(b"reviewed")
+    (tmp_path / names[-1]).write_bytes(b"changed")
+    monkeypatch.setattr(module, "download_libraries", lambda: None)
+    monkeypatch.setattr(module, "cache_dir", lambda: str(tmp_path))
+    monkeypatch.setattr(module, "expected_hashes", lambda version: {name: digest for name in names})
+    loaded = []
+    monkeypatch.setattr(module, "get_parser", lambda lang: loaded.append(lang))
+    with pytest.raises(RuntimeError, match="checksum mismatch"):
+        module.prepare(tmp_path / "staged")
+    assert loaded == []
+
+
+def test_post_signing_seal_preserves_reviewed_source_pins(bundled, monkeypatch):
+    directory, manifest = bundled
+    module = packaging_module("seal_parsers", monkeypatch)
+    target = directory / manifest["libraries"][0]["name"]
+    target.write_bytes(b"grammar-signature")
+    with pytest.raises(RuntimeError, match="checksum mismatch"):
+        resources.validate_grammar_manifest(directory)
+    module.seal(directory)
+    sealed = resources.validate_grammar_manifest(directory)
+    assert sealed["libraries"][0]["source_sha256"] == manifest["libraries"][0]["source_sha256"]
+    assert sealed["libraries"][0]["sha256"] != manifest["libraries"][0]["sha256"]
+
+
+def test_unknown_version_or_platform_never_accepts_new_downloads():
+    with pytest.raises(RuntimeError, match="version"):
+        resources.expected_hashes("future-version")
+    with pytest.raises(RuntimeError, match="platform"):
+        resources.expected_hashes("1.20.0", "unsupported")
+
+
+def test_checksum_pins_cover_the_supported_native_platforms():
+    for key, platform in [("darwin-arm64", "darwin"), ("darwin-x86_64", "darwin"),
+                          ("win32-x86_64", "win32"), ("linux-x86_64", "linux")]:
+        pins = resources.expected_hashes("1.20.0", key)
+        assert set(pins) == {resources.grammar_library_name(lang, platform) for lang in resources.SUPPORTED_GRAMMARS}
+        assert all(len(value) == 64 and int(value, 16) >= 0 for value in pins.values())
+
+
+@pytest.mark.parametrize("damage", ["missing-file", "missing-language", "missing-entry", "wrong-version",
+                                   "wrong-source-hash", "wrong-file-hash", "modified-file", "duplicate", "platform"])
 def test_broken_bundle_fails_before_any_download(bundled, monkeypatch, damage):
     directory, manifest = bundled
     if damage == "missing-file":
@@ -74,8 +135,18 @@ def test_broken_bundle_fails_before_any_download(bundled, monkeypatch, damage):
         manifest["languages"].pop()
     elif damage == "missing-entry":
         manifest["libraries"].pop()
-    else:
+    elif damage == "wrong-version":
         manifest["version"] = "wrong"
+    elif damage == "wrong-source-hash":
+        manifest["libraries"][0]["source_sha256"] = "0" * 64
+    elif damage == "wrong-file-hash":
+        manifest["libraries"][0]["sha256"] = "0" * 64
+    elif damage == "modified-file":
+        (directory / manifest["libraries"][0]["name"]).write_bytes(b"grammarX")
+    elif damage == "duplicate":
+        manifest["libraries"].append(manifest["libraries"][0])
+    else:
+        manifest["platform"] = "foreign"
     (directory / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     def forbidden(_):
         pytest.fail("A broken frozen app must not try to download a parser")
@@ -125,3 +196,27 @@ def test_offline_fixture_checks_every_supported_language(tmp_path):
     for language, source in zip(resources.SUPPORTED_GRAMMARS, module.SOURCES.values()):
         assert not get_parser(language).parse(source.encode()).root_node.has_error, language
     module.validate(valid_result(module))
+
+@pytest.mark.parametrize('damage', ['path-escape', 'symlink', 'oversized'])
+def test_candidate_collection_never_extracts_unsafe_archive_entries(tmp_path, monkeypatch, damage):
+    import io
+    import tarfile
+    zstandard = pytest.importorskip('zstandard')
+    module = packaging_module('collect_parser_hashes', monkeypatch)
+    archive = io.BytesIO()
+    name = resources.grammar_library_name('python')
+    with tarfile.open(fileobj=archive, mode='w') as bundle:
+        entry = tarfile.TarInfo('../' + name if damage == 'path-escape' else name)
+        if damage == 'symlink':
+            entry.type = tarfile.SYMTYPE
+            entry.linkname = str(tmp_path / 'escape')
+        elif damage == 'oversized':
+            entry.size = 32 * 1024 * 1024 + 1
+        bundle.addfile(entry)
+    compressed = zstandard.ZstdCompressor().compress(archive.getvalue())
+    monkeypatch.setattr(module, 'cache_dir', lambda: str(tmp_path / 'cache'))
+    monkeypatch.setattr(module.urllib.request, 'urlopen', lambda *args, **kwargs: io.BytesIO(compressed))
+    with pytest.raises(ValueError):
+        module.download_libraries()
+    assert not (tmp_path / name).exists()
+    assert not (tmp_path / 'escape').exists()

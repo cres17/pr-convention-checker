@@ -9,5 +9,7 @@ try:
 
     get_parser("python")
     TREE_SITTER_AVAILABLE: bool = True
-except Exception:
+    TREE_SITTER_ERROR = ""
+except Exception as exc:
     TREE_SITTER_AVAILABLE = False
+    TREE_SITTER_ERROR = f"{type(exc).__name__}: {exc}"

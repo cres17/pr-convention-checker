@@ -99,6 +99,27 @@ def test_progress_bridge_reads_documents_and_persists_reviewed_baseline(tmp_path
     assert len(messages[-1]['snapshots']) == 1
 
 
+def test_draft_delete_failure_does_not_misreport_a_committed_save(tmp_path, monkeypatch):
+    from drift_gate.desktop.progress_drafts import draft_file
+    from drift_gate.desktop.progress_service import extract_requirements, load_baseline
+    QApplication.instance() or QApplication([])
+    repo = project(tmp_path)
+    data = tmp_path / 'app-data'
+    # A directory where the draft file should be reproduces a real unlink error.
+    draft_file(repo, data).mkdir(parents=True)
+    bridge = DesktopBridge()
+    monkeypatch.setattr(bridge, '_progress_dir', lambda: data)
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    bridge.saveProgress(str(repo), json.dumps(extract_requirements(repo, ['README.md'])), 'save:1')
+    settle(bridge)
+    saved = of_type(messages, 'progressSaved')
+    assert '저장했습니다' in saved['warning']
+    assert load_baseline(repo, data) == saved['baseline']
+    assert not any(message['type'] == 'progressError' for message in messages)
+    assert of_type(messages, 'progressHistory')['request_done']
+
+
 def test_failed_save_reports_each_invalid_item_and_items_carry_effective_status(tmp_path, monkeypatch):
     QApplication.instance() or QApplication([])
     repo = project(tmp_path)
@@ -463,15 +484,19 @@ def test_draft_write_error_and_explicit_discard_have_correlated_responses(tmp_pa
 
 
 @pytest.mark.parametrize('discard', [False, True])
-def test_native_close_protects_unsaved_progress(monkeypatch, discard):
+@pytest.mark.parametrize('cached', [False, True])
+def test_native_close_protects_unsaved_progress(monkeypatch, discard, cached):
     from types import SimpleNamespace
     from PySide6.QtWidgets import QMessageBox
     from drift_gate.desktop.web_app import WebDesktopWindow
     answer = QMessageBox.StandardButton.Yes if discard else QMessageBox.StandardButton.No
-    monkeypatch.setattr(QMessageBox, 'question', lambda *args: answer)
-    window = SimpleNamespace(bridge=SimpleNamespace(progress_dirty=True, scan_thread=None, review_worker=None,
+    prompts = []
+    monkeypatch.setattr(QMessageBox, 'question', lambda *args: (prompts.append(args[2]), answer)[1])
+    window = SimpleNamespace(bridge=SimpleNamespace(progress_dirty=True, progress_recovery_ready=cached, scan_thread=None, review_worker=None,
         progress_pool=SimpleNamespace(waitForDone=lambda timeout: True)))
     results = []
     event = SimpleNamespace(ignore=lambda: results.append('ignored'), accept=lambda: results.append('accepted'))
     WebDesktopWindow.closeEvent(window, event)
+    assert ('복구할 수 있습니다' in prompts[0]) is cached
+    assert ('잃을 수 있습니다' in prompts[0]) is not cached
     assert results == ['accepted' if discard else 'ignored']

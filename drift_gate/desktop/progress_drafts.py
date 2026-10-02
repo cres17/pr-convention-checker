@@ -1,12 +1,18 @@
 """Local recovery copies, separate from confirmed baselines and history."""
 import hashlib
 import json
+import math
 from datetime import datetime, timezone
 from pathlib import Path
 
-from drift_gate.desktop.progress_service import _write_json
+from drift_gate.desktop.json_store import write_json
 
 MAX_DRAFT_BYTES = 2_000_000
+
+
+def _draft_line(value):
+    # null is the JSON representation of an unfinished/NaN numeric input.
+    return value is None or type(value) is int or (type(value) is float and math.isfinite(value))
 
 
 def draft_file(root: Path, data_dir: Path) -> Path:
@@ -40,7 +46,7 @@ def _valid_draft(draft: object) -> bool:
         evidence = item.get("evidence")
         if evidence is not None and (not isinstance(evidence, dict) or not all(
             isinstance(evidence.get(field), str) for field in ("path", "note")
-        ) or type(evidence.get("line")) is not int):
+        ) or "line" not in evidence or not _draft_line(evidence["line"])):
             return False
     return True
 
@@ -52,7 +58,8 @@ def cache_draft(root: Path, data_dir: Path, draft: dict) -> None:
                "updated_at": datetime.now(timezone.utc).isoformat(), "draft": draft}
     if len(json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")) > MAX_DRAFT_BYTES:
         raise ValueError("편집 초안이 보관 상한(2MB)을 넘었습니다. 기준과 근거 저장을 사용해 주세요.")
-    _write_json(draft_file(root, data_dir), payload)
+    write_json(draft_file(root, data_dir), payload)
+    prune_abandoned_drafts(data_dir)
 
 
 def recovery_copy(root: Path, data_dir: Path, baseline: dict | None) -> dict:
@@ -76,3 +83,26 @@ def recovery_copy(root: Path, data_dir: Path, baseline: dict | None) -> dict:
 
 def discard_draft(root: Path, data_dir: Path) -> None:
     draft_file(root, data_dir).unlink(missing_ok=True)
+
+
+def prune_abandoned_drafts(data_dir: Path, *, days=90) -> None:
+    """Expire only old copies for repositories that no longer exist.
+
+    Existing repositories and unreadable/corrupt copies are never discarded.
+    Housekeeping failure must not invalidate an already written recovery copy.
+    """
+    now = datetime.now(timezone.utc)
+    for target in (data_dir / "drafts").glob("*.json"):
+        try:
+            if not target.is_file() or target.stat().st_size > MAX_DRAFT_BYTES:
+                continue
+            payload = json.loads(target.read_text(encoding="utf-8"))
+            repository = Path(payload["repository"])
+            updated = datetime.fromisoformat(payload["updated_at"])
+            if (payload.get("schema") == 1 and repository.is_absolute()
+                    and target == draft_file(repository, data_dir)
+                    and _valid_draft(payload.get("draft"))
+                    and (now - updated).days >= days and not repository.exists()):
+                target.unlink()
+        except (OSError, ValueError, KeyError, TypeError, AttributeError):
+            continue
