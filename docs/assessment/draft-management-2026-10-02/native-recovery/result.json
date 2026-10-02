@@ -1,0 +1,79 @@
+{
+  "mode": "recovery",
+  "kind": "source Qt + built React + actual QWebChannel + local persistence",
+  "events": [
+    {
+      "type": "ready",
+      "request_id": null,
+      "request_done": null
+    },
+    {
+      "type": "progressDocs",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:1",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:2",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:2",
+      "request_done": true
+    },
+    {
+      "type": "progressDraftDiscarded",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:3",
+      "request_done": false
+    },
+    {
+      "type": "progressDocs",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:3",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:4",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:4",
+      "request_done": true
+    },
+    {
+      "type": "progressDocs",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:5",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:6",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:6",
+      "request_done": true
+    },
+    {
+      "type": "progressSaved",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:7",
+      "request_done": false
+    },
+    {
+      "type": "progressReport",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:7",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "ecc27ac4-8d5a-446c-bc4c-82027dddddae:7",
+      "request_done": true
+    }
+  ],
+  "selected_inactive_copies_deleted_only": true,
+  "closed_app_becomes_recoverable": true,
+  "recovered_copy_saved_and_removed": true
+}

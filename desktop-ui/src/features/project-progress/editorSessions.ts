@@ -16,7 +16,7 @@ export class EditorSessions {
   leave(path: string) {
     this.requests(path).leave();
     const state = this.get(path);
-    if (state && !['save', 'extract', 'discard'].includes(state.busy))
+    if (state && !['save', 'extract', 'discard', 'draft-export', 'latest'].includes(state.busy))
       this.keep({ ...state, busy: '' });
   }
   receiveInactive(event: ProgressEvent) {
@@ -24,7 +24,7 @@ export class EditorSessions {
     if (!path || !event.request_id) return false;
     const state = this.get(path), requests = this.requestSets.get(path);
     if (!state || !requests?.accepts(event)) return false;
-    if (event.type === 'progressPreview' || event.type === 'progressSaved') requests.cancel('draft');
+    if (event.type === 'progressPreview' || event.type === 'progressSaved' || event.type === 'progressLatestUsed') requests.cancel('draft');
     this.keep(progressReducer(state, { type: 'event', event }));
     requests.complete(event);
     return true;
@@ -32,7 +32,7 @@ export class EditorSessions {
   prune(active: string) {
     for (const [path, state] of this.states) {
       const requests = this.requests(path);
-      if (path !== active && !state.dirty && !(['save', 'extract', 'discard'] as const).some(
+      if (path !== active && !state.dirty && !(['save', 'extract', 'discard', 'draft-export', 'latest'] as const).some(
         (purpose) => requests.token(purpose))) {
         this.states.delete(path); this.requestSets.delete(path);
       }

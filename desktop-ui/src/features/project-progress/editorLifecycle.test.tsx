@@ -16,7 +16,7 @@ const baseline = (path: string): ProgressBaseline => ({
 function page() {
   const bridge = {
     listProjectDocs: vi.fn(), inspectProgress: vi.fn(), saveProgress: vi.fn(), cacheProgressDraft: vi.fn(),
-    setProgressDirty: vi.fn(), setProgressRecoveryReady: vi.fn(),
+    setProgressDirty: vi.fn(), setProgressRecoveryReady: vi.fn(), exportProgressDraft: vi.fn(), useLatestProgress: vi.fn(),
   } as unknown as Bridge;
   let path = '/one'; let events: QueuedProgressEvent[] = [];
   const hook = renderHook(() => useProjectProgress({path,events,bridge,connected:true}));
@@ -140,4 +140,32 @@ it('keeps a background extraction and schedules its recovery copy when returning
   expect(p.hook.result.current.state.draft?.requirements.map((item) => item.title)).toEqual(['existing edit', 'new extracted goal']);
   act(() => vi.advanceTimersByTime(650));
   expect(JSON.parse(vi.mocked(p.bridge.cacheProgressDraft!).mock.calls.at(-1)![1]).requirements).toHaveLength(2);
+});
+
+it('retains a background latest transition and rejects late autosave success on return', () => {
+  vi.useFakeTimers();
+  const p = page();
+  act(() => p.hook.result.current.actions.edit('one', { title: 'exported edit' }));
+  act(() => vi.advanceTimersByTime(650));
+  const [, , oldCache] = vi.mocked(p.bridge.cacheProgressDraft!).mock.calls.at(-1)!;
+  act(() => p.hook.result.current.actions.save());
+  const [, , save] = vi.mocked(p.bridge.saveProgress).mock.calls.at(-1)!;
+  const latest = { ...baseline('/one'), version: 2 };
+  p.emit({ type: 'progressError', requested_path: '/one', request_id: save, request_done: true,
+    message: 'conflict', current_baseline: latest });
+  act(() => p.hook.result.current.actions.exportDraft());
+  const [, , exported] = vi.mocked(p.bridge.exportProgressDraft!).mock.calls.at(-1)!;
+  p.emit({ type: 'progressDraftExported', requested_path: '/one', request_id: exported, request_done: true, file: '/backup.json' });
+  act(() => p.hook.result.current.actions.useLatest());
+  const [, useLatest] = vi.mocked(p.bridge.useLatestProgress!).mock.calls.at(-1)!;
+  p.move('/two');
+  p.emit({ type: 'progressLatestUsed', requested_path: '/one', request_id: useLatest, request_done: true, baseline: latest });
+  p.emit({ type: 'progressDraftCached', requested_path: '/one', request_id: oldCache, request_done: true });
+  p.move('/one');
+  p.emit({ type: 'progressDocs', requested_path: '/one', documents: [], omitted: 0, baseline: latest });
+  act(() => vi.advanceTimersByTime(1000));
+  expect(p.hook.result.current.state.dirty).toBe(false);
+  expect(p.hook.result.current.state.draft?.version).toBe(2);
+  expect(p.hook.result.current.state.draftStatus).toBe('');
+  expect(p.bridge.cacheProgressDraft).toHaveBeenCalledOnce();
 });
