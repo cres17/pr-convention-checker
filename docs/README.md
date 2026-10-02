@@ -11,6 +11,7 @@
 | 편집 세션·요청 ID·후속 코드 리뷰와 누적 변경 | [현황 후속 검토](review/progress-session-review-2026-10-01.md) |
 | 재시작 후 초안 복구·전체 F 린트·1.0.2 릴리스 | [초안 복구 검증](review/progress-draft-recovery-2026-10-01.md) |
 | 설치본 화면 경로·동봉 파서·실제 오프라인 CI | [설치본 오프라인 검증](review/offline-packaged-analysis-2026-10-01.md) |
+| 충돌 저장·저장소 전환·실행별 초안 보존 | [2026-10-02 편집 안전성 검토](review/editor-concurrency-2026-10-02.md) |
 | 문서 종류와 V5·V6·V7 구현 | [기능별 변경과 검증](review/document-kinds-v5-v7-2026-10-01.md) |
 | 다음 대화에서 이어갈 상태 | [작업 인계](handoff-2026-10-01.md) · [대화 압축본](conversation-summary-2026-10-01.md) |
 | 빌드·설치 프로그램·릴리스 운영 | [데스크톱 CI](ops/desktop-ci.md) |

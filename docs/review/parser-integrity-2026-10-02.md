@@ -54,6 +54,8 @@ chmod -R u+w dist/DriftGate.app
 
 검증 소스 커밋은 **a4f470343af287851c14130543db190a1fadb849**입니다.
 
+후속 [편집 안전성 검토](editor-concurrency-2026-10-02.md)에서 저장소 부재만으로 초안을 삭제할 수 없음을 재현했습니다. 위의 90일 자동 정리는 후속 수정에서 제거했으며, 현재 동작은 앱 실행별 사본 보존과 명시적인 삭제입니다.
+
 | 검사 | 결과 | 근거 |
 |---|---|---|
 | 일반 CI(push) | 성공; 9개 OS/Python 조합 및 린트·기존 벤치마크 | [36946749718](https://github.com/cres17/pr-convention-checker/actions/runs/36946749718) |
