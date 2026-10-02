@@ -10,7 +10,6 @@ import sys
 import tarfile
 import tempfile
 import urllib.request
-import shutil
 import time
 
 from tree_sitter_language_pack import __version__, cache_dir
@@ -44,18 +43,19 @@ def download_libraries():
                 with ZstdDecompressor().stream_reader(archive) as stream:
                     with tarfile.open(fileobj=stream, mode="r|") as bundle:
                         for member in bundle:
-                            if member.name not in names:
+                            name = member.name.removeprefix("./")
+                            if name not in names:
                                 continue
-                            if not member.isfile() or member.size > 32 * 1024 * 1024 or member.name in found:
+                            if not member.isfile() or member.size > 32 * 1024 * 1024 or name in found:
                                 raise ValueError("Invalid parser archive entry")
                             with bundle.extractfile(member) as source:
                                 data = source.read()
                             # Atomic writes never leave a partially downloaded cache file.
-                            target = destination / member.name
+                            target = destination / name
                             temporary = target.with_suffix(target.suffix + ".tmp")
                             temporary.write_bytes(data)
                             temporary.replace(target)
-                            found.add(member.name)
+                            found.add(name)
                 if found != names:
                     raise ValueError("Parser archive is missing required libraries")
                 return
