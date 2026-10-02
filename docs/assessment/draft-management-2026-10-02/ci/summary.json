@@ -1,0 +1,82 @@
+{
+  "source": "d06a8d99361c77072b900f2071b2234869e62310",
+  "run": 36957820464,
+  "conclusion": "success",
+  "ci_push": 36957820441,
+  "ci_pr": 36957825018,
+  "retry_reason": "Intel Mac attempt 1: hdiutil create failed - Resource busy. Tests and packaged offline check passed before the failure. Same source, failed job only rerun.",
+  "desktop_tests": {
+    "Windows": "209 passed, 1 skipped",
+    "macOS-arm64": "210 passed",
+    "macOS-intel": "210 passed"
+  },
+  "react_tests": 106,
+  "results": [
+    {
+      "platform": "Windows",
+      "kind": "offline-installer",
+      "attempt": 1,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "network_denied": true,
+      "source_pins_match": true
+    },
+    {
+      "platform": "Windows",
+      "kind": "offline-package",
+      "attempt": 1,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "network_denied": true,
+      "source_pins_match": true
+    },
+    {
+      "platform": "macOS-arm64",
+      "kind": "offline-dmg",
+      "attempt": 1,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "network_denied": true,
+      "source_pins_match": true
+    },
+    {
+      "platform": "macOS-arm64",
+      "kind": "offline-package",
+      "attempt": 1,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "network_denied": true,
+      "source_pins_match": true
+    },
+    {
+      "platform": "macOS-intel",
+      "kind": "offline-dmg",
+      "attempt": 2,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "network_denied": true,
+      "source_pins_match": true
+    },
+    {
+      "platform": "macOS-intel",
+      "kind": "offline-package",
+      "attempt": 2,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "network_denied": true,
+      "source_pins_match": true
+    }
+  ]
+}
