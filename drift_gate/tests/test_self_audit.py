@@ -5,18 +5,13 @@ No network or subprocess calls.
 """
 from __future__ import annotations
 
-import pytest
 
 from drift_gate.adapters.docs.checklist import (
     ChecklistItem,
     parse_checklist_text,
-    _extract_hints,
 )
 from drift_gate.core.self_audit.matcher import (
-    AuditedItem,
     DiffEvidence,
-    SelfAuditResult,
-    SelfAuditWarning,
     match_checklist,
 )
 

@@ -1,0 +1,9 @@
+# Exact packages installed for baseline-2026-09-22 (Python 3.11.15).
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0
+pytest==9.1.1
+PyYAML==6.0.3
+tree-sitter==0.26.0
+tree-sitter-language-pack==1.20.0

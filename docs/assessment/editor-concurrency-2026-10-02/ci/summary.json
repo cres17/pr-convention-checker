@@ -1,0 +1,91 @@
+{
+  "source": "295a41dd03f368990aced04def41c89bf165a077",
+  "run": 36952740986,
+  "conclusion": "success",
+  "results": [
+    {
+      "platform": "Windows",
+      "package": "offline-installer",
+      "attempt": 1,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "source_pins_match": true,
+      "network_errnos": [
+        13,
+        13
+      ]
+    },
+    {
+      "platform": "Windows",
+      "package": "offline-package",
+      "attempt": 1,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "source_pins_match": true,
+      "network_errnos": [
+        13,
+        13
+      ]
+    },
+    {
+      "platform": "macOS-arm64",
+      "package": "offline-dmg",
+      "attempt": 2,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "source_pins_match": true,
+      "network_errnos": [
+        1,
+        1
+      ]
+    },
+    {
+      "platform": "macOS-arm64",
+      "package": "offline-package",
+      "attempt": 2,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "source_pins_match": true,
+      "network_errnos": [
+        1,
+        1
+      ]
+    },
+    {
+      "platform": "macOS-intel",
+      "package": "offline-dmg",
+      "attempt": 1,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "source_pins_match": true,
+      "network_errnos": [
+        1,
+        1
+      ]
+    },
+    {
+      "platform": "macOS-intel",
+      "package": "offline-package",
+      "attempt": 1,
+      "frozen": true,
+      "bridge_ready": true,
+      "grammar_files": 8,
+      "empty_cache": true,
+      "source_pins_match": true,
+      "network_errnos": [
+        1,
+        1
+      ]
+    }
+  ]
+}

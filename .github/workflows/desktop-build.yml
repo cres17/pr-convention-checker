@@ -1,0 +1,210 @@
+name: Desktop app build
+
+on:
+  push:
+    branches: [ver2]
+    paths:
+      - .github/workflows/desktop-build.yml
+      - drift_gate/**
+      - desktop-ui/**
+      - pyproject.toml
+      - packaging/**
+  pull_request:
+    branches: [ver2]
+    paths:
+      - .github/workflows/desktop-build.yml
+      - drift_gate/**
+      - desktop-ui/**
+      - pyproject.toml
+      - packaging/**
+  workflow_dispatch:
+  # Reused by desktop-release.yml so releases ship exactly what this job tested.
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macos-latest is Apple Silicon (arm64); macos-15-intel builds the Intel app.
+          - { os: macos-latest, label: macOS-arm64 }
+          - { os: macos-15-intel, label: macOS-intel }
+          - { os: windows-latest, label: Windows }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
+        with:
+          python-version: "3.11"
+          cache: pip
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop-ui/package-lock.json
+      - name: Build and test React UI
+        working-directory: desktop-ui
+        run: |
+          npm ci
+          npm test
+          npm run build
+      - name: Install app and build tools
+        run: python -m pip install -e ".[dev,desktop]" pyinstaller==6.22.3 zstandard==0.25.0
+      - name: Restore build-time grammar downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/driftgate-parser-cache
+          key: grammars-${{ runner.os }}-${{ runner.arch }}-language-pack-1.20.0
+      - name: Stage and validate bundled parsers
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: python packaging/prepare_parsers.py
+      - name: Check desktop behavior
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: >
+          python -m pytest -q
+          drift_gate/tests/test_desktop_service.py
+          drift_gate/tests/test_desktop_ui.py
+          drift_gate/tests/test_desktop_web.py
+          drift_gate/tests/test_subscription_review.py
+          drift_gate/tests/test_progress_service.py
+          drift_gate/tests/test_progress_drafts.py
+          drift_gate/tests/test_progress_concurrency.py
+          drift_gate/tests/test_progress_history.py
+          drift_gate/tests/test_progress_report.py
+          drift_gate/tests/test_doc_links.py
+          drift_gate/tests/test_verification_records.py
+          drift_gate/tests/test_policy_setup.py
+          drift_gate/tests/test_report_naming.py
+          drift_gate/tests/test_packaging.py
+      - name: Build native app
+        run: pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack --add-data "drift_gate/adapters/parser_hashes.json:drift_gate/adapters" --add-data "drift_gate/desktop/web:drift_gate/desktop/web" --add-data "build/parser-libraries:drift_gate/grammars" drift_gate/desktop/web_app.py
+      - name: Seal packaged grammar bytes
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            codesign --force --deep --sign - dist/DriftGate.app
+          fi
+          python packaging/seal_parsers.py dist
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            # Refresh the outer resource seal without rewriting native libraries.
+            codesign --force --sign - dist/DriftGate.app
+            codesign --verify --deep --strict dist/DriftGate.app
+          fi
+      - name: Verify the packaged app
+        shell: python
+        run: |
+          import os, sys
+          executable = "dist/DriftGate.app/Contents/MacOS/DriftGate" if sys.platform == "darwin" else "dist/DriftGate/DriftGate.exe"
+          if not os.path.isfile(executable):
+              sys.exit(f"missing packaged executable: {executable}")
+          print("packaged:", executable, os.path.getsize(executable), "bytes")
+          # The bundle layout differs between PyInstaller versions, so look for the UI anywhere in dist.
+          bundled_ui = [
+              os.path.join(root, name)
+              for root, _, names in os.walk("dist")
+              for name in names
+              if name == "index.html" and root.replace(os.sep, "/").endswith("drift_gate/desktop/web")
+          ]
+          if not bundled_ui:
+              sys.exit("the React UI (drift_gate/desktop/web/index.html) is not in the package")
+          print("bundled UI:", bundled_ui[0])
+      - name: Verify actual packaged UI and offline analysis
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            python packaging/verify_package.py dist/DriftGate.app/Contents/MacOS/DriftGate --output build/offline-package
+            codesign --verify --deep --strict dist/DriftGate.app
+          else
+            python packaging/verify_package.py dist/DriftGate/DriftGate.exe --output build/offline-package
+          fi
+      - name: Work out the version
+        id: version
+        shell: bash
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+        run: |
+          tag=""
+          if [ "$REF_TYPE" = "tag" ]; then tag="$REF_NAME"; elif [ -n "$INPUT_TAG" ]; then tag="$INPUT_TAG"; fi
+          version="${tag#desktop-v}"
+          [ -z "$tag" ] && version="0.0.0-dev"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      # macOS: a .dmg to open and drag the app into Applications.
+      - name: Package macOS app (.dmg)
+        if: runner.os == 'macOS'
+        run: |
+          # Ad-hoc signature (no developer certificate): keeps the bundle internally consistent.
+          codesign --verify --deep --strict dist/DriftGate.app
+          rm -rf dmgroot && mkdir dmgroot
+          cp -R dist/DriftGate.app dmgroot/
+          ln -s /Applications dmgroot/Applications
+          hdiutil create -volname "Cross Agent" -srcfolder dmgroot -ov -format UDZO "DriftGate-${{ matrix.label }}.dmg"
+      - name: Check the .dmg opens and holds the app
+        if: runner.os == 'macOS'
+        run: |
+          hdiutil attach -nobrowse -readonly -mountpoint "$RUNNER_TEMP/dgmount" "DriftGate-${{ matrix.label }}.dmg"
+          test -x "$RUNNER_TEMP/dgmount/DriftGate.app/Contents/MacOS/DriftGate"
+          test -L "$RUNNER_TEMP/dgmount/Applications"
+          lipo -archs "$RUNNER_TEMP/dgmount/DriftGate.app/Contents/MacOS/DriftGate"
+          python packaging/verify_package.py "$RUNNER_TEMP/dgmount/DriftGate.app/Contents/MacOS/DriftGate" --output build/offline-dmg
+          hdiutil detach "$RUNNER_TEMP/dgmount"
+
+      # Windows: a Setup.exe installer plus a portable zip (unzip and run DriftGate.exe).
+      - name: Package Windows app (installer and portable zip)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=${{ steps.version.outputs.version }}" "/DSourceDir=$PWD\dist\DriftGate" "/O$PWD" packaging\windows\DriftGate.iss
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
+          Compress-Archive -Path dist/DriftGate -DestinationPath DriftGate-Windows-portable.zip
+      - name: Check the installer installs, starts and uninstalls
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP 'dg-install'
+          Start-Process -FilePath .\DriftGate-Windows-Setup.exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',"/DIR=$dir" -Wait
+          if (-not (Test-Path "$dir\DriftGate.exe")) { throw "installer did not install DriftGate.exe" }
+          python packaging/verify_package.py "$dir\DriftGate.exe" --output build/offline-installer
+          if ($LASTEXITCODE -ne 0) { throw "installed app failed to start" }
+          Start-Process -FilePath "$dir\unins000.exe" -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES' -Wait
+          Get-ChildItem .\DriftGate-Windows-Setup.exe | Format-List Name, Length
+
+      - name: Preserve packaged-analysis evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Offline-check-${{ matrix.label }}
+          path: |
+            build/offline-package/
+            build/offline-dmg/
+            build/offline-installer/
+            build/parser-libraries/manifest.json
+
+      - name: Remove leftover CI firewall rules after cancellation
+        if: always() && runner.os == 'Windows'
+        shell: pwsh
+        run: Get-NetFirewallRule -Name 'DriftGate-package-check-*' -ErrorAction SilentlyContinue | Remove-NetFirewallRule
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: runner.os == 'macOS'
+        with:
+          name: DriftGate-${{ matrix.label }}
+          path: DriftGate-${{ matrix.label }}.dmg
+          retention-days: 14
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: runner.os == 'Windows'
+        with:
+          name: DriftGate-Windows
+          path: |
+            DriftGate-Windows-Setup.exe
+            DriftGate-Windows-portable.zip
+          retention-days: 14

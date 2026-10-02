@@ -1,0 +1,52 @@
+{
+  "version": "1.20.0",
+  "provenance": {
+    "repository": "cres17/pr-convention-checker",
+    "run_id": 36850803111,
+    "commit": "ac87685bad8cfe1d2140479ad52bbe32c34a9c6b",
+    "collection_run_id": 36944756628,
+    "collection_commit": "2d583b63e75dce85363ce9fa8e87011c81174327"
+  },
+  "platforms": {
+    "darwin-arm64": {
+      "libtree_sitter_python.dylib": "a0aca809ab8a578209f465128464b561ed0fd124088c12a49f08777fed76bd53",
+      "libtree_sitter_typescript.dylib": "6966cb024d24a85290fba333b9dc0da21c6f77f117c810e36d9b2354d1804eb2",
+      "libtree_sitter_tsx.dylib": "e0c946fb56d8a10c8664c6a0d9f6c4d441647a1cd693eefa658f65ea4245c69e",
+      "libtree_sitter_javascript.dylib": "330096a0a3d4c98a77f389fbb43e3aa5a3934209597342b270ee7fcd5feb718b",
+      "libtree_sitter_go.dylib": "02a737efd613324bfa3670be20cb43e58a6afd445995288e962d19b23828ed74",
+      "libtree_sitter_java.dylib": "d9ac9eccc61d2514b83542985d2ceb2898bbabadbab44869f8f52be766083fca",
+      "libtree_sitter_kotlin.dylib": "d214c719a0aa503ea359aa5dd3593e89d7c688d58677e0cfbad582b9a8578129",
+      "libtree_sitter_ruby.dylib": "2111a990fa96ea9522ab717f8d7e3a96bd9e7890d7d047e83810c39634a25d02"
+    },
+    "darwin-x86_64": {
+      "libtree_sitter_python.dylib": "3a01177c4caace813619f1e4d3c9b7b2f3fea515e835ea6b1cd6531213d83d0b",
+      "libtree_sitter_typescript.dylib": "c8d36dc68c53dac5754782b36178c924589c175773f05eb0d7c3261558fb4914",
+      "libtree_sitter_tsx.dylib": "86f7d0a5c9d6dfa3368e48dda050bc13e8a9ac8ff243cccd85f6494c050e678d",
+      "libtree_sitter_javascript.dylib": "bb1fc3e4d1dac372be58fb6c3305a23913afe49ce8072bcea43a650f638e3e05",
+      "libtree_sitter_go.dylib": "7c5a1aa44cf554eab5a369f03e42a48474cf30afe73e68f76fb453d4a027b682",
+      "libtree_sitter_java.dylib": "59c6f2eab9e7625ea80e78a067250257e18eb194f6cf354806df524d31cb177b",
+      "libtree_sitter_kotlin.dylib": "bc399cc72374148f81c448adc2fc1bfcc16d0624805b534783bf2b53978a351b",
+      "libtree_sitter_ruby.dylib": "5a42acbdc12c4872ee713283f227ea5f3125bac2a7d5ad0d5a354469b6e8af8e"
+    },
+    "win32-x86_64": {
+      "tree_sitter_python.dll": "cb130db3384c6b3a90b6227788599b585ecd32e76dfbe3e537aac8e904c47d30",
+      "tree_sitter_typescript.dll": "ddd3c7619ce7f643e54a5d337be57ec250b334841550841b862a1b17b7ac2c51",
+      "tree_sitter_tsx.dll": "340b8db5911378f72b2b96fff0b003079110a6479d5d93c5a2b9c2cd24f9ece7",
+      "tree_sitter_javascript.dll": "e88a3c7d83251e0af659c44fae4b21563460f7779d035d752dc66130792074fc",
+      "tree_sitter_go.dll": "cabc805d1b9c83bc820a7507f08feba3ed06bff7c731063976dfec4a4a1f913e",
+      "tree_sitter_java.dll": "d4f3cf7594e0ab1a1d89ec50169efd240ba77b1f3a82bb6e00b0121c8b904639",
+      "tree_sitter_kotlin.dll": "df67a65342661a277c015eebfe41cbba87a845bdfc689a91f98de96a9be5f550",
+      "tree_sitter_ruby.dll": "cd157509defcba046bf1025b0c3b50063a1e18592aecdc828bb78c1363702a40"
+    },
+    "linux-x86_64": {
+      "libtree_sitter_python.so": "0a39a054ae5e50132fbf969697e3e5932a9d5636db3e4810b829c95d8019a281",
+      "libtree_sitter_typescript.so": "5afc27fbe28f53e72a43911085f7fd9c10820dd284bd2dc755b19589e1dcba6a",
+      "libtree_sitter_tsx.so": "ef44143187f5804cabe5031f2c00d6eefa11862c9caa41e467f2cb4c9ba3ca3e",
+      "libtree_sitter_javascript.so": "c636e7aca772dfcafaef6fbdfbf194dc0fa63607fd1588a2081dbdaf33294038",
+      "libtree_sitter_go.so": "582e52d3b1803642b641db038b6c40f467c27244f8cfeda93e8e953b27a6e87c",
+      "libtree_sitter_java.so": "38d7debeacab7eb5be73fff12cff9c14ce4162baaa80e165ac9d18076874e380",
+      "libtree_sitter_kotlin.so": "40abf2de70b5b67912e204c65d5d2b3e5135865d2f234db1f221d0c46162a4c1",
+      "libtree_sitter_ruby.so": "24bd94ea9bc6baef8290dbe828bd42d5b5ddbbcf0829e6a5ad4e1af594168b82"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+# 문서 안내
+
+처음 사용한다면 [설치와 사용법](desktop-app.md)부터 읽으면 됩니다. 과거 실험 문서는 당시 입력과 결과를 보존한 기록이며, 현재 기능의 안내는 최신 사용 문서에서 확인하세요.
+
+| 목적 | 문서 |
+|---|---|
+| Windows·Mac 설치와 화면 사용 | [데스크톱 앱 안내](desktop-app.md) |
+| 구독 계정으로 선택형 LLM 검토 | [구독 LLM 연결](subscription-llm-review.md) |
+| 문서 기준의 구현 현황을 확장하려는 계획 | [프로젝트 현황 계획](../계획.md) |
+| 최신 구조 보완·기능 회귀·릴리스 검증 | [2026-10-01 검증 보고서](review/release-readiness-2026-10-01.md) |
+| 편집 세션·요청 ID·후속 코드 리뷰와 누적 변경 | [현황 후속 검토](review/progress-session-review-2026-10-01.md) |
+| 재시작 후 초안 복구·전체 F 린트·1.0.2 릴리스 | [초안 복구 검증](review/progress-draft-recovery-2026-10-01.md) |
+| 설치본 화면 경로·동봉 파서·실제 오프라인 CI | [설치본 오프라인 검증](review/offline-packaged-analysis-2026-10-01.md) |
+| 초안 삭제 계약·실행 중 보호·일괄 정리·상한 초과 해결 | [2026-10-02 초안 관리 검토](review/draft-management-2026-10-02.md) |
+| 충돌 저장·저장소 전환·실행별 초안 보존 | [2026-10-02 편집 안전성 검토](review/editor-concurrency-2026-10-02.md) |
+| 문서 종류와 V5·V6·V7 구현 | [기능별 변경과 검증](review/document-kinds-v5-v7-2026-10-01.md) |
+| 다음 대화에서 이어갈 상태 | [작업 인계](handoff-2026-10-01.md) · [대화 압축본](conversation-summary-2026-10-01.md) |
+| 빌드·설치 프로그램·릴리스 운영 | [데스크톱 CI](ops/desktop-ci.md) |
+| 원본 버전과 개선본의 차이 | [12개 통제 사례](v1-ver2-controlled-comparison-2026-09-23.md) |
+| P06·P10·Markdown 표 오류의 실제 수정 | [수정 후 재검증](v1-ver2-contract-fix-results-2026-09-23.md) |
+| 기존 평가 밖에서 드러난 한계 | [과적합 점검](generalization-audit-2026-09-22.md) · [공개본 재검증](published-recheck-2026-09-29.md) |
+| UI에 적용한 스킬과 요소 | [디자인 작업](design/desktop-redesign-skill-workflow.md) · [tool-ui 구성](design/tool-ui-integration-2026-09-29.md) |
+
+`assessment/`는 고정 입력과 평가 원본, `review/`는 분석·재검증, `design/`은 설계 근거, `ops/`는 배포 절차, `assets/`는 문서용 캡처입니다. 실행 로그·빌드 산출물·설치 파일은 GitHub Actions와 Releases에서 관리합니다.

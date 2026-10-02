@@ -146,6 +146,10 @@ class DriftIgnoreDirective:
     reason: Optional[str] = None
     expires: Optional[str] = None
     approved_by: Optional[str] = None
+    # Adapter-owned evidence. Never deserialize trust from user-controlled JSON.
+    approval_verified: bool = False
+    approval_commit: str = ""
+    approval_error: str = ""
 
     @classmethod
     def from_dict(cls, d: dict) -> "DriftIgnoreDirective":
@@ -162,6 +166,9 @@ class DriftIgnoreDirective:
             "reason": self.reason,
             "expires": self.expires,
             "approved_by": self.approved_by,
+            "approval_verified": self.approval_verified,
+            "approval_commit": self.approval_commit,
+            "approval_error": self.approval_error,
         }
 
 
@@ -170,9 +177,10 @@ class UnsatisfiedGroup:
     name: str
     required: List[str]
     type: str  # any_changed | all_changed
+    evidence: str = ""
 
     def to_dict(self) -> dict:
-        return {"name": self.name, "required": self.required, "type": self.type}
+        return {"name": self.name, "required": self.required, "type": self.type, "evidence": self.evidence}
 
 
 @dataclass
@@ -180,9 +188,10 @@ class SatisfiedGroup:
     name: str
     required: List[str]
     type: str  # any_changed | all_changed
+    evidence: str = ""
 
     def to_dict(self) -> dict:
-        return {"name": self.name, "required": self.required, "type": self.type}
+        return {"name": self.name, "required": self.required, "type": self.type, "evidence": self.evidence}
 
 
 @dataclass
@@ -283,6 +292,7 @@ class ScanMetrics:
     skipped_large_files: int = 0
     evaluated_rules: int = 0
     runtime_seconds: float = 0.0
+    analysis_notes: List[dict] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -292,6 +302,7 @@ class ScanMetrics:
             "skipped_large_files": self.skipped_large_files,
             "evaluated_rules": self.evaluated_rules,
             "runtime_seconds": self.runtime_seconds,
+            "analysis_notes": self.analysis_notes,
         }
 
 
@@ -334,11 +345,15 @@ class IgnoreAuditEntry:
     reason: str
     approved_by: Optional[str] = None
     expires: Optional[str] = None
+    approval_verified: bool = False
+    approval_commit: str = ""
 
     def to_dict(self) -> dict:
         return {
             "rule_id": self.rule_id,
             "action": self.action,
+            "approval_verified": self.approval_verified,
+            "approval_commit": self.approval_commit,
             "reason": self.reason,
             "approved_by": self.approved_by,
             "expires": self.expires,

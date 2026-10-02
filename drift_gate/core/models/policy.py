@@ -8,6 +8,7 @@ class Group:
     any_changed: List[str] = field(default_factory=list)
     all_changed: List[str] = field(default_factory=list)
     required: bool = True
+    content: str = "auto"  # auto | paths | api-routes | env-keys
 
     @classmethod
     def from_dict(cls, d: dict) -> "Group":
@@ -16,6 +17,7 @@ class Group:
             any_changed=d.get("any_changed", []),
             all_changed=d.get("all_changed", []),
             required=d.get("required", True),
+            content=d.get("content", "auto"),
         )
 
 

@@ -1,0 +1,119 @@
+name: Desktop release
+
+# Publishes the macOS (Apple Silicon and Intel .dmg) and Windows (Setup.exe and portable zip)
+# desktop apps as a DRAFT GitHub release.
+# Tags use the desktop- prefix because v1 / v1.0.0 belong to the GitHub Action.
+#   git tag desktop-v0.2.0 && git push origin desktop-v0.2.0
+# or run this workflow manually and enter the tag; the tag is created when the
+# draft is published, on the commit the workflow ran for.
+on:
+  push:
+    tags:
+      - "desktop-v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, e.g. desktop-v0.2.0"
+        required: true
+      dry_run:
+        description: "Build, test and prepare the release files, but do not create a release"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      should_build: ${{ steps.check.outputs.should_build }}
+    steps:
+      - name: Validate tag and skip an existing release
+        id: check
+        env:
+          TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          if ! [[ "$TAG" =~ ^desktop-v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::Invalid desktop release tag: $TAG"
+            exit 1
+          fi
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
+            echo "Release $TAG already exists; build and upload skipped." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Same tests and build as every push, so a release never ships untested code.
+  build:
+    needs: preflight
+    if: needs.preflight.outputs.should_build == 'true'
+    uses: ./.github/workflows/desktop-build.yml
+
+  release:
+    needs: [preflight, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+      SHA: ${{ github.sha }}
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Check the tag name
+        run: |
+          if ! [[ "$TAG" =~ ^desktop-v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::Tag '$TAG' must look like desktop-v1.2.3 (optionally with a -rc.1 style suffix)."
+            exit 1
+          fi
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            echo "::error::A release for '$TAG' already exists. Delete it or choose a new tag."
+            exit 1
+          fi
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: DriftGate-*
+          merge-multiple: true
+          path: dist
+      - name: Checksums
+        working-directory: dist
+        run: |
+          ls -l
+          sha256sum DriftGate-* | tee SHA256SUMS.txt
+      - name: Create draft release
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          cat > notes.md <<NOTES
+          Cross Agent (Drift Gate desktop) built from commit \`${SHA}\`.
+
+          | Download | For |
+          |---|---|
+          | \`DriftGate-macOS-arm64.dmg\` | Mac with Apple Silicon (M1 and later) |
+          | \`DriftGate-macOS-intel.dmg\` | Mac with an Intel processor |
+          | \`DriftGate-Windows-Setup.exe\` | Windows 64-bit installer (Start menu entry, uninstaller) |
+          | \`DriftGate-Windows-portable.zip\` | Windows without installing: unzip and run \`DriftGate.exe\` |
+
+          Not sure which Mac you have? Apple menu > About This Mac: "Chip: Apple M…" means Apple Silicon, "Processor: Intel" means Intel.
+
+          **These builds are not code-signed or notarized**, so the first launch is blocked by the OS:
+          - macOS: open the .dmg, drag the app to Applications, then open it once. If macOS refuses, go to System Settings > Privacy & Security and choose "Open Anyway" (older macOS: right-click the app > Open), or run \`xattr -dr com.apple.quarantine /Applications/DriftGate.app\`.
+          - Windows: SmartScreen may show "Windows protected your PC". Choose "More info" > "Run anyway".
+
+          Verify a download against \`SHA256SUMS.txt\` (\`shasum -a 256\` on macOS, \`Get-FileHash\` on Windows).
+          NOTES
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "Dry run: no release created for $TAG. Release notes that would be used:" >> "$GITHUB_STEP_SUMMARY"
+            cat notes.md >> "$GITHUB_STEP_SUMMARY"
+            ls -l dist
+            exit 0
+          fi
+          gh release create "$TAG" dist/* \
+            --repo "$REPO" --target "$SHA" --draft \
+            --title "Cross Agent desktop ${TAG#desktop-}" --notes-file notes.md
+          echo "Draft release created for $TAG. Review and publish it from the Releases page." >> "$GITHUB_STEP_SUMMARY"

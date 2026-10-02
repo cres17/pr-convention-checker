@@ -1,0 +1,48 @@
+{
+  "id": 36850803111,
+  "head_sha": "ac87685bad8cfe1d2140479ad52bbe32c34a9c6b",
+  "event": "push",
+  "run_attempt": 1,
+  "conclusion": "success",
+  "html_url": "https://github.com/cres17/pr-convention-checker/actions/runs/36850803111",
+  "created_at": "2026-10-01T10:42:28Z",
+  "updated_at": "2026-10-01T10:50:54Z",
+  "artifacts": [
+    {
+      "id": 11156270114,
+      "name": "DriftGate-macOS-arm64",
+      "size_in_bytes": 213923339,
+      "digest": "sha256:6b7a4eeb74853696c8da2c6c3ef1f61692b7b56435578e5dc5217bd694560f6a"
+    },
+    {
+      "id": 11156091679,
+      "name": "Offline-check-Windows",
+      "size_in_bytes": 166497,
+      "digest": "sha256:fc8164863e969a54795e21607695ab557abc8669462a225c08cf9a2a08a61cc7"
+    },
+    {
+      "id": 11155832984,
+      "name": "DriftGate-Windows",
+      "size_in_bytes": 385060688,
+      "digest": "sha256:76005a9e28f8f0597ed2a9e02c0c7a964345e45741d9d53977d9d5b38621cb7a"
+    },
+    {
+      "id": 11155832155,
+      "name": "Offline-check-macOS-arm64",
+      "size_in_bytes": 225605,
+      "digest": "sha256:2e2f5baf46d947b4316da49692b17326b6a7c74da336dfb8e3477369d34560e0"
+    },
+    {
+      "id": 11155572421,
+      "name": "Offline-check-macOS-intel",
+      "size_in_bytes": 183365,
+      "digest": "sha256:e56fe06a910c97e2ece7724fdba0a053489b51337972cacbda2a58b5c50c3607"
+    },
+    {
+      "id": 11155427550,
+      "name": "DriftGate-macOS-intel",
+      "size_in_bytes": 235282762,
+      "digest": "sha256:addf8f4c535c65a4e25fdb2eb559ba38e753c3df4bd556bd3f37820e634f577e"
+    }
+  ]
+}

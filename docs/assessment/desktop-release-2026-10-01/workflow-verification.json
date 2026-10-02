@@ -1,0 +1,110 @@
+[
+  {
+    "url": "https://github.com/cres17/pr-convention-checker/actions/runs/36804667492",
+    "headSha": "644587996ccdf9572ea7ed88dc99ea88e52bdb1c",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "build / package (macos-15-intel, macOS-intel)",
+        "conclusion": "success"
+      },
+      {
+        "name": "build / package (macos-latest, macOS-arm64)",
+        "conclusion": "success"
+      },
+      {
+        "name": "build / package (windows-latest, Windows)",
+        "conclusion": "success"
+      },
+      {
+        "name": "release",
+        "conclusion": "success"
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/cres17/pr-convention-checker/actions/runs/36804657992",
+    "headSha": "644587996ccdf9572ea7ed88dc99ea88e52bdb1c",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "lint",
+        "conclusion": "success"
+      },
+      {
+        "name": "benchmark",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (windows-latest, 3.12)",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (ubuntu-latest, 3.11)",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (macos-latest, 3.11)",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (ubuntu-latest, 3.10)",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (windows-latest, 3.10)",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (macos-latest, 3.12)",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (macos-latest, 3.10)",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (ubuntu-latest, 3.12)",
+        "conclusion": "success"
+      },
+      {
+        "name": "test (windows-latest, 3.11)",
+        "conclusion": "success"
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/cres17/pr-convention-checker/actions/runs/36805844364",
+    "headSha": "0060e4abdd76c5426c546a58252b4301b90a3172",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "preflight",
+        "conclusion": "success"
+      },
+      {
+        "name": "build",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "release",
+        "conclusion": "skipped"
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/cres17/pr-convention-checker/actions/runs/36805846668",
+    "headSha": "0060e4abdd76c5426c546a58252b4301b90a3172",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "benchmark",
+        "conclusion": "success"
+      }
+    ]
+  }
+]

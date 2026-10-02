@@ -21,6 +21,9 @@ from drift_gate.core.models.policy import Policy
 from drift_gate.core.models.result import DriftIgnoreDirective
 
 
+DEFAULT_FIXTURE_PATH = Path(__file__).resolve().parents[2] / "tests" / "fixtures"
+
+
 @dataclass
 class EvalCaseResult:
     name: str
@@ -247,6 +250,15 @@ def discover_fixture_paths(root: Path, *, recursive: bool = False) -> List[Path]
         return [root]
     pattern = "**/*.json" if recursive else "*.json"
     return sorted(root.glob(pattern))
+
+
+def require_fixture_paths(root: Path, *, recursive: bool = False) -> List[Path]:
+    """Reject empty CLI evaluations instead of reporting perfect zero-case scores."""
+    paths = discover_fixture_paths(root, recursive=recursive)
+    if not paths:
+        print(f"No evaluation fixtures found: {root}", file=sys.stderr)
+        raise SystemExit(2)
+    return paths
 
 
 def render_markdown(summary: EvalSummary) -> str:
@@ -566,7 +578,7 @@ def run_eval(argv=None) -> None:
     parser.add_argument(
         "path",
         nargs="?",
-        default="drift_gate/tests/fixtures",
+        default=str(DEFAULT_FIXTURE_PATH),
         help="Fixture JSON file or directory",
     )
     parser.add_argument(
@@ -615,7 +627,7 @@ def run_eval(argv=None) -> None:
     )
     args = parser.parse_args(argv)
 
-    paths = discover_fixture_paths(Path(args.path), recursive=args.recursive)
+    paths = require_fixture_paths(Path(args.path), recursive=args.recursive)
     report = (
         compare_engines(paths, args.engines.split(","))
         if args.engines

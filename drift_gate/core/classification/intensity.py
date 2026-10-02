@@ -8,6 +8,7 @@ import re
 from typing import Iterable, List
 
 from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.route_syntax import METHOD_PATTERN, route_registration_method
 
 INTENSITY_ORDER = {
     "any": -1,
@@ -24,6 +25,12 @@ INTENSITY_ORDER = {
 }
 
 VALID_INTENSITIES = set(INTENSITY_ORDER)
+
+
+def analysis_unavailable(file: ChangedFile) -> bool:
+    """Missing input is not evidence that a change is below a threshold."""
+    return (file.analysis_method == "unavailable" or not file.patch.strip()
+            or file.patch.startswith(("[binary file skipped]", "[large file skipped]")))
 
 SEMANTIC_SIGNAL_INTENSITY = {
     "env-key-added": "config-key-added",
@@ -57,6 +64,8 @@ EXPORT_PATTERNS = [
 ]
 
 ENV_KEY_PATTERNS = [
+    re.compile(r"os\.environ\[\s*['\"]([A-Z][A-Z0-9_]*)['\"]"),
+    re.compile(r"process\.env\[\s*['\"]([A-Z][A-Z0-9_]*)['\"]"),
     re.compile(r"^\s*[A-Z][A-Z0-9_]*\s*="),
     re.compile(r"process\.env\.([A-Z][A-Z0-9_]*)"),
     re.compile(r"os\.environ(?:\.get)?\(\s*['\"]([A-Z][A-Z0-9_]*)['\"]"),
@@ -64,9 +73,7 @@ ENV_KEY_PATTERNS = [
 ]
 
 ROUTE_PATTERNS = [
-    re.compile(r"\b(router|app)\.(get|post|put|patch|delete)\s*\("),
-    re.compile(r"@\w+\.(get|post|put|patch|delete)\s*\("),
-    re.compile(r"@(Get|Post|Put|Patch|Delete)\s*\("),
+    re.compile(rf"^\s*@({METHOD_PATTERN})\s*\(", re.I),
     re.compile(r"\b(response_model|Body|Query|Path)\s*="),
     re.compile(r"\b(z\.object|schema|requestSchema|responseSchema)\s*\("),
     re.compile(r"^\s*(export\s+)?(interface|type)\s+\w*(Request|Response|Payload|Dto)\b"),
@@ -136,7 +143,7 @@ def classify_file_intensity(file: ChangedFile) -> str:
 
     if file.status == "added":
         return "export-added"
-    if file.status in ("deleted", "renamed"):
+    if file.status in ("deleted", "renamed") and not file.patch:
         return "signature-change"
     if not file.patch:
         return "signature-change"
@@ -168,7 +175,8 @@ def classify_file_intensity(file: ChangedFile) -> str:
     if any(_matches_any(line, DB_SCHEMA_PATTERNS) for _, line in changed_lines):
         return "db-schema-change"
 
-    if any(_matches_any(line, ROUTE_PATTERNS) for _, line in changed_lines):
+    if any(route_registration_method(line) or _matches_any(line, ROUTE_PATTERNS)
+           for _, line in changed_lines):
         return "route-contract-change"
 
     if (

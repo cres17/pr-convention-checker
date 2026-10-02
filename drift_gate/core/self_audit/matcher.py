@@ -7,7 +7,7 @@ function/class names, test names, rule IDs) and produces structured results.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List
 
 
 @dataclass
@@ -109,7 +109,6 @@ def match_checklist(
     warnings: List[SelfAuditWarning] = []
 
     # Track which evidence files are matched by some checked item
-    evidence_files_lower = {f.lower() for f in evidence.changed_files}
     matched_evidence_files: set[str] = set()
 
     for item in items:

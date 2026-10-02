@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "cards_toggled": 4,
+  "excluded_links": false,
+  "excluded_hints": false,
+  "test_picker_cancelled_without_lock": true,
+  "page_navigation_preserves_unsaved_title": true,
+  "native_close_cancel_protects_edit": true,
+  "native_dirty_cleared_after_save": true,
+  "saved_version": 2,
+  "lazy_diff_renders_in_qt": true
+}

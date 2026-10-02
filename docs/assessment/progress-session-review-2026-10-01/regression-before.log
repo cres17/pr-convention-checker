@@ -1,0 +1,68 @@
+
+ RUN  v4.1.11 /private/tmp/driftgate-session-baseline-20261001/desktop-ui
+
+stderr | src/SessionRegression.test.tsx > preserves unsaved edits across page navigation
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+
+stderr | src/SessionRegression.test.tsx > preserves unsaved edits across page navigation
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+
+stderr | src/SessionRegression.test.tsx > ignores an earlier save after returning to the same repository and retains the new draft
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+
+stderr | src/SessionRegression.test.tsx > ignores an earlier save after returning to the same repository and retains the new draft
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+
+ ❯ src/SessionRegression.test.tsx (3 tests | 2 failed | 1 skipped) 380ms
+   × preserves unsaved edits across page navigation 236ms
+   × ignores an earlier save after returning to the same repository and retains the new draft 144ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/SessionRegression.test.tsx > preserves unsaved edits across page navigation
+AssertionError: expected '기존 제목' to be '저장 전 수정' // Object.is equality
+
+Expected: "저장 전 수정"
+Received: "기존 제목"
+
+ ❯ src/SessionRegression.test.tsx:88:68
+     86|   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));
+     87|   act(() => emit({ type: "progressDocs", requested_path: "/sample/proj…
+     88|   expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toB…
+       |                                                                    ^
+     89|   expect(api.saveProgress).not.toHaveBeenCalled();
+     90|   expect(showedWarning).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/SessionRegression.test.tsx > ignores an earlier save after returning to the same repository and retains the new draft
+AssertionError: expected '기존 제목' to be '돌아온 뒤 새 수정' // Object.is equality
+
+Expected: "돌아온 뒤 새 수정"
+Received: "기존 제목"
+
+ ❯ src/SessionRegression.test.tsx:105:68
+    103|   act(() => emit({ type: "progressSaved", requested_path: "/sample/pro…
+    104|     baseline: { ...sessionBaseline, version: 2 } }));
+    105|   expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toB…
+       |                                                                    ^
+    106|   act(() => emit({ type: "repository", path: "/sample/other" }));
+    107|   act(() => emit({ type: "repository", path: "/sample/project" }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 skipped (3)
+   Start at  15:48:27
+   Duration  1.11s (transform 177ms, setup 0ms, import 338ms, tests 380ms, environment 312ms)

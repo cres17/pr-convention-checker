@@ -1,0 +1,45 @@
+{
+  "interpreter": "3.11.15 (main, Mar  3 2026, 00:52:57) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "package_version": "1.20.0",
+  "pack_file": "/private/tmp/driftgate-parser-audit-20261001/Applications/DriftGate.app/Contents/Resources/tree_sitter_language_pack/__init__.py",
+  "tree_sitter_file": "/private/tmp/driftgate-parser-audit-20261001/extracted-python/tree_sitter/__init__.pyc",
+  "cache_dir": "/private/tmp/driftgate-parser-audit-20261001/control-cache/tree-sitter-language-pack/v1.20.0/libs",
+  "cache_before": [],
+  "probes": [
+    {
+      "language": "python",
+      "parsed": "(module (function_definition name: (identifier) parameters: (parameters (typed_parameter (identifier) type: (type (identifier)))) return_type: (type (identifier)) body: (block (return_statement (identifier)))))"
+    },
+    {
+      "language": "typescript",
+      "parsed": "(program (export_statement declaration: (function_declaration name: (identifier) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation (predefined_type)))) return_type: (type_annotation (predefined_type)) body: (statement_block (return_statement (identifier))))))"
+    },
+    {
+      "language": "go",
+      "parsed": "(source_file (package_clause (package_identifier)) (function_declaration name: (identifier) parameters: (parameter_list (parameter_declaration name: (identifier) type: (type_identifier))) result: (type_identifier) body: (block (statement_list (return_statement (expression_list (identifier)))))))"
+    }
+  ],
+  "service_file": "/private/tmp/driftgate-parser-audit-20261001/extracted-python/drift_gate/desktop/service.pyc",
+  "analysis_notes": [
+    {
+      "path": "src/main.go",
+      "method": "grammar+heuristic",
+      "reason": ""
+    },
+    {
+      "path": "src/python_api.py",
+      "method": "grammar+heuristic",
+      "reason": ""
+    },
+    {
+      "path": "src/typescript_api.ts",
+      "method": "grammar+heuristic",
+      "reason": ""
+    }
+  ],
+  "cache_after": [
+    "go",
+    "python",
+    "typescript"
+  ]
+}

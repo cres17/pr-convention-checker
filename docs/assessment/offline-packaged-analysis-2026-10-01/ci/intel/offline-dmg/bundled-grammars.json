@@ -1,0 +1,47 @@
+{
+  "version": "1.20.0",
+  "languages": [
+    "python",
+    "typescript",
+    "tsx",
+    "javascript",
+    "go",
+    "java",
+    "kotlin",
+    "ruby"
+  ],
+  "libraries": [
+    {
+      "name": "libtree_sitter_python.dylib",
+      "source_sha256": "3a01177c4caace813619f1e4d3c9b7b2f3fea515e835ea6b1cd6531213d83d0b"
+    },
+    {
+      "name": "libtree_sitter_typescript.dylib",
+      "source_sha256": "c8d36dc68c53dac5754782b36178c924589c175773f05eb0d7c3261558fb4914"
+    },
+    {
+      "name": "libtree_sitter_tsx.dylib",
+      "source_sha256": "86f7d0a5c9d6dfa3368e48dda050bc13e8a9ac8ff243cccd85f6494c050e678d"
+    },
+    {
+      "name": "libtree_sitter_javascript.dylib",
+      "source_sha256": "bb1fc3e4d1dac372be58fb6c3305a23913afe49ce8072bcea43a650f638e3e05"
+    },
+    {
+      "name": "libtree_sitter_go.dylib",
+      "source_sha256": "7c5a1aa44cf554eab5a369f03e42a48474cf30afe73e68f76fb453d4a027b682"
+    },
+    {
+      "name": "libtree_sitter_java.dylib",
+      "source_sha256": "59c6f2eab9e7625ea80e78a067250257e18eb194f6cf354806df524d31cb177b"
+    },
+    {
+      "name": "libtree_sitter_kotlin.dylib",
+      "source_sha256": "bc399cc72374148f81c448adc2fc1bfcc16d0624805b534783bf2b53978a351b"
+    },
+    {
+      "name": "libtree_sitter_ruby.dylib",
+      "source_sha256": "5a42acbdc12c4872ee713283f227ea5f3125bac2a7d5ad0d5a354469b6e8af8e"
+    }
+  ]
+}

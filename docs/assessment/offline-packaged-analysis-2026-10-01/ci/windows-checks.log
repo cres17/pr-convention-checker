@@ -1,0 +1,6 @@
+2026-10-01T10:43:15.6539605Z  Test Files  7 passed (7)
+2026-10-01T10:43:15.6540465Z       Tests  77 passed (77)
+2026-10-01T10:44:02.4212465Z Staged 8 grammars (1.20.0) in build\parser-libraries
+2026-10-01T10:45:07.1468962Z 170 passed in 63.96s (0:01:03)
+2026-10-01T10:47:05.0554924Z PASS: rendered packaged UI + native bridge + 8 offline grammar analyses; D:\a\pr-convention-checker\pr-convention-checker\build\offline-package\result.json
+2026-10-01T10:50:05.6310391Z PASS: rendered packaged UI + native bridge + 8 offline grammar analyses; D:\a\pr-convention-checker\pr-convention-checker\build\offline-installer\result.json

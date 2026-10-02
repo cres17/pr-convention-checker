@@ -342,6 +342,8 @@ class TestDriftIgnorePolicy:
                 rule_id="test-rule",
                 reason="temporary",
                 approved_by="@team/api",
+                approval_verified=True,
+                approval_commit="verified-current-head",
             )
         ]
         approved_result = run(changed_files=files, drift_ignores=approved, policy=policy)
@@ -734,7 +736,6 @@ class TestLargePR:
         data = json.loads((FIXTURES / "pr_large_100_files.json").read_text(encoding="utf-8"))
         files = [ChangedFile.from_dict(f) for f in data["changed_files"]]
         from drift_gate.core.models.policy import Policy
-        from drift_gate.core.models.result import DriftIgnoreDirective
         policy = Policy.from_dict(data["policy"])
         result = run(changed_files=files, drift_ignores=[], policy=policy)
         assert result.scan_metrics.scanned_files >= 99

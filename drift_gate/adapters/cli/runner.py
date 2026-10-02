@@ -20,10 +20,11 @@ import webbrowser
 from pathlib import Path
 
 from drift_gate.adapters.eval.runner import (
+    DEFAULT_FIXTURE_PATH,
+    require_fixture_paths,
     benchmark_gate_failures,
     compare_engines,
     compare_paths,
-    discover_fixture_paths,
     evaluate_paths,
     render_comparison_html,
     render_comparison_markdown,
@@ -428,7 +429,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     demo.add_argument(
         "--fixtures",
-        default="drift_gate/tests/fixtures",
+        default=str(DEFAULT_FIXTURE_PATH),
         help="Fixture JSON file or directory",
     )
     demo.add_argument("--html-out", default="benchmark.html")
@@ -665,7 +666,7 @@ def _add_eval_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "path",
         nargs="?",
-        default="drift_gate/tests/fixtures",
+        default=str(DEFAULT_FIXTURE_PATH),
         help="Fixture JSON file or directory",
     )
     parser.add_argument(
@@ -710,6 +711,9 @@ def _run_check(args) -> None:
         policy_for_run = load_policy(args.policy)
     except FileNotFoundError:
         policy_for_run = None
+    if policy_for_run and not (args.pr and args.repo):
+        from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+        changed_files = attach_env_documents(changed_files, policy_for_run, local_document_reader(Path.cwd()))
     result = run(
         changed_files=changed_files,
         drift_ignores=drift_ignores,
@@ -798,7 +802,7 @@ def _run_check(args) -> None:
 
 
 def _run_demo(args) -> None:
-    paths = discover_fixture_paths(Path(args.fixtures))
+    paths = require_fixture_paths(Path(args.fixtures))
     comparison = compare_paths(paths)
 
     Path(args.html_out).write_text(
@@ -815,7 +819,7 @@ def _run_demo(args) -> None:
 
 
 def _run_eval(args) -> None:
-    paths = discover_fixture_paths(Path(args.path), recursive=args.recursive)
+    paths = require_fixture_paths(Path(args.path), recursive=args.recursive)
     report = (
         compare_engines(paths, args.engines.split(","))
         if args.engines
@@ -1305,7 +1309,7 @@ def _render_self_audit_html(audit_result) -> str:
 
     def _item_rows(items, badge_class, badge_label):
         if not items:
-            return f"<tr><td colspan='3'><em>None</em></td></tr>"
+            return "<tr><td colspan='3'><em>None</em></td></tr>"
         rows = ""
         for item in items:
             ev = ", ".join(_html.escape(e) for e in item.evidence) or "—"
@@ -1517,7 +1521,13 @@ def _collect_inputs(args) -> tuple[list, list]:
             sys.exit(1)
         github = GitHubAdapter(token=token, repo=args.repo)
         changed_files, pr_body = github.get_pr_files_and_body(args.pr)
-        return enrich_semantic_signals(changed_files), parse_drift_ignores(pr_body)
+        from drift_gate.adapters.github.approvals import verify_ignores
+        directives = parse_drift_ignores(pr_body)
+        policy = _load_policy_optional(args.policy)
+        if policy:
+            directives = verify_ignores(github, args.pr, directives, policy, changed_files)
+            changed_files = github.attach_env_documents(args.pr, changed_files, policy)
+        return enrich_semantic_signals(changed_files), directives
 
     git = GitAdapter()
     return enrich_semantic_signals(git.get_changed_files(args.base)), []
@@ -1581,7 +1591,7 @@ def _dead_rule_warnings(policy, repo_root: Path) -> list[str]:
 
 def _repo_recommendations(repo_root: Path) -> dict:
     paths = set(_repo_paths(repo_root))
-    frameworks = _detect_frameworks(paths)
+    frameworks = _detect_frameworks(paths, repo_root)
     presets = []
 
     if _has_any(paths, ["prisma/schema.prisma", "db/**", "database/migrations/**", "alembic/versions/**"]):
@@ -1623,11 +1633,24 @@ def _select_init_preset(requested: str, recommendations: dict) -> str:
     return "fullstack"
 
 
-def _detect_frameworks(paths: set[str]) -> list[str]:
+def recommend_preset(repo_root: Path, requested: str = "auto") -> dict:
+    """Starter-policy choice and repository recommendations for ``repo_root``.
+
+    Independent of the working directory, so GUIs can preview what ``init`` would write.
+    """
+    recommendations = _repo_recommendations(repo_root)
+    return {
+        "preset": _select_init_preset(requested, recommendations),
+        "recommendations": recommendations,
+    }
+
+
+def _detect_frameworks(paths: set[str], repo_root: Path | None = None) -> list[str]:
     frameworks = []
-    package_json = Path("package.json")
-    pyproject = Path("pyproject.toml")
-    requirements = Path("requirements.txt")
+    base = repo_root if repo_root is not None else Path(".")
+    package_json = base / "package.json"
+    pyproject = base / "pyproject.toml"
+    requirements = base / "requirements.txt"
 
     package_text = package_json.read_text(encoding="utf-8") if package_json.exists() else ""
     pyproject_text = pyproject.read_text(encoding="utf-8") if pyproject.exists() else ""

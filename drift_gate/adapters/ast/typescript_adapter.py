@@ -12,8 +12,8 @@ Future upgrade path (tree-sitter):
 """
 import re
 from functools import lru_cache
+from drift_gate.core.route_syntax import OBJECT_CALL
 
-_TS_ROUTE = re.compile(r"\b(router|app)\.(get|post|put|patch|delete)\s*\(")
 _API_SCHEMA = re.compile(
     r"\b(z\.object|response_model|requestBody|responses|parameters|operationId)\b"
 )
@@ -90,7 +90,7 @@ class TypeScriptAdapter:
         Tree-sitter upgrade: match CallExpression where callee is MemberExpression
         with object matching router|app and property matching HTTP methods.
         """
-        return any(_TS_ROUTE.search(line) for line in lines)
+        return any(OBJECT_CALL.match(line) for line in lines)
 
     def _has_api_schema(self, lines: list[str]) -> bool:
         """Detect Zod schemas, OpenAPI annotations, or response_model usage.

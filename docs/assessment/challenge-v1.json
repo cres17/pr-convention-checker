@@ -1,0 +1,23 @@
+{
+  "version": "challenge-v1",
+  "description": "Synthetic development acceptance cases. These expectations describe desired behavior, including capabilities not yet implemented. Not production accuracy or a replacement for existing regression tests. Unknown API patches must fail closed for this suite's blocker policy.",
+  "policies": {
+    "api": {
+      "rules": [{"id": "api-doc", "when": {"any_changed": ["src/routes/**"], "min_change_intensity": "route-contract-change"}, "require": {"groups": [{"name": "API docs", "any_changed": ["docs/api/**"]}]}, "severity": "blocker"}]
+    },
+    "approval": {
+      "rules": [{"id": "api-doc", "when": {"any_changed": ["src/routes/**"], "min_change_intensity": "route-contract-change"}, "require": {"groups": [{"name": "API docs", "any_changed": ["docs/api/**"]}]}, "severity": "blocker"}],
+      "suppression": {"require_codeowners_approval": true}
+    }
+  },
+  "cases": [
+    {"id": "C01-route-without-docs", "policy": "api", "expected": "fail", "reason": "API path changed without documentation; positive control.", "changed_files": [{"path": "src/routes/users.py", "status": "modified", "patch": "-@app.get('/users')\n+@app.get('/members')\n"}]},
+    {"id": "C02-unrelated-doc-typo", "policy": "api", "expected": "fail", "reason": "An unrelated documentation typo does not document the changed API path.", "changed_files": [{"path": "src/routes/users.py", "status": "modified", "patch": "-@app.get('/users')\n+@app.get('/members')\n"}, {"path": "docs/api/payments.md", "status": "modified", "patch": "-teh payment\n+the payment\n"}]},
+    {"id": "C03-related-doc-update", "policy": "api", "expected": "pass", "reason": "The matching endpoint is updated in documentation; negative control.", "changed_files": [{"path": "src/routes/users.py", "status": "modified", "patch": "-@app.get('/users')\n+@app.get('/members')\n"}, {"path": "docs/api/users.md", "status": "modified", "patch": "-GET /users\n+GET /members\n"}]},
+    {"id": "C04-deleted-api-file", "policy": "api", "expected": "fail", "reason": "Removing a public route also changes its contract and must not bypass the threshold.", "changed_files": [{"path": "src/routes/users.py", "status": "deleted", "patch": "-@app.get('/users')\n-def users():\n-    return []\n"}]},
+    {"id": "C05-missing-api-patch", "policy": "api", "expected": "fail", "reason": "This blocker policy requires conservative failure when a matched API file cannot be analyzed, rather than assuming no contract change.", "changed_files": [{"path": "src/routes/users.py", "status": "modified", "patch": ""}]},
+    {"id": "C06-unverified-approval", "policy": "approval", "expected": "fail", "reason": "User-written approved-by text is not verified approval evidence.", "pr_body": "drift-ignore: api-doc\nreason: test exception\napproved-by: arbitrary-user", "changed_files": [{"path": "src/routes/users.py", "status": "modified", "patch": "-@app.get('/users')\n+@app.get('/members')\n"}]},
+    {"id": "C07-comment-only", "policy": "api", "expected": "pass", "reason": "Comment wording alone does not change the API; avoid overblocking.", "changed_files": [{"path": "src/routes/users.py", "status": "modified", "patch": "-# retrieve users\n+# retrieve all users\n"}]},
+    {"id": "C08-implementation-only", "policy": "api", "expected": "pass", "reason": "Renaming a local intermediate variable does not change the contract; avoid overblocking.", "changed_files": [{"path": "src/routes/users.py", "status": "modified", "patch": "-    result = service.list_users()\n-    return result\n+    users = service.list_users()\n+    return users\n"}]}
+  ]
+}

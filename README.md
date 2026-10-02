@@ -2,309 +2,395 @@
 
 # Drift Gate
 
-**Code changes. Contracts should keep up.**
+**코드 변경에 맞춰 문서도 함께 바뀌었는지 확인합니다.**
 
-Catch missing API specs, runbooks, release notes, and security docs before merge.<br>
-A GitHub Action and local CLI, powered by your team's policy.
+API 명세, 설정 예제, 운영 문서의 누락을 PR에서 점검하는 개발 도구입니다.<br>
+팀의 규칙을 YAML로 정의하고, 로컬 CLI와 GitHub Actions에서 같은 정책으로 검사합니다.
 
-[![CI](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml/badge.svg)](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml)
-[![Benchmark](https://github.com/cres17/pr-convention-checker/actions/workflows/benchmark.yml/badge.svg)](https://github.com/cres17/pr-convention-checker/actions/workflows/benchmark.yml)
+[![CI](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml/badge.svg?branch=ver2)](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml?query=branch%3Aver2)
 [![License: MIT](https://img.shields.io/badge/License-MIT-8B5CF6)](LICENSE)
 
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](pyproject.toml)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](action.yml)
-[![YAML Policy](https://img.shields.io/badge/YAML-Policy-CB171E?style=for-the-badge&logo=yaml&logoColor=white)](#policy-example)
-[![Tree-sitter](https://img.shields.io/badge/Tree--sitter-Semantic_Analysis-4D9375?style=for-the-badge)](#semantic-detection)
+[![YAML Policy](https://img.shields.io/badge/YAML-Policy-CB171E?style=for-the-badge&logo=yaml&logoColor=white)](#정책-작성)
+[![Tree-sitter](https://img.shields.io/badge/Tree--sitter-Code_Analysis-4D9375?style=for-the-badge)](#분석-대상과-적용-예제)
 [![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](drift_gate/tests)
 
-[Quick Start](#quick-start) · [How It Works](#how-it-works) · [GitHub Action](#github-action) · [Policy Example](#policy-example) · [Examples & Guides](#examples--guides)
+[기술 스택](#기술-스택) · [사용 흐름](#사용-흐름) · [데스크톱 앱](#데스크톱-앱으로-검사하기) · [버전별 변경](#버전별-변경) · [검증 결과](#검증-결과)
 
 </div>
 
 ---
 
-## Why Drift Gate?
+> **`ver2` 개발 브랜치** — API·환경변수의 내용 검사와 승인 검증을 확장하고, 로컬 결과를 읽기 쉬운 [데스크톱 앱](docs/desktop-app.md)을 추가했습니다. 확인된 오탐·미탐은 [검증 결과](#검증-결과)에 공개합니다.
 
-A PR can pass its tests and still leave the next developer with an outdated
-contract. Drift Gate checks whether code changes include the documents your
-team expects, using explicit rules in `.drift-gate.yml`.
+## 서비스 개요
 
-| When this changes… | Keep these in sync |
-| :--- | :--- |
-| API routes or OpenAPI definitions | API docs and CHANGELOG entries |
-| Database schemas or migrations | Runbooks and release notes |
-| Environment variables or configuration | `.env.example` |
-| CI workflows or infrastructure | Operations docs |
-| Authentication or RBAC | Security docs |
+API 경로를 바꾸고 테스트까지 고쳤더라도 문서에는 이전 주소가 남을 수 있습니다. 새 환경변수를 사용하는 코드를 추가했는데 `.env.example`에 키가 없다면 다른 개발자는 실행에 필요한 설정을 놓치게 됩니다.
 
-**Deterministic decisions.** Your policy controls pass/fail; an LLM is not
-required. Optional Claude enrichment improves checklist wording without
-changing the gate decision.
+Drift Gate는 이런 변경을 코드 리뷰 전에 확인하도록 만들었습니다. `.drift-gate.yml`에 코드 경로와 함께 확인할 문서를 연결하면, 변경 내용에 따라 필요한 문서를 검사하고 누락된 항목과 판정 근거를 보고서로 남깁니다.
 
-**Checks that fit your workflow.** Run locally before opening a PR, then use
-the GitHub Action to publish results during review.
+| 코드에서 바뀐 부분 | 함께 확인할 문서 | 현재 검사 방식 |
+|---|---|---|
+| API 메서드·경로 | API 명세 | 인식 가능한 메서드·경로의 추가·삭제를 문서 diff와 대조 |
+| 정적인 환경변수 키 | `.env.example` 등 설정 예제 | 설정한 샘플 파일에 새 키가 있는지 확인 |
+| DB 스키마·마이그레이션 | 운영 문서·변경 이력 | 정책에 지정한 문서의 동반 수정 확인 |
+| CI·인프라 설정 | 배포·운영 문서 | 정책에 지정한 문서의 동반 수정 확인 |
+| 인증·권한 로직 | 보안 문서 | 정책에 지정한 문서의 동반 수정 확인 |
 
-## How It Works
+**통과·실패는 정책 엔진이 결정합니다.** Claude API는 선택 기능으로, 검사가 끝난 뒤 체크리스트와 설명을 보완합니다. API 키 없이도 기본 검사와 보고서 생성이 동작합니다.
+
+데스크톱 앱에서는 [구독 계정으로 LLM 추가 판정](docs/subscription-llm-review.md)도 받을 수 있습니다. 사용자가 로그인한 공식 Codex·Claude Code를 호출하며, LLM의 결론과 수정 제안을 규칙 판정 옆에서 확인합니다.
+
+## 기술 스택
+
+`main`과 `ver2` 모두 **Python · YAML 정책 · Tree-sitter · GitHub Actions · pytest**를 사용합니다. `ver2`에서는 이 구성을 유지하고 분석 로직과 의존성 버전 조건을 수정했습니다.
+
+| 영역 | 기술 | 역할 |
+|---|---|---|
+| 구현 언어 | **Python 3.10+** | 정책 평가, CLI, 외부 연동 구현 |
+| 정책 설정 | **YAML · PyYAML** | 검사할 코드 경로, 필요한 문서, 심각도와 예외 규칙 정의 |
+| 변경 수집 | **Git diff · GitHub REST API** | 로컬 변경 또는 PR의 파일·patch 수집 |
+| 코드 분석 | **Tree-sitter · tree-sitter-language-pack** | 언어별 문법 분석 신호 추출. 정규식·휴리스틱과 함께 사용 |
+| 자동 검사 | **GitHub Actions** | PR 검사, 댓글 작성, 보고서 보관 |
+| 테스트·코드 검사 | **pytest · Ruff** | 회귀 테스트와 주요 Python 오류 검사 |
+| 보고서 | **Markdown · JSON · HTML** | 리뷰용 요약, 자동화용 데이터, 브라우저 보고서 출력 |
+| AI 도구 연동 | **MCP** | 로컬 AI 도구에서 정책 조회와 검사 기능 호출 |
+| 선택 기능 | **Claude API** | 판정 후 체크리스트·근거 설명 보완 |
+| 선택 기능 | **PySide6 · Qt WebEngine · React · TypeScript · tool-ui** | Windows·macOS용 로컬 검사 화면 |
+| 선택 기능 | **Codex CLI · Claude Code CLI** | 사용자 구독 로그인으로 LLM 추가 검토 |
+
+실행 의존성은 [pyproject.toml](pyproject.toml), 테스트와 코드 검사 설정은 [CI 설정](.github/workflows/ci.yml)에 있습니다. MCP와 Claude 연동은 `main`에도 있던 기능입니다.
+
+<details>
+<summary>코드 구조와 역할</summary>
+
+| 경로 | 담당 역할 |
+|---|---|
+| [`drift_gate/core`](drift_gate/core) | 정책·변경 모델, 규칙 평가, 최종 판정 |
+| [`drift_gate/adapters`](drift_gate/adapters) | Git·GitHub 입력, 문법 분석, CLI·Action·MCP·Claude 연동 |
+| [`drift_gate/reporters`](drift_gate/reporters) | Markdown·JSON·HTML 보고서 생성 |
+| [`drift_gate/tests`](drift_gate/tests) | 단위·통합 테스트와 고정 평가 사례 |
+| [`scripts`](scripts) · [`docs/assessment`](docs/assessment) | 개선 전후 측정 도구와 원본 결과 |
+
+</details>
+
+## 분석 대상과 적용 예제
+
+Drift Gate 자체는 Python으로 구현했습니다. 아래 언어는 **검사할 저장소의 코드 분석 대상**입니다. 언어별 어댑터가 존재한다는 뜻이며, 모든 문법이나 프레임워크를 완전히 분석한다는 뜻은 아닙니다.
+
+| 분석 대상 | 파일 확장자 | 어댑터가 확인하는 주요 신호 |
+|---|---|---|
+| Python | `.py` | 함수·클래스, API 라우트, 설정 접근 |
+| TypeScript · JavaScript | `.ts`, `.tsx`, `.js`, `.jsx` | export·타입, API 라우트, 설정 접근 |
+| Go | `.go` | 함수와 공개 타입 |
+| Java · Kotlin | `.java`, `.kt`, `.kts` | 공개 타입·함수 관련 선언 |
+| Ruby | `.rb` | 메서드·클래스·모듈 |
+
+Tree-sitter는 변경된 코드 조각을 분석합니다. 불완전한 diff나 지원하지 않는 구문에서는 휴리스틱을 사용하며, 분석 방법과 사유를 보고서에 남깁니다. **문서 내용 검사에는 별도의 정규식과 제한된 항목 비교가 사용됩니다.** 전체 프로그램과 문서의 의미가 같음을 증명하지는 않습니다.
+
+| 적용할 프로젝트 | 정책 예제 |
+|---|---|
+| Python API | [FastAPI](examples/fastapi/README.md) · [Django](examples/django/README.md) |
+| JavaScript · TypeScript | [Express](examples/express-api/README.md) · [Next.js](examples/nextjs/README.md) |
+| DB 마이그레이션 | [Prisma](examples/prisma/README.md) |
+| 배포 자동화 | [GitHub Actions](examples/github-actions-deploy/README.md) |
+
+FastAPI·Django·Express·Next.js·Prisma는 적용 예제를 제공하는 대상입니다. 이 프레임워크들이 Drift Gate의 실행 의존성에 포함되지는 않습니다.
+
+## 사용 흐름
 
 ```mermaid
 flowchart TD
-    A[Pull request or local changes] --> B[Collect changed paths and patches]
-    B --> C[Classify changes with available semantic signals]
-    P[.drift-gate.yml policy] --> D[Evaluate required document changes]
+    A[로컬 변경 또는 PR] --> B[변경 경로와 diff 수집]
+    B --> C[변경 유형과 문법 신호 분석]
+    P[팀의 YAML 정책] --> D[필요한 문서 검사]
     C --> D
-    D --> E[Apply valid ignores and severity thresholds]
-    E --> F[Gate result]
-    F --> G[Markdown, JSON, and HTML reports]
-    G --> H[PR comment and workflow artifacts]
-
-    classDef input fill:#eff6ff,stroke:#3b82f6,color:#1e3a8a
-    classDef policy fill:#f5f3ff,stroke:#8b5cf6,color:#4c1d95
-    classDef output fill:#ecfdf5,stroke:#10b981,color:#064e3b
-    class A,B,C input
-    class P,D,E policy
-    class F,G,H output
+    D --> E[예외 승인과 심각도 기준 적용]
+    E --> F[통과 · 경고 · 실패 · 검사 대상 없음]
+    F --> G[Markdown · JSON · HTML 보고서]
+    F -. 선택 .-> H[Claude 설명 보완]
+    H --> G
+    G --> I[로컬 확인 또는 PR 댓글·보고서 보관]
 ```
 
-The policy defines which documents must change alongside code. Drift Gate
-evaluates those requirements and applies your gate thresholds. Local runs can
-write reports; the GitHub Action can also post a PR comment and upload artifacts.
+1. **규칙을 정합니다.** 어떤 코드 변경에 어떤 문서가 필요한지 `.drift-gate.yml`에 작성합니다.
+2. **변경을 검사합니다.** 경로와 diff를 분석하고, 규칙에 따라 파일 동반 수정 또는 API·설정 항목을 확인합니다.
+3. **근거를 확인합니다.** 누락된 문서를 보완하거나 정해진 예외 절차를 따릅니다. 담당자 승인 필수 예외는 PR 본문에 이름만 적어서는 허용되지 않습니다.
 
-## Quick Start
+### 검사 예시
 
-Requires **Python 3.10+**. From a local clone of this repository:
+코드의 `@app.get('/users')`를 `@app.get('/members')`로 변경하고 API 내용 검사 규칙이 적용된 경우입니다.
+
+| 문서 변경 | 결과 |
+|---|---|
+| 문서를 수정하지 않음 | 실패 |
+| 다른 API 문서의 오타만 수정 | 실패 |
+| `GET /users`를 삭제하고 `GET /members`를 추가 | 통과 |
+
+이 예시는 한 줄 라우트와 `GET /members` 형태의 문서에 해당합니다. 두 열 Markdown 표도 일부 지원하지만, 여러 줄 라우트와 중첩 OpenAPI YAML 등은 [지원 범위와 한계](#지원-범위와-한계)를 확인하세요.
+
+## 시작하기
+
+Python 3.10 이상과 Git이 필요합니다. 아래는 macOS·Linux 기준입니다. Windows에서는 `python3` 대신 `py`를 사용하고, 가상환경은 `.venv\Scripts\Activate.ps1`로 활성화합니다.
+
+### 데스크톱 앱으로 검사하기
+
+명령어 출력이 낯설다면 저장소를 선택하고 **상태 → 변경 파일 → 규칙별 근거** 순서로 읽을 수 있는 앱을 실행하세요.
+
+**[Windows 설치 EXE 다운로드](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-Windows-Setup.exe)** · **[Mac DMG 다운로드](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.2-preview.20261001)**
+
+공개 1.0.2 미리보기에는 화면 파일 경로와 오프라인 파서 포함 문제가 확인됐습니다. 수정본은 `ver2`의 새 빌드부터 적용되며, 기존 공개 설치 파일은 아직 교체하지 않았습니다. [설치본 수정·검증](docs/review/offline-packaged-analysis-2026-10-01.md)을 확인하세요.
+
+설치 파일은 Python·Node.js를 따로 설치하지 않고 사용합니다. Windows는 설치 후 시작 메뉴의 **Cross Agent**에서 실행하고, Mac은 DMG 안의 앱을 **Applications** 폴더로 드래그합니다. 현재는 공식 코드 서명·Apple 공증 전 미리보기이며 보안 경고가 표시될 수 있습니다. Git 설치 등 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다.
+
+소스에서 직접 실행하려면 다음을 사용합니다.
 
 ```bash
-py -m pip install -e .
-py main.py init --preset api
-py main.py check --explain
+npm ci --prefix desktop-ui
+npm run build --prefix desktop-ui
+python -m pip install -e '.[desktop]'
+drift-gate-desktop
 ```
 
-These commands install Drift Gate, create a starter policy, and check the
-current working tree with rule explanations. Adjust the generated paths to
-match your project.
+`.drift-gate.yml`이 있는 Git 저장소를 고른 뒤 `HEAD` 또는 `main` 등을 비교 기준으로 입력합니다. [Windows·macOS 앱 빌드 및 다운로드](https://github.com/cres17/pr-convention-checker/actions/runs/36804667492)와 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다. 로컬 규칙 검사 후 구독 계정으로 LLM 의견을 추가할 수 있습니다.
 
-> **Platform tip:** The examples use the Windows `py` launcher. On macOS or
-> Linux, use `python3` instead.
+![데스크톱 앱의 합성 검사 예시 화면](docs/assets/cross-agent-desktop.png)
 
-### Everyday commands
+*화면 예시는 설명을 위한 합성 입력입니다.*
+
+### 계획 대비 진행 현황 보기
+
+데스크톱 앱의 **프로젝트 현황**에서 Markdown을 **현재 목표·향후 계획·과거 결과·참고**로 구분합니다. 현재 목표에서만 기능 후보와 완료 조건을 추출하고 현황을 집계합니다. 기능의 코드 위치와 검증 기록을 연결하면 구현·완료·근거 없음·재확인 항목을 볼 수 있습니다. 이 화면은 `.drift-gate.yml` 없이도 사용할 수 있습니다.
+
+![계획.md의 개발 단계 다섯 개를 기능 후보로 저장한 프로젝트 현황 화면](docs/assets/project-progress.png)
+
+*위 0/5는 자동으로 개발 진척이 0%라고 판정한 결과가 아닙니다. 아직 이 기준에 코드 근거와 검증 기록을 입력하지 않은 상태입니다.* 자동 의미 판정과 테스트 실행은 아직 제공하지 않습니다. 판정 범위와 사용법은 [데스크톱 앱 안내](docs/desktop-app.md), 다음 구현 단계는 [계획](계획.md)에 적었습니다.
+
+현재 `ver2` 소스에서는 근거가 모두 비어 있으면 **첫 기능의 코드 근거 연결**을 안내합니다. 요약 카드의 **완료 확인·구현 확인·근거 없음·재확인**을 누르면 해당 목록으로 이동합니다. 리뷰의 경고는 **주의**로 구분했습니다. [변경과 검증 기록](docs/review/document-kinds-v5-v7-2026-10-01.md)에 비교표와 실제 앱 캡처를 정리했습니다. 위 다운로드의 기존 미리보기 설치 파일에는 이 후속 변경이 포함되지 않습니다.
+
+### 먼저 예제 보고서 보기
 
 ```bash
-py main.py check                         # check current working tree
-py main.py report --out-html report.html # write an HTML report
-py main.py docs-check README.md --json   # verify docs match CLI/schema
-py main.py review --base main            # deterministic code review helper
-py main.py demo                          # generate benchmark.html
-py main.py eval --compare-baseline       # run fixture benchmark
+git clone --branch ver2 https://github.com/cres17/pr-convention-checker.git
+cd pr-convention-checker
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+drift-gate demo
 ```
 
-If Python's Scripts directory is on `PATH`, the console command is also
-available:
+생성된 `benchmark.html`을 브라우저로 열면 저장소에 포함된 합성 사례의 판정과 근거를 볼 수 있습니다. 실제 서비스 PR을 검사한 결과는 아닙니다. Tree-sitter 문법을 처음 읽을 때는 다운로드가 필요할 수 있습니다.
+
+### 내 저장소에 적용하기
+
+설치한 가상환경이 활성화된 상태에서 **검사할 Git 저장소로 이동**합니다.
 
 ```bash
-drift-gate check
-drift-gate report --out-html report.html
+drift-gate init --preset api
 ```
 
-## GitHub Action
+생성된 `.drift-gate.yml`의 코드·문서 경로를 프로젝트에 맞게 수정합니다. 정책 파일이 이미 있다면 초기화 대신 기존 파일을 편집하세요. 변경한 새 파일은 Git에 추가한 후 검사합니다. 아직 추적하지 않는 파일은 로컬 diff에 포함되지 않습니다.
 
-Commit your `.drift-gate.yml` policy, then create
-`.github/workflows/drift-gate.yml`:
+```bash
+drift-gate check --base HEAD --explain
+```
+
+`HEAD`와 현재 작업 트리를 비교하므로 커밋 전 확인에 사용할 수 있습니다. 이미 커밋한 변경을 비교하려면 `--base main`처럼 실제 기준 브랜치를 지정합니다.
+
+| 필요한 작업 | 명령 |
+|---|---|
+| HTML 보고서 저장 | `drift-gate report --base HEAD --out-html report.html` |
+| JSON 결과 확인 | `drift-gate check --base HEAD --json` |
+| CLI·정책 문서의 정합성 확인 | `drift-gate docs-check README.md --json` |
+| 기존 평가 사례 전체 실행 | `drift-gate-eval --recursive --compare-baseline` |
+
+## 정책 작성
+
+예를 들어 다음 정책은 API 계약 수준의 변경이 있을 때 API 문서를 확인합니다.
+
+```yaml
+rules:
+  - id: api-doc-sync
+    when:
+      any_changed: ["src/routes/**"]
+      min_change_intensity: route-contract-change
+    require:
+      groups:
+        - name: API 문서
+          any_changed: ["docs/api/**"]
+          content: api-routes
+    severity: blocker
+```
+
+`content`는 문서를 어떻게 확인할지 정합니다.
+
+| 값 | 용도 |
+|---|---|
+| `paths` | 지정한 문서 파일이 함께 수정됐는지만 확인 |
+| `api-routes` | 문서 diff에서 인식 가능한 HTTP 메서드·경로 변경 확인 |
+| `env-keys` | 명시한 설정 예제 파일에서 새 환경변수 키 확인 |
+| `auto` — 기본값 | 인식 가능한 API 변경·문서 경로에는 내용 검사, 그 외에는 경로 검사 |
+
+`api-routes`도 앞 단계에서 규칙이 발동한 변경만 검사합니다. HEAD·OPTIONS 한 줄 라우트와 두 열 Markdown 표는 [회귀 사례](docs/v1-ver2-contract-fix-results-2026-09-23.md)에서 확인했습니다. 지원하지 않는 문법까지 탐지한다는 뜻은 아닙니다. 기존 동작을 유지하려면 `paths`를 명시할 수 있지만, 이 경우 무관한 문서 수정도 조건을 충족할 수 있습니다.
+
+환경변수 정책과 승인 예외 설정은 [내용 검증 안내](docs/content-verification.md)를 참고하세요.
+
+## GitHub Actions 연결
+
+검사할 저장소에 정책 파일을 커밋한 뒤 `.github/workflows/drift-gate.yml`을 추가합니다.
 
 ```yaml
 name: Drift Gate
-
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-
 permissions:
   contents: read
   pull-requests: write
-
 jobs:
   drift-gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: cres17/pr-convention-checker@v1
-```
-
-<details>
-<summary><strong>Optional: enrich checklists with Claude</strong></summary>
-
-Add an Anthropic API key to improve checklist wording. The deterministic gate
-decision stays the same:
-
-```yaml
-      - uses: cres17/pr-convention-checker@v1
+      - uses: actions/setup-python@v4
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          python-version: "3.11"
+      - uses: cres17/pr-convention-checker@ver2
 ```
+
+기본 설정은 PR 댓글과 보고서 파일을 남기고, 정책 결과가 `fail`이면 작업을 실패 처리합니다. `ver2`는 변경될 수 있는 개발 브랜치입니다. 검증을 마친 버전을 계속 사용하려면 해당 커밋 SHA를 지정하세요.
+
+<details>
+<summary>주요 설정과 선택 기능</summary>
+
+| 입력 | 기본값 | 설명 |
+|---|---|---|
+| `policy_file` | `.drift-gate.yml` | 정책 파일 경로 |
+| `post_comment` | `true` | PR 댓글 게시 여부 |
+| `fail_on_blocker` | `true` | 정책 결과가 실패일 때 작업 실패 처리 |
+| `upload_report_artifact` | `true` | 생성한 보고서를 Actions 실행 결과에 보관 |
+| `anthropic_api_key` | 없음 | Claude 체크리스트 보완 사용 |
+
+Claude 연결은 필수가 아닙니다. API 키를 설정하지 않아도 정책 검사와 보고서 생성은 동작합니다. 전체 입력·출력은 [action.yml](action.yml), MCP·플러그인 구성은 [플러그인 메타데이터](.claude-plugin/plugin.json)를 참고하세요.
 
 </details>
 
+## 버전별 변경
+
+아래 표의 기준은 **기존 `main`의 `bffc655` → `ver2`**입니다. 실제 [`v1` 태그와 `ver2`의 통제 비교](docs/v1-ver2-controlled-comparison-2026-09-23.md)는 별도 문서에서 다룹니다. `v1` 태그는 Claude 중심 PR 규칙 검사기였고, `main`의 `bffc655`는 이미 Python 정책 엔진을 포함합니다. `ver2`는 브랜치명이며, `v2.0.0` 정식 릴리스를 의미하지 않습니다.
+
+| 항목 | 기존 main | ver2에서 업데이트한 내용 |
+|---|---|---|
+| 기본 구성 | Python, YAML, Tree-sitter, CLI·Action·MCP, 보고서 | 기존 구성 유지 |
+| 문법 분석 | Tree-sitter와 휴리스틱 사용 | 파서 입력·노드 API 호환성 수정, 분석 방법·실패 사유 표시 |
+| 변경 수집 | 변경 경로와 patch 기반 분석 | 삭제 코드와 분석 입력 누락 처리 보강 |
+| API 문서 | 문서 파일의 동반 수정 확인 | 인식 가능한 HTTP 메서드·경로 변경 내용까지 대조 |
+| 환경변수 | 설정 예제의 동반 수정 확인 | 새 정적 키가 현재 샘플에 있는지 확인. 샘플이 이미 갖춘 경우도 허용 |
+| 승인 예외 | PR 본문의 승인자 문자열 처리 | CODEOWNERS·리뷰 승인·대상 커밋 등 검증된 근거 확인 |
+| 설치 | Action에서 PyYAML 설치 | Action에서 패키지와 선언된 의존성을 함께 설치 |
+| 검증 | 기존 테스트·합성 벤치마크 | 개선 목표·새 반례 비교 자료 추가, Windows 테스트 출력 인코딩 수정 |
+| 로컬 사용 화면 | CLI·HTML 보고서 | PySide6 · Qt WebEngine · React · TypeScript · tool-ui 데스크톱 앱에서 저장소 선택, 규칙별 근거 확인, 보고서 저장 |
+| 프로젝트 현황 | 기능 목록과 전체 진척 화면 없음 | 문서를 현재 목표·향후 계획·과거 결과·참고로 구분. 현재 목표의 코드 근거·수동 검증 현황과 카드 필터 제공 |
+| 구독 LLM 검토 | 별도 API 키로 Claude 설명 보완 | 공식 Codex·Claude Code 구독 로그인으로 추가 판정, 전송 미리보기와 중지 |
+
 <details>
-<summary><strong>Action configuration</strong></summary>
+<summary>실제로 바뀐 의존성 버전 조건</summary>
 
-| Input | Default | Purpose |
-| :--- | :--- | :--- |
-| `policy_file` | `.drift-gate.yml` | Path to your team's policy |
-| `github_token` | `${{ github.token }}` | Token for posting PR comments |
-| `post_comment` | `true` | Publish the result as a PR comment |
-| `fail_on_blocker` | `true` | Fail the workflow when the configured gate returns `fail` |
-| `upload_report_artifact` | `true` | Upload generated reports as a workflow artifact |
-| `anthropic_api_key` | Empty | Enable optional Claude checklist enrichment |
+| 패키지 | 기존 main | ver2 |
+|---|---|---|
+| Python | `>=3.10` | 동일 |
+| PyYAML | `>=6.0` | `>=6.0,<7` |
+| tree-sitter | 직접 버전 조건 없음 | `>=0.26,<0.27` 직접 명시 |
+| tree-sitter-language-pack | `>=1.8.1` | `==1.20.0` |
+| pytest — 개발용 | `>=7.0` | 동일 |
 
-See [action.yml](action.yml) for all inputs and outputs, including the model
-setting and generated report paths.
+Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니다. 기존 `v1`·`v1.0.0` 태그와 개발 브랜치 `ver2`는 서로 다른 Git 참조입니다.
 
 </details>
 
-## Policy Example
+문자열 속 가짜 라우트, HEAD 라우트, 두 열 Markdown 표의 알려진 세 오류는 [제품 코드 수정과 재검증](docs/v1-ver2-contract-fix-results-2026-09-23.md)을 마쳤습니다. 남은 반례와 실제 PR 평가는 계속 보완할 항목입니다.
 
-This policy requires **API docs and release notes** whenever a route or OpenAPI
-file changes. Save it as `.drift-gate.yml`:
+## 검증 결과
 
-```yaml
-rules:
-  - id: api-contract-sync
-    when:
-      any_changed:
-        - "src/routes/**"
-        - "openapi/**"
-    require:
-      groups:
-        - name: "API docs"
-          any_changed:
-            - "docs/api/**"
-            - "docs/spec.md"
-        - name: "Release notes"
-          all_changed:
-            - "CHANGELOG.md"
-    severity: blocker
-    message: "API surface changed without synced contract docs"
+**2026-10-02 초안 관리 보완:** 삭제 시 수정 버전을 필수로 확인하고, 실행 중 사본 보호·선택 정리·저장소별 잠금·상한 초과 시 초안 내보내기 후 최신 기준 전환을 추가했습니다. Python **752개**·화면 **106개**가 통과했으며 실제 Mac Qt 화면에서 복구·선택 정리·내보내기 흐름을 확인했습니다. [검토와 검증 범위](docs/review/draft-management-2026-10-02.md)
 
-gate:
-  fail_on_blocker: true
-  fail_on_major_count: 2
+**2026-10-02 편집 안전성 보완:** 충돌 저장을 버전 검사와 앱 간 잠금으로 막고, 저장소 전환 후 완료 응답·초안 보존·사용자 선택에 따른 합치기를 보완했습니다. Python **742개**·화면 **100개**가 통과했고 실제 Qt 화면에서 충돌 선택과 두 편집의 저장 보존을 확인했습니다. 고정 합성 평가도 통제 **12/12**, 지원 **21/24**·경계 **1/8**로 유지됐습니다. 실제 PR 정확도 향상을 주장하지 않습니다. [최종 검토와 검증 범위](docs/review/editor-concurrency-2026-10-02.md)
 
-ignore_paths:
-  - "src/internal/**"
-```
+**2026-10-01 데스크톱 1.0.2 미리보기:** 재시작 후 초안 복구, 재추출 근거 보존, 요약 카드 분리, 범위·응답 처리와 화면 구조를 보완했습니다. Python **693개**·화면 **77개**, 전체 Ruff `F` 검사가 통과했습니다. 세 플랫폼 릴리스 빌드에서 앱 실행·설치 검증을 마치고 네 설치 파일의 크기·해시를 대조했습니다. [초안 복구와 릴리스 검증](docs/review/progress-draft-recovery-2026-10-01.md)
 
-> [!IMPORTANT]
-> Keep required docs paths such as `docs/**` and `CHANGELOG.md` out of
-> `ignore_paths`. Ignored paths are excluded from both trigger and requirement
-> checks.
+**2026-10-01 데스크톱 1.0.1 검증:** Python **668개**, 화면 **27개**가 통과했습니다. 새 화면 흐름 6개와 패키지 평가 6개는 각각 같은 입력에서 **0/6 → 6/6**으로 개선됐습니다. 기존 12개 계약 변경은 **12/12**, 32개 반례는 지원 **21/24**·경계 **1/8**로 유지됐습니다. 세 플랫폼의 앱 빌드·실행 시작, DMG 마운트와 Windows 설치·실행 시작·제거도 확인했습니다. [구조 보완과 검증 보고서](docs/review/release-readiness-2026-10-01.md) · [다음 작업 인계](docs/handoff-2026-10-01.md)
 
-<details>
-<summary><strong>Rule field reference</strong></summary>
 
-| Field | Meaning |
+**기존 테스트 통과와 새 사례에 대한 탐지 성능을 나눠 확인했습니다.** 기존 커밋과 개선본을 같은 환경·입력으로 실행했습니다. 아래 수치는 각각의 평가셋에만 해당하며, 서로 합산하지 않습니다.
+
+**2026-09-29 공개본 재검증:** `5d6fb01`을 별도로 추출해 지원 범위 **21/24**, 경계 **1/8**, 전체 테스트 **542개 통과**를 다시 확인했습니다. [시점별 비교와 남은 실패 10개](docs/published-recheck-2026-09-29.md)를 함께 공개합니다. 알려진 사례를 수정한 뒤의 회귀 결과이며 새로운 독립 평가가 아닙니다.
+
+| 검증 항목 | 개선 전 | ver2 개선본 | 읽는 방법 |
+|---|---:|---:|---|
+| 기존 합성 사례 | 22/22 | 22/22 | 기존 기대 동작 유지 |
+| 개발 목표 사례 | 4/8 | 8/8 | 구현에 사용한 인수 기준 충족 |
+| 별도 환경변수 사례 | 5/8 | 8/8 | 개발 중 만든 정적 키 검사 사례 |
+| **새 반례: 지원 범위** | **10/24** | **21/24** | 알려진 반례를 수정한 뒤에도 3개 불일치 |
+| 정상 변경을 잘못 차단 — 새 반례 | 5/12 | 2/12 | 오탐 3건 감소 |
+| 누락을 놓침 — 새 반례 | 9/12 | 1/12 | 미탐 8건 감소 |
+| **새 반례: 확장·형식 경계** | **2/8** | **1/8** | 여러 줄 라우트·OpenAPI 등 7개 불일치 |
+| 전체 pytest | 470/471 | 569/569 | 구독 CLI·데스크톱·프로젝트 현황 검사 포함 |
+| 파서 직접 실행 | 0/3 | 3/3 | Python·TypeScript·Go 호출 확인 |
+
+새 반례는 처음에 제품 코드를 바꾸지 않은 채 두 버전에 적용했고, 이후 알려진 오류 세 가지를 수정해 같은 입력에 재검증했습니다. 작성자가 만든 합성 데이터이므로 독립·블라인드 검증은 아닙니다. **8/8이나 21/24를 실제 PR의 정확도로 해석할 수 없습니다.**
+
+[기능 커밋 CI (`88da119`)](https://github.com/cres17/pr-convention-checker/actions/runs/36540953593)에서 Ubuntu·Windows·macOS × Python 3.10·3.11·3.12의 9개 조합과 코드 검사·벤치마크가 통과했습니다. [데스크톱 빌드](https://github.com/cres17/pr-convention-checker/actions/runs/36804667492)에서는 React UI 검사 후 Windows·macOS 패키지를 각각 생성·업로드했습니다.
+
+실행 환경과 첫 평가 원본은 [과적합 점검](docs/generalization-audit-2026-09-22.md), 수정 뒤 사례별 판정과 해시는 [재검증 보고서](docs/v1-ver2-contract-fix-results-2026-09-23.md)에 있습니다. 전체 테스트 통과와 실제 GitHub 권한 환경의 정상 동작 여부는 별개의 검증입니다.
+
+## 지원 범위와 한계
+
+- **문자열 오탐의 잔여 사례:** 한 줄 가짜 라우트는 고쳤지만, 환경변수 접근을 설명하는 문자열을 실제 접근으로 보는 반례가 남아 있습니다.
+- **일부 계약 변경 미탐:** HEAD·OPTIONS 한 줄 사례는 고쳤지만, 라우터 prefix, 여러 줄 라우트, 요청·응답 스키마 변경을 놓칩니다. 문서에 이전 경로를 다시 추가해도 통과하는 반례가 있습니다.
+- **문서 형식 제약:** 두 열 Markdown 표는 일부 지원하지만 중첩 OpenAPI YAML의 올바른 수정도 차단할 수 있습니다.
+- **설정 검사 제약:** 정적 키 위주이며, 별칭·동적 키를 충분히 다루지 못합니다. 기존 키 사용 코드만 정리했는데 차단되는 반례도 있습니다.
+- **실사용 검증 부족:** 실제 PR 표본 평가, 리뷰 시간 절감, 조직 권한을 사용한 승인 검증은 아직 측정하지 않았습니다.
+
+다음 개선은 이 문제들을 재현하는 테스트를 유지하면서, 전체 파일의 변경 전후 구조 비교와 별도의 실제 PR 평가셋을 추가하는 데 초점을 둡니다. [우선순위와 완료 기준](docs/generalization-audit-2026-09-22.md#다음-개선-순서)을 확인할 수 있습니다.
+
+## 문서 모음
+
+| 목적 | 문서 |
 |---|---|
-| `id` | Rule ID, also used by `drift-ignore` |
-| `when.any_changed` | Paths that trigger the rule |
-| `when.min_change_intensity` | Optional threshold such as `signature-change` or `route-contract-change` |
-| `require.groups[].any_changed` | Group is satisfied when any listed path changed |
-| `require.groups[].all_changed` | Group is satisfied only when every listed path changed |
-| `severity` | `blocker`, `major`, `minor`, or `nit` |
-| `gate.fail_on_blocker` | Fail CI on blocker violations |
-| `gate.fail_on_major_count` | Fail CI when major count reaches this number |
+| 최신 기능·구조·릴리스 검증과 다음 작업 | [문서 안내](docs/README.md) · [작업 인계](docs/handoff-2026-10-01.md) |
+| 실제 `v1` 태그와 `ver2`의 설계·실행 경로를 비교하고 싶을 때 | [통제 실험과 사례별 결과](docs/v1-ver2-controlled-comparison-2026-09-23.md) |
+| 개선 전후 결과를 검토하고 싶을 때 | [세 오류 수정 후 재검증](docs/v1-ver2-contract-fix-results-2026-09-23.md) · [첫 사후 검증](docs/generalization-audit-2026-09-22.md) |
+| 로컬 변경을 화면에서 검사하고 싶을 때 | [데스크톱 앱 사용·빌드 안내](docs/desktop-app.md) |
+| API 키 없이 구독 계정으로 LLM 검토를 받고 싶을 때 | [구독 연결과 실제 응답 기록](docs/subscription-llm-review.md) |
+| 다음 개발 범위를 확인할 때 | [개선 계획과 기준값](docs/development-roadmap.md) |
+| 내용 검사와 예외 승인을 설정할 때 | [내용 검증 안내](docs/content-verification.md) |
+| 탐지 규칙·기존 설정을 이해할 때 | [탐지기 안내](docs/detector-guide.md) · [마이그레이션](docs/migration-guide.md) |
+| 프레임워크별로 적용할 때 | [FastAPI](examples/fastapi/README.md) · [Express](examples/express-api/README.md) · [Next.js](examples/nextjs/README.md) · [Django](examples/django/README.md) · [Prisma](examples/prisma/README.md) |
+| 실행 문제를 해결할 때 | [문제 해결](docs/troubleshooting.md) |
 
-</details>
-
-## Suppressing Intentional Drift
-
-Add this to the PR description:
-
-```text
-drift-ignore: api-contract-sync
-reason: internal-only refactor, no public contract changed
-```
-
-For `blocker` and `major` rules, `reason:` is required. Without it, the ignore
-is rejected and the rule still counts toward the gate.
-
-## Outputs
-
-| Format | Use it for |
-| :--- | :--- |
-| **Markdown** | Readable summaries and PR comments |
-| **JSON** | Automation and structured rule decisions |
-| **HTML** | Visual reports for review; generate locally with `--out-html` |
-
-<details>
-<summary><strong>Example JSON report</strong></summary>
-
-Illustrative passing result:
-
-```json
-{
-  "summary": {"blocker": 0, "major": 0, "minor": 0, "nit": 0, "gate_decision": "pass"},
-  "scan_metrics": {"scanned_files": 3, "evaluated_rules": 1, "runtime_seconds": 0.01},
-  "result": "pass",
-  "change_types": ["api-surface"],
-  "violations": [],
-  "rule_decisions": [],
-  "skipped_rules": [],
-  "rejected_ignores": [],
-  "ignore_audit": [],
-  "temporal_warnings": [],
-  "gate": {"fail_on_blocker": true, "fail_on_major_count": 2}
-}
-```
-
-</details>
-
-## Semantic Detection
-
-Drift Gate combines path rules with patch/semantic signals. Current adapters
-cover Python, TypeScript/JavaScript, Go, Java, Kotlin, and Ruby. When
-`tree-sitter-language-pack` is installed, grammar-backed parsing is used where
-available; conservative patch heuristics remain as fallback.
-
-Learn how signals are evaluated in the [detector guide](docs/detector-guide.md).
-
-## Examples & Guides
-
-Start with an example that matches your stack, then adapt its policy paths to
-your repository.
-
-| Stack | Example |
-| :--- | :--- |
-| Python APIs | [FastAPI](examples/fastapi/README.md) · [Django](examples/django/README.md) |
-| JavaScript / TypeScript | [Express](examples/express-api/README.md) · [Next.js](examples/nextjs/README.md) |
-| Database migrations | [Prisma](examples/prisma/README.md) |
-| Deployment workflows | [GitHub Actions](examples/github-actions-deploy/README.md) |
-
-**Further reading:** [Detector guide](docs/detector-guide.md) ·
-[Migration guide](docs/migration-guide.md) ·
-[Troubleshooting](docs/troubleshooting.md)
-
-## Development
-
-### Repository workflows
-
-| Workflow | Runs on | Checks and artifacts |
-| :--- | :--- | :--- |
-| [CI](.github/workflows/ci.yml) | Pushes and PRs to `main` / `develop`; published releases | Tests on Ubuntu, Windows, and macOS with Python 3.10–3.12; critical Ruff checks; baseline and multi-engine benchmarks |
-| [Benchmark](.github/workflows/benchmark.yml) | Pushes to `main`; published releases | Tests, baseline comparison, and multi-engine evaluation; uploads benchmark reports and attaches reports to releases |
-
-The status badges at the top link directly to the corresponding workflow runs.
-
-### Local checks
+## 개발과 테스트
 
 ```bash
-py -m pip install -e ".[dev]"
-py -m pytest -q
-py main.py docs-check README.md --json
-py main.py eval drift_gate/tests/fixtures --recursive --compare-baseline --engines semantic-aware --max-fp 0 --max-fn 0 --min-f1 1.0
+python -m pip install -e '.[dev]'
+python -m pytest -q
+drift-gate docs-check README.md --json
+drift-gate-eval --recursive --compare-baseline
 ```
 
-The evaluation command checks the fixture suite against explicit false-positive,
-false-negative, and F1 thresholds. Use `py main.py demo` to generate a browsable
-`benchmark.html` report.
+| 저장소 워크플로 | 실행 조건 | 검사 내용 |
+|---|---|---|
+| [CI](.github/workflows/ci.yml) | `main`·`develop`·`ver2` push, `main`·`develop` 대상 PR, 릴리스 게시 | 9개 OS·Python 조합, 필수 Ruff 검사, 기존 사례·다중 엔진 벤치마크 |
+| [Benchmark](.github/workflows/benchmark.yml) | `main` push, 릴리스 게시 | 테스트·벤치마크, 보고서 업로드 |
 
-## License
+`ver2`의 벤치마크는 **CI 안의 `benchmark` 작업**에서 실행됩니다. 별도 `Benchmark` 워크플로는 `ver2` push에 실행되지 않아 상단 상태 배지는 해당 브랜치의 CI를 표시합니다. CI의 mypy 검사는 참고용이며 실패해도 작업을 중단하지 않습니다.
 
-Released under the [MIT License](LICENSE).
+측정 자료는 `docs/assessment/`에 보존합니다. 새 측정은 기존 결과를 덮어쓰지 않고 다른 경로에 저장합니다. CI 벤치마크 통과는 저장소의 고정 사례 통과를 뜻하며, 별도 사후 평가에서 확인된 한계는 [검증 결과](#검증-결과)에 함께 공개합니다.
+
+---
+
+Claude를 활용해 개발한 개인 프로젝트입니다. 코드와 재현 가능한 검증 자료를 공개하며, 실제 PR 정확도와 리뷰 시간 절감 효과는 후속 평가 대상으로 남겨 두었습니다.
+
+[MIT License](LICENSE)
+
+새 화면의 컴포넌트 사용·검증 범위는 [UI 개편 기록](docs/design/tool-ui-integration-2026-09-29.md)에 정리했습니다.

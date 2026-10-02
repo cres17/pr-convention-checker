@@ -1,0 +1,58 @@
+{
+  "synthetic": true,
+  "provider": "claude",
+  "cli_version": "2.1.283 (Claude Code)",
+  "case": "code GET /members versus docs GET /customers",
+  "expected_llm_verdict": "fail",
+  "policy": "rules:\n  - id: api-doc-sync\n    when:\n      any_changed: [src/routes/**]\n    require:\n      groups:\n        - name: API docs\n          any_changed: [docs/api.md]\n          content: api-routes\n    severity: blocker\n",
+  "files": [
+    {
+      "path": "src/routes/users.py",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "@@ -1 +1 @@\n-@app.get('/users')\n+@app.get('/members')\n",
+      "semantic_signals": [],
+      "semantic_evidence": [],
+      "analysis_method": "not-analyzed",
+      "analysis_reason": "",
+      "documented_env_keys": null
+    },
+    {
+      "path": "docs/api.md",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "@@ -1 +1 @@\n-GET /users\n+GET /customers\n",
+      "semantic_signals": [],
+      "semantic_evidence": [],
+      "analysis_method": "not-analyzed",
+      "analysis_reason": "",
+      "documented_env_keys": null
+    }
+  ],
+  "rule_gate_before": "fail",
+  "rule_gate_after": "fail",
+  "gate_unchanged": true,
+  "elapsed_seconds": 12.95,
+  "review": {
+    "provider": "claude",
+    "verdict": "fail",
+    "summary": "src/routes/users.py에서 라우트가 '/users'에서 '/members'로 바뀌었습니다. 그런데 docs/api.md는 'GET /users'를 'GET /customers'로 고쳤습니다. 문서 파일은 수정됐지만 문서에 적힌 경로가 실제 코드 경로와 다르므로 API 계약이 맞지 않습니다. 규칙 판정 fail은 결과로는 맞습니다. 다만 사유인 'required groups are missing'은 실제 diff와 맞지 않습니다. docs/api.md가 변경 목록에 있으므로 any_changed 조건은 충족되고, 실패 원인은 content(api-routes) 불일치로 보는 것이 맞습니다.",
+    "findings": [
+      {
+        "rule_id": "api-doc-sync",
+        "reason": "코드는 GET /members를 노출하는데 문서는 GET /customers를 적고 있습니다. 문서에 없는 경로(/members)가 생겼고, 코드에 없는 경로(/customers)가 문서에 들어가 계약이 서로 다릅니다.",
+        "suggestion": "docs/api.md의 'GET /customers'를 'GET /members'로 고치세요. 경로를 /customers로 바꾸려던 의도였다면 코드 쪽을 '/customers'로 맞추세요. 기존 /users 클라이언트에 대한 호환성이나 폐기 안내도 함께 문서화하세요."
+      },
+      {
+        "rule_id": "api-doc-sync",
+        "reason": "규칙 판정 사유 'required groups are missing'은 오진단일 수 있습니다. docs/api.md가 실제로 수정됐으므로 그룹 누락이 아니라 내용 검사(api-routes) 불일치가 실패 원인입니다.",
+        "suggestion": "검사기가 파일 누락과 내용 불일치를 구분해 보고하도록 사유 메시지를 개선하세요. 예: 'documented route /customers does not match code route /members'."
+      }
+    ],
+    "limitations": [
+      "patch가 한 줄 hunk뿐이라 두 파일의 나머지 내용은 확인할 수 없습니다. 다른 위치에 /members 문서나 /users 라우트가 남아 있는지는 알 수 없습니다.",
+      "'api-routes' 내용 검사기의 정확한 매칭 방식은 제공되지 않았습니다.",
+      "/users 경로 제거가 의도된 호환성 파괴인지는 자료만으로 판단할 수 없습니다."
+    ]
+  }
+}
