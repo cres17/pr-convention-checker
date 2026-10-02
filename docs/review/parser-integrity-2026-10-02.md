@@ -32,4 +32,35 @@ PyInstaller와 macOS 서명이 원본 파일을 바꾸므로 `source_sha256`과 
 
 ## 검증 상태
 
-로컬 회귀 검사와 세 플랫폼 설치본 검증의 최종 결과는 후속 CI 확인 뒤 이 문서에 기록합니다. 32개 반례·12개 통제 사례의 판정 정확도 재평가 및 실제 사용자 PC에서의 설치/사용은 이번 변경으로 검증했다고 주장하지 않습니다. 공개 미리보기 릴리스는 갱신하지 않았습니다.
+32개 반례·12개 통제 사례의 판정 정확도 재평가 및 실제 사용자 PC에서의 설치/사용은 이번 변경으로 검증했다고 주장하지 않습니다. 공개 미리보기 릴리스는 갱신하지 않았습니다.
+
+로컬 DMG를 실제 마운트한 읽기 전용 경로에서도 동일한 오프라인 검사가 통과했습니다(`local-dmg`).
+
+로컬 최종 회귀 검사는 Python **734개**, React **82개**가 통과했고 타입 검사·UI 빌드·Ruff(E9,F)도 통과했습니다. 파서 초기화에 체크섬 오류를 주입한 소스 Qt 화면은 문법 분석 미적용 파일 8개와 파일별 사유를 표시했습니다(`local-fallback`). 이는 설치본 변조 실험이 아닌 실패 주입 시험입니다. 서명한 macOS 앱은 빈 캐시·OS 네트워크 차단에서 8개 언어 분석과 정책 판정·UI 렌더링을 통과했습니다(`local-package`).
+
+## CI에서 발견한 추가 회귀와 수정
+
+첫 전체 CI의 Windows 실패는 새 테스트 한 곳이 기본 cp1252로 UTF-8 초안을 읽은 문제였으며 `b214c24`에서 인코딩을 명시해 일반 CI가 통과했습니다. 운영 파일 읽기/쓰기에는 이미 UTF-8이 지정돼 있었습니다.
+
+macOS는 첫 오프라인 분석 후 QtWebEngineCore.framework/Versions/Resources라는 빈 디렉터리가 생겨 엄격한 중첩 서명 검사가 실패했습니다. 빈 디렉터리를 없애면 검사가 통과하고, 다음 실행이 재생성하는 것을 로컬에서도 재현했습니다. 파서·Qt 네이티브 파일 해시는 변경되지 않았습니다. 리소스·맞춤법 사전·보조 프로세스 경로 지정과 리소스 심볼릭 링크는 해결하지 못했습니다. [Qt 배포 문서](https://doc.qt.io/QT-6/qtwebengine-deploying.html)는 경로 설정의 공식 참고 자료입니다.
+
+`a4f4703`에서 서명된 프레임워크의 Versions 부모 디렉터리를 읽기 전용으로 설정했습니다. 실제 버전 안의 리소스와 실행 파일은 그대로 읽을 수 있고 앱 데이터는 별도 사용자 폴더를 씁니다. 비어 있는 잘못된 Resources 폴더만 제거하며, 내용이 있으면 중단합니다. 첫 실행 전후 모두 codesign --verify --deep --strict가 통과하고 화면·8개 언어 오프라인 분석도 통과했습니다. CI도 실제 첫 검사 직후 서명 검사를 반복합니다. 기존 로컬 생성물을 다시 빌드할 때에는 해당 생성물의 폴더 쓰기 권한을 되돌려야 하며 아래 명령은 생성된 dist에만 적용합니다.
+
+```bash
+chmod -R u+w dist/DriftGate.app
+```
+
+## 최종 원격 검증
+
+검증 소스 커밋은 **a4f470343af287851c14130543db190a1fadb849**입니다.
+
+| 검사 | 결과 | 근거 |
+|---|---|---|
+| 일반 CI(push) | 성공; 9개 OS/Python 조합 및 린트·기존 벤치마크 | [36946749718](https://github.com/cres17/pr-convention-checker/actions/runs/36946749718) |
+| 일반 CI(PR) | 성공 | [36946754131](https://github.com/cres17/pr-convention-checker/actions/runs/36946754131) |
+| 데스크톱 빌드(3 플랫폼) | 성공, attempt 1 | [36946749706](https://github.com/cres17/pr-convention-checker/actions/runs/36946749706) |
+| 실제 앱 및 배포 파일의 첫 오프라인 검사 | 6/6 성공 | `docs/assessment/parser-integrity-2026-10-02/ci/summary.json` 및 각 원본 JSON |
+
+일반 CI에는 Qt가 없어 Linux·macOS는 701 passed / 3 skipped, Windows는 700 passed / 4 skipped입니다. Windows의 추가 1개는 Unix 폴더 쓰기 권한 시험입니다. Qt가 설치된 로컬 전체 시험은 734개이며 React는 82개입니다. 데스크톱 선택 검사는 macOS 두 환경에서 192 passed, Windows에서 191 passed / 1 skipped이며 React 82개는 세 곳 모두 통과했습니다.
+
+아티팩트의 JSON 6개를 직접 내려받아 검증했습니다. 모두 실제 frozen 앱, 화면·QWebChannel 연결, 8개 파일의 grammar+heuristic, 문서 누락 warn 판정, 숫자 IP 두 곳의 연결 실패, 빈 파서 캐시 유지가 맞았습니다. 각 파서 원본 해시도 저장소 고정값과 같았습니다. macOS 앱은 첫 실행 뒤에도 엄격한 중첩 서명이 유지됐고 읽기 전용 DMG에서도 같은 검사가 통과했습니다. Windows는 설치 후 검사와 제거까지 통과했습니다. 설치 파일을 독립적으로 사용자 PC에 설치한 시험은 아닙니다.

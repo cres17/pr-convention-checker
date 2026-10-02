@@ -1,0 +1,14 @@
+[
+    {
+        "Name":  "DriftGate-package-check-18c607d8e34d4afe8766040298d58c03-0",
+        "Enabled":  1,
+        "Action":  4,
+        "Direction":  2
+    },
+    {
+        "Name":  "DriftGate-package-check-18c607d8e34d4afe8766040298d58c03-1",
+        "Enabled":  1,
+        "Action":  4,
+        "Direction":  2
+    }
+]

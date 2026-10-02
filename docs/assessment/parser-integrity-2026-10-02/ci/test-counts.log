@@ -1,0 +1,6 @@
+package (windows-latest, Windows)	Build and test React UI	2026-10-02T00:36:23.8687301Z ^[[2m      Tests ^[[22m ^[[1m^[[32m82 passed^[[39m^[[22m^[[90m (82)^[[39m
+package (windows-latest, Windows)	Check desktop behavior	2026-10-02T00:38:22.6490690Z 191 passed, 1 skipped in 62.04s (0:01:02)
+package (macos-latest, macOS-arm64)	Build and test React UI	2026-10-02T00:36:05.1404200Z ^[[2m      Tests ^[[22m ^[[1m^[[32m82 passed^[[39m^[[22m^[[90m (82)^[[39m
+package (macos-latest, macOS-arm64)	Check desktop behavior	2026-10-02T00:37:00.0939580Z 192 passed in 20.54s
+package (macos-15-intel, macOS-intel)	Build and test React UI	2026-10-02T00:36:55.1364600Z ^[[2m      Tests ^[[22m ^[[1m^[[32m82 passed^[[39m^[[22m^[[90m (82)^[[39m
+package (macos-15-intel, macOS-intel)	Check desktop behavior	2026-10-02T00:39:25.5483540Z 192 passed in 72.08s (0:01:12)

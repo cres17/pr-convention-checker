@@ -1,0 +1,182 @@
+[
+  {
+    "platform": "darwin-arm64",
+    "check": "offline-dmg",
+    "frozen": true,
+    "bridge_ready": true,
+    "methods": [
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic"
+    ],
+    "fresh_cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      }
+    ],
+    "gate": "warn"
+  },
+  {
+    "platform": "darwin-arm64",
+    "check": "offline-package",
+    "frozen": true,
+    "bridge_ready": true,
+    "methods": [
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic"
+    ],
+    "fresh_cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      }
+    ],
+    "gate": "warn"
+  },
+  {
+    "platform": "darwin-x86_64",
+    "check": "offline-dmg",
+    "frozen": true,
+    "bridge_ready": true,
+    "methods": [
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic"
+    ],
+    "fresh_cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      }
+    ],
+    "gate": "warn"
+  },
+  {
+    "platform": "darwin-x86_64",
+    "check": "offline-package",
+    "frozen": true,
+    "bridge_ready": true,
+    "methods": [
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic"
+    ],
+    "fresh_cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[Errno 1] Operation not permitted",
+        "errno": 1
+      }
+    ],
+    "gate": "warn"
+  },
+  {
+    "platform": "win32-x86_64",
+    "check": "offline-package",
+    "frozen": true,
+    "bridge_ready": true,
+    "methods": [
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic"
+    ],
+    "fresh_cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions",
+        "errno": 13
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions",
+        "errno": 13
+      }
+    ],
+    "gate": "warn"
+  },
+  {
+    "platform": "win32-x86_64",
+    "check": "offline-installer",
+    "frozen": true,
+    "bridge_ready": true,
+    "methods": [
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic",
+      "grammar+heuristic"
+    ],
+    "fresh_cache_files": [],
+    "network_probes": [
+      {
+        "host": "1.1.1.1",
+        "error": "[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions",
+        "errno": 13
+      },
+      {
+        "host": "140.82.112.3",
+        "error": "[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions",
+        "errno": 13
+      }
+    ],
+    "gate": "warn"
+  }
+]
