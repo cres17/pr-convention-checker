@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from drift_gate.desktop.progress_drafts import cache_draft, discard_draft, draft_file, recovery_copy
+from drift_gate.desktop.progress_drafts import cache_draft, discard_draft, draft_file, recovery_copy, prune_abandoned_drafts
 from drift_gate.desktop.progress_service import extract_requirements, save_baseline
 from drift_gate.tests.test_progress_service import project
 
@@ -61,3 +61,38 @@ def test_invalid_or_oversized_write_keeps_the_last_valid_copy(tmp_path):
     with pytest.raises(ValueError, match='2MB'):
         cache_draft(root, data, draft)
     assert draft_file(root, data).read_bytes() == original
+
+
+@pytest.mark.parametrize('line', [1.5, None, -3, 0])
+def test_unfinished_numeric_input_survives_recovery_but_cannot_confirm_implementation(tmp_path, line):
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    draft = extract_requirements(root, ['README.md'])
+    draft['requirements'][0].update(implementation_status='implemented', evidence={'path': 'src/login.py', 'line': line, 'note': ''})
+    cache_draft(root, data, draft)
+    assert recovery_copy(root, data, None)['recovery']['requirements'][0]['evidence']['line'] == line
+    with pytest.raises(ValueError):
+        save_baseline(root, data, draft)
+
+
+def test_pruning_preserves_active_and_recent_drafts(tmp_path):
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    draft = extract_requirements(root, ['README.md'])
+    cache_draft(root, data, draft)
+    current = draft_file(root, data)
+    payload = json.loads(current.read_text())
+    payload['updated_at'] = '2020-01-01T00:00:00+00:00'
+    current.write_text(json.dumps(payload))
+    abandoned = tmp_path / 'deleted-repository'
+    old = draft_file(abandoned, data)
+    payload['repository'] = str(abandoned.resolve())
+    old.write_text(json.dumps(payload))
+    fresh = draft_file(tmp_path / 'recent-repository', data)
+    payload['repository'] = str((tmp_path / 'recent-repository').resolve())
+    from datetime import datetime, timezone
+    payload['updated_at'] = datetime.now(timezone.utc).isoformat()
+    fresh.write_text(json.dumps(payload))
+    prune_abandoned_drafts(data)
+    assert not old.exists()
+    assert current.exists() and fresh.exists()

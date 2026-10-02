@@ -26,7 +26,7 @@ const baseline = z.object({
 }).passthrough();
 // Draft inputs can be incomplete; e.g. a negative evidence line must survive recovery.
 const recoveryBaseline = baseline.extend({ requirements: z.array(item.extend({
-    evidence: z.object({ path: text, line: z.number().int(), note: text,
+    evidence: z.object({ path: text, line: z.number().finite().nullable(), note: text,
         excerpt: text.optional(), sha256: text.optional() }).nullable(),
 })).max(120) });
 const report = z.object({
@@ -59,7 +59,9 @@ const violation = z.object({ rule_id: text, severity: text, confidence: text, me
     missing_docs_explanation: text, changed_contract_summary: text, docs_update_draft: text, false_positive_note: text }).passthrough();
 const scan = z.object({ repository: text, base: text, at: text, changed_file_count: nonnegative, policy: text,
     files: z.array(z.object({ path: text, patch: text, status: text })),
-    result: z.object({ result: text, rule_decisions: z.array(decision), violations: z.array(violation).optional() }).passthrough() });
+    result: z.object({ result: text, rule_decisions: z.array(decision), violations: z.array(violation).optional(),
+        scan_metrics: z.object({ analysis_notes: z.array(z.object({ path: text, method: text, reason: text.optional() }).passthrough()).optional() }).passthrough().optional(),
+    }).passthrough() });
 const schema = z.discriminatedUnion("type", [
     z.object({ type: z.literal("progressDocs"), ...progressMeta, documents: z.array(document), omitted: nonnegative, repository: text.optional(), baseline: baseline.nullable().optional(),
         recovery: recoveryBaseline.nullable().optional().catch(null), recovery_warning: text.optional() }),
@@ -68,7 +70,7 @@ const schema = z.discriminatedUnion("type", [
     z.object({ type: z.literal("progressDraftError"), ...progressMeta, message: text }),
     z.object({ type: z.literal("progressPreview"), ...progressMeta, repository: text.optional(), truncated: z.boolean().optional(),
         documents: z.record(text, text), document_kinds: kinds.optional(), requirements: z.array(item).max(120) }),
-    z.object({ type: z.literal("progressSaved"), ...progressMeta, baseline }),
+    z.object({ type: z.literal("progressSaved"), ...progressMeta, baseline, warning: text.optional() }),
     z.object({ type: z.literal("progressReport"), ...progressMeta, report }),
     z.object({ type: z.literal("progressHistory"), ...progressMeta, ...history }),
     z.object({ type: z.literal("progressTests"), ...progressMeta, format: text, file: text, modified: text,

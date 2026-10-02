@@ -31,6 +31,7 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 
 [tool.setuptools.package-data]
+"drift_gate.adapters" = ["parser_hashes.json"]
 "drift_gate.desktop" = ["web/**/*", "web/*"]
 
 "drift_gate.tests" = ["fixtures/*.json", "fixtures/**/*.json"]

@@ -90,6 +90,7 @@ class DesktopBridge(QObject):
         self.scan_worker = None
         self.review_worker = None
         self.progress_dirty = False
+        self.progress_recovery_ready = False
         self.history = []  # Session-only: no hidden persistence of source diffs.
         # One thread keeps progress results in request order (save -> report).
         self.progress_pool = QThreadPool(self)
@@ -135,11 +136,19 @@ class DesktopBridge(QObject):
 
         def work():
             baseline = save_baseline(path, directory, json.loads(payload_json))
-            discard_draft(repository_root(path), directory)
-            report = inspect_progress(path, directory)
-            return [('progressSaved', {'baseline': baseline}),
-                    ('progressReport', {'report': report}),
-                    ('progressHistory', record_snapshot(path, directory, report))]
+            warning = ''
+            try:
+                discard_draft(repository_root(path), directory)
+            except OSError:
+                warning = '기준과 근거는 저장했습니다. 이전 초안 파일을 지우지 못했습니다. 다음 실행에서 오래된 초안이 보이면 삭제해 주세요.'
+            events = [('progressSaved', {'baseline': baseline, 'warning': warning})]
+            try:
+                report = inspect_progress(path, directory)
+                events += [('progressReport', {'report': report}),
+                           ('progressHistory', record_snapshot(path, directory, report))]
+            except (OSError, ValueError):
+                events[0][1]['warning'] += ' 기준과 근거는 저장했지만 현황 재검사 또는 이력 기록에 실패했습니다. 다시 검사해 주세요.'
+            return events
         self._run_progress(path, work, request_id=request_id)
 
     @Slot(str, str, str)
@@ -205,6 +214,10 @@ class DesktopBridge(QObject):
     @Slot(bool)
     def setProgressDirty(self, dirty):
         self.progress_dirty = dirty
+
+    @Slot(bool)
+    def setProgressRecoveryReady(self, ready):
+        self.progress_recovery_ready = ready
 
     @Slot(str)
     def forgetTestResults(self, path):
@@ -433,9 +446,12 @@ class WebDesktopWindow(QMainWindow):
 
     def closeEvent(self, event):
         if self.bridge.progress_dirty:
+            recovery = ('보관 완료된 초안은 다음 실행에서 복구할 수 있습니다.'
+                        if self.bridge.progress_recovery_ready else
+                        '최신 초안의 보관 완료를 확인하지 못했습니다. 앱을 닫으면 최근 편집을 잃을 수 있습니다. 창을 닫지 말고 보관 완료를 기다리거나 기준과 근거를 저장해 주세요.')
             answer = QMessageBox.question(
                 self, '저장 전 변경 사항',
-                '현황에 확정하지 않은 변경이 있습니다. 앱을 닫을까요? 자동 보관된 초안은 다음 실행에서 복구할 수 있습니다.',
+                '현황에 확정하지 않은 변경이 있습니다. 앱을 닫을까요? ' + recovery,
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 QMessageBox.StandardButton.No,
             )
@@ -474,7 +490,7 @@ def main():
     window = WebDesktopWindow()
     if package_check:
         from drift_gate.desktop.package_check import PackageCheck
-        window.package_check = PackageCheck(app, window, sys.argv[2], sys.argv[3])
+        _package_check = PackageCheck(app, window, sys.argv[2], sys.argv[3])
     window.show()
     sys.exit(app.exec())
 

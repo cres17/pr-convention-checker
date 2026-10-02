@@ -11,7 +11,7 @@ export type ProgressEvent = Requested & (
   | { type: "progressDraftError"; message: string }
   | ({ type: "progressPreview"; repository?: string; truncated?: boolean } & Pick<ProgressBaseline, "documents" | "document_kinds" | "requirements">)
   | { type: "progressTestsCancelled" }
-  | { type: "progressSaved"; baseline: ProgressBaseline }
+  | { type: "progressSaved"; baseline: ProgressBaseline; warning?: string }
   | { type: "progressReport"; report: ProgressReport }
   | ({ type: "progressTests" } & TestLinks)
   | ({ type: "progressHistory" } & ProgressHistory)

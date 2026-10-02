@@ -53,10 +53,16 @@ Windows PowerShell에서도 설치 명령은 같으며, Python 실행 명령이 
 로컬에서 빌드할 때는 다음 명령을 사용할 수 있습니다.
 
 ```bash
-python -m pip install -e '.[desktop]' pyinstaller
+python -m pip install -e '.[desktop]' pyinstaller==6.22.3 zstandard==0.25.0
 npm ci --prefix desktop-ui
 npm run build --prefix desktop-ui
-pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack --add-data "drift_gate/desktop/web:drift_gate/desktop/web" drift_gate/desktop/web_app.py
+python packaging/prepare_parsers.py
+pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack --add-data "drift_gate/adapters/parser_hashes.json:drift_gate/adapters" --add-data "drift_gate/desktop/web:drift_gate/desktop/web" --add-data "build/parser-libraries:drift_gate/grammars" drift_gate/desktop/web_app.py
+# macOS에서만: 네이티브 파일의 서명을 먼저 마칩니다.
+# codesign --force --deep --sign - dist/DriftGate.app
+python packaging/seal_parsers.py dist
+# macOS에서만: 외부 번들의 서명을 갱신합니다(네이티브 파일은 다시 서명하지 않습니다).
+# codesign --force --sign - dist/DriftGate.app
 ```
 
 현재 macOS에서는 앱 번들 생성과 실행 시작, 합성 Git 저장소 검사와 diff 표시를 확인했습니다. [설치 파일 빌드 기록](https://github.com/cres17/pr-convention-checker/actions/runs/36558685569)에서는 macOS DMG 생성·마운트와 Windows 설치 EXE 생성·설치·실행 시작·제거 단계가 통과했습니다. Windows의 실행 확인은 CI에서 화면 없이 12초 동안 프로세스가 유지되는지 보는 검사이며, 실제 사용자 PC에서의 전체 기능 검증은 아직 하지 않았습니다. 공식 코드 서명·Apple 공증과 자동 업데이트는 아직 제공하지 않습니다.
@@ -152,3 +158,9 @@ React + tool-ui 화면을 Qt WebEngine 안에 넣었습니다. [개편 내용과
 ### 현황 상태 전이와 Qt 연결 정리
 
 누적 변경 리뷰 후 상태 전이를 `progressState.ts`에 모았고, Qt 명령·응답 연결은 `useProjectProgress.ts`로 캡슐화했다. 응답이 한 번에 들어와도 앞 응답의 근거와 항목을 이어서 사용한다. 테스트 파일 선택을 취소하면 화면의 읽기 잠금이 풀리며 이전 파일 기억은 유지된다. 입력을 바꾼 뒤 과거 테스트 연결을 다시 표시하지 않고, 저장 후 재연결한다. 현재 문서에서 사라진 중복 출처는 갱신하되 참고 출처와 기존 근거는 보존한다. [리뷰·검증 기록](review/progress-structure-review-2026-10-01.md)을 참조한다.
+
+## 2026-10-02 보완
+
+파서 원본의 기대 해시를 macOS arm64·Intel, Windows x64, Linux x64별로 저장소에 고정했습니다. 다운로드한 모든 파일을 비교한 후에만 파서를 불러옵니다. 패키징·서명 후의 해시도 설치본에 기록하고, 첫 문법 분석 전에 파일과 비교합니다. 원본 고정값의 출처와 보안 범위는 [검토 기록](review/parser-integrity-2026-10-02.md)에 남깁니다.
+
+문법 분석을 적용하지 못한 파일은 검사 화면의 안내에서 파일별로 확인할 수 있습니다. 자동 보관은 마지막 입력 후 0.65초에 실행하며 저장소를 바꾸면 대기 중인 초안을 보관합니다. 소수·빈 줄 번호도 편집 초안으로 복구하지만 확정 저장에서는 양의 정수 줄 번호를 요구합니다. 저장 후 초안 삭제에 실패해도 저장 완료와 경고를 함께 보여 줍니다. 존재하는 저장소의 초안은 보존하고, 저장소 경로가 없어진 지 오래된 초안만 보관 시각 기준 90일 후 정리합니다. 종료 안내는 최신 초안의 보관 완료 여부를 구분합니다.

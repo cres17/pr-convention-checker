@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { Bridge, ProgressBaseline, ProgressItem } from "../../bridge";
 import type { ProgressEvent, QueuedProgressEvent } from "../../events";
 import ProjectProgress from "./ProjectProgress";
 
-afterEach(cleanup);
+afterEach(() => { cleanup(); vi.useRealTimers(); });
 const makeItem = (id: string, included = true): ProgressItem => ({
   id,
   title: id,
@@ -71,6 +71,7 @@ function harness() {
 }
 
 it("offers recovery without overwriting the confirmed baseline, then preserves incomplete edits", () => {
+  vi.useFakeTimers();
   const page = harness();
   const recovery = makeBaseline();
   recovery.requirements[0] = { ...recovery.requirements[0], title: "복구할 제목", criterion: "" };
@@ -82,6 +83,7 @@ it("offers recovery without overwriting the confirmed baseline, then preserves i
   expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("첫 기능");
   fireEvent.click(screen.getByRole("button", { name: "초안 복구" }));
   expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("복구할 제목");
+  act(() => vi.advanceTimersByTime(650));
   const cached = vi.mocked(page.bridge.cacheProgressDraft!).mock.calls.at(-1)!;
   expect(JSON.parse(cached[1]).requirements[0].criterion).toBe("");
   expect(page.bridge.saveProgress).not.toHaveBeenCalled();
@@ -101,9 +103,11 @@ it("deletes only the recovery copy after a correlated confirmation", () => {
 });
 
 it("shows an autosave failure without unlocking a confirmed save in progress", () => {
+  vi.useFakeTimers();
   const page = harness();
   page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline: makeBaseline() });
   fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "새 제목" } });
+  act(() => vi.advanceTimersByTime(650));
   const [path, , request_id] = vi.mocked(page.bridge.cacheProgressDraft!).mock.calls.at(-1)!;
   fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
   page.emit({ type: "progressDraftError", requested_path: path, request_id, request_done: true, message: "디스크 오류" });
@@ -436,4 +440,38 @@ it("finishes a pending test read without applying its obsolete result after an e
     items: { "첫 기능": { patterns: ["old_test"], matched: 1, passed: 1, failed: 0, skipped: 0, failing: [], no_match: false } } });
   expect(screen.queryByLabelText("자동 검증 기록")).toBeNull();
   expect(screen.getByRole("button", { name: "기준과 근거 저장" }).matches(":disabled")).toBe(false);
+});
+
+it("coalesces rapid edits and cancels a pending cache when confirming a save", () => {
+  vi.useFakeTimers();
+  const page = harness();
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline: makeBaseline() });
+  for (const title of ["하", "하나", "하나 더"]) {
+    fireEvent.change(screen.getByLabelText("기능명"), { target: { value: title } });
+    act(() => vi.advanceTimersByTime(200));
+  }
+  expect(page.bridge.cacheProgressDraft).not.toHaveBeenCalled();
+  act(() => vi.advanceTimersByTime(450));
+  expect(page.bridge.cacheProgressDraft).toHaveBeenCalledOnce();
+  expect(JSON.parse(vi.mocked(page.bridge.cacheProgressDraft!).mock.calls[0][1]).requirements[0].title).toBe("하나 더");
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "확정 제목" } });
+  fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
+  const [path, , request_id] = vi.mocked(page.bridge.saveProgress).mock.calls.at(-1)!;
+  page.emit({ type: "progressSaved", requested_path: path, request_id, request_done: true,
+    baseline: makeBaseline(), warning: "기준은 저장했지만 초안을 지우지 못했습니다." });
+  act(() => vi.advanceTimersByTime(1000));
+  expect(page.bridge.cacheProgressDraft).toHaveBeenCalledOnce();
+  expect(screen.getByText("기준은 저장했지만 초안을 지우지 못했습니다.")).toBeTruthy();
+  expect((screen.getByLabelText("기능명") as HTMLInputElement).disabled).toBe(false);
+});
+
+it("flushes the latest pending draft when switching repositories", () => {
+  vi.useFakeTimers();
+  const page = harness();
+  page.emit({ type: "progressDocs", documents: [], omitted: 0, baseline: makeBaseline() });
+  fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "전환 전 마지막 입력" } });
+  page.move("/sample/two");
+  const [path, payload] = vi.mocked(page.bridge.cacheProgressDraft!).mock.calls.at(-1)!;
+  expect(path).toBe("/sample/one");
+  expect(JSON.parse(payload).requirements[0].title).toBe("전환 전 마지막 입력");
 });

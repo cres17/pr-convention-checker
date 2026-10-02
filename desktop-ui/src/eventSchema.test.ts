@@ -60,3 +60,17 @@ it("recovers invalid evidence inputs without treating them as a confirmed baseli
     documents: [], omitted: 0, baseline: null, recovery: draft }));
   expect(result).toMatchObject({ type: "progressDocs", recovery: draft });
 });
+it("recovers fractional and empty evidence lines while rejecting them in confirmed baselines", () => {
+  for (const line of [1.5, null]) {
+    const baseline = { repository: "/repo", documents: { "a.md": "h" }, requirements: [{
+      id: "x", title: "x", criterion: "x", area: "x", included: true,
+      source: { path: "a.md", line: 1, excerpt: "x", sha256: "h" },
+      implementation_status: "implemented", evidence: { path: "", line, note: "" },
+      verification_status: "unverified", verification_note: "",
+    }] };
+    expect(decodeDesktopEvent(JSON.stringify({ type: "progressDocs", requested_path: "/repo", request_id: "docs:1",
+      documents: [], omitted: 0, recovery: baseline }))).toMatchObject({ type: "progressDocs", recovery: baseline });
+    expect(decodeDesktopEvent(JSON.stringify({ type: "progressSaved", requested_path: "/repo", request_id: "save:1", baseline })).type)
+      .toBe("progressError");
+  }
+});

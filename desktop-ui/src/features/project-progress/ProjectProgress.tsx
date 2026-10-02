@@ -27,6 +27,7 @@ export default function ProjectProgress(props: ProjectProgressProps) {
     );
   return (
     <div className="progress-page">
+      {state.saveWarning && <div className="notice" role="status">{state.saveWarning}</div>}
       {!state.dirty && (state.recovery || state.recoveryWarning) && <div className="notice" role="status">
         <div>
           <strong>이전 편집 초안이 있습니다.</strong>
