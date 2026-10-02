@@ -25,7 +25,7 @@ const baseline = z.object({
     requirements: z.array(item).max(120), version: nonnegative.optional(),
 }).passthrough();
 // Draft inputs can be incomplete; e.g. a negative evidence line must survive recovery.
-const recoveryBaseline = baseline.extend({ requirements: z.array(item.extend({
+const recoveryBaseline = baseline.extend({ edit_base: baseline.nullable().optional(), requirements: z.array(item.extend({
     evidence: z.object({ path: text, line: z.number().finite().nullable(), note: text,
         excerpt: text.optional(), sha256: text.optional() }).nullable(),
 })).max(120) });
@@ -64,7 +64,8 @@ const scan = z.object({ repository: text, base: text, at: text, changed_file_cou
     }).passthrough() });
 const schema = z.discriminatedUnion("type", [
     z.object({ type: z.literal("progressDocs"), ...progressMeta, documents: z.array(document), omitted: nonnegative, repository: text.optional(), baseline: baseline.nullable().optional(),
-        recovery: recoveryBaseline.nullable().optional().catch(null), recovery_warning: text.optional() }),
+        recovery: recoveryBaseline.nullable().optional().catch(null), recovery_warning: text.optional(),
+        recovery_key: text.optional(), recovery_revision: text.optional(), recovery_options: z.array(z.object({ key: text, updated_at: text })).optional() }),
     z.object({ type: z.literal("progressDraftCached"), ...progressMeta }),
     z.object({ type: z.literal("progressDraftDiscarded"), ...progressMeta }),
     z.object({ type: z.literal("progressDraftError"), ...progressMeta, message: text }),
@@ -80,7 +81,7 @@ const schema = z.discriminatedUnion("type", [
         issues: z.array(issue), truncated: z.boolean(), limitations: text }),
     z.object({ type: z.literal("progressEvidence"), ...progressMeta, id: text, candidates: z.array(candidate) }),
     z.object({ type: z.literal("progressExported"), ...progressMeta, file: text }),
-    z.object({ type: z.literal("progressError"), ...progressMeta, message: text, errors: z.array(fieldError).optional() }),
+    z.object({ type: z.literal("progressError"), ...progressMeta, message: text, errors: z.array(fieldError).optional(), current_baseline: baseline.optional() }),
     z.object({ type: z.literal("ready"), ...meta, repository: text, base: text, installed: z.record(text, text) }),
     z.object({ type: z.literal("repository"), ...meta, path: text }),
     z.object({ type: z.literal("scanning"), ...meta }),
@@ -119,7 +120,8 @@ export function decodeDesktopEvent(raw: string): DesktopEvent {
     if (value && typeof value === "object" && "type" in value && typeof value.type === "string" && value.type.startsWith("progress")
         && "requested_path" in value && typeof value.requested_path === "string"
         && "request_id" in value && typeof value.request_id === "string") {
-        return { type: "progressError", requested_path: value.requested_path, request_id: value.request_id,
+        return { type: value.type === 'progressDraftCached' || value.type === 'progressDraftError' ? 'progressDraftError' : 'progressError',
+            requested_path: value.requested_path, request_id: value.request_id,
             request_done: true, message: "현황 응답 형식이 올바르지 않습니다. 다시 시도해 주세요." };
     }
     return { type: "error", message: "앱 응답 형식이 올바르지 않습니다. 다시 시도해 주세요." };

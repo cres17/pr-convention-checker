@@ -141,6 +141,9 @@ export type ProgressBaseline = {
   document_kinds?: Record<string, DocumentKind>;
   requirements: ProgressItem[];
   version?: number;
+  edit_base?: ProgressBaseline | null;
+  recovery_key?: string;
+  recovery_revision?: string;
 };
 export type ProgressReport = {
   repository: string;
@@ -174,9 +177,9 @@ export interface Bridge {
   forgetTestResults: (path: string) => void;
   exportProgress: (path: string, kind: string, requestId?: string) => void;
   openDocument: (relative: string) => void;
-  listProjectDocs: (path: string, requestId?: string) => void;
+  listProjectDocs: (path: string, requestId?: string, recoveryKey?: string) => void;
   cacheProgressDraft?: (path: string, payloadJson: string, requestId: string) => void;
-  discardProgressDraft?: (path: string, requestId: string) => void;
+  discardProgressDraft?: (path: string, requestId: string, recoveryKey?: string, revision?: string) => void;
   previewProgress: (path: string, selectedJson: string, requestId?: string) => void;
   saveProgress: (path: string, payloadJson: string, requestId?: string) => void;
   inspectProgress: (path: string, requestId?: string) => void;

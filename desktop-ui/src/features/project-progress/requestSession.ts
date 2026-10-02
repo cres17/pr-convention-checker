@@ -1,7 +1,7 @@
 import type { ProgressEvent } from "../../events";
 export type ProgressRequest = "documents" | "extract" | "save" | "inspect" | "links" | "tests" | "evidence" | "export" | "draft" | "discard";
 const responses: Record<ProgressEvent["type"], ProgressRequest[]> = {
-    progressDocs: ["documents"], progressPreview: ["extract"], progressSaved: ["save"],
+    progressDocs: ["documents", "discard"], progressPreview: ["extract"], progressSaved: ["save"],
     progressReport: ["save", "inspect"], progressHistory: ["save", "inspect"],
     progressTests: ["tests", "inspect"], progressTestsCancelled: ["tests"],
     progressLinks: ["links"], progressEvidence: ["evidence"], progressExported: ["export"],
@@ -20,6 +20,11 @@ export class ProgressRequests {
         return id;
     }
     cancel(purpose: ProgressRequest) { this.latest.delete(purpose); }
+    token(purpose: ProgressRequest) { return this.latest.get(purpose); }
+    leave() {
+        for (const purpose of ["documents", "inspect", "links", "tests", "evidence", "export"] as const)
+            this.cancel(purpose);
+    }
     invalidateReads() {
         for (const purpose of ["inspect", "links", "tests", "evidence"] as const)
             this.latest.delete(purpose);

@@ -287,7 +287,7 @@ def test_document_done_mark_without_backing_evidence_is_reported_not_trusted(tmp
     repo = project(tmp_path)  # README: "- [x] 로그인 ..." and "- [ ] 요청과 세션 ..."
     draft = extract_requirements(repo, ["README.md"])
     assert [i.get("doc_marked_done") for i in draft["requirements"]] == [True, False]
-    save_baseline(repo, tmp_path / "state", draft)
+    draft = save_baseline(repo, tmp_path / "state", draft)
     report = inspect_progress(repo, tmp_path / "state")
     assert [i.get("doc_claim") for i in report["items"]] == ["unbacked", None]
     assert report["doc_claims_unbacked"] == 1
@@ -416,6 +416,7 @@ def test_history_records_each_save_and_shows_change_since_the_last_one(tmp_path)
     draft = extract_requirements(repo, ["README.md"])
     first = _save_and_record(repo, state, draft)
     assert [r["version"] for r in first["snapshots"]] == [1] and first["since_save"] is None
+    draft = load_baseline(repo, state)
 
     draft["requirements"][0]["implementation_status"] = "implemented"
     draft["requirements"][0]["evidence"] = {"path": "src/login.py", "line": 1, "note": "확인"}
@@ -465,7 +466,7 @@ def test_report_flags_test_names_missing_from_the_repository_test_files(tmp_path
     subprocess.run(["git", "-C", str(repo), "add", "tests"], check=True)
     state = tmp_path / "state"
     draft = extract_requirements(repo, ["README.md"])
-    save_baseline(repo, state, draft)
+    draft = save_baseline(repo, state, draft)
     assert inspect_progress(repo, state)["test_pattern_hints"] == {}  # no patterns, nothing to check
     draft["requirements"][0]["test_patterns"] = ["test_login_flow", "test_logn_flow"]
     saved = save_baseline(repo, state, draft)
@@ -604,6 +605,7 @@ def test_merged_reextraction_adds_past_goals_without_losing_evidence_or_history(
     preview = extract_requirements(repo, ["README.md", "past.md"])
     preview["requirements"] = old + [entry for entry in preview["requirements"]
                                     if entry["id"] not in {i["id"] for i in old}]
+    preview["version"] = saved["version"]
     merged = save_baseline(repo, state, preview)
     assert merged["requirements"][:2] == old
     assert merged["version"] == 2
@@ -651,6 +653,7 @@ def test_reextracted_document_preserves_review_but_requires_explicit_reconfirmat
     for item in preview["requirements"]:
         item["source"] = fresh[item["id"]]["source"]
         item["reviewed_documents"] = saved["documents"]
+    preview["version"] = saved["version"]
     merged = save_baseline(repo, state, preview)
     assert merged["requirements"][0]["verification_note"] == "검증 기록"
     assert inspect_progress(repo, state)["counts"]["complete"] == 0
@@ -671,6 +674,7 @@ def test_retained_removed_source_is_not_dropped_or_counted_as_reviewed(tmp_path)
     (repo / "README.md").write_text("# 새 계획\n- [ ] 새 기능\n", encoding="utf-8")
     preview = extract_requirements(repo, ["README.md"])
     preview["requirements"] = deepcopy(saved["requirements"]) + preview["requirements"]
+    preview["version"] = saved["version"]
     merged = save_baseline(repo, state, preview)
     report = inspect_progress(repo, state)
     assert len(merged["requirements"]) == 3

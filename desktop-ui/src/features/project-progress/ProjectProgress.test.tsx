@@ -475,3 +475,42 @@ it("flushes the latest pending draft when switching repositories", () => {
   expect(path).toBe("/sample/one");
   expect(JSON.parse(payload).requirements[0].title).toBe("전환 전 마지막 입력");
 });
+
+it.each(['local', 'latest'] as const)('offers an explicit %s choice for overlapping edits while preserving unrelated edits', (choice) => {
+  const page = harness();
+  const original = { ...makeBaseline(), version: 1 };
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline: original });
+  fireEvent.change(screen.getByLabelText('기능명'), { target: { value: '내 제목' } });
+  fireEvent.click(screen.getByRole('button', { name: '기준과 근거 저장' }));
+  const [path, , request_id] = vi.mocked(page.bridge.saveProgress).mock.calls.at(-1)!;
+  const latest = structuredClone(original);
+  latest.version = 2;
+  latest.requirements[0].title = '최신 제목';
+  latest.requirements[1].area = '다른 편집기의 변경';
+  page.emit({ type: 'progressError', requested_path: path, request_id, request_done: true,
+    message: '최신 기준과 합쳐 주세요.', current_baseline: latest });
+  expect(screen.getByRole('button', { name: '기준과 근거 저장' }).matches(':disabled')).toBe(true);
+  expect(screen.getByText('내 제목 · 기능명')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: choice === 'local'
+    ? '겹치는 변경은 내 편집으로 합치기' : '겹치는 변경은 최신 기준으로 합치기' }));
+  expect((screen.getByLabelText('기능명') as HTMLInputElement).value).toBe(choice === 'local' ? '내 제목' : '최신 제목');
+  fireEvent.click(screen.getByRole('button', { name: '기준과 근거 저장' }));
+  const saved = JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls.at(-1)![1]);
+  expect(saved.version).toBe(2);
+  expect(saved.requirements[1].area).toBe('다른 편집기의 변경');
+});
+
+it('selects another recovery copy and deletes only the displayed revision', () => {
+  const page = harness();
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline: makeBaseline(), recovery: makeBaseline(),
+    recovery_key: 'new.json', recovery_revision: 'new:1', recovery_options: [
+      { key: 'new.json', updated_at: '2026-10-02T01:00:00Z' }, { key: 'old.json', updated_at: '2026-10-01T01:00:00Z' },
+    ] });
+  fireEvent.change(screen.getByLabelText('복구할 초안'), { target: { value: 'old.json' } });
+  const [path, token, key] = vi.mocked(page.bridge.listProjectDocs).mock.calls.at(-1)!;
+  expect(key).toBe('old.json');
+  page.emit({ type: 'progressDocs', requested_path: path, request_id: token, request_done: true,
+    documents: [], omitted: 0, baseline: makeBaseline(), recovery: makeBaseline(), recovery_key: key, recovery_revision: 'old:1' });
+  fireEvent.click(screen.getByRole('button', { name: '보관된 초안 삭제' }));
+  expect(vi.mocked(page.bridge.discardProgressDraft!).mock.calls.at(-1)?.slice(2)).toEqual(['old.json', 'old:1']);
+});

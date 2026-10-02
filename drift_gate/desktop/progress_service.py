@@ -16,6 +16,7 @@ from pathlib import Path
 
 from drift_gate.desktop import progress_history, verification_records
 from drift_gate.desktop.json_store import write_json
+from drift_gate.desktop.store_lock import store_lock
 from drift_gate.desktop.progress_scope import in_current_scope as _in_current_scope, requirement_sources
 from drift_gate.desktop.doc_links import (
     MAX_ISSUES,
@@ -77,6 +78,13 @@ class BaselineError(ValueError):
             if len(errors) == 1
             else f"{len(errors)}개 항목을 확인해 주세요. 첫 오류: {first}"
         )
+
+
+class BaselineConflict(ValueError):
+    """An editor tried to replace a newer confirmed baseline."""
+    def __init__(self, baseline: dict):
+        self.baseline = baseline
+        super().__init__("다른 편집기에서 기준을 저장했습니다. 내 편집은 유지했습니다. 최신 기준과 합친 뒤 다시 저장해 주세요.")
 
 
 def _table_cells(line: str) -> list[str]:
@@ -547,6 +555,12 @@ def _item_errors(
 
 def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
     root = _repository(path)
+    remote = _remote_identity(root)
+    with store_lock(_store_file(root, data_dir, remote)):
+        return _save_baseline(root, data_dir, remote, payload)
+
+
+def _save_baseline(root: Path, data_dir: Path, remote: str | None, payload: dict) -> dict:
     if not isinstance(payload, dict):
         raise ValueError("기준 데이터를 읽지 못했습니다.")
     docs = payload.get("documents")
@@ -556,7 +570,6 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
     if not isinstance(items, list) or len(items) > MAX_REQUIREMENTS:
         raise ValueError("기능 목록을 확인해 주세요.")
     kinds = _document_kinds(docs, payload.get("document_kinds"))
-    remote = _remote_identity(root)
     previous = _load_baseline(root, data_dir, remote)
     previous_items = (
         {item["id"]: item for item in previous["requirements"]} if previous else {}
@@ -604,6 +617,11 @@ def save_baseline(path: str | Path, data_dir: Path, payload: dict) -> dict:
         and previous["requirements"] == items
         and _document_kinds(previous["documents"], previous.get("document_kinds")) == kinds
     )
+    submitted_version = payload.get("version", 0)
+    if type(submitted_version) is not int or submitted_version < 0:
+        raise ValueError("기준 버전이 올바르지 않습니다. 최신 기준을 다시 불러와 주세요.")
+    if previous and not unchanged and submitted_version != previous["version"]:
+        raise BaselineConflict(previous)
     version = (previous["version"] + (0 if unchanged else 1)) if previous else 1
     saved = {
         "schema": 1,
@@ -642,10 +660,12 @@ def record_snapshot(path: str | Path, data_dir: Path, report: dict) -> dict:
     """Store the report's state as a history entry (after a baseline save)."""
     root = _repository(path)
     remote = _remote_identity(root)
-    snapshots = progress_history.append_snapshot(
-        _load_snapshots(root, data_dir, remote), progress_history.make_snapshot(report)
-    )
-    write_json(_history_file(root, data_dir, remote), {"schema": 1, "snapshots": snapshots})
+    target = _history_file(root, data_dir, remote)
+    with store_lock(target):
+        snapshots = progress_history.append_snapshot(
+            _load_snapshots(root, data_dir, remote), progress_history.make_snapshot(report)
+        )
+        write_json(target, {"schema": 1, "snapshots": snapshots})
     return progress_history.summarize(snapshots, report)
 
 

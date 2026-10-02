@@ -6,7 +6,8 @@ import type {
 
 type Requested = { requested_path?: string; request_id?: string; request_done?: boolean };
 export type ProgressEvent = Requested & (
-  | { type: "progressDocs"; documents: ProjectDocument[]; omitted: number; repository?: string; baseline?: ProgressBaseline | null; recovery?: ProgressBaseline | null; recovery_warning?: string }
+  | { type: "progressDocs"; documents: ProjectDocument[]; omitted: number; repository?: string; baseline?: ProgressBaseline | null; recovery?: ProgressBaseline | null; recovery_warning?: string;
+      recovery_key?: string; recovery_revision?: string; recovery_options?: { key: string; updated_at: string }[] }
   | { type: "progressDraftCached" | "progressDraftDiscarded" }
   | { type: "progressDraftError"; message: string }
   | ({ type: "progressPreview"; repository?: string; truncated?: boolean } & Pick<ProgressBaseline, "documents" | "document_kinds" | "requirements">)
@@ -18,7 +19,7 @@ export type ProgressEvent = Requested & (
   | ({ type: "progressLinks" } & LinkReport)
   | { type: "progressExported"; file: string }
   | { type: "progressEvidence"; id: ProgressItem["id"]; candidates: EvidenceCandidate[] }
-  | { type: "progressError"; message: string; errors?: ProgressFieldError[] }
+  | { type: "progressError"; message: string; errors?: ProgressFieldError[]; current_baseline?: ProgressBaseline }
 );
 export type QueuedProgressEvent = ProgressEvent & { _seq: number };
 export type DesktopEvent = ProgressEvent | (Requested & (

@@ -106,8 +106,8 @@ def test_draft_delete_failure_does_not_misreport_a_committed_save(tmp_path, monk
     repo = project(tmp_path)
     data = tmp_path / 'app-data'
     # A directory where the draft file should be reproduces a real unlink error.
-    draft_file(repo, data).mkdir(parents=True)
     bridge = DesktopBridge()
+    draft_file(repo, data, bridge._draft_owner).mkdir(parents=True)
     monkeypatch.setattr(bridge, '_progress_dir', lambda: data)
     messages = []
     bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
@@ -118,6 +118,33 @@ def test_draft_delete_failure_does_not_misreport_a_committed_save(tmp_path, monk
     assert load_baseline(repo, data) == saved['baseline']
     assert not any(message['type'] == 'progressError' for message in messages)
     assert of_type(messages, 'progressHistory')['request_done']
+
+
+def test_conflicting_save_returns_latest_baseline_and_preserves_recovery(tmp_path, monkeypatch):
+    from copy import deepcopy
+    from drift_gate.desktop.progress_drafts import cache_draft, recovery_copy
+    from drift_gate.desktop.progress_service import extract_requirements, load_baseline, save_baseline
+    QApplication.instance() or QApplication([])
+    repo = project(tmp_path)
+    data = tmp_path / 'data'
+    first = save_baseline(repo, data, extract_requirements(repo, ['README.md']))
+    stale = deepcopy(first)
+    stale['requirements'][1]['title'] = '저장할 내 편집'
+    cache_draft(repo, data, stale)
+    first['requirements'][0]['title'] = '다른 창에서 저장한 편집'
+    latest = save_baseline(repo, data, first)
+    bridge = DesktopBridge()
+    monkeypatch.setattr(bridge, '_progress_dir', lambda: data)
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    bridge.saveProgress(str(repo), json.dumps(stale), 'stale:save')
+    settle(bridge)
+    assert len(messages) == 1
+    failure = messages[0]
+    assert failure['type'] == 'progressError' and failure['request_id'] == 'stale:save'
+    assert failure['requested_path'] == str(repo) and failure['request_done']
+    assert failure['current_baseline'] == latest == load_baseline(repo, data)
+    assert recovery_copy(repo, data, latest)['recovery'] == stale
 
 
 def test_failed_save_reports_each_invalid_item_and_items_carry_effective_status(tmp_path, monkeypatch):
@@ -456,6 +483,8 @@ def test_draft_recovers_on_a_new_bridge_and_clears_only_after_successful_save(tm
     docs = of_type(messages, 'progressDocs')
     assert docs['baseline']['requirements'][0]['title'] != '재시작 전 편집'
     assert docs['recovery']['requirements'][0]['title'] == '재시작 전 편집'
+    draft['recovery_key'] = docs['recovery_key']
+    draft['recovery_revision'] = docs['recovery_revision']
     second.saveProgress(str(repo), json.dumps(draft), 'second:bad-save')
     settle(second)
     assert recovery_copy(repo, directory, baseline)['recovery']
@@ -479,8 +508,41 @@ def test_draft_write_error_and_explicit_discard_have_correlated_responses(tmp_pa
     assert messages[-1]['request_id'] == 'draft:bad' and messages[-1]['request_done']
     bridge.discardProgressDraft(str(repo), 'draft:delete')
     settle(bridge)
-    assert messages[-1]['type'] == 'progressDraftDiscarded'
-    assert messages[-1]['request_id'] == 'draft:delete'
+    assert of_type(messages, 'progressDraftDiscarded')['request_id'] == 'draft:delete'
+    assert messages[-1]['type'] == 'progressDocs' and messages[-1]['request_done']
+
+
+def test_two_app_drafts_survive_another_apps_successful_and_conflicting_save(tmp_path, monkeypatch):
+    from copy import deepcopy
+    from drift_gate.desktop.progress_drafts import draft_file, recovery_copy
+    from drift_gate.desktop.progress_service import extract_requirements, load_baseline, save_baseline
+    QApplication.instance() or QApplication([])
+    repo = project(tmp_path)
+    data = tmp_path / 'data'
+    baseline = save_baseline(repo, data, extract_requirements(repo, ['README.md']))
+    left, right = DesktopBridge(), DesktopBridge()
+    for bridge in (left, right):
+        monkeypatch.setattr(bridge, '_progress_dir', lambda: data)
+    ours, theirs = deepcopy(baseline), deepcopy(baseline)
+    ours['requirements'][0]['title'] = '첫 창의 편집'
+    theirs['requirements'][1]['title'] = '다른 창의 편집'
+    left.cacheProgressDraft(str(repo), json.dumps(ours), 'left:draft')
+    right.cacheProgressDraft(str(repo), json.dumps(theirs), 'right:draft')
+    settle(left)
+    settle(right)
+    left_file = draft_file(repo, data, left._draft_owner)
+    right_file = draft_file(repo, data, right._draft_owner)
+    assert left_file.is_file() and right_file.is_file() and left_file != right_file
+    left.saveProgress(str(repo), json.dumps(ours), 'left:save')
+    settle(left)
+    assert not left_file.exists() and right_file.is_file()
+    messages = []
+    right.event.connect(lambda raw: messages.append(json.loads(raw)))
+    right.saveProgress(str(repo), json.dumps(theirs), 'right:save')
+    settle(right)
+    assert messages[-1]['type'] == 'progressError' and messages[-1]['current_baseline']['version'] == 2
+    assert right_file.is_file()
+    assert recovery_copy(repo, data, load_baseline(repo, data))['recovery'] == theirs
 
 
 @pytest.mark.parametrize('discard', [False, True])

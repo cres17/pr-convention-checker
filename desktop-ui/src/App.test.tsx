@@ -591,7 +591,7 @@ it("preserves unsaved edits across page navigation", async () => {
   expect(showedWarning).toBe(true);
   expect(api.setProgressDirty).toHaveBeenLastCalledWith(true);
 });
-it("ignores an earlier save after returning to the same repository and retains the new draft", async () => {
+it("keeps an outstanding save locked across repository navigation, then ignores its replay after a new edit", async () => {
   const act = await openSessionEditor();
   fireEvent.click(screen.getByRole("button", { name: "기준과 근거 저장" }));
   const earlier = api.saveProgress.mock.calls.at(-1)?.[2];
@@ -600,9 +600,13 @@ it("ignores an earlier save after returning to the same repository and retains t
   const current = api.listProjectDocs.mock.calls.at(-1)?.[1];
   act(() => emit({ type: "progressDocs", requested_path: "/sample/project", request_id: current,
     documents: [], omitted: 0, baseline: sessionBaseline }));
+  expect(screen.getByLabelText('기능명').matches(':disabled')).toBe(true);
+  act(() => emit({ type: "progressSaved", requested_path: "/sample/project", request_id: earlier,
+    request_done: true, baseline: { ...sessionBaseline, version: 2 } }));
+  expect(screen.getByLabelText('기능명').matches(':disabled')).toBe(false);
   fireEvent.change(screen.getByLabelText("기능명"), { target: { value: "돌아온 뒤 새 수정" } });
   act(() => emit({ type: "progressSaved", requested_path: "/sample/project", request_id: earlier,
-    baseline: { ...sessionBaseline, version: 2 } }));
+    request_done: true, baseline: { ...sessionBaseline, version: 2 } }));
   expect((screen.getByLabelText("기능명") as HTMLInputElement).value).toBe("돌아온 뒤 새 수정");
   act(() => emit({ type: "repository", path: "/sample/other" }));
   act(() => emit({ type: "repository", path: "/sample/project" }));

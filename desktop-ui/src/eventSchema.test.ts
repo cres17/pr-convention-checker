@@ -20,6 +20,10 @@ it("rejects malformed JSON and unknown event names", () => {
   expect(decodeDesktopEvent("{").type).toBe("error");
   expect(decodeDesktopEvent('{"type":"unknown"}').type).toBe("error");
 });
+it('keeps malformed autosave replies separate from a confirmed save in progress', () => {
+  expect(decodeDesktopEvent(JSON.stringify({ type: 'progressDraftCached', requested_path: '/repo',
+    request_id: 'draft:1', request_done: 'wrong' }))).toMatchObject({ type: 'progressDraftError', request_id: 'draft:1', request_done: true });
+});
 it("rejects malformed nested progress data without exposing it to the editor", () => {
   expect(decodeDesktopEvent(JSON.stringify({ type: "progressSaved", requested_path: "/repo", request_id: "save:1",
     baseline: { repository: "/repo", documents: {}, requirements: [{ id: "one", included: "yes" }] } })))
