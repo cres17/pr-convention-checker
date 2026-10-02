@@ -81,18 +81,18 @@ def test_pruning_preserves_active_and_recent_drafts(tmp_path):
     draft = extract_requirements(root, ['README.md'])
     cache_draft(root, data, draft)
     current = draft_file(root, data)
-    payload = json.loads(current.read_text())
+    payload = json.loads(current.read_text(encoding='utf-8'))
     payload['updated_at'] = '2020-01-01T00:00:00+00:00'
-    current.write_text(json.dumps(payload))
+    current.write_text(json.dumps(payload), encoding='utf-8')
     abandoned = tmp_path / 'deleted-repository'
     old = draft_file(abandoned, data)
     payload['repository'] = str(abandoned.resolve())
-    old.write_text(json.dumps(payload))
+    old.write_text(json.dumps(payload), encoding='utf-8')
     fresh = draft_file(tmp_path / 'recent-repository', data)
     payload['repository'] = str((tmp_path / 'recent-repository').resolve())
     from datetime import datetime, timezone
     payload['updated_at'] = datetime.now(timezone.utc).isoformat()
-    fresh.write_text(json.dumps(payload))
+    fresh.write_text(json.dumps(payload), encoding='utf-8')
     prune_abandoned_drafts(data)
     assert not old.exists()
     assert current.exists() and fresh.exists()
