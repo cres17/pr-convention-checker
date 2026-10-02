@@ -1,0 +1,56 @@
+{
+  "version": "1.20.0",
+  "platform": "win32-x86_64",
+  "languages": [
+    "python",
+    "typescript",
+    "tsx",
+    "javascript",
+    "go",
+    "java",
+    "kotlin",
+    "ruby"
+  ],
+  "libraries": [
+    {
+      "name": "tree_sitter_python.dll",
+      "source_sha256": "cb130db3384c6b3a90b6227788599b585ecd32e76dfbe3e537aac8e904c47d30",
+      "sha256": "cb130db3384c6b3a90b6227788599b585ecd32e76dfbe3e537aac8e904c47d30"
+    },
+    {
+      "name": "tree_sitter_typescript.dll",
+      "source_sha256": "ddd3c7619ce7f643e54a5d337be57ec250b334841550841b862a1b17b7ac2c51",
+      "sha256": "ddd3c7619ce7f643e54a5d337be57ec250b334841550841b862a1b17b7ac2c51"
+    },
+    {
+      "name": "tree_sitter_tsx.dll",
+      "source_sha256": "340b8db5911378f72b2b96fff0b003079110a6479d5d93c5a2b9c2cd24f9ece7",
+      "sha256": "340b8db5911378f72b2b96fff0b003079110a6479d5d93c5a2b9c2cd24f9ece7"
+    },
+    {
+      "name": "tree_sitter_javascript.dll",
+      "source_sha256": "e88a3c7d83251e0af659c44fae4b21563460f7779d035d752dc66130792074fc",
+      "sha256": "e88a3c7d83251e0af659c44fae4b21563460f7779d035d752dc66130792074fc"
+    },
+    {
+      "name": "tree_sitter_go.dll",
+      "source_sha256": "cabc805d1b9c83bc820a7507f08feba3ed06bff7c731063976dfec4a4a1f913e",
+      "sha256": "cabc805d1b9c83bc820a7507f08feba3ed06bff7c731063976dfec4a4a1f913e"
+    },
+    {
+      "name": "tree_sitter_java.dll",
+      "source_sha256": "d4f3cf7594e0ab1a1d89ec50169efd240ba77b1f3a82bb6e00b0121c8b904639",
+      "sha256": "d4f3cf7594e0ab1a1d89ec50169efd240ba77b1f3a82bb6e00b0121c8b904639"
+    },
+    {
+      "name": "tree_sitter_kotlin.dll",
+      "source_sha256": "df67a65342661a277c015eebfe41cbba87a845bdfc689a91f98de96a9be5f550",
+      "sha256": "df67a65342661a277c015eebfe41cbba87a845bdfc689a91f98de96a9be5f550"
+    },
+    {
+      "name": "tree_sitter_ruby.dll",
+      "source_sha256": "cd157509defcba046bf1025b0c3b50063a1e18592aecdc828bb78c1363702a40",
+      "sha256": "cd157509defcba046bf1025b0c3b50063a1e18592aecdc828bb78c1363702a40"
+    }
+  ]
+}

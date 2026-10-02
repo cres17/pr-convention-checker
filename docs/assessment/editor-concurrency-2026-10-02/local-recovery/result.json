@@ -1,0 +1,846 @@
+{
+  "kind": "source Qt + built React + real QWebChannel overloaded recovery APIs",
+  "events": [
+    {
+      "type": "ready",
+      "repository": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "base": "HEAD",
+      "installed": {
+        "codex": "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+        "claude": "/opt/homebrew/bin/claude"
+      }
+    },
+    {
+      "type": "progressDocs",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "documents": [
+        {
+          "path": "README.md",
+          "tracked": true,
+          "bytes": 103
+        }
+      ],
+      "omitted": 0,
+      "baseline": {
+        "schema": 1,
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 1,
+        "saved_at": "2026-10-02T01:55:04.090538+00:00",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "requirements": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "로그인 화면을 `src/login.py`에 만든다",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false
+          }
+        ]
+      },
+      "recovery_key": "90b2d0838d7c07625a1f9677.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.json",
+      "recovery_revision": "1790906104092033933:1864",
+      "recovery_options": [
+        {
+          "key": "90b2d0838d7c07625a1f9677.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.json",
+          "updated_at": "2026-10-02T01:55:04.092034+00:00"
+        },
+        {
+          "key": "90b2d0838d7c07625a1f9677.cccccccccccccccccccccccccccccccc.json",
+          "updated_at": "2026-10-02T01:55:04.091769+00:00"
+        },
+        {
+          "key": "90b2d0838d7c07625a1f9677.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json",
+          "updated_at": "2026-10-02T01:55:04.091482+00:00"
+        }
+      ],
+      "recovery": {
+        "schema": 1,
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 1,
+        "saved_at": "2026-10-02T01:55:04.090538+00:00",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "requirements": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "b 실행의 편집",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false
+          }
+        ]
+      },
+      "recovery_warning": "",
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:1",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "report": {
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 1,
+        "at": "2026-10-02T01:55:05.010366+00:00",
+        "head": "커밋 없음",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "stale_documents": [],
+        "stale_context_documents": [],
+        "counts": {
+          "implemented": 0,
+          "partial": 0,
+          "not_implemented": 0,
+          "unknown": 2,
+          "complete": 0,
+          "excluded": 0
+        },
+        "total": 2,
+        "items": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "로그인 화면을 `src/login.py`에 만든다",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true,
+            "stale_evidence": false,
+            "stale_requirement": false,
+            "document_kind": "current",
+            "in_current_scope": true,
+            "effective_status": "unknown",
+            "doc_claim": "unbacked"
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false,
+            "stale_evidence": false,
+            "stale_requirement": false,
+            "document_kind": "current",
+            "in_current_scope": true,
+            "effective_status": "unknown"
+          }
+        ],
+        "doc_claims_unbacked": 1,
+        "test_pattern_hints": {},
+        "limitations": "상태는 사용자가 확정한 코드 근거와 수동 검증 기록 기준입니다. 자동 의미 판정이나 테스트 실행은 아직 제공하지 않습니다."
+      },
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:2",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "snapshots": [],
+      "since_save": null,
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:2",
+      "request_done": true
+    },
+    {
+      "type": "progressDocs",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "documents": [
+        {
+          "path": "README.md",
+          "tracked": true,
+          "bytes": 103
+        }
+      ],
+      "omitted": 0,
+      "baseline": {
+        "schema": 1,
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 1,
+        "saved_at": "2026-10-02T01:55:04.090538+00:00",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "requirements": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "로그인 화면을 `src/login.py`에 만든다",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false
+          }
+        ]
+      },
+      "recovery_key": "90b2d0838d7c07625a1f9677.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json",
+      "recovery_revision": "1790906104091482500:1864",
+      "recovery_options": [
+        {
+          "key": "90b2d0838d7c07625a1f9677.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.json",
+          "updated_at": "2026-10-02T01:55:04.092034+00:00"
+        },
+        {
+          "key": "90b2d0838d7c07625a1f9677.cccccccccccccccccccccccccccccccc.json",
+          "updated_at": "2026-10-02T01:55:04.091769+00:00"
+        },
+        {
+          "key": "90b2d0838d7c07625a1f9677.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json",
+          "updated_at": "2026-10-02T01:55:04.091482+00:00"
+        }
+      ],
+      "recovery": {
+        "schema": 1,
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 1,
+        "saved_at": "2026-10-02T01:55:04.090538+00:00",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "requirements": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "a 실행의 편집",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false
+          }
+        ]
+      },
+      "recovery_warning": "",
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:3",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "report": {
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 1,
+        "at": "2026-10-02T01:55:05.413656+00:00",
+        "head": "커밋 없음",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "stale_documents": [],
+        "stale_context_documents": [],
+        "counts": {
+          "implemented": 0,
+          "partial": 0,
+          "not_implemented": 0,
+          "unknown": 2,
+          "complete": 0,
+          "excluded": 0
+        },
+        "total": 2,
+        "items": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "로그인 화면을 `src/login.py`에 만든다",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true,
+            "stale_evidence": false,
+            "stale_requirement": false,
+            "document_kind": "current",
+            "in_current_scope": true,
+            "effective_status": "unknown",
+            "doc_claim": "unbacked"
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false,
+            "stale_evidence": false,
+            "stale_requirement": false,
+            "document_kind": "current",
+            "in_current_scope": true,
+            "effective_status": "unknown"
+          }
+        ],
+        "doc_claims_unbacked": 1,
+        "test_pattern_hints": {},
+        "limitations": "상태는 사용자가 확정한 코드 근거와 수동 검증 기록 기준입니다. 자동 의미 판정이나 테스트 실행은 아직 제공하지 않습니다."
+      },
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:4",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "snapshots": [],
+      "since_save": null,
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:4",
+      "request_done": true
+    },
+    {
+      "type": "progressDraftDiscarded",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:5",
+      "request_done": false
+    },
+    {
+      "type": "progressDocs",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "documents": [
+        {
+          "path": "README.md",
+          "tracked": true,
+          "bytes": 103
+        }
+      ],
+      "omitted": 0,
+      "baseline": {
+        "schema": 1,
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 1,
+        "saved_at": "2026-10-02T01:55:04.090538+00:00",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "requirements": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "로그인 화면을 `src/login.py`에 만든다",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false
+          }
+        ]
+      },
+      "recovery_key": "90b2d0838d7c07625a1f9677.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.json",
+      "recovery_revision": "1790906104092033933:1864",
+      "recovery_options": [
+        {
+          "key": "90b2d0838d7c07625a1f9677.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.json",
+          "updated_at": "2026-10-02T01:55:04.092034+00:00"
+        },
+        {
+          "key": "90b2d0838d7c07625a1f9677.cccccccccccccccccccccccccccccccc.json",
+          "updated_at": "2026-10-02T01:55:04.091769+00:00"
+        }
+      ],
+      "recovery": {
+        "schema": 1,
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 1,
+        "saved_at": "2026-10-02T01:55:04.090538+00:00",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "requirements": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "b 실행의 편집",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false
+          }
+        ]
+      },
+      "recovery_warning": "",
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:5",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "report": {
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 1,
+        "at": "2026-10-02T01:55:05.746105+00:00",
+        "head": "커밋 없음",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "stale_documents": [],
+        "stale_context_documents": [],
+        "counts": {
+          "implemented": 0,
+          "partial": 0,
+          "not_implemented": 0,
+          "unknown": 2,
+          "complete": 0,
+          "excluded": 0
+        },
+        "total": 2,
+        "items": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "로그인 화면을 `src/login.py`에 만든다",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true,
+            "stale_evidence": false,
+            "stale_requirement": false,
+            "document_kind": "current",
+            "in_current_scope": true,
+            "effective_status": "unknown",
+            "doc_claim": "unbacked"
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false,
+            "stale_evidence": false,
+            "stale_requirement": false,
+            "document_kind": "current",
+            "in_current_scope": true,
+            "effective_status": "unknown"
+          }
+        ],
+        "doc_claims_unbacked": 1,
+        "test_pattern_hints": {},
+        "limitations": "상태는 사용자가 확정한 코드 근거와 수동 검증 기록 기준입니다. 자동 의미 판정이나 테스트 실행은 아직 제공하지 않습니다."
+      },
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:6",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "snapshots": [],
+      "since_save": null,
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:6",
+      "request_done": true
+    },
+    {
+      "type": "progressSaved",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "baseline": {
+        "schema": 1,
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 2,
+        "saved_at": "2026-10-02T01:55:06.218777+00:00",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "requirements": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "b 실행의 편집",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false
+          }
+        ]
+      },
+      "warning": "",
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:7",
+      "request_done": false
+    },
+    {
+      "type": "progressReport",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "report": {
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+        "version": 2,
+        "at": "2026-10-02T01:55:06.248719+00:00",
+        "head": "커밋 없음",
+        "documents": {
+          "README.md": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+        },
+        "document_kinds": {
+          "README.md": "current"
+        },
+        "stale_documents": [],
+        "stale_context_documents": [],
+        "counts": {
+          "implemented": 0,
+          "partial": 0,
+          "not_implemented": 0,
+          "unknown": 2,
+          "complete": 0,
+          "excluded": 0
+        },
+        "total": 2,
+        "items": [
+          {
+            "id": "d18ea18ae87c4bdb",
+            "title": "b 실행의 편집",
+            "criterion": "로그인 화면을 `src/login.py`에 만든다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 2,
+              "excerpt": "- [x] 로그인 화면을 `src/login.py`에 만든다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": true,
+            "stale_evidence": false,
+            "stale_requirement": false,
+            "document_kind": "current",
+            "in_current_scope": true,
+            "effective_status": "unknown",
+            "doc_claim": "unbacked"
+          },
+          {
+            "id": "1ff508d6b2c696b9",
+            "title": "요청과 세션을 연결한다",
+            "criterion": "요청과 세션을 연결한다",
+            "area": "",
+            "included": true,
+            "source": {
+              "path": "README.md",
+              "line": 3,
+              "excerpt": "- [ ] 요청과 세션을 연결한다",
+              "sha256": "3f3ecf3542438aa8b496ce822e97402a2785caf73a5e88a054d26b575d341d44"
+            },
+            "implementation_status": "unknown",
+            "evidence": null,
+            "verification_status": "unverified",
+            "verification_note": "",
+            "doc_marked_done": false,
+            "stale_evidence": false,
+            "stale_requirement": false,
+            "document_kind": "current",
+            "in_current_scope": true,
+            "effective_status": "unknown"
+          }
+        ],
+        "doc_claims_unbacked": 1,
+        "test_pattern_hints": {},
+        "limitations": "상태는 사용자가 확정한 코드 근거와 수동 검증 기록 기준입니다. 자동 의미 판정이나 테스트 실행은 아직 제공하지 않습니다."
+      },
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:7",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "requested_path": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-recovery-native-uh3eondh/repo",
+      "snapshots": [
+        {
+          "at": "2026-10-02T01:55:06.248719+00:00",
+          "version": 2,
+          "head": "커밋 없음",
+          "total": 2,
+          "counts": {
+            "implemented": 0,
+            "partial": 0,
+            "not_implemented": 0,
+            "unknown": 2,
+            "complete": 0,
+            "excluded": 0
+          },
+          "changes": null,
+          "complete_delta": null
+        }
+      ],
+      "since_save": null,
+      "request_id": "e69f05f0-65a2-468b-a522-348f492e255a:7",
+      "request_done": true
+    }
+  ],
+  "selected_copy_deleted": true,
+  "recovered_copy_committed_and_deleted": true,
+  "unselected_copy_preserved": true,
+  "saved_version": 2
+}
