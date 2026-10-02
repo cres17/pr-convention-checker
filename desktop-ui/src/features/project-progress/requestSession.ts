@@ -1,12 +1,13 @@
 import type { ProgressEvent } from "../../events";
-export type ProgressRequest = "documents" | "extract" | "save" | "inspect" | "links" | "tests" | "evidence" | "export" | "draft" | "discard";
+export type ProgressRequest = "documents" | "extract" | "save" | "inspect" | "links" | "tests" | "evidence" | "export" | "draft" | "discard" | "draft-export" | "latest";
 const responses: Record<ProgressEvent["type"], ProgressRequest[]> = {
     progressDocs: ["documents", "discard"], progressPreview: ["extract"], progressSaved: ["save"],
     progressReport: ["save", "inspect"], progressHistory: ["save", "inspect"],
     progressTests: ["tests", "inspect"], progressTestsCancelled: ["tests"],
     progressLinks: ["links"], progressEvidence: ["evidence"], progressExported: ["export"],
     progressDraftCached: ["draft"], progressDraftError: ["draft"], progressDraftDiscarded: ["discard"],
-    progressError: ["documents", "extract", "save", "inspect", "links", "tests", "evidence", "export", "discard"],
+    progressDraftExported: ["draft-export"], progressDraftExportCancelled: ["draft-export"], progressLatestUsed: ["latest"],
+    progressError: ["documents", "extract", "save", "inspect", "links", "tests", "evidence", "export", "discard", "draft-export", "latest"],
 };
 /** Requests are scoped to one editor visit, and only the latest request per purpose wins. */
 export class ProgressRequests {

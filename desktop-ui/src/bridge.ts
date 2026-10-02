@@ -135,6 +135,7 @@ export type LinkReport = {
 export type ProjectDocument = { path: string; tracked: boolean; bytes: number };
 export type EvidenceCandidate = { path: string; line: number; excerpt: string };
 export type DocumentKind = "current" | "future" | "past" | "reference";
+export type RecoveryOption = { key: string; updated_at: string; revision?: string; bytes?: number; active?: boolean };
 export type ProgressBaseline = {
   repository: string;
   documents: Record<string, string>;
@@ -180,6 +181,9 @@ export interface Bridge {
   listProjectDocs: (path: string, requestId?: string, recoveryKey?: string) => void;
   cacheProgressDraft?: (path: string, payloadJson: string, requestId: string) => void;
   discardProgressDraft?: (path: string, requestId: string, recoveryKey?: string, revision?: string) => void;
+  discardProgressDrafts?: (path: string, selectionsJson: string, requestId: string) => void;
+  exportProgressDraft?: (path: string, payloadJson: string, requestId: string) => void;
+  useLatestProgress?: (path: string, requestId: string) => void;
   previewProgress: (path: string, selectedJson: string, requestId?: string) => void;
   saveProgress: (path: string, payloadJson: string, requestId?: string) => void;
   inspectProgress: (path: string, requestId?: string) => void;

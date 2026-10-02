@@ -135,3 +135,82 @@ def test_multiple_copies_are_selectable_and_changed_copies_cannot_be_deleted(tmp
     assert recovery_copy(root, data, None)['recovery'] == second
     with pytest.raises(ValueError):
         discard_recovery(root, data, '../outside.json')
+
+
+@pytest.mark.parametrize('revision', ['', None])
+def test_recovery_deletion_requires_revision_even_for_an_existing_copy(tmp_path, revision):
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    cache_draft(root, data, extract_requirements(root, ['README.md']))
+    target = draft_file(root, data)
+    original = target.read_bytes()
+    with pytest.raises(ValueError, match='수정 버전'):
+        discard_recovery(root, data, target.name, revision)
+    assert target.read_bytes() == original
+
+
+def test_all_owner_copies_share_one_persistent_transaction_gate(tmp_path):
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    draft = extract_requirements(root, ['README.md'])
+    for number in range(40):
+        cache_draft(root, data, draft, f'{number:032x}')
+    assert len(recovery_copy(root, data, None)['recovery_options']) == 40
+    for number in range(40):
+        discard_draft(root, data, f'{number:032x}')
+    discard_draft(root, data, 'f' * 32)
+    assert [lock.name for lock in (data / 'drafts').glob('*.lock')] == [draft_file(root, data).name + '.lock']
+
+
+def test_bulk_cleanup_rechecks_every_revision_before_deleting_any_copy(tmp_path):
+    from drift_gate.desktop.progress_drafts import discard_recoveries
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    draft = extract_requirements(root, ['README.md'])
+    for owner in ('a' * 32, 'b' * 32, 'c' * 32):
+        cache_draft(root, data, draft, owner)
+    options = recovery_copy(root, data, None)['recovery_options']
+    draft['requirements'][0]['title'] = '새 편집'
+    cache_draft(root, data, draft, 'a' * 32)
+    with pytest.raises(ValueError, match='새 편집'):
+        discard_recoveries(root, data, options)
+    assert all(draft_file(root, data, owner).is_file() for owner in ('a' * 32, 'b' * 32, 'c' * 32))
+    refreshed = recovery_copy(root, data, None)['recovery_options']
+    discard_recoveries(root, data, refreshed[:2])
+    assert len(recovery_copy(root, data, None)['recovery_options']) == 1
+
+
+def test_session_lease_protects_a_copy_even_if_its_revision_has_not_changed(tmp_path):
+    from drift_gate.desktop.progress_drafts import DraftSession, discard_recoveries
+    from drift_gate.desktop.store_lock import store_lock
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    draft = extract_requirements(root, ['README.md'])
+    owner = 'a' * 32
+    cache_draft(root, data, draft, owner)
+    option = recovery_copy(root, data, None)['recovery_options'][0]
+    session = DraftSession(root, data, owner)
+    try:
+        with store_lock(draft_file(root, data)):
+            session.start_locked()
+        with pytest.raises(ValueError, match='편집 중'):
+            discard_recoveries(root, data, [option])
+        assert recovery_copy(root, data, None)['recovery_options'][0]['active']
+    finally:
+        session.close()
+    assert not recovery_copy(root, data, None)['recovery_options'][0]['active']
+    discard_recoveries(root, data, [option])
+
+
+def test_export_preserves_incomplete_inputs_and_original_edit_ancestry(tmp_path):
+    from copy import deepcopy
+    from drift_gate.desktop.progress_drafts import export_draft
+    root = project(tmp_path)
+    draft = extract_requirements(root, ['README.md'])
+    draft['edit_base'] = deepcopy(draft)
+    draft['requirements'][0].update(title='내 편집', evidence={'path': '', 'line': None, 'note': ''})
+    target = tmp_path / 'export.json'
+    export_draft(root, draft, target)
+    payload = json.loads(target.read_text(encoding='utf-8'))
+    assert payload['draft'] == draft
+    assert payload['draft']['edit_base']['requirements'][0]['title'] != '내 편집'

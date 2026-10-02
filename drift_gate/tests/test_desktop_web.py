@@ -474,6 +474,7 @@ def test_draft_recovers_on_a_new_bridge_and_clears_only_after_successful_save(tm
     monkeypatch.setattr(first, '_progress_dir', lambda: directory)
     first.cacheProgressDraft(str(repo), json.dumps(draft), 'first:draft')
     settle(first)
+    first.closeDraftSessions()
     second = DesktopBridge()
     monkeypatch.setattr(second, '_progress_dir', lambda: directory)
     messages = []
@@ -554,7 +555,7 @@ def test_native_close_protects_unsaved_progress(monkeypatch, discard, cached):
     answer = QMessageBox.StandardButton.Yes if discard else QMessageBox.StandardButton.No
     prompts = []
     monkeypatch.setattr(QMessageBox, 'question', lambda *args: (prompts.append(args[2]), answer)[1])
-    window = SimpleNamespace(bridge=SimpleNamespace(progress_dirty=True, progress_recovery_ready=cached, scan_thread=None, review_worker=None,
+    window = SimpleNamespace(bridge=SimpleNamespace(progress_dirty=True, progress_recovery_ready=cached, scan_thread=None, review_worker=None, closeDraftSessions=lambda: None,
         progress_pool=SimpleNamespace(waitForDone=lambda timeout: True)))
     results = []
     event = SimpleNamespace(ignore=lambda: results.append('ignored'), accept=lambda: results.append('accepted'))
@@ -562,3 +563,82 @@ def test_native_close_protects_unsaved_progress(monkeypatch, discard, cached):
     assert ('복구할 수 있습니다' in prompts[0]) is cached
     assert ('잃을 수 있습니다' in prompts[0]) is not cached
     assert results == ['accepted' if discard else 'ignored']
+
+
+def test_bridge_rejects_missing_revision_and_active_copy_in_bulk_cleanup(tmp_path, monkeypatch):
+    from drift_gate.desktop.progress_drafts import recovery_copy, draft_file
+    from drift_gate.desktop.progress_service import extract_requirements
+    QApplication.instance() or QApplication([])
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    left, right = DesktopBridge(), DesktopBridge()
+    for bridge in (left, right):
+        monkeypatch.setattr(bridge, '_progress_dir', lambda: data)
+    messages = []
+    right.event.connect(lambda raw: messages.append(json.loads(raw)))
+    left.cacheProgressDraft(str(root), json.dumps(extract_requirements(root, ['README.md'])), 'cache')
+    settle(left)
+    try:
+        option = recovery_copy(root, data, None)['recovery_options'][0]
+        right.discardProgressDraft(str(root), 'missing', option['key'])
+        settle(right)
+        assert '수정 버전' in of_type(messages, 'progressError')['message']
+        right.discardProgressDrafts(str(root), json.dumps([option]), 'live')
+        settle(right)
+        assert '편집 중' in of_type(messages, 'progressError')['message']
+        assert draft_file(root, data, left._draft_owner).is_file()
+        left.closeDraftSessions()
+        right.discardProgressDrafts(str(root), json.dumps([option]), 'closed')
+        settle(right)
+        assert of_type(messages, 'progressDraftDiscarded')['request_id'] == 'closed'
+        assert 'recovery' not in of_type(messages, 'progressDocs')
+    finally:
+        left.closeDraftSessions()
+        right.closeDraftSessions()
+
+
+def test_export_must_succeed_and_remain_intact_before_using_latest_baseline(tmp_path, monkeypatch):
+    from drift_gate.desktop.progress_drafts import draft_file
+    from drift_gate.desktop.progress_service import extract_requirements, save_baseline
+    QApplication.instance() or QApplication([])
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    baseline = save_baseline(root, data, extract_requirements(root, ['README.md']))
+    draft = json.loads(json.dumps(baseline))
+    draft['requirements'][0]['title'] = '내 편집'
+    bridge = DesktopBridge()
+    monkeypatch.setattr(bridge, '_progress_dir', lambda: data)
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    bridge.cacheProgressDraft(str(root), json.dumps(draft), 'cache')
+    settle(bridge)
+    target = tmp_path / 'export.json'
+    try:
+        bridge.useLatestProgress(str(root), 'no-export')
+        settle(bridge)
+        assert of_type(messages, 'progressError')['request_id'] == 'no-export'
+        assert draft_file(root, data, bridge._draft_owner).is_file()
+        monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getSaveFileName', lambda *args: ('', ''))
+        bridge.exportProgressDraft(str(root), json.dumps(draft), 'cancel')
+        assert messages[-1]['type'] == 'progressDraftExportCancelled'
+        monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getSaveFileName', lambda *args: (str(target), ''))
+        bridge.exportProgressDraft(str(root), json.dumps(draft), 'export')
+        settle(bridge)
+        assert of_type(messages, 'progressDraftExported')['file'] == str(target)
+        original = target.read_bytes()
+        target.write_text('{}', encoding='utf-8')
+        bridge.useLatestProgress(str(root), 'tampered')
+        settle(bridge)
+        assert of_type(messages, 'progressError')['request_id'] == 'tampered'
+        assert draft_file(root, data, bridge._draft_owner).is_file()
+        target.write_bytes(original)
+        latest = json.loads(json.dumps(baseline))
+        latest['requirements'][1]['title'] = 'export 후 다른 편집기가 저장'
+        latest = save_baseline(root, data, latest)
+        bridge.useLatestProgress(str(root), 'latest')
+        settle(bridge)
+        assert of_type(messages, 'progressLatestUsed')['baseline'] == latest
+        assert not draft_file(root, data, bridge._draft_owner).exists()
+        assert json.loads(target.read_text(encoding='utf-8'))['draft'] == draft
+    finally:
+        bridge.closeDraftSessions()

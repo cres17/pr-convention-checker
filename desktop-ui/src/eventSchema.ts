@@ -65,7 +65,7 @@ const scan = z.object({ repository: text, base: text, at: text, changed_file_cou
 const schema = z.discriminatedUnion("type", [
     z.object({ type: z.literal("progressDocs"), ...progressMeta, documents: z.array(document), omitted: nonnegative, repository: text.optional(), baseline: baseline.nullable().optional(),
         recovery: recoveryBaseline.nullable().optional().catch(null), recovery_warning: text.optional(),
-        recovery_key: text.optional(), recovery_revision: text.optional(), recovery_options: z.array(z.object({ key: text, updated_at: text })).optional() }),
+        recovery_key: text.optional(), recovery_revision: text.optional(), recovery_options: z.array(z.object({ key: text, updated_at: text, revision: text.optional(), bytes: nonnegative.optional(), active: z.boolean().optional() })).optional() }),
     z.object({ type: z.literal("progressDraftCached"), ...progressMeta }),
     z.object({ type: z.literal("progressDraftDiscarded"), ...progressMeta }),
     z.object({ type: z.literal("progressDraftError"), ...progressMeta, message: text }),
@@ -80,6 +80,9 @@ const schema = z.discriminatedUnion("type", [
     z.object({ type: z.literal("progressLinks"), ...progressMeta, documents: strings, checked: nonnegative,
         issues: z.array(issue), truncated: z.boolean(), limitations: text }),
     z.object({ type: z.literal("progressEvidence"), ...progressMeta, id: text, candidates: z.array(candidate) }),
+    z.object({ type: z.literal("progressDraftExported"), ...progressMeta, file: text }),
+    z.object({ type: z.literal("progressDraftExportCancelled"), ...progressMeta }),
+    z.object({ type: z.literal("progressLatestUsed"), ...progressMeta, baseline, warning: text.optional() }),
     z.object({ type: z.literal("progressExported"), ...progressMeta, file: text }),
     z.object({ type: z.literal("progressError"), ...progressMeta, message: text, errors: z.array(fieldError).optional(), current_baseline: baseline.optional() }),
     z.object({ type: z.literal("ready"), ...meta, repository: text, base: text, installed: z.record(text, text) }),

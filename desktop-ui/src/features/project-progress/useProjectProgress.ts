@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef } from "react";
-import type { Bridge, DocumentKind, ProgressItem } from "../../bridge";
+import type { Bridge, DocumentKind, ProgressItem, RecoveryOption } from "../../bridge";
 import type { QueuedProgressEvent } from "../../events";
 import { isProgressFilter } from "./status";
 import { confirmRequirement } from "./requirement";
@@ -58,7 +58,7 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
           dispatch({ type: "end", operation: operation.current });
         continue;
       }
-      if (event.type === 'progressPreview' || event.type === 'progressSaved') requests.cancel('draft');
+      if (event.type === 'progressPreview' || event.type === 'progressSaved' || event.type === 'progressLatestUsed') requests.cancel('draft');
       dispatch({ type: "event", event });
       requests.complete(event);
     }
@@ -66,7 +66,7 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
   useEffect(() => { operation.current = state.busy; }, [state.busy]);
   useEffect(() => {
     if (!connected || !bridge?.cacheProgressDraft || state.path !== path || !state.path || !state.draft || !state.dirty
-      || state.busy === "save" || state.draftStatus === "cached") return;
+      || state.busy === "save" || state.busy === "latest" || state.busy === "draft-export" || state.draftStatus === "cached") return;
     const requests = sessions.current.requests(state.path);
     if (requests.token('draft')) return;
     dispatch({ type: "cache-draft" });
@@ -121,12 +121,13 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
     if (!connected || !path || !bridge || state.path !== path || state.busy || operation.current) return;
     if ((view.recoveryPending && purpose !== "discard" && purpose !== 'documents') || (state.conflict && purpose === 'save')) return;
     operation.current = purpose;
-    if (purpose === "save" && queuedDraft.current) {
+    if ((purpose === "save" || purpose === "latest") && queuedDraft.current) {
       clearTimeout(queuedDraft.current.timer);
       queuedDraft.current = null;
     }
     const requests = sessions.current.requests(path);
-    if (purpose === "save" || purpose === "extract") requests.invalidateReads();
+    if (purpose === 'latest') requests.cancel('draft');
+    if (purpose === "save" || purpose === "extract" || purpose === "latest") requests.invalidateReads();
     dispatch({ type: "begin", operation: purpose });
     operationToken.current = requests.start(purpose);
     run(bridge, operationToken.current);
@@ -142,6 +143,7 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
   };
   const actions = {
     recoverDraft: () => dispatch({ type: "recover-draft" }),
+    keepCopies: () => dispatch({ type: "keep-copies" }),
     chooseRecovery: (key: string) => begin('documents', (bridge, token) => bridge.listProjectDocs(path, token, key)),
     rebase: (choice: 'local' | 'latest') => {
       sessions.current.requests(state.path).cancel('draft');
@@ -150,6 +152,20 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
     discardDraft: () => {
       if (!state.dirty && bridge?.discardProgressDraft)
         begin("discard", (bridge, token) => bridge.discardProgressDraft?.(path, token, state.recoveryKey, state.recoveryRevision));
+    },
+    discardCopies: (options: RecoveryOption[]) => {
+      if (!state.dirty && bridge?.discardProgressDrafts && options.length && options.every((copy) => !copy.active && copy.revision))
+        begin('discard', (bridge, token) => bridge.discardProgressDrafts?.(path,
+          JSON.stringify(options.map(({ key, revision }) => ({ key, revision }))), token));
+    },
+    exportDraft: () => {
+      if (state.draft && bridge?.exportProgressDraft)
+        begin('draft-export', (bridge, token) => bridge.exportProgressDraft?.(path,
+          JSON.stringify({ ...state.draft, edit_base: state.base }), token));
+    },
+    useLatest: () => {
+      if (state.conflict && state.draftExported && bridge?.useLatestProgress)
+        begin('latest', (bridge, token) => bridge.useLatestProgress?.(path, token));
     },
     selectFilter: (value: string) => { if (isProgressFilter(value)) dispatch({ type: "filter", value }); },
     search: (value: string) => dispatch({ type: "query", value }),

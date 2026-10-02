@@ -33,6 +33,9 @@ function harness() {
     loadTestResults: vi.fn(),
     cacheProgressDraft: vi.fn(),
     discardProgressDraft: vi.fn(),
+    discardProgressDrafts: vi.fn(),
+    exportProgressDraft: vi.fn(),
+    useLatestProgress: vi.fn(),
   } as unknown as Bridge;
   let events: QueuedProgressEvent[] = [];
   let path = "/sample/one";
@@ -513,4 +516,91 @@ it('selects another recovery copy and deletes only the displayed revision', () =
     documents: [], omitted: 0, baseline: makeBaseline(), recovery: makeBaseline(), recovery_key: key, recovery_revision: 'old:1' });
   fireEvent.click(screen.getByRole('button', { name: '보관된 초안 삭제' }));
   expect(vi.mocked(page.bridge.discardProgressDraft!).mock.calls.at(-1)?.slice(2)).toEqual(['old.json', 'old:1']);
+});
+
+it('protects running recovery copies and sends the selected cleanup revisions only', () => {
+  const page = harness();
+  const options = [
+    { key: 'live.json', revision: 'live:1', updated_at: '2026-10-02T01:00:00Z', bytes: 2048, active: true },
+    { key: 'old.json', revision: 'old:1', updated_at: '2026-10-01T01:00:00Z', bytes: 1024, active: false },
+  ];
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline: makeBaseline(), recovery: makeBaseline(),
+    recovery_key: 'live.json', recovery_revision: 'live:1', recovery_options: options });
+  expect(screen.getByRole('button', { name: '초안 복구' }).matches(':disabled')).toBe(true);
+  expect(screen.getByRole('button', { name: '보관된 초안 삭제' }).matches(':disabled')).toBe(true);
+  expect(screen.getByLabelText('정리할 초안 1').matches(':disabled')).toBe(true);
+  fireEvent.click(screen.getByLabelText('정리할 초안 2'));
+  fireEvent.click(screen.getByRole('button', { name: '선택한 초안 1개 삭제' }));
+  expect(JSON.parse(vi.mocked(page.bridge.discardProgressDrafts!).mock.calls.at(-1)![1])).toEqual([{ key: 'old.json', revision: 'old:1' }]);
+});
+
+function overflowPage() {
+  const page = harness();
+  const original = { ...makeBaseline(), version: 1 };
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline: original });
+  // A new extracted requirement exists only in our editor; the other editor adds 118.
+  page.emit({ type: 'progressPreview', documents: original.documents, requirements: [...original.requirements, makeItem('내 새 기능')] });
+  fireEvent.click(screen.getByRole('button', { name: '기준과 근거 저장' }));
+  const [path, , request_id] = vi.mocked(page.bridge.saveProgress).mock.calls.at(-1)!;
+  const latest = { ...original, version: 2, requirements: [...original.requirements,
+    ...Array.from({ length: 118 }, (_, index) => makeItem(`다른 새 기능 ${index}`))] };
+  page.emit({ type: 'progressError', requested_path: path, request_id, request_done: true, message: 'conflict', current_baseline: latest });
+  return { ...page, latest };
+}
+
+it('keeps an overflowing draft after export cancellation and failure', () => {
+  const page = overflowPage();
+  const useLatest = screen.getByRole('button', { name: '내 편집을 폐기하고 최신 기준 사용' });
+  expect(useLatest.matches(':disabled')).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: '내 초안 파일로 내보내기' }));
+  let request_id = vi.mocked(page.bridge.exportProgressDraft!).mock.calls.at(-1)![2];
+  page.emit({ type: 'progressDraftExportCancelled', request_id, request_done: true });
+  expect(useLatest.matches(':disabled')).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: '내 초안 파일로 내보내기' }));
+  request_id = vi.mocked(page.bridge.exportProgressDraft!).mock.calls.at(-1)![2];
+  page.emit({ type: 'progressError', request_id, request_done: true, message: 'disk full' });
+  expect(useLatest.matches(':disabled')).toBe(true);
+  expect(page.bridge.useLatestProgress).not.toHaveBeenCalled();
+  expect(screen.getByRole('button', { name: '기준과 근거 저장' }).matches(':disabled')).toBe(true);
+});
+
+it('uses latest only after successful export and never revives the discarded autosave', () => {
+  vi.useFakeTimers();
+  const page = overflowPage();
+  fireEvent.click(screen.getByRole('button', { name: '내 초안 파일로 내보내기' }));
+  const [, payload, request_id] = vi.mocked(page.bridge.exportProgressDraft!).mock.calls.at(-1)!;
+  expect(JSON.parse(payload).requirements.some((item: ProgressItem) => item.id === '내 새 기능')).toBe(true);
+  page.emit({ type: 'progressDraftExported', request_id, request_done: true, file: '/backup/draft.json' });
+  fireEvent.click(screen.getByRole('button', { name: '내 편집을 폐기하고 최신 기준 사용' }));
+  const latestRequest = vi.mocked(page.bridge.useLatestProgress!).mock.calls.at(-1)![1];
+  page.emit({ type: 'progressLatestUsed', request_id: latestRequest, request_done: true, baseline: page.latest });
+  act(() => vi.advanceTimersByTime(1000));
+  expect(page.bridge.cacheProgressDraft).not.toHaveBeenCalled();
+  expect(screen.getByRole('button', { name: '기준과 근거 저장' }).matches(':disabled')).toBe(false);
+  page.move('/sample/two');
+  expect(page.bridge.cacheProgressDraft).not.toHaveBeenCalled();
+});
+
+it('requires another export after editing the exported draft', () => {
+  const page = overflowPage();
+  fireEvent.click(screen.getByRole('button', { name: '내 초안 파일로 내보내기' }));
+  const request_id = vi.mocked(page.bridge.exportProgressDraft!).mock.calls.at(-1)![2];
+  page.emit({ type: 'progressDraftExported', request_id, request_done: true, file: '/backup/draft.json' });
+  expect(screen.getByRole('button', { name: '내 편집을 폐기하고 최신 기준 사용' }).matches(':disabled')).toBe(false);
+  fireEvent.change(screen.getByLabelText('기능명'), { target: { value: '내보낸 뒤 추가 편집' } });
+  expect(screen.getByRole('button', { name: '내 편집을 폐기하고 최신 기준 사용' }).matches(':disabled')).toBe(true);
+});
+
+it('allows baseline editing while preserving the other running app recovery copy', () => {
+  const page = harness();
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline: makeBaseline(), recovery: makeBaseline(),
+    recovery_key: 'live.json', recovery_revision: '1', recovery_options: [
+      { key: 'live.json', revision: '1', updated_at: '2026-10-02T01:00:00Z', active: true },
+    ] });
+  fireEvent.click(screen.getByRole('button', { name: '초안은 보존하고 기준 편집' }));
+  expect(screen.queryByRole('button', { name: '초안 복구' })).toBeNull();
+  fireEvent.change(screen.getByLabelText('기능명'), { target: { value: '새 창에서 기준 편집' } });
+  expect((screen.getByLabelText('기능명') as HTMLInputElement).value).toBe('새 창에서 기준 편집');
+  expect(page.bridge.discardProgressDraft).not.toHaveBeenCalled();
+  expect(page.bridge.discardProgressDrafts).not.toHaveBeenCalled();
 });

@@ -1,6 +1,6 @@
 import type {
   DocumentKind, EvidenceCandidate, LinkReport, ProgressBaseline, ProgressFieldError,
-  ProgressHistory, ProgressItem, ProgressReport, ProjectDocument, TestLinks,
+  ProgressHistory, ProgressItem, ProgressReport, ProjectDocument, RecoveryOption, TestLinks,
 } from "../../bridge";
 import type { ProgressEvent } from "../../events";
 import { mergeProgressPreview } from "./merge";
@@ -8,7 +8,7 @@ import { displayStatus, filterProgressItems, inCurrentScope, type ProgressFilter
 import { manualRequirement, patchRequirement } from "./requirement";
 import { rebaseProgress } from "./rebase";
 
-export type ProgressOperation = "" | "documents" | "extract" | "save" | "links" | "tests" | "discard";
+export type ProgressOperation = "" | "documents" | "extract" | "save" | "links" | "tests" | "discard" | "draft-export" | "latest";
 export type ProgressState = {
   path: string;
   documents: ProjectDocument[];
@@ -38,7 +38,8 @@ export type ProgressState = {
   recoveryWarning: string;
   recoveryKey: string;
   recoveryRevision: string;
-  recoveryOptions: { key: string; updated_at: string }[];
+  recoveryOptions: RecoveryOption[];
+  draftExported: string;
   saveWarning: string;
   draftStatus: "" | "saving" | "cached" | "error";
   draftError: string;
@@ -50,7 +51,7 @@ export function initialProgressState(path = "", busy: ProgressOperation = ""): P
     showDocuments: true, fieldErrors: [], focusField: "", links: null, history: null,
     tests: null, exported: "", dirty: false, inspections: 0,
     recovery: null, recoveryWarning: "", saveWarning: "", draftStatus: "", draftError: "",
-    recoveryKey: '', recoveryRevision: '', recoveryOptions: [],
+    recoveryKey: '', recoveryRevision: '', recoveryOptions: [], draftExported: '',
   };
 }
 export type ProgressAction =
@@ -73,7 +74,7 @@ export type ProgressAction =
   | { type: "forget-tests" }
   | { type: "add-manual"; id: string };
 // Recovery copies never change the confirmed baseline until the user saves.
-export type DraftAction = { type: "recover-draft" } | { type: "cache-draft" } | { type: "rebase"; choice: 'local' | 'latest' };
+export type DraftAction = { type: "recover-draft" } | { type: "keep-copies" } | { type: "cache-draft" } | { type: "rebase"; choice: 'local' | 'latest' };
 
 function finish(state: ProgressState, operation: ProgressOperation): ProgressOperation {
   return state.busy === operation ? "" : state.busy;
@@ -117,12 +118,13 @@ function receive(state: ProgressState, event: ProgressEvent): ProgressState {
         return { ...state, busy: finish(state, "extract"), error: error instanceof Error ? error.message : String(error) };
       }
     }
+    case "progressLatestUsed":
     case "progressSaved":
       return {
         ...state, dirty: false, draftStatus: "", draftError: "", recovery: null, recoveryWarning: "", saveWarning: event.warning ?? "",
-        busy: state.busy === "documents" ? "" : finish(state, "save"), fieldErrors: [], draft: event.baseline, base: event.baseline, conflict: null,
+        busy: "", draftExported: "", recoveryKey: "", recoveryRevision: "", recoveryOptions: [], fieldErrors: [], draft: event.baseline, base: event.baseline, conflict: null,
         selectedDocs: Object.keys(event.baseline.documents), documentKinds: event.baseline.document_kinds ?? {},
-        showDocuments: false,
+        showDocuments: false, inspections: state.inspections + (event.type === "progressLatestUsed" ? 1 : 0),
       };
     case "progressReport":
       return state.dirty ? state : { ...state, report: event.report };
@@ -134,6 +136,8 @@ function receive(state: ProgressState, event: ProgressEvent): ProgressState {
       return { ...state, history: { snapshots: event.snapshots, since_save: event.since_save } };
     case "progressLinks":
       return { ...state, busy: finish(state, "links"), links: state.dirty ? state.links : event };
+    case "progressDraftExported": return { ...state, busy: finish(state, "draft-export"), draftExported: event.file };
+    case "progressDraftExportCancelled": return { ...state, busy: finish(state, "draft-export") };
     case "progressExported":
       return { ...state, exported: `저장했습니다 · ${event.file}` };
     case "progressEvidence":
@@ -147,6 +151,7 @@ function receive(state: ProgressState, event: ProgressEvent): ProgressState {
   }
 }
 function transition(state: ProgressState, action: ProgressAction | DraftAction): ProgressState {
+  if (["draft-export", "latest"].includes(state.busy) && ["edit", "kind", "document", "add-manual", "rebase"].includes(action.type)) return state;
   if (!state.dirty && (state.recovery || state.recoveryWarning)
       && ["edit", "kind", "document", "add-manual"].includes(action.type)) return state;
   switch (action.type) {
@@ -160,8 +165,10 @@ function transition(state: ProgressState, action: ProgressAction | DraftAction):
         recoveryWarning: '', saveWarning: '최신 기준과 편집을 합쳤습니다. 내용을 검토한 뒤 기준과 근거 저장을 눌러 주세요.' };
     }
     case "cache-draft": return { ...state, draftStatus: "saving", draftError: "" };
+    case "keep-copies": return state.busy || state.dirty ? state : { ...state, recovery: null, recoveryWarning: '',
+      recoveryKey: '', recoveryRevision: '', recoveryOptions: [] };
     case "recover-draft": {
-      if (!state.recovery || state.busy || state.dirty) return state;
+      if (!state.recovery || state.busy || state.dirty || state.recoveryOptions.find((copy) => copy.key === state.recoveryKey)?.active) return state;
       const draft = { ...state.recovery, recovery_key: state.recoveryKey, recovery_revision: state.recoveryRevision };
       const base = draft.edit_base ?? ((draft.version ?? 0) === (state.base?.version ?? 0) ? state.base : null);
       return { ...state, draft, base, recovery: null, dirty: true, report: null, links: null, tests: null, fieldErrors: [],
@@ -172,7 +179,7 @@ function transition(state: ProgressState, action: ProgressAction | DraftAction):
     case "restore":
       return action.retained
         ? { ...action.retained, path: action.path,
-            busy: ["save", "extract", "discard"].includes(action.retained.busy) ? action.retained.busy : action.connected ? "documents" : "",
+            busy: ["save", "extract", "discard", "draft-export", "latest"].includes(action.retained.busy) ? action.retained.busy : action.connected ? "documents" : "",
             candidates: [], inspections: 0 }
         : initialProgressState(action.path, action.connected && action.path ? "documents" : "");
     case "event": return receive(state, action.event);
@@ -244,7 +251,7 @@ function transition(state: ProgressState, action: ProgressAction | DraftAction):
 export function progressReducer(state: ProgressState, action: ProgressAction | DraftAction): ProgressState {
   let next = transition(state, action);
   if (next === state) return state;
-  if (next.dirty && next.draft !== state.draft) next = { ...next, draftStatus: "saving", draftError: "" };
+  if (next.dirty && next.draft !== state.draft) next = { ...next, draftStatus: "saving", draftError: "", draftExported: "" };
   const visible = filterProgressItems(next.draft, next.report, next.filter, next.query);
   if (visible.some((item) => item.id === next.selectedId)) return next;
   return { ...next, selectedId: visible[0]?.id ?? "", candidates: [] };

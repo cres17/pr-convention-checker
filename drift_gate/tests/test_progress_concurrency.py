@@ -87,3 +87,49 @@ def test_lock_timeout_and_exception_release(tmp_path):
             raise ValueError('failed validation')
     with store_lock(target, timeout=0.05):
         pass
+
+
+def _draft_session_writer(root, data, draft, owner, ready, finish):
+    from drift_gate.desktop.progress_drafts import DraftSession, cache_draft
+    session = DraftSession(root, data, owner)
+    try:
+        cache_draft(root, data, draft, owner, session)
+        ready.set()
+        finish.wait(timeout=20)
+    finally:
+        session.close()
+
+
+@pytest.mark.parametrize('crash', [False, True])
+def test_native_session_lease_is_live_across_processes_and_released_on_exit(tmp_path, crash):
+    from drift_gate.desktop.progress_drafts import discard_recovery, draft_file, recovery_copy
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    draft = extract_requirements(root, ['README.md'])
+    owner = 'a' * 32
+    context = multiprocessing.get_context('spawn')
+    ready, finish = context.Event(), context.Event()
+    process = context.Process(target=_draft_session_writer, args=(root, data, draft, owner, ready, finish))
+    process.start()
+    try:
+        assert ready.wait(timeout=15)
+        option = recovery_copy(root, data, None)['recovery_options'][0]
+        assert option['active'] is True
+        with pytest.raises(ValueError, match='편집 중'):
+            discard_recovery(root, data, option['key'], option['revision'])
+        assert draft_file(root, data, owner).is_file()
+        if crash:
+            process.terminate()
+        else:
+            finish.set()
+        process.join(timeout=15)
+        assert not process.is_alive()
+        result = recovery_copy(root, data, None)
+        assert result['recovery_options'][0]['active'] is False
+        assert not list((data / 'drafts').glob('*.live.lock'))
+        discard_recovery(root, data, option['key'], option['revision'])
+        assert recovery_copy(root, data, None) == {}
+    finally:
+        if process.is_alive():
+            process.terminate()
+            process.join(timeout=5)

@@ -21,7 +21,9 @@ from drift_gate.desktop.review_dialog import ReviewWorker, review_html
 from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
 from drift_gate.adapters.report_naming import default_report_path, detect_project
 from drift_gate.desktop.progress_report import render_markdown
-from drift_gate.desktop.progress_drafts import cache_draft, recovery_copy, discard_draft, discard_recovery
+from drift_gate.desktop.progress_drafts import (
+    DraftSession, cache_draft, recovery_copy, discard_draft, discard_recovery, discard_recoveries, export_draft,
+)
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
     BaselineConflict, BaselineError, check_references, evidence_candidates, extract_requirements, inspect_progress,
@@ -95,6 +97,8 @@ class DesktopBridge(QObject):
         self.review_worker = None
         self.progress_dirty = False
         self._draft_owner = uuid.uuid4().hex
+        self._draft_sessions = {}
+        self._draft_exports = {}
         self.progress_recovery_ready = False
         self.history = []  # Session-only: no hidden persistence of source diffs.
         # One thread keeps progress results in request order (save -> report).
@@ -116,6 +120,17 @@ class DesktopBridge(QObject):
     def _progress_dir(self):
         return Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)) / 'progress'
 
+    def closeDraftSessions(self):
+        for session in self._draft_sessions.values():
+            session.close()
+        self._draft_sessions.clear()
+
+    def _progress_documents(self, path, directory, recovery_key=''):
+        result = list_documents(path)
+        result['baseline'] = load_baseline(path, directory)
+        result.update(recovery_copy(repository_root(path), directory, result['baseline'], recovery_key))
+        return result
+
     @Slot(str)
     @Slot(str, str)
     @Slot(str, str, str)
@@ -123,10 +138,7 @@ class DesktopBridge(QObject):
         directory = self._progress_dir()
 
         def work():
-            result = list_documents(path)
-            result['baseline'] = load_baseline(path, directory)
-            result.update(recovery_copy(repository_root(path), directory, result['baseline'], recovery_key))
-            return [('progressDocs', result)]
+            return [('progressDocs', self._progress_documents(path, directory, recovery_key))]
         self._run_progress(path, work, request_id=request_id)
 
     @Slot(str, str)
@@ -167,7 +179,15 @@ class DesktopBridge(QObject):
         def work():
             if len(payload_json.encode('utf-8')) > 2_000_000:
                 raise ValueError('편집 초안이 보관 상한을 넘었습니다.')
-            cache_draft(repository_root(path), directory, json.loads(payload_json), self._draft_owner)
+            root = repository_root(path)
+            payload = json.loads(payload_json)
+            exported = self._draft_exports.get(root)
+            if exported is not None and exported['draft'] != payload:
+                self._draft_exports.pop(root, None)
+            key = (root, directory)
+            if key not in self._draft_sessions:
+                self._draft_sessions[key] = DraftSession(root, directory, self._draft_owner)
+            cache_draft(root, directory, payload, self._draft_owner, self._draft_sessions[key])
             return [('progressDraftCached', {})]
         self._run_progress(path, work, error_type='progressDraftError', request_id=request_id)
 
@@ -181,10 +201,49 @@ class DesktopBridge(QObject):
                 discard_recovery(repository_root(path), directory, recovery_key, revision)
             else:
                 discard_draft(repository_root(path), directory, self._draft_owner)
-            result = list_documents(path)
-            result['baseline'] = load_baseline(path, directory)
-            result.update(recovery_copy(repository_root(path), directory, result['baseline']))
-            return [('progressDraftDiscarded', {}), ('progressDocs', result)]
+            return [('progressDraftDiscarded', {}), ('progressDocs', self._progress_documents(path, directory))]
+        self._run_progress(path, work, request_id=request_id)
+
+    @Slot(str, str, str)
+    def discardProgressDrafts(self, path, selections_json, request_id):
+        directory = self._progress_dir()
+        def work():
+            discard_recoveries(repository_root(path), directory, json.loads(selections_json))
+            return [('progressDraftDiscarded', {}), ('progressDocs', self._progress_documents(path, directory))]
+        self._run_progress(path, work, request_id=request_id)
+
+    @Slot(str, str, str)
+    def exportProgressDraft(self, path, payload_json, request_id):
+        filename, _ = QFileDialog.getSaveFileName(self.parent(), '편집 초안 내보내기',
+                                                 str(Path(path) / 'progress-draft.json'), 'JSON (*.json)')
+        if not filename:
+            self.emit('progressDraftExportCancelled', requested_path=path, request_id=request_id, request_done=True)
+            return
+        def work():
+            root, payload, target = repository_root(path), json.loads(payload_json), Path(filename)
+            export_draft(root, payload, target)
+            self._draft_exports[root] = {'draft': payload, 'file': target, 'sha256': hashlib.sha256(target.read_bytes()).hexdigest()}
+            return [('progressDraftExported', {'file': filename})]
+        self._run_progress(path, work, request_id=request_id)
+
+    @Slot(str, str)
+    def useLatestProgress(self, path, request_id):
+        directory = self._progress_dir()
+        def work():
+            root = repository_root(path)
+            exported = self._draft_exports.get(root)
+            if exported is None or hashlib.sha256(exported['file'].read_bytes()).hexdigest() != exported['sha256']:
+                raise ValueError('내보낸 초안 파일을 확인하지 못했습니다. 초안을 다시 내보낸 뒤 전환해 주세요.')
+            baseline = load_baseline(path, directory)
+            if baseline is None:
+                raise ValueError('최신 기준을 찾지 못했습니다. 현재 편집은 유지했습니다.')
+            warning = ''
+            try:
+                discard_draft(root, directory, self._draft_owner)
+            except OSError:
+                warning = '최신 기준을 불러왔지만 이전 초안 사본을 지우지 못했습니다.'
+            self._draft_exports.pop(root, None)
+            return [('progressLatestUsed', {'baseline': baseline, 'warning': warning})]
         self._run_progress(path, work, request_id=request_id)
 
     @Slot(str)
@@ -488,6 +547,7 @@ class WebDesktopWindow(QMainWindow):
             if not self.bridge.review_worker.wait(2000):
                 event.ignore()
                 return
+        self.bridge.closeDraftSessions()
         event.accept()
 
 

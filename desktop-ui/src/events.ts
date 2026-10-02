@@ -1,13 +1,13 @@
 import type {
   EvidenceCandidate, LinkReport, PolicyPreview, ProgressBaseline,
   ProgressFieldError, ProgressHistory, ProgressItem, ProgressReport,
-  ProjectDocument, Review, Scan, ScanImpact, TestLinks,
+  ProjectDocument, RecoveryOption, Review, Scan, ScanImpact, TestLinks,
 } from "./bridge";
 
 type Requested = { requested_path?: string; request_id?: string; request_done?: boolean };
 export type ProgressEvent = Requested & (
   | { type: "progressDocs"; documents: ProjectDocument[]; omitted: number; repository?: string; baseline?: ProgressBaseline | null; recovery?: ProgressBaseline | null; recovery_warning?: string;
-      recovery_key?: string; recovery_revision?: string; recovery_options?: { key: string; updated_at: string }[] }
+      recovery_key?: string; recovery_revision?: string; recovery_options?: RecoveryOption[] }
   | { type: "progressDraftCached" | "progressDraftDiscarded" }
   | { type: "progressDraftError"; message: string }
   | ({ type: "progressPreview"; repository?: string; truncated?: boolean } & Pick<ProgressBaseline, "documents" | "document_kinds" | "requirements">)
@@ -17,7 +17,9 @@ export type ProgressEvent = Requested & (
   | ({ type: "progressTests" } & TestLinks)
   | ({ type: "progressHistory" } & ProgressHistory)
   | ({ type: "progressLinks" } & LinkReport)
-  | { type: "progressExported"; file: string }
+  | { type: "progressExported" | "progressDraftExported"; file: string }
+  | { type: "progressDraftExportCancelled" }
+  | { type: "progressLatestUsed"; baseline: ProgressBaseline; warning?: string }
   | { type: "progressEvidence"; id: ProgressItem["id"]; candidates: EvidenceCandidate[] }
   | { type: "progressError"; message: string; errors?: ProgressFieldError[]; current_baseline?: ProgressBaseline }
 );
@@ -43,6 +45,7 @@ export function isProgressEvent(event: DesktopEvent): event is ProgressEvent {
     case "progressReport": case "progressTests": case "progressHistory":
     case "progressLinks": case "progressExported": case "progressEvidence":
     case "progressError": case "progressTestsCancelled":
+    case "progressDraftExported": case "progressDraftExportCancelled": case "progressLatestUsed":
     case "progressDraftCached": case "progressDraftDiscarded": case "progressDraftError": return true;
     default: return false;
   }
