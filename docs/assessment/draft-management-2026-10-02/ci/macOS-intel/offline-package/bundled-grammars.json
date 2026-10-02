@@ -1,0 +1,56 @@
+{
+  "version": "1.20.0",
+  "platform": "darwin-x86_64",
+  "languages": [
+    "python",
+    "typescript",
+    "tsx",
+    "javascript",
+    "go",
+    "java",
+    "kotlin",
+    "ruby"
+  ],
+  "libraries": [
+    {
+      "name": "libtree_sitter_python.dylib",
+      "source_sha256": "3a01177c4caace813619f1e4d3c9b7b2f3fea515e835ea6b1cd6531213d83d0b",
+      "sha256": "aed2fc669a5e1f8fa47c6cabce687b76f2e69cb64c1dfff1468ead0eebd4b570"
+    },
+    {
+      "name": "libtree_sitter_typescript.dylib",
+      "source_sha256": "c8d36dc68c53dac5754782b36178c924589c175773f05eb0d7c3261558fb4914",
+      "sha256": "1d1933a76ca2d4e44628f50f3a65465544d1cd333be6f5f561adcb4ce30e34c8"
+    },
+    {
+      "name": "libtree_sitter_tsx.dylib",
+      "source_sha256": "86f7d0a5c9d6dfa3368e48dda050bc13e8a9ac8ff243cccd85f6494c050e678d",
+      "sha256": "e101a86bf1b0fc4687af5bdb574ba69ce53dc44869f6fe5ba185ef7aaf389f2a"
+    },
+    {
+      "name": "libtree_sitter_javascript.dylib",
+      "source_sha256": "bb1fc3e4d1dac372be58fb6c3305a23913afe49ce8072bcea43a650f638e3e05",
+      "sha256": "aa33b6d5e47c03262342d6f764148f524fda45b720e2b3f05822d4bcf68720d6"
+    },
+    {
+      "name": "libtree_sitter_go.dylib",
+      "source_sha256": "7c5a1aa44cf554eab5a369f03e42a48474cf30afe73e68f76fb453d4a027b682",
+      "sha256": "a55375c3c8f1a33e360e1b0e7fd7dc449060a868cd37fcf58e1b95668af1b023"
+    },
+    {
+      "name": "libtree_sitter_java.dylib",
+      "source_sha256": "59c6f2eab9e7625ea80e78a067250257e18eb194f6cf354806df524d31cb177b",
+      "sha256": "0c67259863d60d17ac5f72942df501ae71181b814a70e6b346fb9ea85eccb3f4"
+    },
+    {
+      "name": "libtree_sitter_kotlin.dylib",
+      "source_sha256": "bc399cc72374148f81c448adc2fc1bfcc16d0624805b534783bf2b53978a351b",
+      "sha256": "be4d3df6dffdbc922baac7a12b34653e724b0f1e840501fad955644941b0f054"
+    },
+    {
+      "name": "libtree_sitter_ruby.dylib",
+      "source_sha256": "5a42acbdc12c4872ee713283f227ea5f3125bac2a7d5ad0d5a354469b6e8af8e",
+      "sha256": "843b29887a1969cd425251b2a3c2ad775677a3d34bd59a780f1bf6db89c94a7f"
+    }
+  ]
+}

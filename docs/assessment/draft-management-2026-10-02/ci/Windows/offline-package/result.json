@@ -1,0 +1,338 @@
+{
+  "frozen": true,
+  "ui": "D:\\a\\pr-convention-checker\\pr-convention-checker\\dist\\DriftGate\\_internal\\drift_gate\\desktop\\web",
+  "ui_text": "Cross Agent\nDRIFT GATE WORKSPACE\n프로젝트\n프로젝트 연결\nWORKSPACE\n리뷰\n1\n프로젝트 현황\n규칙\n히스토리\n설정\n로컬 워크스페이스\n규칙 검사는 외부 전송 없이 실행\nfixture\n리뷰\n데스크톱 연결됨\nCODE & DOCUMENT REVIEW\n변경을 살피고, 확신을 더하세요.\n\n규칙 판정부터 코드 근거, AI의 두 번째 의견까지 한곳에서.\n\n다시 검사\n프로젝트\n폴더 선택\n비교 기준\nHEAD는 커밋 전 변경\n새 파일은 Git 추가 후 검사\n규칙 판정\n주의\n\n1개 항목의 문서 조건을 확인하세요.\n\nHEAD → 작업 폴더\n변경 파일\n8\n평가 규칙\n1\n조치할 항목\n1\n통과 규칙\n0\n규칙별 판정\n1\n전체\n조치 필요\n통과\n수정 필요\n규칙 검사\nAPI changes require documentation\noffline-api-docs\n\n이번 변경에서 반영되지 않은 문서 조건 1개: API documentation\n\n규칙 판정은 LLM 의견과 별도로 유지됩니다.\nEVIDENCE\n수정 필요\nAPI changes require documentation\noffline-api-docs\n\n이번 변경에서 반영되지 않은 문서 조건 1개: API documentation\n\n변경된 코드\nsrc/Api.java\nsrc/Api.kt\nsrc/api.go\nsrc/api.js\nsrc/api.py\nsrc/api.rb\nsrc/api.ts\nsrc/view.tsx\n필요한 문서 조건\nAPI documentation\n\ndocs/api.md\n확신도 낮음\n고치는 방법\nAPI documentation 업데이트\ndocs/api.md 열기\n코드 변경 근거\nsrc/Api.java\nsrc/Api.kt\nsrc/api.go\nsrc/api.js\nsrc/api.py\nsrc/api.rb\nsrc/api.ts\nsrc/view.tsx\nPlain Text\n•\nsrc/Api.java\n+1\nSECOND OPINION\nAI와 한 번 더 검토하세요\n미요청\n\n규칙이 놓칠 수 있는 문맥을 검토합니다. 전송 자료를 먼저 확인하고 직접 요청하세요.\n\n전송 내용 확인연결 설정\n검사 완료 · 2026. 10. 2. 오전 2:59:32\nJSON 저장\nHTML 보고서\nCross Agent\n·\nPowered by Drift Gate\n·\n로컬 규칙 검사 + 선택형 LLM 검토",
+  "bridge_ready": true,
+  "network_probes": [
+    {
+      "host": "1.1.1.1",
+      "error": "[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions",
+      "errno": 13
+    },
+    {
+      "host": "140.82.112.3",
+      "error": "[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions",
+      "errno": 13
+    }
+  ],
+  "grammar_directory": "D:\\a\\pr-convention-checker\\pr-convention-checker\\dist\\DriftGate\\_internal\\drift_gate\\grammars",
+  "scan": {
+    "repository": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\driftgate-offline-check-ag9ott5a\\fixture",
+    "base": "HEAD",
+    "changed_file_count": 8,
+    "result": {
+      "summary": {
+        "blocker": 0,
+        "major": 1,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "warn"
+      },
+      "scan_metrics": {
+        "scanned_files": 8,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 1,
+        "runtime_seconds": 2.175633000000005,
+        "analysis_notes": [
+          {
+            "path": "src/Api.java",
+            "method": "grammar+heuristic",
+            "reason": ""
+          },
+          {
+            "path": "src/Api.kt",
+            "method": "grammar+heuristic",
+            "reason": ""
+          },
+          {
+            "path": "src/api.go",
+            "method": "grammar+heuristic",
+            "reason": ""
+          },
+          {
+            "path": "src/api.js",
+            "method": "grammar+heuristic",
+            "reason": ""
+          },
+          {
+            "path": "src/api.py",
+            "method": "grammar+heuristic",
+            "reason": ""
+          },
+          {
+            "path": "src/api.rb",
+            "method": "grammar+heuristic",
+            "reason": ""
+          },
+          {
+            "path": "src/api.ts",
+            "method": "grammar+heuristic",
+            "reason": ""
+          },
+          {
+            "path": "src/view.tsx",
+            "method": "grammar+heuristic",
+            "reason": ""
+          }
+        ]
+      },
+      "result": "warn",
+      "change_types": [
+        "other"
+      ],
+      "violations": [
+        {
+          "rule_id": "offline-api-docs",
+          "severity": "MAJOR",
+          "confidence": "low",
+          "change_types": [
+            "other"
+          ],
+          "change_type": "other",
+          "message": "API changes require documentation",
+          "trigger_files": [
+            {
+              "path": "src/Api.java",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/Api.java b/src/Api.java\nindex e69de29..ac0c02e 100644\n--- a/src/Api.java\n+++ b/src/Api.java\n@@ -0,0 +1 @@\n+public class Api { public String get() { return \"ok\"; } }\n",
+              "semantic_signals": [
+                "class-interface-type-changed"
+              ],
+              "semantic_evidence": [
+                "Java/Kotlin public type or function changed"
+              ],
+              "analysis_method": "grammar+heuristic",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            },
+            {
+              "path": "src/Api.kt",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/Api.kt b/src/Api.kt\nindex e69de29..d839fb1 100644\n--- a/src/Api.kt\n+++ b/src/Api.kt\n@@ -0,0 +1,5 @@\n+class Api {\n+  fun get(): String {\n+    return \"ok\"\n+  }\n+}\n",
+              "semantic_signals": [
+                "class-interface-type-changed"
+              ],
+              "semantic_evidence": [
+                "Java/Kotlin public type or function changed"
+              ],
+              "analysis_method": "grammar+heuristic",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            },
+            {
+              "path": "src/api.go",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/api.go b/src/api.go\nindex e69de29..e6cff44 100644\n--- a/src/api.go\n+++ b/src/api.go\n@@ -0,0 +1,2 @@\n+package main\n+func API(value string) string { return value }\n",
+              "semantic_signals": [
+                "function-signature-changed"
+              ],
+              "semantic_evidence": [
+                "Go function signature changed"
+              ],
+              "analysis_method": "grammar+heuristic",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            },
+            {
+              "path": "src/api.js",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/api.js b/src/api.js\nindex e69de29..cfc991f 100644\n--- a/src/api.js\n+++ b/src/api.js\n@@ -0,0 +1 @@\n+export function api(value) { return value; }\n",
+              "semantic_signals": [
+                "public-export-added"
+              ],
+              "semantic_evidence": [
+                "TS/JS public export added"
+              ],
+              "analysis_method": "grammar+heuristic",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            },
+            {
+              "path": "src/api.py",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/api.py b/src/api.py\nindex e69de29..36edbc5 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -0,0 +1,2 @@\n+def api(value: str) -> str:\n+    return value\n",
+              "semantic_signals": [
+                "function-signature-changed"
+              ],
+              "semantic_evidence": [
+                "Python function signature changed"
+              ],
+              "analysis_method": "grammar+heuristic",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            },
+            {
+              "path": "src/api.rb",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/api.rb b/src/api.rb\nindex e69de29..6c7b882 100644\n--- a/src/api.rb\n+++ b/src/api.rb\n@@ -0,0 +1,5 @@\n+class Api\n+  def get\n+    \"ok\"\n+  end\n+end\n",
+              "semantic_signals": [
+                "function-signature-changed"
+              ],
+              "semantic_evidence": [
+                "Ruby public class/module/method changed"
+              ],
+              "analysis_method": "grammar+heuristic",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            },
+            {
+              "path": "src/api.ts",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/api.ts b/src/api.ts\nindex e69de29..676ed6f 100644\n--- a/src/api.ts\n+++ b/src/api.ts\n@@ -0,0 +1 @@\n+export function api(value: string): string { return value; }\n",
+              "semantic_signals": [
+                "public-export-added"
+              ],
+              "semantic_evidence": [
+                "TS/JS public export added"
+              ],
+              "analysis_method": "grammar+heuristic",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            },
+            {
+              "path": "src/view.tsx",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/view.tsx b/src/view.tsx\nindex e69de29..78e78e0 100644\n--- a/src/view.tsx\n+++ b/src/view.tsx\n@@ -0,0 +1 @@\n+export function View() { return <div>ok</div>; }\n",
+              "semantic_signals": [
+                "public-export-added"
+              ],
+              "semantic_evidence": [
+                "TS/JS public export added"
+              ],
+              "analysis_method": "grammar+heuristic",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            }
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "API documentation",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "any_changed",
+              "evidence": ""
+            }
+          ],
+          "checklist": [
+            "API documentation 업데이트"
+          ],
+          "ignored": false,
+          "change_intensity": "export-added",
+          "change_intensities": [
+            "export-added",
+            "signature-change"
+          ],
+          "trigger_patterns": [
+            "src/**"
+          ],
+          "blast_radius": [
+            "missing requirement group: API documentation"
+          ],
+          "missing_docs_explanation": "",
+          "changed_contract_summary": "",
+          "docs_update_draft": "",
+          "false_positive_note": "",
+          "cross_file_relations": []
+        }
+      ],
+      "rule_decisions": [
+        {
+          "rule_id": "offline-api-docs",
+          "severity": "MAJOR",
+          "status": "fail",
+          "reason": "required groups are missing",
+          "matched_patterns": [
+            "src/**"
+          ],
+          "trigger_files": [
+            "src/Api.java",
+            "src/Api.kt",
+            "src/api.go",
+            "src/api.js",
+            "src/api.py",
+            "src/api.rb",
+            "src/api.ts",
+            "src/view.tsx"
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "API documentation",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "any_changed",
+              "evidence": ""
+            }
+          ]
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": true,
+        "fail_on_major_count": 2
+      }
+    },
+    "policy": "rules:\n  - id: offline-api-docs\n    when:\n      any_changed: ['src/**']\n    require:\n      groups:\n        - name: API documentation\n          any_changed: ['docs/api.md']\n    severity: major\n    message: API changes require documentation\n",
+    "files": [
+      {
+        "path": "src/Api.java",
+        "patch": "diff --git a/src/Api.java b/src/Api.java\nindex e69de29..ac0c02e 100644\n--- a/src/Api.java\n+++ b/src/Api.java\n@@ -0,0 +1 @@\n+public class Api { public String get() { return \"ok\"; } }\n",
+        "status": "modified"
+      },
+      {
+        "path": "src/Api.kt",
+        "patch": "diff --git a/src/Api.kt b/src/Api.kt\nindex e69de29..d839fb1 100644\n--- a/src/Api.kt\n+++ b/src/Api.kt\n@@ -0,0 +1,5 @@\n+class Api {\n+  fun get(): String {\n+    return \"ok\"\n+  }\n+}\n",
+        "status": "modified"
+      },
+      {
+        "path": "src/api.go",
+        "patch": "diff --git a/src/api.go b/src/api.go\nindex e69de29..e6cff44 100644\n--- a/src/api.go\n+++ b/src/api.go\n@@ -0,0 +1,2 @@\n+package main\n+func API(value string) string { return value }\n",
+        "status": "modified"
+      },
+      {
+        "path": "src/api.js",
+        "patch": "diff --git a/src/api.js b/src/api.js\nindex e69de29..cfc991f 100644\n--- a/src/api.js\n+++ b/src/api.js\n@@ -0,0 +1 @@\n+export function api(value) { return value; }\n",
+        "status": "modified"
+      },
+      {
+        "path": "src/api.py",
+        "patch": "diff --git a/src/api.py b/src/api.py\nindex e69de29..36edbc5 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -0,0 +1,2 @@\n+def api(value: str) -> str:\n+    return value\n",
+        "status": "modified"
+      },
+      {
+        "path": "src/api.rb",
+        "patch": "diff --git a/src/api.rb b/src/api.rb\nindex e69de29..6c7b882 100644\n--- a/src/api.rb\n+++ b/src/api.rb\n@@ -0,0 +1,5 @@\n+class Api\n+  def get\n+    \"ok\"\n+  end\n+end\n",
+        "status": "modified"
+      },
+      {
+        "path": "src/api.ts",
+        "patch": "diff --git a/src/api.ts b/src/api.ts\nindex e69de29..676ed6f 100644\n--- a/src/api.ts\n+++ b/src/api.ts\n@@ -0,0 +1 @@\n+export function api(value: string): string { return value; }\n",
+        "status": "modified"
+      },
+      {
+        "path": "src/view.tsx",
+        "patch": "diff --git a/src/view.tsx b/src/view.tsx\nindex e69de29..78e78e0 100644\n--- a/src/view.tsx\n+++ b/src/view.tsx\n@@ -0,0 +1 @@\n+export function View() { return <div>ok</div>; }\n",
+        "status": "modified"
+      }
+    ],
+    "at": "2026-10-02T02:59:32.399898+00:00"
+  },
+  "isolation": "Windows Defender Firewall program outbound block",
+  "fresh_cache_files": []
+}

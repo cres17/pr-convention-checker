@@ -34,3 +34,11 @@
 - JSON 초안 백업을 앱으로 가져오는 화면은 이번 범위에 없습니다. 파일 자체는 전체 편집과 원래 기준을 보존합니다.
 - 실제 최종 사용자 Windows/macOS 설치·사용성은 검증하지 않았습니다. 로컬 Qt 검증은 소스 호스트의 임시 저장소 실행입니다.
 - 이번 작업은 편집 안전성과 사용 흐름 보완입니다. 기존 합성 평가를 재실행하지 않았고 판정 정확도 향상을 주장하지 않습니다. 공개 미리보기 릴리스도 갱신하지 않습니다.
+
+## 원격 CI와 실제 패키지 검사
+
+운영 코드 커밋 `d06a8d99361c77072b900f2071b2234869e62310`의 [push CI](https://github.com/cres17/pr-convention-checker/actions/runs/36957820441), [PR CI](https://github.com/cres17/pr-convention-checker/actions/runs/36957825018), [세 플랫폼 앱 빌드](https://github.com/cres17/pr-convention-checker/actions/runs/36957820464)가 모두 성공했습니다. 데스크톱 회귀 검사는 Windows 209개 통과·1개 skip, ARM Mac·Intel Mac 각각 210개 통과이며, 화면 테스트는 세 환경 모두 106개 통과입니다. 새 정상 종료·강제 종료·실행 중 삭제 거부 테스트가 포함돼 Windows `msvcrt.locking`과 Mac `flock` 분기를 실제 실행했습니다.
+
+Intel Mac 첫 실행은 테스트와 `.app`의 오프라인 검사가 통과한 뒤 `hdiutil create failed - Resource busy`로 DMG 생성만 실패했습니다. 실패한 작업만 같은 소스로 재실행했고 두 번째 실행에서 DMG와 설치본 검사가 성공했습니다. 코드 수정으로 통과시킨 재실행이 아닙니다.
+
+산출물의 결과 JSON을 직접 내려받아 Windows 앱·설치본, ARM Mac 앱·DMG, Intel Mac 앱·DMG 총 6건을 확인했습니다. 실제 frozen 앱의 UI·QWebChannel 연결, 네트워크 차단, 빈 캐시, 8개 언어의 `grammar+heuristic` 분석과 빈 실패 사유, 저장소에 고정한 파서 원본 해시 일치가 모두 확인됐습니다. [검사 JSON과 요약](../assessment/draft-management-2026-10-02/ci/summary.json)을 보존했습니다. 패키지 검사는 기존 분석 흐름을 검증하며, 새 초안 관리 화면 흐름은 별도의 로컬 Qt 재현으로 확인했습니다.
