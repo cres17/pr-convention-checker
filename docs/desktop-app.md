@@ -56,6 +56,7 @@ Windows PowerShell에서도 설치 명령은 같으며, Python 실행 명령이 
 python -m pip install -e '.[desktop]' pyinstaller==6.22.3 zstandard==0.25.0
 npm ci --prefix desktop-ui
 npm run build --prefix desktop-ui
+# 기존 macOS 생성물을 재빌드하는 경우에만: chmod -R u+w dist/DriftGate.app
 python packaging/prepare_parsers.py
 pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack --add-data "drift_gate/adapters/parser_hashes.json:drift_gate/adapters" --add-data "drift_gate/desktop/web:drift_gate/desktop/web" --add-data "build/parser-libraries:drift_gate/grammars" drift_gate/desktop/web_app.py
 # macOS에서만: 네이티브 파일의 서명을 먼저 마칩니다.

@@ -7,12 +7,12 @@
 macOS Apple Silicon(`macos-latest`), macOS Intel(`macos-15-intel`), Windows(`windows-latest`) 세 곳에서 각각 다음을 순서대로 실행합니다. 한쪽이 실패해도 다른 쪽은 계속 실행합니다(`fail-fast: false`).
 
 1. **React UI**: `desktop-ui`에서 `npm ci` → `npm test`(vitest) → `npm run build`. 빌드 결과는 `drift_gate/desktop/web`에 만들어지며 저장소에는 포함하지 않습니다.
-2. **앱 설치·파서 준비**: `pip install -e ".[dev,desktop]" pyinstaller` 후 `packaging/prepare_parsers.py`로 Python·TypeScript·TSX·JavaScript·Go·Java·Kotlin·Ruby 파서를 내려받아 `build/parser-libraries`에 준비합니다. 언어팩 버전·OS·아키텍처별 캐시를 쓰며 다운로드 실패는 두 번 재시도하고 최종 실패하면 빌드를 중단합니다. 빌드에만 인터넷이 필요합니다.
+2. **앱 설치·파서 준비**: `pip install -e ".[dev,desktop]" pyinstaller==6.22.3 zstandard==0.25.0` 후 `packaging/prepare_parsers.py`로 Python·TypeScript·TSX·JavaScript·Go·Java·Kotlin·Ruby 파서를 내려받아 `build/parser-libraries`에 준비합니다. 언어팩 버전·OS·아키텍처별 캐시를 쓰며 다운로드 실패는 두 번 재시도하고 최종 실패하면 빌드를 중단합니다. 검토한 네 플랫폼의 원본 해시를 `parser_hashes.json`에 고정하고 모든 파일을 비교한 뒤에만 파서를 로드합니다. 고정값 없는 버전·플랫폼 및 해시 불일치는 빌드를 중단합니다. 빌드에만 인터넷이 필요합니다.
 3. **데스크톱 동작 검사**: 아래 테스트 파일만 실행합니다. 전체 테스트가 아니라 **데스크톱 앱과 프로젝트 현황이 쓰는 파일**로 범위를 제한했습니다.
    - `test_desktop_service.py`, `test_desktop_ui.py`, `test_desktop_web.py`, `test_subscription_review.py`
    - `test_progress_service.py`, `test_progress_drafts.py`, `test_progress_history.py`, `test_progress_report.py`
    - `test_doc_links.py`, `test_verification_records.py`, `test_policy_setup.py`, `test_report_naming.py`, `test_packaging.py`
-4. **앱 빌드와 실제 오프라인 검사**: UI와 8개 파서를 PyInstaller 설치본에 함께 넣습니다. `packaging/verify_package.py`는 파서 포함 여부를 확인하고, 빈 사용자 파서 캐시와 OS의 송신 차단 상태에서 설치본을 실행합니다. Mac은 `sandbox-exec`, Windows는 앱과 Qt WebEngine 실행 파일에 임시 Windows Defender Firewall 규칙을 적용하며 검사 후 제거합니다. 실제 React 화면·QWebChannel 연결, 8개 언어의 `grammar+heuristic` 분석, API 문서 누락의 `warn` 판정까지 확인합니다. 연결 차단도 앱 안에서 확인하며, 화면·분석이 끝나지 않거나 휴리스틱으로 내려가면 실패합니다.
+4. **앱 빌드와 실제 오프라인 검사**: UI와 8개 파서, 원본 고정값 파일을 PyInstaller 설치본에 함께 넣습니다. macOS는 네이티브 파일 서명 후 `seal_parsers.py`로 설치본 해시를 기록하고 외부 번들만 다시 서명합니다. Windows는 패키징 후 설치본 해시를 기록합니다. 앱의 첫 문법 조회에서 원본 고정값과 실제 설치 파일 해시를 확인합니다. macOS Qt 프레임워크의 Versions 부모 디렉터리는 읽기 전용으로 두어 실행이 빈 가짜 버전 폴더를 만들지 못하게 합니다. 실제 오프라인 검사 직후에도 엄격한 중첩 서명 검사를 반복합니다. `packaging/verify_package.py`는 파서 포함 여부를 확인하고, 빈 사용자 파서 캐시와 OS의 송신 차단 상태에서 설치본을 실행합니다. Mac은 `sandbox-exec`, Windows는 앱과 Qt WebEngine 실행 파일에 임시 Windows Defender Firewall 규칙을 적용하며 검사 후 제거하고 Windows job 종료에서도 남은 CI 전용 규칙을 정리합니다. 방화벽 변경은 GitHub CI에서만 허용합니다. 실제 React 화면·QWebChannel 연결, 8개 언어의 `grammar+heuristic` 분석, API 문서 누락의 `warn` 판정까지 확인합니다. 연결 차단도 앱 안에서 확인하며, 화면·분석이 끝나지 않거나 휴리스틱으로 내려가면 실패합니다.
 5. **배포 파일 만들기**:
    - macOS: 앱을 임시 서명(ad-hoc, 개발자 인증서 없음)한 뒤 `Applications` 바로가기가 든 **`.dmg`**를 만듭니다(`DriftGate-macOS-arm64.dmg`, `DriftGate-macOS-intel.dmg`). DMG 안의 앱에서도 새 빈 캐시와 네트워크 차단으로 같은 실제 검사를 반복합니다.
    - Windows: Inno Setup(`packaging/windows/DriftGate.iss`)으로 **`DriftGate-Windows-Setup.exe`** 설치 프로그램을, 설치 없이 쓰는 `DriftGate-Windows-portable.zip`도 만듭니다. CI에서 설치 프로그램을 조용히 설치해 설치된 앱에서 같은 오프라인 검사를 수행하고 제거합니다. 앱 설치는 현재 사용자 영역이며 관리자 권한이 필요 없지만, **CI 검증용 방화벽 규칙에는 관리자 권한이 필요합니다.**
@@ -55,7 +55,8 @@ QT_QPA_PLATFORM=offscreen python -m pytest -q drift_gate/tests/test_desktop_serv
   drift_gate/tests/test_progress_drafts.py \
   drift_gate/tests/test_progress_history.py drift_gate/tests/test_progress_report.py \
   drift_gate/tests/test_doc_links.py drift_gate/tests/test_verification_records.py \
-  drift_gate/tests/test_policy_setup.py drift_gate/tests/test_report_naming.py
+  drift_gate/tests/test_policy_setup.py drift_gate/tests/test_report_naming.py \
+  drift_gate/tests/test_packaging.py
 ```
 
 Linux 컨테이너에서 `libEGL.so.1`을 찾지 못해 Qt WebEngine 테스트가 실패하면 `apt-get update` 후 `apt-get install libegl1`을 실행합니다(패키지 목록이 오래되면 설치가 404로 실패할 수 있습니다). `QT_QPA_PLATFORM=offscreen`이면 화면 없이 실행됩니다.
@@ -80,3 +81,7 @@ Linux 컨테이너에서 `libEGL.so.1`을 찾지 못해 Qt WebEngine 테스트�
 Benchmark는 수동 실행도 지원한다. Action 릴리스의 평가 보고서 첨부에는 `contents: write`가 필요하며, 데스크톱 릴리스는 설치 파일과 체크섬만 제공하고 평가 원본은 Actions 아티팩트·문서에 둔다.
 
 기존 공개 태그로 수정 워크플로를 실행한 [36805844364](https://github.com/cres17/pr-convention-checker/actions/runs/36805844364)는 사전 검사만 실행하고 앱 빌드·업로드 없이 성공했다. [Benchmark 36805846668](https://github.com/cres17/pr-convention-checker/actions/runs/36805846668)도 성공했다. Action 릴리스의 실제 보고서 업로드는 이 수동 검증에 포함되지 않는다.
+
+## 파서 버전 변경 시
+
+`Collect parser hash candidates` 워크플로는 macOS 두 CPU·Windows·Linux에서 원본 파일을 로드하지 않고 해시 후보를 만듭니다. `ver2`의 수집 스크립트 또는 워크플로 변경으로 실행합니다. 후보가 고정값을 자동 갱신하지 않으며, 기존 기록과 대조·검토 후 `drift_gate/adapters/parser_hashes.json`의 버전·플랫폼별 값을 명시적으로 변경합니다. [2026-10-02 검토 기록](../review/parser-integrity-2026-10-02.md)에 신뢰 범위와 출처를 기록했습니다.
