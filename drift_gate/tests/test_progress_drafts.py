@@ -425,3 +425,16 @@ def test_archived_provenance_survives_backup_and_recovery(tmp_path):
     import_draft(root, data, source)
     assert recovery_copy(root, data, baseline)['recovery']['archived_documents'] == ['README.md']
     assert recovery_copy(root, data, baseline)['recovery']['requirements'] == baseline['requirements']
+
+
+def test_json_storage_bytes_match_the_utf8_limit_even_with_windows_newline_defaults(tmp_path, monkeypatch):
+    from drift_gate.desktop import json_store
+    original = json_store.tempfile.NamedTemporaryFile
+    def windows_default(*args, **kwargs):
+        kwargs.setdefault('newline', '\r\n')
+        return original(*args, **kwargs)
+    monkeypatch.setattr(json_store.tempfile, 'NamedTemporaryFile', windows_default)
+    payload = {'기능':['첫째','둘째'], 'note':'입력\n보존'}
+    target = tmp_path / 'data.json'
+    json_store.write_json(target, payload)
+    assert target.read_bytes() == json.dumps(payload, ensure_ascii=False, indent=2).encode('utf-8')
