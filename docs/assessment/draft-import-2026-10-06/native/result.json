@@ -1,0 +1,76 @@
+{
+  "kind": "macOS source Qt + built React + actual QWebChannel + temporary Git repository",
+  "events": [
+    {
+      "type": "ready",
+      "request_id": null,
+      "request_done": null
+    },
+    {
+      "type": "progressDocs",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:1",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:2",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:2",
+      "request_done": true
+    },
+    {
+      "type": "progressDraftImportCancelled",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:3",
+      "request_done": true
+    },
+    {
+      "type": "progressError",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:4",
+      "request_done": true
+    },
+    {
+      "type": "progressDocs",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:5",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:6",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:6",
+      "request_done": true
+    },
+    {
+      "type": "progressSaved",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:7",
+      "request_done": false
+    },
+    {
+      "type": "progressReport",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:7",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "8bc47aab-988b-43c3-87fc-45962c6f5fbc:7",
+      "request_done": true
+    }
+  ],
+  "checks": {
+    "cancel_keeps_baseline": true,
+    "wrong_repository_rejected_without_baseline_change": true,
+    "import_keeps_confirmed_baseline": true,
+    "import_stored_separately_and_selectable": true,
+    "partial_input_recovered_and_import_disabled_while_dirty": true,
+    "explicit_save_commits_imported_edit": true,
+    "source_backup_preserved_and_recovered_copy_removed": true,
+    "saved_autosave_not_revived": true
+  },
+  "copy_key": "d8ccd329f12ccc8b14060c18.fb060f6b76944b219564735e94919bc5.json"
+}

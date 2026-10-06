@@ -35,6 +35,7 @@ function harness() {
     discardProgressDraft: vi.fn(),
     discardProgressDrafts: vi.fn(),
     exportProgressDraft: vi.fn(),
+    importProgressDraft: vi.fn(),
     useLatestProgress: vi.fn(),
   } as unknown as Bridge;
   let events: QueuedProgressEvent[] = [];
@@ -603,4 +604,41 @@ it('allows baseline editing while preserving the other running app recovery copy
   expect((screen.getByLabelText('기능명') as HTMLInputElement).value).toBe('새 창에서 기준 편집');
   expect(page.bridge.discardProgressDraft).not.toHaveBeenCalled();
   expect(page.bridge.discardProgressDrafts).not.toHaveBeenCalled();
+});
+
+it('imports a file into recovery without replacing the confirmed editor until explicitly recovered', () => {
+  const page = harness();
+  const baseline = { ...makeBaseline(), version: 2 };
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline });
+  fireEvent.click(screen.getByRole('button', { name: '초안 파일 불러오기' }));
+  const [path, request_id] = vi.mocked(page.bridge.importProgressDraft!).mock.calls.at(-1)!;
+  const recovered = structuredClone(baseline);
+  recovered.requirements[0].title = '파일에서 복구한 제목';
+  recovered.requirements[0].evidence = { path: '', line: 1.5, note: '' };
+  page.emit({ type: 'progressDocs', requested_path: path, request_id, request_done: true, documents: [], omitted: 0,
+    baseline, recovery: recovered, recovery_key: 'import.json', recovery_revision: 'r:1', recovery_options: [
+      { key: 'import.json', revision: 'r:1', active: false, updated_at: '2026-10-06T01:00:00Z' },
+    ] });
+  expect((screen.getByLabelText('기능명') as HTMLInputElement).value).toBe('첫 기능');
+  expect(page.bridge.saveProgress).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: '초안 복구' }));
+  expect(screen.getByText('초안을 복구했습니다. 내용을 검토한 뒤 기준과 근거 저장을 눌러 주세요.')).toBeTruthy();
+  expect((screen.getByLabelText('기능명') as HTMLInputElement).value).toBe('파일에서 복구한 제목');
+  expect(screen.getByRole('button', { name: '초안 파일 불러오기' }).matches(':disabled')).toBe(true);
+});
+
+it('keeps the editor and existing recovery options after import cancellation or failure', () => {
+  const page = harness();
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline: makeBaseline(), recovery: makeBaseline(),
+    recovery_key: 'old.json', recovery_revision: 'r:1' });
+  fireEvent.click(screen.getByRole('button', { name: '초안 파일 불러오기' }));
+  let [path, request_id] = vi.mocked(page.bridge.importProgressDraft!).mock.calls.at(-1)!;
+  page.emit({ type: 'progressDraftImportCancelled', requested_path: path, request_id, request_done: true });
+  expect(screen.getByRole('button', { name: '초안 복구' }).matches(':disabled')).toBe(false);
+  fireEvent.click(screen.getByRole('button', { name: '초안 파일 불러오기' }));
+  [path, request_id] = vi.mocked(page.bridge.importProgressDraft!).mock.calls.at(-1)!;
+  page.emit({ type: 'progressError', requested_path: path, request_id, request_done: true, message: '다른 프로젝트의 초안입니다.' });
+  expect(screen.getByText('다른 프로젝트의 초안입니다.')).toBeTruthy();
+  expect(screen.getByRole('button', { name: '초안 복구' }).matches(':disabled')).toBe(false);
+  expect((screen.getByLabelText('기능명') as HTMLInputElement).value).toBe('첫 기능');
 });

@@ -16,7 +16,7 @@ const baseline = (path: string): ProgressBaseline => ({
 function page() {
   const bridge = {
     listProjectDocs: vi.fn(), inspectProgress: vi.fn(), saveProgress: vi.fn(), cacheProgressDraft: vi.fn(),
-    setProgressDirty: vi.fn(), setProgressRecoveryReady: vi.fn(), exportProgressDraft: vi.fn(), useLatestProgress: vi.fn(),
+    setProgressDirty: vi.fn(), setProgressRecoveryReady: vi.fn(), exportProgressDraft: vi.fn(), useLatestProgress: vi.fn(), importProgressDraft: vi.fn(),
   } as unknown as Bridge;
   let path = '/one'; let events: QueuedProgressEvent[] = [];
   const hook = renderHook(() => useProjectProgress({path,events,bridge,connected:true}));
@@ -168,4 +168,23 @@ it('retains a background latest transition and rejects late autosave success on 
   expect(p.hook.result.current.state.draft?.version).toBe(2);
   expect(p.hook.result.current.state.draftStatus).toBe('');
   expect(p.bridge.cacheProgressDraft).toHaveBeenCalledOnce();
+});
+
+it('retains imported recovery in its original repository after a background completion', () => {
+  const p = page();
+  act(() => p.hook.result.current.actions.importDraft());
+  const [path, request_id] = vi.mocked(p.bridge.importProgressDraft!).mock.calls.at(-1)!;
+  p.move('/two');
+  const imported = baseline('/one');
+  imported.requirements[0].title = 'background import';
+  p.emit({ type: 'progressDocs', requested_path: path, request_id, request_done: true, documents: [], omitted: 0,
+    baseline: baseline('/one'), recovery: imported, recovery_key: 'file.json', recovery_revision: 'revision' });
+  expect(p.hook.result.current.state.recovery).toBeNull();
+  p.move('/one');
+  expect(p.hook.result.current.state.recovery?.requirements[0].title).toBe('background import');
+  expect(p.hook.result.current.state.dirty).toBe(false);
+  p.emit({ type: 'progressDocs', requested_path: '/one', documents: [], omitted: 0,
+    baseline: baseline('/one'), recovery: imported, recovery_key: 'file.json', recovery_revision: 'revision' });
+  act(() => p.hook.result.current.actions.recoverDraft());
+  expect(p.hook.result.current.state.draft?.requirements[0].title).toBe('background import');
 });

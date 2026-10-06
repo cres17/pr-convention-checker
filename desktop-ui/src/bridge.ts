@@ -182,6 +182,7 @@ export interface Bridge {
   cacheProgressDraft?: (path: string, payloadJson: string, requestId: string) => void;
   discardProgressDraft?: (path: string, requestId: string, recoveryKey?: string, revision?: string) => void;
   discardProgressDrafts?: (path: string, selectionsJson: string, requestId: string) => void;
+  importProgressDraft?: (path: string, requestId: string) => void;
   exportProgressDraft?: (path: string, payloadJson: string, requestId: string) => void;
   useLatestProgress?: (path: string, requestId: string) => void;
   previewProgress: (path: string, selectedJson: string, requestId?: string) => void;

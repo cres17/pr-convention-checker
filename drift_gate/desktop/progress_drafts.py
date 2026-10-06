@@ -4,6 +4,7 @@ import json
 import math
 import re
 import stat
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -34,6 +35,17 @@ def _valid_draft(draft: object) -> bool:
     base = draft.get('edit_base')
     if base is not None and (not isinstance(base, dict) or 'edit_base' in base or not _valid_draft(base)):
         return False
+    if base is not None and any(item.get('evidence') is not None and (
+        type(item['evidence']['line']) is not int or item['evidence']['line'] < 0) for item in base['requirements']):
+        return False
+    if 'repository' in draft and not isinstance(draft['repository'], str):
+        return False
+    if 'version' in draft and (type(draft['version']) is not int or draft['version'] < 0):
+        return False
+    kinds = draft.get('document_kinds', {})
+    if not isinstance(kinds, dict) or not all(isinstance(path, str) and kind in
+        ('current', 'future', 'past', 'reference') for path, kind in kinds.items()):
+        return False
     docs, items = draft.get("documents"), draft.get("requirements")
     if not isinstance(docs, dict) or not 1 <= len(docs) <= 10 or not all(
         isinstance(path, str) and isinstance(digest, str) for path, digest in docs.items()
@@ -41,22 +53,46 @@ def _valid_draft(draft: object) -> bool:
         return False
     ids = set()
     for item in items:
-        if not isinstance(item, dict) or not isinstance(item.get("id"), str) or item["id"] in ids:
+        if not isinstance(item, dict) or not isinstance(item.get("id"), str) or not item['id'] or item["id"] in ids:
             return False
         ids.add(item["id"])
         if not all(isinstance(item.get(field), str) for field in (
             "title", "criterion", "area", "implementation_status", "verification_status", "verification_note"
         )) or not isinstance(item.get("included"), bool):
             return False
+        if item['implementation_status'] not in ('unknown', 'partial', 'implemented', 'not_implemented') or item['verification_status'] not in ('unverified', 'verified'):
+            return False
         source = item.get("source")
         if not isinstance(source, dict) or not all(isinstance(source.get(field), str) for field in (
             "path", "excerpt", "sha256"
-        )) or type(source.get("line")) is not int:
+        )) or type(source.get("line")) is not int or source['line'] < 0:
             return False
         evidence = item.get("evidence")
         if evidence is not None and (not isinstance(evidence, dict) or not all(
             isinstance(evidence.get(field), str) for field in ("path", "note")
         ) or "line" not in evidence or not _draft_line(evidence["line"])):
+            return False
+        if evidence is not None and any(key in evidence and not isinstance(evidence[key], str) for key in ('excerpt', 'sha256')):
+            return False
+        for key in ('implementation_note', 'source_key'):
+            if key in item and not isinstance(item[key], str):
+                return False
+        for key in ('stale_evidence', 'stale_requirement', 'doc_marked_done'):
+            if key in item and not isinstance(item[key], bool):
+                return False
+        reviewed = item.get('reviewed_documents', {})
+        patterns = item.get('test_patterns', [])
+        if not isinstance(reviewed, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in reviewed.items()):
+            return False
+        if not isinstance(patterns, list) or not all(isinstance(pattern, str) for pattern in patterns):
+            return False
+        if item.get('doc_claim') not in (None, 'unbacked') or ('effective_status' in item and item['effective_status'] not in
+            ('unknown', 'partial', 'implemented', 'not_implemented', 'excluded')):
+            return False
+        duplicates = item.get('duplicates', [])
+        if not isinstance(duplicates, list) or len(duplicates) > 20 or not all(isinstance(place, dict) and all(
+            isinstance(place.get(key), str) for key in ('path', 'excerpt', 'criterion')) and
+            type(place.get('line')) is int and place['line'] >= 0 for place in duplicates):
             return False
     return True
 
@@ -79,11 +115,23 @@ class DraftSession:
             self._held = held
 
     def close(self):
-        with store_lock(self.gate):
-            if self._held is not None:
-                self._held.__exit__(None, None, None)
-                self._held = None
+        if self._held is None:
+            return True
+        try:
+            with store_lock(self.gate, timeout=0):
+                self._release()
                 self.lease.with_suffix('.live.lock').unlink(missing_ok=True)
+            return True
+        except OSError:
+            # Closing must not wait for another writer. Release the lease but
+            # leave its inode for the next gated recovery lookup to clean up.
+            self._release()
+            return False
+
+    def _release(self):
+        held, self._held = self._held, None
+        if held is not None:
+            held.__exit__(None, None, None)
 
 
 def _active_locked(target: Path) -> bool:
@@ -213,3 +261,33 @@ def export_draft(root: Path, draft: dict, target: Path) -> None:
     write_json(target, payload)
     if json.loads(target.read_text(encoding='utf-8')) != payload:
         raise OSError('내보낸 초안 파일을 확인하지 못했습니다.')
+
+
+def import_draft(root: Path, data_dir: Path, source: Path) -> str:
+    """Read a bounded backup and add a new recovery copy, never a baseline."""
+    with source.open('rb') as stream:
+        content = stream.read(MAX_DRAFT_BYTES + 1)
+    if len(content) > MAX_DRAFT_BYTES:
+        raise ValueError('초안 파일이 불러오기 상한(2MB)을 넘었습니다.')
+    def reject_constant(value):
+        raise ValueError(f'유효하지 않은 JSON 숫자입니다: {value}')
+    try:
+        payload = json.loads(content.decode('utf-8-sig'), parse_constant=reject_constant)
+    except (ValueError, UnicodeError, RecursionError) as exc:
+        raise ValueError('초안 파일의 JSON 형식이 올바르지 않습니다.') from exc
+    if not isinstance(payload, dict) or type(payload.get('schema')) is not int or payload['schema'] != 1:
+        raise ValueError('지원하지 않는 초안 파일 형식입니다.')
+    repository = str(root.resolve())
+    if payload.get('repository') != repository:
+        raise ValueError('다른 프로젝트의 초안입니다. 원래 프로젝트를 연결한 뒤 불러와 주세요.')
+    draft = payload.get('draft')
+    if not _valid_draft(draft):
+        raise ValueError('편집 초안의 형식이 올바르지 않습니다.')
+    if draft.get('repository', repository) != repository or (draft.get('edit_base') is not None and
+            draft['edit_base'].get('repository', repository) != repository):
+        raise ValueError('초안과 원래 편집 기준의 프로젝트가 일치하지 않습니다.')
+    # External recovery metadata must never authorize deletion of another copy.
+    draft = {key: value for key, value in draft.items() if key not in ('recovery_key', 'recovery_revision')}
+    owner = uuid.uuid4().hex
+    cache_draft(root, data_dir, draft, owner)
+    return draft_file(root, data_dir, owner).name

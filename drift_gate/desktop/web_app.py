@@ -1,6 +1,7 @@
 """Local React surface hosted by Qt; only trusted bundled UI gets a bridge."""
 import hashlib
 import json
+import logging
 import sys
 import uuid
 from datetime import datetime, timezone
@@ -22,7 +23,7 @@ from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
 from drift_gate.adapters.report_naming import default_report_path, detect_project
 from drift_gate.desktop.progress_report import render_markdown
 from drift_gate.desktop.progress_drafts import (
-    DraftSession, cache_draft, recovery_copy, discard_draft, discard_recovery, discard_recoveries, export_draft,
+    DraftSession, cache_draft, recovery_copy, discard_draft, discard_recovery, discard_recoveries, export_draft, import_draft,
 )
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
@@ -122,7 +123,11 @@ class DesktopBridge(QObject):
 
     def closeDraftSessions(self):
         for session in self._draft_sessions.values():
-            session.close()
+            try:
+                if not session.close():
+                    logging.getLogger(__name__).warning('Deferred draft lease cleanup: %s', session.lease)
+            except OSError:
+                logging.getLogger(__name__).exception('Could not clean up draft lease: %s', session.lease)
         self._draft_sessions.clear()
 
     def _progress_documents(self, path, directory, recovery_key=''):
@@ -224,6 +229,20 @@ class DesktopBridge(QObject):
             export_draft(root, payload, target)
             self._draft_exports[root] = {'draft': payload, 'file': target, 'sha256': hashlib.sha256(target.read_bytes()).hexdigest()}
             return [('progressDraftExported', {'file': filename})]
+        self._run_progress(path, work, request_id=request_id)
+
+    @Slot(str, str)
+    def importProgressDraft(self, path, request_id):
+        filename, _ = QFileDialog.getOpenFileName(self.parent(), '편집 초안 불러오기', str(Path(path)), 'JSON (*.json)')
+        if not filename:
+            self.emit('progressDraftImportCancelled', requested_path=path, request_id=request_id, request_done=True)
+            return
+        directory = self._progress_dir()
+        def work():
+            key = import_draft(repository_root(path), directory, Path(filename))
+            result = self._progress_documents(path, directory, key)
+            result['recovery_warning'] = '파일의 초안을 별도 사본으로 보관했습니다. 초안 복구를 눌러 내용을 검토해 주세요. 확정 기준은 바꾸지 않았습니다. ' + result.get('recovery_warning', '')
+            return [('progressDocs', result)]
         self._run_progress(path, work, request_id=request_id)
 
     @Slot(str, str)
