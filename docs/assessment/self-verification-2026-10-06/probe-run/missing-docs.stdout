@@ -1,0 +1,183 @@
+{
+  "summary": {
+    "blocker": 1,
+    "major": 0,
+    "minor": 0,
+    "nit": 0,
+    "gate_decision": "fail"
+  },
+  "scan_metrics": {
+    "scanned_files": 1,
+    "skipped_ignored_files": 0,
+    "skipped_binary_files": 0,
+    "skipped_large_files": 0,
+    "evaluated_rules": 5,
+    "runtime_seconds": 0.012269667000509799,
+    "analysis_notes": [
+      {
+        "path": "src/routes/session.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      }
+    ]
+  },
+  "result": "fail",
+  "change_types": [
+    "api-surface"
+  ],
+  "violations": [
+    {
+      "rule_id": "api-contract-sync",
+      "severity": "BLOCKER",
+      "confidence": "high",
+      "change_types": [
+        "api-surface"
+      ],
+      "change_type": "api-surface",
+      "message": "API surface changed without synced contract/docs",
+      "trigger_files": [
+        {
+          "path": "src/routes/session.py",
+          "status": "modified",
+          "previous_path": null,
+          "patch": "diff --git a/src/routes/session.py b/src/routes/session.py\nindex b6c3af3..c458ece 100644\n--- a/src/routes/session.py\n+++ b/src/routes/session.py\n@@ -1,2 +1,2 @@\n-def create_session(user):\n-    return user\n+def create_session(user, expires_in):\n+    return (user, expires_in)\n",
+          "semantic_signals": [
+            "function-signature-changed"
+          ],
+          "semantic_evidence": [
+            "Python function signature changed"
+          ],
+          "analysis_method": "grammar+heuristic",
+          "analysis_reason": "",
+          "documented_env_keys": null
+        }
+      ],
+      "satisfied_groups": [],
+      "unsatisfied_groups": [
+        {
+          "name": "API 계약 문서",
+          "required": [
+            "docs/spec.md",
+            "docs/api/**"
+          ],
+          "type": "any_changed",
+          "evidence": ""
+        },
+        {
+          "name": "릴리즈 공지",
+          "required": [
+            "CHANGELOG.md"
+          ],
+          "type": "all_changed",
+          "evidence": ""
+        }
+      ],
+      "checklist": [
+        "관련 spec/API 문서를 변경 내용에 맞게 업데이트",
+        "CHANGELOG.md에 변경 항목 추가"
+      ],
+      "ignored": false,
+      "change_intensity": "signature-change",
+      "change_intensities": [
+        "signature-change"
+      ],
+      "trigger_patterns": [
+        "src/routes/**"
+      ],
+      "blast_radius": [
+        "OpenAPI/spec documentation",
+        "external API consumers",
+        "missing requirement group: API 계약 문서",
+        "missing requirement group: 릴리즈 공지",
+        "release notes"
+      ],
+      "missing_docs_explanation": "",
+      "changed_contract_summary": "",
+      "docs_update_draft": "",
+      "false_positive_note": "",
+      "cross_file_relations": []
+    }
+  ],
+  "rule_decisions": [
+    {
+      "rule_id": "api-contract-sync",
+      "severity": "BLOCKER",
+      "status": "fail",
+      "reason": "required groups are missing",
+      "matched_patterns": [
+        "src/routes/**"
+      ],
+      "trigger_files": [
+        "src/routes/session.py"
+      ],
+      "satisfied_groups": [],
+      "unsatisfied_groups": [
+        {
+          "name": "API 계약 문서",
+          "required": [
+            "docs/spec.md",
+            "docs/api/**"
+          ],
+          "type": "any_changed",
+          "evidence": ""
+        },
+        {
+          "name": "릴리즈 공지",
+          "required": [
+            "CHANGELOG.md"
+          ],
+          "type": "all_changed",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "rule_id": "schema-migration-proof",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "env-config-sync",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "workflow-ops-doc",
+      "severity": "MINOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "auth-security-doc",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    }
+  ],
+  "skipped_rules": [],
+  "rejected_ignores": [],
+  "ignore_audit": [],
+  "temporal_warnings": [],
+  "gate": {
+    "fail_on_blocker": true,
+    "fail_on_major_count": 2
+  }
+}

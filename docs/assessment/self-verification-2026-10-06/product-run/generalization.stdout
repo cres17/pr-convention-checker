@@ -1,0 +1,35 @@
+{
+  "out": "/Users/moon/Documents/pr-convention-checker/docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+  "counts": {
+    "supported": {
+      "total": 24,
+      "matched": 21,
+      "tp": 11,
+      "tn": 10,
+      "fp": 2,
+      "fn": 1,
+      "errors": 0
+    },
+    "boundary": {
+      "total": 8,
+      "matched": 1,
+      "tp": 0,
+      "tn": 1,
+      "fp": 1,
+      "fn": 6,
+      "errors": 0
+    }
+  },
+  "mismatches": [
+    "A09-stale-route-retained",
+    "E04-existing-token-key",
+    "E05-env-access-in-string",
+    "B01-multiline-route",
+    "B03-openapi-yaml",
+    "B04-router-prefix",
+    "B05-dynamic-environment-key",
+    "B06-aliased-environment-getter",
+    "B07-response-schema",
+    "B08-chained-router"
+  ]
+}

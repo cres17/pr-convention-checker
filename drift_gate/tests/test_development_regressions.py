@@ -228,6 +228,38 @@ def env_policy():
              "severity": "blocker"}]})
 
 
+@pytest.mark.parametrize('access', ["os.getenv('SERVICE_TOKEN')", 'os.environ["PAYMENT_SECRET"]',
+                                  "os.environ.get('WORKER_LIMIT')", "os.getenv(\n    'API_TOKEN'\n)"])
+def test_existing_python_environment_key_is_not_new_after_value_processing(access):
+    before = 'value = ' + access
+    after = 'value = (' + access + ').strip()'
+    patch = '\n'.join('-' + line for line in before.splitlines()) + '\n' + '\n'.join('+' + line for line in after.splitlines()) + '\n'
+    file = ChangedFile(path='src/config/service.py', status='modified', patch=patch)
+    assert run(enrich_semantic_signals([file]), policy=env_policy()).result == 'pass'
+    file.patch = '\n'.join('+' + line for line in before.splitlines()) + '\n'
+    assert run(enrich_semantic_signals([file]), policy=env_policy()).result == 'fail'
+
+
+@pytest.mark.parametrize('line', [
+    'message = "os.getenv(\'API_TOKEN\')"',
+    "message = '''os.environ['PAYMENT_SECRET']'''",
+    '# os.getenv("WORKER_TOKEN")',
+])
+def test_python_environment_access_example_is_not_an_executed_access(line):
+    file = ChangedFile(path='src/config/service.py', status='modified', patch='+' + line + '\n')
+    assert run(enrich_semantic_signals([file]), policy=env_policy()).result == 'pass'
+
+
+def test_python_environment_key_rename_requires_new_key_and_invalid_fragment_is_not_suppressed():
+    file = ChangedFile(path='src/config/service.py', status='modified',
+        patch="-value = os.getenv('FIRST_KEY')\n+value = os.getenv('SECOND_KEY')\n")
+    assert run(enrich_semantic_signals([file]), policy=env_policy()).result == 'fail'
+    sample = ChangedFile(path='.env.example', status='unchanged', documented_env_keys=['SECOND_KEY'])
+    assert run(enrich_semantic_signals([file, sample]), policy=env_policy()).result == 'pass'
+    file.patch = "+value = os.getenv('UNKNOWN_KEY'\n"
+    assert run(enrich_semantic_signals([file]), policy=env_policy()).result == 'fail'
+
+
 def test_unchanged_sample_is_checked_and_values_are_not_retained(tmp_path):
     (tmp_path / ".env.example").write_text("PAYMENT_TIMEOUT=private-value\n")
     files = [ChangedFile(path="src/config/pay.py", status="modified", patch="+timeout = os.getenv('PAYMENT_TIMEOUT')\n")]

@@ -1,0 +1,998 @@
+{
+  "requested_base": "729a3cd",
+  "evaluation": {
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass"
+    },
+    "scan_metrics": {
+      "scanned_files": 117,
+      "skipped_ignored_files": 14,
+      "skipped_binary_files": 7,
+      "skipped_large_files": 2,
+      "evaluated_rules": 6,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": ".drift-gate.self.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": ".github/workflows/desktop-build.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "desktop-ui/src/bridge.ts",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "desktop-ui/src/eventSchema.ts",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "desktop-ui/src/events.ts",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/DocumentSetup.tsx",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/History.tsx",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/ProjectProgress.test.tsx",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/ProjectProgress.tsx",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/documents.ts",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/limits.ts",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/merge.ts",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/progressContracts.test.ts",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/progressState.ts",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/rebase.ts",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/requirement.ts",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/status.ts",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "desktop-ui/src/features/project-progress/useProjectProgress.ts",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "docs/architecture/target-architecture-2026-10-06.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/architecture/target-architecture-v2-2026-10-06.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/native-run.log",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/native/finished.png",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/native/imported-copy.png",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/native/recovered.png",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/native/result.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/python-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/react-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/ruff.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/ui-build.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-fixes-2026-10-06/validation.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/bridge-results.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/bridge-stderr.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/bridge_audit.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/python-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/react-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/reproduce.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/results.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/ui-audit.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/ui-audit.tsx.fixture",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-review-2026-10-06/validation.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-fixes-2026-10-06/README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-fixes-2026-10-06/native-run.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-fixes-2026-10-06/native/finished.png",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/architecture-second-fixes-2026-10-06/native/result.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/architecture-second-fixes-2026-10-06/python-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-fixes-2026-10-06/react-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-fixes-2026-10-06/ruff.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-fixes-2026-10-06/ui-build.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-fixes-2026-10-06/validation.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/bridge-results.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/bridge-run.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/bridge_probe.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/python-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/react-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/reproduce.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/results.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/ruff.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/ui-build.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/ui-probe.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/ui-probe.ts.fixture",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/architecture-second-review-2026-10-06/validation.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/package-verification-2026-10-06/README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/package-verification-2026-10-06/ci-corrections.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/package-verification-2026-10-06/local-validation.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/package-verification-2026-10-06/offline-dmg/bundled-grammars.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/package-verification-2026-10-06/offline-dmg/result.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/package-verification-2026-10-06/offline-installed/bundled-grammars.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/package-verification-2026-10-06/offline-installed/result.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/package-verification-2026-10-06/offline-installed/result.png",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/package-verification-2026-10-06/offline-package/bundled-grammars.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/package-verification-2026-10-06/offline-package/result.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/desktop-bridge.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/mcp-transport.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/progress-storage.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/ops/drift-gate-self-check.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/architecture-audit-2026-10-06.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/architecture-fixes-2026-10-06.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/architecture-second-audit-2026-10-06.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/architecture-second-fixes-2026-10-06.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/git/client.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/adapters/mcp/server.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/classification/intensity.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/engine.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/evaluation/contracts.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/python_syntax.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/desktop/json_store.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/desktop/progress_context.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/desktop/progress_documents.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/desktop/progress_drafts.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/desktop/progress_history.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/desktop/progress_limits.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/desktop/progress_service.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/desktop/verification_records.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/desktop/web_app.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/tests/contracts/progress.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/tests/test_contract_route_regressions.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_desktop_web.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_development_regressions.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_engine.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_git_collection.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_mcp_tools.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_progress_drafts.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_progress_history.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_progress_service.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_self_policy.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_validator.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/utils/glob_matcher.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "pyproject.toml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "scripts/check_self.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        }
+      ]
+    },
+    "result": "pass",
+    "change_types": [
+      "cli-public-interface",
+      "other",
+      "workflow-ci"
+    ],
+    "violations": [],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/core/**",
+          "drift_gate/utils/**"
+        ],
+        "trigger_files": [
+          "drift_gate/core/classification/intensity.py",
+          "drift_gate/core/engine.py",
+          "drift_gate/core/evaluation/contracts.py",
+          "drift_gate/core/python_syntax.py",
+          "drift_gate/utils/glob_matcher.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/cli/**",
+          "drift_gate/adapters/git/**",
+          "pyproject.toml"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/cli/runner.py",
+          "drift_gate/adapters/git/client.py",
+          "pyproject.toml"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Input and CLI contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/mcp/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/mcp/server.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "MCP transport contract",
+            "required": [
+              "docs/contracts/mcp-transport.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/desktop/json_store.py",
+          "drift_gate/desktop/progress*",
+          "drift_gate/desktop/verification_records.py"
+        ],
+        "trigger_files": [
+          "drift_gate/desktop/json_store.py",
+          "drift_gate/desktop/progress_context.py",
+          "drift_gate/desktop/progress_documents.py",
+          "drift_gate/desktop/progress_drafts.py",
+          "drift_gate/desktop/progress_history.py",
+          "drift_gate/desktop/progress_limits.py",
+          "drift_gate/desktop/progress_service.py",
+          "drift_gate/desktop/verification_records.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Progress persistence contract",
+            "required": [
+              "docs/contracts/progress-storage.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "desktop-ui/src/**",
+          "drift_gate/desktop/web_app.py"
+        ],
+        "trigger_files": [
+          "desktop-ui/src/bridge.ts",
+          "desktop-ui/src/eventSchema.ts",
+          "desktop-ui/src/events.ts",
+          "desktop-ui/src/features/project-progress/DocumentSetup.tsx",
+          "desktop-ui/src/features/project-progress/History.tsx",
+          "desktop-ui/src/features/project-progress/ProjectProgress.tsx",
+          "desktop-ui/src/features/project-progress/documents.ts",
+          "desktop-ui/src/features/project-progress/limits.ts",
+          "desktop-ui/src/features/project-progress/merge.ts",
+          "desktop-ui/src/features/project-progress/progressState.ts",
+          "desktop-ui/src/features/project-progress/rebase.ts",
+          "desktop-ui/src/features/project-progress/requirement.ts",
+          "desktop-ui/src/features/project-progress/status.ts",
+          "desktop-ui/src/features/project-progress/useProjectProgress.ts",
+          "drift_gate/desktop/web_app.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Desktop event and editing contract",
+            "required": [
+              "docs/contracts/desktop-bridge.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "pass",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          ".drift-gate.self.yml",
+          ".github/workflows/**",
+          "scripts/check_self.py"
+        ],
+        "trigger_files": [
+          ".drift-gate.self.yml",
+          ".github/workflows/ci.yml",
+          ".github/workflows/desktop-build.yml",
+          "scripts/check_self.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Self-check and package operations",
+            "required": [
+              "docs/ops/drift-gate-self-check.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {
+      ".drift-gate.self.yml": [
+        "self-package-operations"
+      ],
+      ".github/workflows/ci.yml": [
+        "self-package-operations"
+      ],
+      ".github/workflows/desktop-build.yml": [
+        "self-package-operations"
+      ],
+      "desktop-ui/src/bridge.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/eventSchema.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/events.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/DocumentSetup.tsx": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/History.tsx": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/ProjectProgress.tsx": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/documents.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/limits.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/merge.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/progressState.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/rebase.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/requirement.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/status.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "desktop-ui/src/features/project-progress/useProjectProgress.ts": [
+        "self-ui-bridge-contract"
+      ],
+      "drift_gate/adapters/cli/runner.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/git/client.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/mcp/server.py": [
+        "self-mcp-contract"
+      ],
+      "drift_gate/core/classification/intensity.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/engine.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/contracts.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/python_syntax.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/desktop/json_store.py": [
+        "self-progress-contract"
+      ],
+      "drift_gate/desktop/progress_context.py": [
+        "self-progress-contract"
+      ],
+      "drift_gate/desktop/progress_documents.py": [
+        "self-progress-contract"
+      ],
+      "drift_gate/desktop/progress_drafts.py": [
+        "self-progress-contract"
+      ],
+      "drift_gate/desktop/progress_history.py": [
+        "self-progress-contract"
+      ],
+      "drift_gate/desktop/progress_limits.py": [
+        "self-progress-contract"
+      ],
+      "drift_gate/desktop/progress_service.py": [
+        "self-progress-contract"
+      ],
+      "drift_gate/desktop/verification_records.py": [
+        "self-progress-contract"
+      ],
+      "drift_gate/desktop/web_app.py": [
+        "self-ui-bridge-contract"
+      ],
+      "drift_gate/utils/glob_matcher.py": [
+        "self-engine-contract"
+      ],
+      "pyproject.toml": [
+        "self-cli-contract"
+      ],
+      "scripts/check_self.py": [
+        "self-package-operations"
+      ]
+    },
+    "unmatched": [
+      "docs/architecture/target-architecture-2026-10-06.md",
+      "docs/architecture/target-architecture-v2-2026-10-06.md",
+      "docs/assessment/architecture-fixes-2026-10-06/README.md",
+      "docs/assessment/architecture-fixes-2026-10-06/native-run.log",
+      "docs/assessment/architecture-fixes-2026-10-06/native/finished.png",
+      "docs/assessment/architecture-fixes-2026-10-06/native/imported-copy.png",
+      "docs/assessment/architecture-fixes-2026-10-06/native/recovered.png",
+      "docs/assessment/architecture-fixes-2026-10-06/native/result.json",
+      "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+      "docs/assessment/architecture-fixes-2026-10-06/python-tests.log",
+      "docs/assessment/architecture-fixes-2026-10-06/react-tests.log",
+      "docs/assessment/architecture-fixes-2026-10-06/ruff.log",
+      "docs/assessment/architecture-fixes-2026-10-06/ui-build.log",
+      "docs/assessment/architecture-fixes-2026-10-06/validation.json",
+      "docs/assessment/architecture-review-2026-10-06/README.md",
+      "docs/assessment/architecture-review-2026-10-06/bridge-results.json",
+      "docs/assessment/architecture-review-2026-10-06/bridge-stderr.log",
+      "docs/assessment/architecture-review-2026-10-06/bridge_audit.py",
+      "docs/assessment/architecture-review-2026-10-06/python-tests.log",
+      "docs/assessment/architecture-review-2026-10-06/react-tests.log",
+      "docs/assessment/architecture-review-2026-10-06/reproduce.py",
+      "docs/assessment/architecture-review-2026-10-06/results.json",
+      "docs/assessment/architecture-review-2026-10-06/ui-audit.log",
+      "docs/assessment/architecture-review-2026-10-06/ui-audit.tsx.fixture",
+      "docs/assessment/architecture-review-2026-10-06/validation.json",
+      "docs/assessment/architecture-second-fixes-2026-10-06/README.md",
+      "docs/assessment/architecture-second-fixes-2026-10-06/native-run.log",
+      "docs/assessment/architecture-second-fixes-2026-10-06/native/finished.png",
+      "docs/assessment/architecture-second-fixes-2026-10-06/native/result.json",
+      "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+      "docs/assessment/architecture-second-fixes-2026-10-06/python-tests.log",
+      "docs/assessment/architecture-second-fixes-2026-10-06/react-tests.log",
+      "docs/assessment/architecture-second-fixes-2026-10-06/ruff.log",
+      "docs/assessment/architecture-second-fixes-2026-10-06/ui-build.log",
+      "docs/assessment/architecture-second-fixes-2026-10-06/validation.json",
+      "docs/assessment/architecture-second-review-2026-10-06/README.md",
+      "docs/assessment/architecture-second-review-2026-10-06/bridge-results.json",
+      "docs/assessment/architecture-second-review-2026-10-06/bridge-run.log",
+      "docs/assessment/architecture-second-review-2026-10-06/bridge_probe.py",
+      "docs/assessment/architecture-second-review-2026-10-06/python-tests.log",
+      "docs/assessment/architecture-second-review-2026-10-06/react-tests.log",
+      "docs/assessment/architecture-second-review-2026-10-06/reproduce.py",
+      "docs/assessment/architecture-second-review-2026-10-06/results.json",
+      "docs/assessment/architecture-second-review-2026-10-06/ruff.log",
+      "docs/assessment/architecture-second-review-2026-10-06/ui-build.log",
+      "docs/assessment/architecture-second-review-2026-10-06/ui-probe.log",
+      "docs/assessment/architecture-second-review-2026-10-06/ui-probe.ts.fixture",
+      "docs/assessment/architecture-second-review-2026-10-06/validation.json",
+      "docs/assessment/package-verification-2026-10-06/README.md",
+      "docs/assessment/package-verification-2026-10-06/ci-corrections.md",
+      "docs/assessment/package-verification-2026-10-06/local-validation.json",
+      "docs/assessment/package-verification-2026-10-06/offline-dmg/bundled-grammars.json",
+      "docs/assessment/package-verification-2026-10-06/offline-dmg/result.json",
+      "docs/assessment/package-verification-2026-10-06/offline-installed/bundled-grammars.json",
+      "docs/assessment/package-verification-2026-10-06/offline-installed/result.json",
+      "docs/assessment/package-verification-2026-10-06/offline-installed/result.png",
+      "docs/assessment/package-verification-2026-10-06/offline-package/bundled-grammars.json",
+      "docs/assessment/package-verification-2026-10-06/offline-package/result.json",
+      "docs/contracts/desktop-bridge.md",
+      "docs/contracts/gate-and-inputs.md",
+      "docs/contracts/mcp-transport.md",
+      "docs/contracts/progress-storage.md",
+      "docs/ops/drift-gate-self-check.md",
+      "docs/review/architecture-audit-2026-10-06.md",
+      "docs/review/architecture-fixes-2026-10-06.md",
+      "docs/review/architecture-second-audit-2026-10-06.md",
+      "docs/review/architecture-second-fixes-2026-10-06.md"
+    ],
+    "ignored": [
+      "desktop-ui/src/features/project-progress/ProjectProgress.test.tsx",
+      "desktop-ui/src/features/project-progress/progressContracts.test.ts",
+      "drift_gate/tests/contracts/progress.json",
+      "drift_gate/tests/test_contract_route_regressions.py",
+      "drift_gate/tests/test_desktop_web.py",
+      "drift_gate/tests/test_development_regressions.py",
+      "drift_gate/tests/test_engine.py",
+      "drift_gate/tests/test_git_collection.py",
+      "drift_gate/tests/test_mcp_tools.py",
+      "drift_gate/tests/test_progress_drafts.py",
+      "drift_gate/tests/test_progress_history.py",
+      "drift_gate/tests/test_progress_service.py",
+      "drift_gate/tests/test_self_policy.py",
+      "drift_gate/tests/test_validator.py"
+    ]
+  }
+}

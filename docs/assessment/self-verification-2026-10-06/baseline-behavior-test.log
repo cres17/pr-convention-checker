@@ -1,0 +1,3 @@
+.                                                                        [100%]
+1 passed in 0.89s
+{'pytest_exit_code': 0, 'test': 'test_recreated_same_version_baseline_rejects_old_editor_and_preserves_new_edits', 'production_functions_executed': ['<dictcomp>', '<module>', 'baseline_id'], 'baseline_id_call_count': 5}
