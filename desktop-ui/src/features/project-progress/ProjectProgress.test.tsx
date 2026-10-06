@@ -645,14 +645,16 @@ it('keeps the editor and existing recovery options after import cancellation or 
   expect((screen.getByLabelText('기능명') as HTMLInputElement).value).toBe('첫 기능');
 });
 
+// Capacity fixtures keep 119/121 real rows; query the controls directly to avoid
+// recomputing the entire jsdom accessibility tree for every click on slow runners.
 it('limits manual additions in the UI and reducer, including two rapid additions', () => {
   const page = harness();
   const baseline = makeBaseline();
   baseline.requirements = Array.from({ length: 119 }, (_, n) => makeItem(`goal-${n}`));
   page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline });
-  fireEvent.click(screen.getByRole('button', { name: '직접 추가' }));
-  expect((screen.getByRole('button', { name: '직접 추가' }) as HTMLButtonElement).disabled).toBe(true);
-  fireEvent.click(screen.getByRole('button', { name: '기준과 근거 저장' }));
+  fireEvent.click(screen.getByText('직접 추가', { selector: 'button' }));
+  expect((screen.getByText('직접 추가', { selector: 'button' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByText('기준과 근거 저장', { selector: 'button' }));
   expect(JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls[0][1]).requirements).toHaveLength(120);
 });
 
@@ -661,17 +663,17 @@ it('recovers a legacy overflow, exports it, and explicitly removes selected item
   const recovery = makeBaseline();
   recovery.requirements = Array.from({ length: 121 }, (_, n) => makeItem(`old-${n}`));
   page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline: makeBaseline(), recovery });
-  fireEvent.click(screen.getByRole('button', { name: '초안 복구' }));
-  expect((screen.getByRole('button', { name: '기준과 근거 저장' }) as HTMLButtonElement).disabled).toBe(true);
-  fireEvent.click(screen.getByRole('button', { name: '초안 파일로 내보내기' }));
+  fireEvent.click(screen.getByText('초안 복구', { selector: 'button' }));
+  expect((screen.getByText('기준과 근거 저장', { selector: 'button' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByText('초안 파일로 내보내기', { selector: 'button' }));
   expect(JSON.parse(vi.mocked(page.bridge.exportProgressDraft!).mock.calls[0][1]).requirements).toHaveLength(121);
   page.emit({ type: 'progressDraftExportCancelled' });
   const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
-  fireEvent.click(screen.getByRole('button', { name: '선택한 기능 삭제' }));
+  fireEvent.click(screen.getByText('선택한 기능 삭제', { selector: 'button' }));
   expect(screen.getByText('old-0', { selector: 'strong' })).toBeDefined();
   confirm.mockReturnValue(true);
-  fireEvent.click(screen.getByRole('button', { name: '선택한 기능 삭제' }));
-  fireEvent.click(screen.getByRole('button', { name: '기준과 근거 저장' }));
+  fireEvent.click(screen.getByText('선택한 기능 삭제', { selector: 'button' }));
+  fireEvent.click(screen.getByText('기준과 근거 저장', { selector: 'button' }));
   const items = JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls[0][1]).requirements;
   expect(items).toHaveLength(120);
   expect(items.some((item: ProgressItem) => item.id === 'old-0')).toBe(false);

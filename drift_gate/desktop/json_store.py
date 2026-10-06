@@ -10,7 +10,7 @@ def write_json(target: Path, data: dict) -> None:
     temporary = None
     try:
         with tempfile.NamedTemporaryFile(
-            "w", encoding="utf-8", dir=target.parent, delete=False
+            "w", encoding="utf-8", newline="\n", dir=target.parent, delete=False
         ) as stream:
             temporary = Path(stream.name)
             json.dump(data, stream, ensure_ascii=False, indent=2, allow_nan=False)
