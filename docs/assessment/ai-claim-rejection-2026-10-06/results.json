@@ -1,0 +1,319 @@
+{
+  "exit_codes": {
+    "exit_codes": {
+      "check --json": 2,
+      "report": 2,
+      "review --format json": 2,
+      "self-audit": 2,
+      "check outside a repository": 2
+    },
+    "missing_checklist_json_mode": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "ERROR: checklist file not found: /tmp/tmpmfbaoz6c/codes/missing.md\n"
+    }
+  },
+  "json_error": {
+    "git_failure": {
+      "error": {
+        "code": "input_error",
+        "message": "Git 변경을 읽지 못했습니다. 저장소와 비교 기준을 확인하고 다시 검사해 주세요."
+      }
+    },
+    "exit": 2
+  },
+  "git_names": {
+    "expected": [
+      "-dash.txt",
+      "dir with space/a b.md",
+      "src/routes/'q'.py",
+      "src/routes/[x]*.py",
+      "src/routes/new\nline.py",
+      "src/routes/한글.py"
+    ],
+    "collected": [
+      "-dash.txt",
+      "dir with space/a b.md",
+      "src/routes/'q'.py",
+      "src/routes/[x]*.py",
+      "src/routes/new\nline.py",
+      "src/routes/한글.py"
+    ],
+    "equal": true,
+    "option_like_base": "rejected"
+  },
+  "untracked": {
+    "untracked": {
+      "result": "pass",
+      "scanned_files": 0,
+      "stderr": ""
+    },
+    "after_add_N": {
+      "result": "fail",
+      "rules": [
+        "api-contract-sync"
+      ]
+    }
+  },
+  "stale_base": {
+    "base_main": {
+      "result": "fail",
+      "rules": [
+        "api-contract-sync"
+      ],
+      "trigger_files": [
+        "src/routes/new.py:deleted"
+      ]
+    },
+    "base_merge_base": {
+      "result": "pass",
+      "rules": []
+    }
+  },
+  "mcp": {
+    "oversize_then_next_ok": true,
+    "bad_utf8_then_next_ok": true,
+    "batch": "request must be an object; batches are unsupported",
+    "jsonrpc_text_contains_NaN_token": true,
+    "jsonrpc_text_excerpt": "{   \"records\": [     {       \"timestamp\": \"2026-10-05T00:00:00+00:00\",       \"rule_id\": \"x\",       \"note\": \"OUTSIDE-REPO-VALUE\",       \"score\": NaN     }   ],   \"summary\": {     \"total\": 1,     \"resul",
+    "legacy_path_same_input": "Out of range float values are not JSON compliant",
+    "history_reads_file_outside_repo": true,
+    "parse_error_shape": {
+      "ok": false,
+      "error": "invalid json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+    },
+    "notification_without_id_responses": 1
+  },
+  "python_env": {
+    "os.getenv": [
+      "A_KEY"
+    ],
+    "os.environ.get": [
+      "A_KEY"
+    ],
+    "os.environ[]": [
+      "A_KEY"
+    ],
+    "comment": [],
+    "string literal": []
+  },
+  "env_languages": {
+    "python": {
+      "result": "pass",
+      "rules": [],
+      "evidence": []
+    },
+    "go": {
+      "result": "warn",
+      "rules": [
+        "env-sync"
+      ],
+      "evidence": [
+        "No static new environment keys could be established from this change"
+      ]
+    },
+    "java": {
+      "result": "warn",
+      "rules": [
+        "env-sync"
+      ],
+      "evidence": [
+        "No static new environment keys could be established from this change"
+      ]
+    },
+    "ruby": {
+      "result": "warn",
+      "rules": [
+        "env-sync"
+      ],
+      "evidence": [
+        "No static new environment keys could be established from this change"
+      ]
+    },
+    "vite": {
+      "result": "warn",
+      "rules": [
+        "env-sync"
+      ],
+      "evidence": [
+        "No static new environment keys could be established from this change"
+      ]
+    }
+  },
+  "intensity": {
+    "add *extra to a public signature": {
+      "result": "pass",
+      "rules": []
+    },
+    "add **options to a public signature": {
+      "result": "pass",
+      "rules": []
+    },
+    "control: add c=2 to the signature": {
+      "result": "fail",
+      "rules": [
+        "src-doc-sync"
+      ]
+    },
+    "bump #define API_VERSION": {
+      "result": "pass",
+      "rules": []
+    },
+    "control: real comment line": {
+      "result": "pass",
+      "rules": []
+    }
+  },
+  "additional_policy_inputs": {
+    "policy_present_at_root": {
+      "exit": 1,
+      "result": "fail",
+      "rules_evaluated": 5,
+      "stderr": ""
+    },
+    "run_from_subdirectory": {
+      "exit": 0,
+      "result": "pass",
+      "rules_evaluated": 0,
+      "stderr": ""
+    },
+    "explicit_policy_that_does_not_exist": {
+      "exit": 0,
+      "result": "pass",
+      "rules_evaluated": 0,
+      "stderr": ""
+    },
+    "malformed_policy": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "    ^"
+    },
+    "review_from_root": {
+      "exit": 0
+    },
+    "review_from_subdirectory": {
+      "exit": 2,
+      "stdout": "{\"error\": {\"code\": \"input_error\", \"message\": \"검사할 파일을 읽지 못했습니다: src/a.py\"}}\n"
+    }
+  },
+  "self_audit_tool_status": {
+    "C01": {
+      "status": "supported",
+      "evidence_count": 41
+    },
+    "C02": {
+      "status": "supported",
+      "evidence_count": 31
+    },
+    "C03": {
+      "status": "supported",
+      "evidence_count": 33
+    },
+    "C04": {
+      "status": "supported",
+      "evidence_count": 32
+    },
+    "C05": {
+      "status": "supported",
+      "evidence_count": 8
+    },
+    "C06": {
+      "status": "supported",
+      "evidence_count": 31
+    },
+    "C07": {
+      "status": "supported",
+      "evidence_count": 31
+    },
+    "C08": {
+      "status": "supported",
+      "evidence_count": 30
+    },
+    "C09": {
+      "status": "supported",
+      "evidence_count": 31
+    },
+    "C10": {
+      "status": "supported",
+      "evidence_count": 30
+    },
+    "C11": {
+      "status": "supported",
+      "evidence_count": 35
+    },
+    "C12": {
+      "status": "supported",
+      "evidence_count": 30
+    },
+    "C13": {
+      "status": "supported",
+      "evidence_count": 2
+    },
+    "C14": {
+      "status": "unsupported",
+      "evidence_count": 0
+    }
+  },
+  "claims": {
+    "C01": {
+      "tool_status": "supported",
+      "independent_verdict": "accepted",
+      "observed": "exit codes {'check --json': 2, 'report': 2, 'review --format json': 2, 'self-audit': 2, 'check outside a repository': 2}"
+    },
+    "C02": {
+      "tool_status": "supported",
+      "independent_verdict": "partially accepted",
+      "observed": "Git failure gives input_error JSON, but a missing checklist in --json mode exits 1 with stdout=''"
+    },
+    "C03": {
+      "tool_status": "supported",
+      "independent_verdict": "accepted",
+      "observed": "special names collected=True, option-like base rejected"
+    },
+    "C04": {
+      "tool_status": "supported",
+      "independent_verdict": "accepted with caveat",
+      "observed": "untracked file: {'result': 'pass', 'scanned_files': 0, 'stderr': ''}; the run gives no warning that it was skipped"
+    },
+    "C05": {
+      "tool_status": "supported",
+      "independent_verdict": "rejected",
+      "observed": "base=main reports {'result': 'fail', 'rules': ['api-contract-sync'], 'trigger_files': ['src/routes/new.py:deleted']} on a branch that is behind main; the merge-base gives {'result': 'pass', 'rules': []}"
+    },
+    "C06": {
+      "tool_status": "supported",
+      "independent_verdict": "accepted",
+      "observed": "oversize frame answered, next frame served"
+    },
+    "C07": {
+      "tool_status": "supported",
+      "independent_verdict": "accepted",
+      "observed": "invalid UTF-8 frame answered, next frame served"
+    },
+    "C08": {
+      "tool_status": "supported",
+      "independent_verdict": "partially accepted",
+      "observed": "batch refused (request must be an object; batches are unsupported); parse errors use {'ok': False, 'error': 'invalid json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)'} instead of a JSON-RPC error; a notification without id got 1 response(s)"
+    },
+    "C09": {
+      "tool_status": "supported",
+      "independent_verdict": "rejected",
+      "observed": "JSON-RPC tools/call text contains NaN: {   \"records\": [     {       \"timestamp\": \"2026-10-05T00:00:00+00:00\",       \"rule_id\": \"x\",       \"note\": \"OUTSIDE-REPO-VALUE\",       \"score\": NaN     }   ],   \"summary\": {     \"total\": 1,     \"resul; legacy path: Out of range float values are not JSON compliant"
+    },
+    "C10": {
+      "tool_status": "supported",
+      "independent_verdict": "accepted",
+      "observed": "{'os.getenv': ['A_KEY'], 'os.environ.get': ['A_KEY'], 'os.environ[]': ['A_KEY'], 'comment': [], 'string literal': []}"
+    },
+    "C11": {
+      "tool_status": "supported",
+      "independent_verdict": "partially accepted",
+      "observed": "with a correctly updated .env.example: python=pass, go=warn, java=warn, ruby=warn, vite=warn"
+    },
+    "C12": {
+      "tool_status": "supported",
+      "independent_verdict": "rejected",
+      "observed": "semantic edits classified as comment-only: add *extra to a public signature -> pass, add **options to a public signature -> pass, control: add c=2 to the signature -> fail, bump #define API_VERSION -> pass, control: real comment line -> pass"
+    }
+  }
+}
