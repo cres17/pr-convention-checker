@@ -748,3 +748,14 @@ class TestLargePR:
         policy = Policy.from_dict(data["policy"])
         result = run(changed_files=files, drift_ignores=[], policy=policy)
         assert result.result in ("pass", "warn", "fail")
+
+
+def test_policy_path_cannot_silently_bypass_a_blocking_policy(tmp_path):
+    from drift_gate.adapters.policy_loader import load_policy
+    target = tmp_path / '.drift-gate.yml'
+    target.write_text('rules:\n  - id: docs\n    when:\n      any_changed: ["src/**"]\n    require:\n      groups:\n        - name: docs\n          any_changed: ["docs/**"]\n    severity: blocker\n', encoding='utf-8')
+    files = [ChangedFile(path='src/routes/a.py', status='modified', patch='+def route(): pass')]
+    assert run(files, policy=load_policy(target)).result == 'fail'
+    with pytest.raises(ValueError, match='adapter'):
+        run(files, policy_path=target)
+    assert run(files).no_policy

@@ -4,7 +4,7 @@ import type {
   ProjectDocument, RecoveryOption, Review, Scan, ScanImpact, TestLinks,
 } from "./bridge";
 
-type Requested = { requested_path?: string; request_id?: string; request_done?: boolean };
+type Requested = { requested_path?: string; request_id?: string; request_done?: boolean; baseline_version?: number; baseline_id?: string; inspection_id?: string };
 export type ProgressEvent = Requested & (
   | { type: "progressDocs"; documents: ProjectDocument[]; omitted: number; repository?: string; baseline?: ProgressBaseline | null; recovery?: ProgressBaseline | null; recovery_warning?: string;
       recovery_key?: string; recovery_revision?: string; recovery_options?: RecoveryOption[] }

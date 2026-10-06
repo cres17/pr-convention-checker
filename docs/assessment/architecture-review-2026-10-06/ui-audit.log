@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /Users/moon/Documents/pr-convention-checker/desktop-ui
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  10:44:11
+   Duration  2.12s (transform 101ms, setup 0ms, import 245ms, tests 1.52s, environment 288ms)
+

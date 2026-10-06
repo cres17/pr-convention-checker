@@ -46,7 +46,7 @@ def match_glob(path: str, pattern: str) -> bool:
     path = path.lstrip("/")
     pattern = pattern.lstrip("/")
     try:
-        return bool(re.fullmatch(glob_to_regex(pattern), path))
+        return bool(re.fullmatch(glob_to_regex(pattern), path, flags=re.DOTALL))
     except re.error:
         return False
 

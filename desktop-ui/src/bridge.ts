@@ -83,6 +83,7 @@ export type ProgressItem = {
 export type ProgressFieldError = { id: string; field: string; message: string };
 export type ChangeCounts = Partial<Record<"gained" | "regressed" | "excluded" | "reincluded" | "added" | "removed", number>>;
 export type ProgressHistory = {
+  warning?: string;
   snapshots: {
     at: string;
     version: number;
@@ -137,8 +138,10 @@ export type EvidenceCandidate = { path: string; line: number; excerpt: string };
 export type DocumentKind = "current" | "future" | "past" | "reference";
 export type RecoveryOption = { key: string; updated_at: string; revision?: string; bytes?: number; active?: boolean };
 export type ProgressBaseline = {
+  baseline_id?: string;
   repository: string;
   documents: Record<string, string>;
+  archived_documents?: string[];
   document_kinds?: Record<string, DocumentKind>;
   requirements: ProgressItem[];
   version?: number;

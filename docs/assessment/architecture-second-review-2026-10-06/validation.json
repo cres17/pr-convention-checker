@@ -1,0 +1,65 @@
+{
+  "head": "729a3cde70c3457b633798bb50273d815d4d2c12",
+  "state": "uncommitted ver2 working tree",
+  "source_sha256": {
+    ".github/workflows/desktop-build.yml": "d444422f237344e6ceccbd8fd699c44deeb85b80418063eb005069a0efdae46d",
+    "desktop-ui/src/bridge.ts": "4cbddd637095c1707800f97e73ae957d9d1e994754fab63f9882ea114fab7def",
+    "desktop-ui/src/eventSchema.ts": "c25f122f61fcb06651ea1e8ce66a255aa3ba80ee95f6451b96ddfe297c50aa8b",
+    "desktop-ui/src/events.ts": "77920859ce01c5451d80f035a137be2bfbb9b51be7423580e90d606d593551d2",
+    "desktop-ui/src/features/project-progress/ProjectProgress.test.tsx": "2f99722b01a061a1a21e3b69490f5787c7bb1c7eba56aaf940d0e600b88f68c3",
+    "desktop-ui/src/features/project-progress/ProjectProgress.tsx": "1121ab13ee3d10e53474af9b165c9737f11018ba7faa80feba6daf35a1934b22",
+    "desktop-ui/src/features/project-progress/limits.ts": "3fad7057764dca2ac58f09ddfcdbde86c7b3822ec4275f1fb38e4300704516f5",
+    "desktop-ui/src/features/project-progress/merge.ts": "98d9d279220018b5ea7ff8c7527672e1c4537cc18b62194db3b793267569799d",
+    "desktop-ui/src/features/project-progress/progressContracts.test.ts": "650c7853f29ac89087211b8a5a954d05ef0598dbd0f5e9e6702044808bcdee0b",
+    "desktop-ui/src/features/project-progress/progressState.ts": "f63b0d40d8cdcdb0dbdd5eb943631b01cca11cdcaaa63800fcdd0dc8ef8a785f",
+    "desktop-ui/src/features/project-progress/rebase.ts": "42eaddd327d689e55e6f77cb927534147a368eb3efa5002db85d4f4dbf8c4a95",
+    "desktop-ui/src/features/project-progress/requirement.ts": "e55122bc8b3a40a6c9e01e392b5a5b33835577558ddac38c89a1443f10f4293d",
+    "desktop-ui/src/features/project-progress/useProjectProgress.ts": "303cf5fec47495238a8111cfd0c2f9f7573201fbd1caaac0c2861086b06180f8",
+    "drift_gate/adapters/cli/runner.py": "90a94c7e565b163910a073439021baf01d04ce2fbb882e8d0f542ab3e913d67e",
+    "drift_gate/adapters/git/client.py": "48d933a6fa2407f1a944fc402012709cb09e5e9113b5f8e993f0b85f165921bf",
+    "drift_gate/desktop/progress_context.py": "1ec0697cd77ada505252379b059e3cfddfb272438b57f3069cbf5b1ee291ed35",
+    "drift_gate/desktop/progress_drafts.py": "f21b580d06bdebd74861dc420d1bff75655e7a0545493d704991df407c773790",
+    "drift_gate/desktop/progress_history.py": "1fa4abbf72d98280ef53a3500a8f084cacfcf48aad490cb8828b43d70956408a",
+    "drift_gate/desktop/progress_limits.py": "2693ef1c87cb6966c7ff70dc6eb3aaf809cecfe0d63ea2a7622dca92bac0a9e2",
+    "drift_gate/desktop/progress_service.py": "760d6a5382b9a53f7e4e73e9e97b0b9c9058c10a6bbe9b690e7470fe5668f3a1",
+    "drift_gate/desktop/verification_records.py": "5108619d4059f78845bb3c59158061abb5551261593d74a0ef8c2963cc52bd2f",
+    "drift_gate/desktop/web_app.py": "75947afd9a2d434d8bebf9da3c148a0395727c7897e839fd7cc33d3964b72a75",
+    "drift_gate/tests/contracts/progress.json": "51a19f1add1fd6099c3bf7dbef90d3cfade081a4dfb77883d6b7352a77d121ec",
+    "drift_gate/tests/test_desktop_web.py": "1d621b754fadc9c48ff72a082e5df3e9df6b1fcba8b256d12fa1c5e6a3e6f2a2",
+    "drift_gate/tests/test_git_collection.py": "9988184b6c005c3e410889238d3d72922ffa6828556cea07719e37de283da2d7",
+    "drift_gate/tests/test_progress_drafts.py": "d0e0322eefc9183d45a0dcef54ff2eafd8b3bd0b260f5a3181fcb6bc049ca61e",
+    "drift_gate/tests/test_progress_history.py": "40736ed9e4913e941356e4465e1deb0d1f4afe78fc8a8215c1c3f01700f8fedd",
+    "drift_gate/tests/test_validator.py": "b50d864621ffd6dc7a2736a72a090e570b27aff036ec633f020a03c8bc6306b2",
+    "drift_gate/utils/glob_matcher.py": "980c481cf582e2a0d3ad7a9c1fb504a11fd4d3d0913eec5111be27c27d587714",
+    "pyproject.toml": "c7e5b950339a4f03374c0a76b756b755caca14487d012641eb1b2169bbbba414"
+  },
+  "unchanged_operating_sources": true,
+  "python": {
+    "passed": 800,
+    "skipped": 0
+  },
+  "react": {
+    "passed": 117
+  },
+  "observational_cases": 6,
+  "normal_controls": 4,
+  "observational_TS": 2,
+  "bridge": {
+    "damaged_history_events": [
+      "progressError"
+    ],
+    "terminal": true,
+    "report_delivered": false,
+    "control_events": [
+      "progressReport",
+      "progressHistory"
+    ]
+  },
+  "local_document_links_checked": 7,
+  "limitations": [
+    "No remote CI refresh",
+    "No installed package run",
+    "No native GUI run this review",
+    "No independent accuracy evaluation"
+  ]
+}

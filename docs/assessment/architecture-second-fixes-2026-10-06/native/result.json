@@ -1,0 +1,50 @@
+{
+  "kind": "macOS source Qt + built React + QWebChannel + temporary repository",
+  "confirmation": "fixture replaces window.confirm with an affirmative answer",
+  "checks": {
+    "original_baseline_loaded": true,
+    "saved_version_advanced": true,
+    "old_goals_and_evidence_preserved": true,
+    "explicit_archive_saved": true,
+    "new_document_added": true,
+    "unavailable_history_event": true,
+    "history_warning_visible": true,
+    "report_visible_after_save": true,
+    "archived_document_visible": true,
+    "bad_history_bytes_preserved": true
+  },
+  "events": [
+    {
+      "type": "ready",
+      "request_done": null
+    },
+    {
+      "type": "progressDocs",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_done": true
+    },
+    {
+      "type": "progressPreview",
+      "request_done": true
+    },
+    {
+      "type": "progressSaved",
+      "request_done": false
+    },
+    {
+      "type": "progressReport",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_done": true
+    }
+  ]
+}

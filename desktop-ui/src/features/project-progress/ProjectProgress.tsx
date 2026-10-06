@@ -1,3 +1,4 @@
+import { MAX_REQUIREMENTS } from "./limits";
 import DraftRecovery from "./DraftRecovery";
 import { AlertCircle, BookOpen, Plus } from "lucide-react";
 import { progressFilterLabels } from "./status";
@@ -32,6 +33,11 @@ export default function ProjectProgress(props: ProjectProgressProps) {
         <button className="secondary" disabled={!!busy || state.dirty} onClick={actions.importDraft}>초안 파일 불러오기</button>
         {state.dirty && <span>현재 편집을 저장하거나 최신 기준으로 전환한 뒤 파일을 불러올 수 있습니다.</span>}
       </div>
+      {state.dirty && <button className="secondary" disabled={!!busy} onClick={actions.exportDraft}>초안 파일로 내보내기</button>}
+      {state.draftExported && !state.conflict && <p role="status">초안 파일 저장을 확인했습니다 · {state.draftExported}</p>}
+      {draft && draft.requirements.length >= MAX_REQUIREMENTS && <div className="notice" role="status">
+        기능은 최대 {MAX_REQUIREMENTS}개까지 확정할 수 있습니다. 선택한 항목을 정리하거나 초안 파일로 내보낼 수 있습니다.
+      </div>}
       {state.saveWarning && <div className="notice" role="status">{state.saveWarning}</div>}
       {state.conflict && view.merge && <div className="notice error" role="alert">
         <div>
@@ -86,6 +92,7 @@ export default function ProjectProgress(props: ProjectProgressProps) {
         onToggle={actions.toggleDocuments}
         onSelect={actions.selectDocument}
         onKind={actions.changeKind}
+        onArchive={actions.archiveDocument}
         onExtract={actions.extract}
       />
 
@@ -125,7 +132,10 @@ export default function ProjectProgress(props: ProjectProgressProps) {
                 >
                   <Plus size={15} /> 직접 추가
                 </button>
-                <button className="primary" onClick={actions.save} disabled={!!busy || !!state.conflict}>
+                {item && <button className="secondary" disabled={!!busy} onClick={() => {
+                  if (window.confirm(`“${item.title}” 항목과 기록된 근거를 초안에서 삭제할까요? 확정 기준은 저장할 때 바뀝니다.`)) actions.removeItem(item.id);
+                }}>선택한 기능 삭제</button>}
+                <button className="primary" onClick={actions.save} disabled={!!busy || !!state.conflict || draft.requirements.length > MAX_REQUIREMENTS}>
                   {busy === "save" ? "저장 중…" : "기준과 근거 저장"}
                 </button>
               </div>

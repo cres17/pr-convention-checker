@@ -1,0 +1,16 @@
+Error calling Python override of QRunnable::run(): Traceback (most recent call last):
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/web_app.py", line 73, in run
+    events = [{'type': kind, 'requested_path': self.path, **data} for kind, data in self.work()]
+                                                                                    ^^^^^^^^^^^
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/web_app.py", line 308, in <lambda>
+    self._run_progress(path, lambda: [('progressTests', link_test_results(path, directory, filename))], request_id=request_id)
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/progress_service.py", line 956, in link_test_results
+    verification_records.parse_results(results_file),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/verification_records.py", line 102, in parse_results
+    kind, tests = "jest", _jest(data)
+                          ^^^^^^^^^^^
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/verification_records.py", line 78, in _jest
+    for result in suite.get("assertionResults") or []:
+TypeError: 'int' object is not iterable

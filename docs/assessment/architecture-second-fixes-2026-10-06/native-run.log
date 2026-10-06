@@ -1,0 +1,28 @@
+Committed save history recording failed
+Traceback (most recent call last):
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/progress_history.py", line 42, in validate_snapshots
+    raise ValueError('invalid snapshot')
+ValueError: invalid snapshot
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/progress_service.py", line 674, in _load_snapshots
+    return progress_history.validate_snapshots(data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/progress_history.py", line 54, in validate_snapshots
+    raise HistoryError('진행 이력의 형식을 읽지 못했습니다. 원본 파일은 보존했습니다.') from exc
+drift_gate.desktop.progress_history.HistoryError: 진행 이력의 형식을 읽지 못했습니다. 원본 파일은 보존했습니다.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/web_app.py", line 188, in work
+    history = record_snapshot(path, directory, report)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/progress_service.py", line 687, in record_snapshot
+    _load_snapshots(root, data_dir, remote), progress_history.make_snapshot(report)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/moon/Documents/pr-convention-checker/drift_gate/desktop/progress_service.py", line 676, in _load_snapshots
+    raise progress_history.HistoryError('진행 이력을 읽지 못했습니다. 원본 파일은 보존했습니다.') from exc
+drift_gate.desktop.progress_history.HistoryError: 진행 이력을 읽지 못했습니다. 원본 파일은 보존했습니다.

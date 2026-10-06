@@ -1,0 +1,12 @@
+{
+  "malformed_results": {
+    "worker_finished": true,
+    "terminal_events": 0
+  },
+  "interleaved_save": {
+    "saved_version": 1,
+    "reported_version": 2,
+    "history_version": 2,
+    "ordering": "another writer commits between save_baseline and inspect_progress"
+  }
+}

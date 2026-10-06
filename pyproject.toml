@@ -34,4 +34,4 @@ python_functions = ["test_*"]
 "drift_gate.adapters" = ["parser_hashes.json"]
 "drift_gate.desktop" = ["web/**/*", "web/*"]
 
-"drift_gate.tests" = ["fixtures/*.json", "fixtures/**/*.json"]
+"drift_gate.tests" = ["fixtures/*.json", "fixtures/**/*.json", "contracts/*.json"]

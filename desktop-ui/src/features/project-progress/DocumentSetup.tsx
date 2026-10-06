@@ -17,6 +17,7 @@ type Props = {
   onToggle: () => void;
   onSelect: (path: string, selected: boolean) => void;
   onKind: (path: string, kind: DocumentKind) => void;
+  onArchive: (path: string) => void;
   onExtract: () => void;
 };
 export default function DocumentSetup({
@@ -33,6 +34,7 @@ export default function DocumentSetup({
   onToggle,
   onSelect,
   onKind,
+  onArchive,
   onExtract,
 }: Props) {
   return (
@@ -71,6 +73,18 @@ export default function DocumentSetup({
       )}
       {expanded && (
         <>
+          {draft && Object.keys(draft.documents).map((relative) => (
+            <div key={`binding:${relative}`} className="progress-doc">
+              <span>{relative} {draft.archived_documents?.includes(relative) ? "(출처 보관)" :
+                !documents.some((doc) => doc.path === relative) ? "(현재 목록에 없음)" : "(연결됨)"}</span>
+              {!draft.archived_documents?.includes(relative) && <button className="secondary"
+                disabled={!!busy || (draft.archived_documents?.length ?? 0) >= 120}
+                onClick={() => onArchive(relative)} aria-label={`${relative} 연결 해제하고 출처 보관`}>
+                연결 해제하고 출처 보관
+              </button>}
+            </div>
+          ))}
+          {!!draft?.archived_documents?.length && <p className="hint">보관된 문서의 기능·근거는 유지되고 현재 목표 집계에서 제외됩니다. 다시 연결하려면 해당 문서를 선택하고 재추출하세요. 이름이 바뀐 문서는 새 문서로 선택하세요.</p>}
           <p>
             문서를 선택하고 종류를 지정하세요. 현재 목표에서만 기능 후보를
             추출합니다. 향후 계획·과거 결과·참고는 보관과 링크 점검에 사용하며

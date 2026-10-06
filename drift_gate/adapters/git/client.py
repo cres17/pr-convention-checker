@@ -33,15 +33,15 @@ def _sanitize_path(raw: str) -> Optional[str]:
     Rejects paths that:
     - Are absolute (start with '/' or contain a drive letter on Windows)
     - Contain path traversal sequences ('..') after normalization
-    - Are empty or whitespace-only
+    - Are empty or contain a NUL
 
     Returns the normalized relative path string, or None if the path is unsafe.
     """
-    if not raw or not raw.strip():
+    if not raw or "\x00" in raw:
         return None
 
-    # Strip leading/trailing whitespace
-    path = raw.strip()
+    # Preserve exact spelling, including leading/trailing whitespace.
+    path = raw
 
     # Reject absolute paths (Unix-style or Windows-style)
     if path.startswith("/") or (len(path) > 1 and path[1] == ":"):
@@ -66,96 +66,65 @@ def _sanitize_path(raw: str) -> Optional[str]:
     return clean
 
 
+class GitInputError(ValueError):
+    """Git input could not be collected; this is never an empty successful diff."""
+
+
 class GitAdapter:
     def __init__(self, repo_root: str | Path | None = None):
         self.repo_root = Path(repo_root) if repo_root is not None else None
 
     def get_changed_files(self, base: str = "HEAD~1") -> List[ChangedFile]:
-        """Return files changed between base and the current working tree."""
-        diff_base = base
-        output = _git_diff_name_status(diff_base, cwd=self.repo_root)
-        if output is None:
-            diff_base = "HEAD~1"
-            output = _git_diff_name_status(diff_base, cwd=self.repo_root)
-        if output is None:
-            return []
-
-        return [
-            _with_patch(file, diff_base, cwd=self.repo_root)
-            for file in _parse_name_status(output)
-        ]
+        if not base or base.startswith("-"):
+            raise GitInputError("비교 기준이 올바르지 않습니다.")
+        commit = _git(["rev-parse", "--verify", "--end-of-options", f"{base}^{{commit}}"], self.repo_root).decode('ascii').strip()
+        output = _git(["diff", "--no-ext-diff", "--no-textconv", "--name-status", "-z", "--find-renames", commit, "--"], self.repo_root)
+        return [_with_patch(file, commit, self.repo_root) for file in _parse_name_status(output)]
 
 
-def _git_diff_name_status(diff_base: str, cwd: Path | None = None) -> str | None:
+def _git(args: list[str], cwd: Path | None) -> bytes:
     try:
-        return subprocess.check_output(
-            ["git", "diff", "--name-status", "--find-renames", diff_base],
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            stderr=subprocess.DEVNULL,
-            **({"cwd": cwd} if cwd is not None else {}),
-        )
-    except subprocess.CalledProcessError:
-        return None
+        return subprocess.check_output(["git", "--literal-pathspecs", *args], cwd=cwd,
+                                       stderr=subprocess.PIPE, timeout=30)
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError) as exc:
+        raise GitInputError("Git 변경을 읽지 못했습니다. 저장소와 비교 기준을 확인하고 다시 검사해 주세요.") from exc
 
 
-def _parse_name_status(output: str) -> List[ChangedFile]:
+def _parse_name_status(output: bytes) -> List[ChangedFile]:
+    fields = output.split(b"\0")
+    if fields[-1] != b"":
+        raise GitInputError("Git 파일 목록이 완전하지 않습니다.")
+    fields.pop()
     files = []
-    for line in output.splitlines():
-        parts = line.split("\t")
-        if not parts or not parts[0]:
-            continue
-        if parts[0].startswith("R") and len(parts) >= 3:
-            new_path = _sanitize_path(parts[2])
-            old_path = _sanitize_path(parts[1])
-            if new_path is None:
-                continue
-            files.append(ChangedFile(
-                path=new_path,
-                status="renamed",
-                previous_path=old_path,
-            ))
-        elif len(parts) >= 2:
-            safe_path = _sanitize_path(parts[1])
-            if safe_path is None:
-                continue
-            files.append(ChangedFile(
-                path=safe_path,
-                status=STATUS_MAP.get(parts[0], "modified"),
-            ))
+    index = 0
+    while index < len(fields):
+        try:
+            status = fields[index].decode('ascii')
+            count = 2 if status.startswith(('R', 'C')) else 1
+            paths = fields[index + 1:index + 1 + count]
+            if len(paths) != count:
+                raise ValueError('missing path')
+            decoded = [entry.decode('utf-8', errors='strict') for entry in paths]
+            if any(_sanitize_path(path) != path for path in decoded):
+                raise ValueError('unsafe path')
+        except (ValueError, UnicodeError) as exc:
+            raise GitInputError("Git 파일 경로를 읽지 못했습니다. UTF-8의 저장소 상대 경로가 필요합니다.") from exc
+        files.append(ChangedFile(path=decoded[-1],
+            status='renamed' if status.startswith('R') else STATUS_MAP.get(status, 'modified'),
+            previous_path=decoded[0] if status.startswith('R') else None))
+        index += count + 1
     return files
 
 
 def _with_patch(file: ChangedFile, diff_base: str, cwd: Path | None = None) -> ChangedFile:
-    """Attach per-file unified diff when available."""
     if _is_binary_path(file.path):
-        return ChangedFile(
-            path=file.path,
-            status=file.status,
-            previous_path=file.previous_path,
-            patch="[binary file skipped]",
-        )
-    try:
-        patch = subprocess.check_output(
-            ["git", "diff", "--find-renames", diff_base, "--", *([file.previous_path] if file.previous_path else []), file.path],
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            stderr=subprocess.DEVNULL,
-            **({"cwd": cwd} if cwd is not None else {}),
-        )
-    except subprocess.CalledProcessError:
-        patch = ""
-    if len(patch.encode("utf-8", errors="replace")) > _max_patch_bytes():
-        patch = "[large file skipped]"
-
-    return ChangedFile(
-        path=file.path,
-        status=file.status,
-        previous_path=file.previous_path,
-        patch=patch,
-    )
+        patch = "[binary file skipped]"
+    else:
+        paths = [file.previous_path, file.path] if file.previous_path else [file.path]
+        patch = _git(["diff", "--no-ext-diff", "--no-textconv", "--find-renames", diff_base, "--", *paths], cwd).decode('utf-8', errors='replace')
+        if len(patch.encode('utf-8')) > _max_patch_bytes():
+            patch = "[large file skipped]"
+    return ChangedFile(path=file.path, status=file.status, previous_path=file.previous_path, patch=patch)
 
 
 def _is_binary_path(path: str) -> bool:

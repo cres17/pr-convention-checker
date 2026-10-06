@@ -1,0 +1,84 @@
+{
+  "date": "2026-10-06",
+  "source_parent": "729a3cde70c3457b633798bb50273d815d4d2c12",
+  "scope": "latest working-tree source; macOS arm64 frozen app, readonly DMG and temporary installed copy",
+  "signature": "ad-hoc; not Developer ID or notarization",
+  "tool_versions": {
+    "python": "3.11.15",
+    "pyinstaller": "6.22.3",
+    "tree_sitter_language_pack": "1.20.0"
+  },
+  "source_sha256": {
+    ".github/workflows/desktop-build.yml": "d444422f237344e6ceccbd8fd699c44deeb85b80418063eb005069a0efdae46d",
+    "desktop-ui/src/bridge.ts": "60265ccc73fa3fc83581df786c0314d30310c22450b31a3015e6ac8b2c2ad358",
+    "desktop-ui/src/eventSchema.ts": "5c76d2d4f584988ec3583c0684b1eb7f321ee68490ce4e2aa6b4f82c81d45b4c",
+    "desktop-ui/src/events.ts": "77920859ce01c5451d80f035a137be2bfbb9b51be7423580e90d606d593551d2",
+    "desktop-ui/src/features/project-progress/DocumentSetup.tsx": "a571b2c0701e644c68fe6af0dc55588d3f494987e6127b11bc19c91bfc7a568d",
+    "desktop-ui/src/features/project-progress/History.tsx": "4d745ef4909ec50ea11a6d5fb811803d083810431ddcaf4b83ac23898464cc3c",
+    "desktop-ui/src/features/project-progress/ProjectProgress.test.tsx": "b204e08d6f9ae91586f83f64a4116c28189f4a40f2286500c973ad7f32106dd6",
+    "desktop-ui/src/features/project-progress/ProjectProgress.tsx": "22aa152dd3572ac3b3bd8a0b32fc63fc24ad88f42de234154c14af517271e34d",
+    "desktop-ui/src/features/project-progress/documents.ts": "d9bf51f8818e7876e5dc91e61022bcf48a543015b9e4da175679185ef81d4e5f",
+    "desktop-ui/src/features/project-progress/limits.ts": "3fad7057764dca2ac58f09ddfcdbde86c7b3822ec4275f1fb38e4300704516f5",
+    "desktop-ui/src/features/project-progress/merge.ts": "9ee63b5f89d832484e4e2a633672c7b4256bb0d07522b1ed0eb433b183d2b08c",
+    "desktop-ui/src/features/project-progress/progressContracts.test.ts": "cb4c544f71ddbfda8552cab1fef0d08dc747031b5f52fcb9773092e1b65c0326",
+    "desktop-ui/src/features/project-progress/progressState.ts": "052d71e1b9a65fcdeb4f55aa7e61d0b0ffdc7cda5e8c389cf2d756ffb5b8d4a5",
+    "desktop-ui/src/features/project-progress/rebase.ts": "a7d869014495c39544b4cbfb60dc12bfc11f146b6f194811e192e96f5be164c8",
+    "desktop-ui/src/features/project-progress/requirement.ts": "1a4de486433ab1f90d6472ef9355fe26437ea9d9e3143c2c0208a8e3320852a7",
+    "desktop-ui/src/features/project-progress/status.ts": "09953586fae2bb8690adad425fa7615973b954de2e51378a0007b706d8505527",
+    "desktop-ui/src/features/project-progress/useProjectProgress.ts": "27c0d9bc0f660a63182fc99b1516a1725b4d2a2d416634cabfa1dac2044855f9",
+    "drift_gate/adapters/cli/runner.py": "90a94c7e565b163910a073439021baf01d04ce2fbb882e8d0f542ab3e913d67e",
+    "drift_gate/adapters/git/client.py": "48d933a6fa2407f1a944fc402012709cb09e5e9113b5f8e993f0b85f165921bf",
+    "drift_gate/adapters/mcp/server.py": "b6f6bfa91de082d26edc0876859c49b4c5ea4d4696606346832a8103243b54f9",
+    "drift_gate/core/engine.py": "c8dd621b16a829afbf4254bab676ec98782c4e64b76d187b942f112578fb3ca9",
+    "drift_gate/desktop/progress_context.py": "55500814c6870d8595f9de2629ad74372618ebc63b17b11ccdd22a677b328103",
+    "drift_gate/desktop/progress_documents.py": "fd0819a2ccce45ab14c4e30b1cdffb39c4b8c73bab2cae3c84eb2e5191440402",
+    "drift_gate/desktop/progress_drafts.py": "fff3c4df7a776472a8af94983e513237b7695cbdac562db1b47ba17acf6d794e",
+    "drift_gate/desktop/progress_history.py": "98fabbc30ec0a3287c72daf91bf8434b8484dfee1541021797a2c09ecec7acf0",
+    "drift_gate/desktop/progress_limits.py": "2693ef1c87cb6966c7ff70dc6eb3aaf809cecfe0d63ea2a7622dca92bac0a9e2",
+    "drift_gate/desktop/progress_service.py": "97f06b0e6c9746d0799791bf98b3b592ce99ae30e86b8e98409538f2c945eb30",
+    "drift_gate/desktop/verification_records.py": "5108619d4059f78845bb3c59158061abb5551261593d74a0ef8c2963cc52bd2f",
+    "drift_gate/desktop/web_app.py": "254a1dedcf530b11382b01c8ef9d8727f150aa60f6ac40130866d42d5f14b467",
+    "drift_gate/tests/contracts/progress.json": "51a19f1add1fd6099c3bf7dbef90d3cfade081a4dfb77883d6b7352a77d121ec",
+    "drift_gate/tests/test_desktop_web.py": "109148fb9ba55afdb0e5f69dbd7a03e2f5bfff127e7e51ab84feb3076f2c605e",
+    "drift_gate/tests/test_engine.py": "8722ef00dc073ab1b92d8454bdd068a7286809f7c95a25a2bb415019c1876088",
+    "drift_gate/tests/test_git_collection.py": "9988184b6c005c3e410889238d3d72922ffa6828556cea07719e37de283da2d7",
+    "drift_gate/tests/test_mcp_tools.py": "30cd33781da14e33a936de79b39e3a0d7a5309f5af94aecbf15992fc1747316d",
+    "drift_gate/tests/test_progress_drafts.py": "fa520d9a500f5be712f90e9efdc188bfde4ab38f9e17b5f85b766b0a21345518",
+    "drift_gate/tests/test_progress_history.py": "eb059c0fd9f569c6e7f7b88f3351f9f7a0714c01537df851b9198c6fb2e18e51",
+    "drift_gate/tests/test_progress_service.py": "5fa019a70679b7daeccb719adf455e937925cb8a81877398f1a71c12500079c3",
+    "drift_gate/tests/test_validator.py": "b50d864621ffd6dc7a2736a72a090e570b27aff036ec633f020a03c8bc6306b2",
+    "drift_gate/utils/glob_matcher.py": "980c481cf582e2a0d3ad7a9c1fb504a11fd4d3d0913eec5111be27c27d587714",
+    "pyproject.toml": "c7e5b950339a4f03374c0a76b756b755caca14487d012641eb1b2169bbbba414"
+  },
+  "local_checks": {
+    "offline-package": {
+      "status": "passed",
+      "parsers": 8,
+      "fresh_cache_files": 0,
+      "network_probes_blocked": 2,
+      "gate": "warn"
+    },
+    "offline-dmg": {
+      "status": "passed",
+      "parsers": 8,
+      "fresh_cache_files": 0,
+      "network_probes_blocked": 2,
+      "gate": "warn"
+    },
+    "offline-installed": {
+      "status": "passed",
+      "parsers": 8,
+      "fresh_cache_files": 0,
+      "network_probes_blocked": 2,
+      "gate": "warn"
+    }
+  },
+  "dmg_sha256": "1c9c5a8ee5042fdc644d316ec42b83beb160b7381feddb8d134b5896b8c9f786",
+  "dmg_bytes": 223757822,
+  "local_tests": {
+    "python_passed": 833,
+    "react_passed": 122,
+    "ruff_E9_F": "passed"
+  },
+  "remote_ci": "pending push; exact pushed commit and per-platform artifacts will be checked in this conversation"
+}

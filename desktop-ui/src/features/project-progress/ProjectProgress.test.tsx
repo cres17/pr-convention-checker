@@ -644,3 +644,73 @@ it('keeps the editor and existing recovery options after import cancellation or 
   expect(screen.getByRole('button', { name: '초안 복구' }).matches(':disabled')).toBe(false);
   expect((screen.getByLabelText('기능명') as HTMLInputElement).value).toBe('첫 기능');
 });
+
+it('limits manual additions in the UI and reducer, including two rapid additions', () => {
+  const page = harness();
+  const baseline = makeBaseline();
+  baseline.requirements = Array.from({ length: 119 }, (_, n) => makeItem(`goal-${n}`));
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline });
+  fireEvent.click(screen.getByRole('button', { name: '직접 추가' }));
+  expect((screen.getByRole('button', { name: '직접 추가' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: '기준과 근거 저장' }));
+  expect(JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls[0][1]).requirements).toHaveLength(120);
+});
+
+it('recovers a legacy overflow, exports it, and explicitly removes selected items before saving', () => {
+  const page = harness();
+  const recovery = makeBaseline();
+  recovery.requirements = Array.from({ length: 121 }, (_, n) => makeItem(`old-${n}`));
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline: makeBaseline(), recovery });
+  fireEvent.click(screen.getByRole('button', { name: '초안 복구' }));
+  expect((screen.getByRole('button', { name: '기준과 근거 저장' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: '초안 파일로 내보내기' }));
+  expect(JSON.parse(vi.mocked(page.bridge.exportProgressDraft!).mock.calls[0][1]).requirements).toHaveLength(121);
+  page.emit({ type: 'progressDraftExportCancelled' });
+  const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+  fireEvent.click(screen.getByRole('button', { name: '선택한 기능 삭제' }));
+  expect(screen.getByText('old-0', { selector: 'strong' })).toBeDefined();
+  confirm.mockReturnValue(true);
+  fireEvent.click(screen.getByRole('button', { name: '선택한 기능 삭제' }));
+  fireEvent.click(screen.getByRole('button', { name: '기준과 근거 저장' }));
+  const items = JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls[0][1]).requirements;
+  expect(items).toHaveLength(120);
+  expect(items.some((item: ProgressItem) => item.id === 'old-0')).toBe(false);
+  confirm.mockRestore();
+});
+
+it('requires explicit confirmation to archive a missing document and preserves its goals on save', () => {
+  const page = harness();
+  const baseline = { ...makeBaseline(), version: 1, baseline_id: 'original' };
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline });
+  fireEvent.click(screen.getByRole('button', { name: '기준 문서 변경' }));
+  const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+  fireEvent.click(screen.getByRole('button', { name: 'README.md 연결 해제하고 출처 보관' }));
+  fireEvent.click(screen.getByRole('button', { name: '기준과 근거 저장' }));
+  let payload = JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls.at(-1)![1]);
+  expect(payload.archived_documents).toBeUndefined();
+  const request = vi.mocked(page.bridge.saveProgress).mock.calls.at(-1)!;
+  page.emit({ type: 'progressSaved', baseline, requested_path: request[0], request_id: request[2], request_done: true });
+  fireEvent.click(screen.getByRole('button', { name: '기준 문서 변경' }));
+  confirm.mockReturnValue(true);
+  fireEvent.click(screen.getByRole('button', { name: 'README.md 연결 해제하고 출처 보관' }));
+  fireEvent.click(screen.getByRole('button', { name: '기준과 근거 저장' }));
+  payload = JSON.parse(vi.mocked(page.bridge.saveProgress).mock.calls.at(-1)![1]);
+  expect(payload.archived_documents).toEqual(['README.md']);
+  expect(payload.requirements).toEqual(baseline.requirements);
+  expect(payload.baseline_id).toBe('original');
+  expect(payload.document_kinds['README.md']).toBe('reference');
+  confirm.mockRestore();
+});
+
+it('shows unavailable history without losing a valid progress report', () => {
+  const page = harness();
+  page.emit({ type: 'progressDocs', documents: [], omitted: 0, baseline: makeBaseline() });
+  page.emit({ type: 'progressReport', report: {
+    repository: '/sample/one', version: 1, at: '2026-10-06T00:00:00Z', head: 'a',
+    total: 1, counts: { unknown: 1, complete: 0, implemented: 0, partial: 0, not_implemented: 0, excluded: 1 }, stale_documents: [],
+    items: makeBaseline().requirements, limitations: '',
+  }});
+  page.emit({ type: 'progressHistory', snapshots: [], since_save: null, warning: '이력 파일 원본은 보존했습니다.' });
+  expect(screen.getByText(/이력 파일 원본은 보존했습니다/)).toBeTruthy();
+  expect(screen.getByRole('button', { name: '근거 없음 1개 보기' })).toBeTruthy();
+});

@@ -1,0 +1,38 @@
+{
+  "document_rename": {
+    "error": "기준 문서가 변경됐습니다. 다시 불러와 주세요.",
+    "saved_version": 1,
+    "available_documents": [
+      "PLAN.md"
+    ],
+    "control_version": 2
+  },
+  "baseline_aba": {
+    "old_version": 1,
+    "replacement_version": 1,
+    "different_baseline_ids": true,
+    "accepted_stale_editor_version": 2,
+    "replacement_edit_preserved": false
+  },
+  "core_policy_path": {
+    "path_argument_result": "pass",
+    "no_policy": true,
+    "loaded_policy_control": "fail"
+  },
+  "mcp_non_object": {
+    "exit": 1,
+    "responses": 0,
+    "error": "AttributeError: 'list' object has no attribute 'get'",
+    "valid_request_control_exit": 0,
+    "valid_request_control_responses": 1
+  },
+  "malformed_history": {
+    "inspection_completed": true,
+    "history_error": "'version'"
+  },
+  "same_version_history": {
+    "report_at": "2026-10-06T01:00:00Z",
+    "comparison_at": "2026-10-06T02:00:00Z",
+    "false_regressed_count": 1
+  }
+}

@@ -65,7 +65,7 @@ def _junit(data: bytes) -> list[dict]:
 def _jest(data: bytes) -> list[dict]:
     try:
         payload = json.loads(data)
-    except (ValueError, UnicodeDecodeError) as exc:
+    except (ValueError, UnicodeDecodeError, RecursionError) as exc:
         raise ValueError(f"JSON을 읽지 못했습니다: {exc}") from exc
     suites = payload.get("testResults") if isinstance(payload, dict) else None
     if not isinstance(suites, list):
@@ -75,7 +75,10 @@ def _jest(data: bytes) -> list[dict]:
         if not isinstance(suite, dict):
             continue
         file = re.split(r"[\\/]", str(suite.get("name", "")))[-1]  # Windows paths use backslashes
-        for result in suite.get("assertionResults") or []:
+        assertions = suite.get("assertionResults", [])
+        if not isinstance(assertions, list):
+            raise ValueError("Jest/Vitest assertionResults는 목록이어야 합니다.")
+        for result in assertions:
             if not isinstance(result, dict):
                 continue
             title = str(result.get("fullName") or result.get("title") or "")

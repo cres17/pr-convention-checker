@@ -16,6 +16,9 @@ from pathlib import Path
 
 from drift_gate.desktop import progress_history, verification_records
 from drift_gate.desktop.json_store import write_json
+from drift_gate.desktop.progress_context import baseline_id
+from drift_gate.desktop.progress_documents import archived_documents
+from drift_gate.desktop.progress_limits import MAX_REQUIREMENTS
 from drift_gate.desktop.store_lock import store_lock
 from drift_gate.desktop.progress_scope import in_current_scope as _in_current_scope, requirement_sources
 from drift_gate.desktop.doc_links import (
@@ -26,7 +29,6 @@ from drift_gate.desktop.doc_links import (
 
 MAX_DOC_BYTES = 256_000
 MAX_DOCS = 150
-MAX_REQUIREMENTS = 120
 MAX_DUPLICATES = 20
 STATUSES = frozenset({"unknown", "partial", "implemented", "not_implemented"})
 MAX_SOURCE_BYTES = 512_000
@@ -442,13 +444,20 @@ def _load_baseline(root: Path, data_dir: Path, remote: str | None) -> dict | Non
         if remote is None or not target.is_file():
             return None
     data = json.loads(target.read_text(encoding="utf-8"))
-    if data.get("schema") != 1:
+    if not isinstance(data, dict) or data.get("schema") != 1:
         raise ValueError("저장된 기준의 형식이 현재 앱과 맞지 않습니다.")
+    archived = archived_documents(data)
+    if archived:
+        data['document_kinds'] = {**_document_kinds(data['documents'], data.get('document_kinds')),
+                                  **{path: 'reference' for path in archived}}
     # Files keyed by remote carry it; path-keyed files must match this folder.
     owner = data.get("remote")
     if (owner != remote) if owner is not None else (data.get("repository") != str(root)):
         raise ValueError("저장된 기준의 형식이 현재 앱과 맞지 않습니다.")
-    return data
+    if data.get("repository") != str(root):
+        data = {**data, "origin_repository": data.get("origin_repository", data.get("repository")),
+                "repository": str(root)}
+    return {**data, "baseline_id": baseline_id(data)}
 
 
 def _item_errors(
@@ -565,17 +574,21 @@ def _save_baseline(root: Path, data_dir: Path, remote: str | None, payload: dict
         raise ValueError("기준 데이터를 읽지 못했습니다.")
     docs = payload.get("documents")
     items = payload.get("requirements")
-    if not isinstance(docs, dict) or not docs or len(docs) > 10:
-        raise ValueError("기준 문서를 선택해 주세요.")
+    archived = archived_documents(payload)
     if not isinstance(items, list) or len(items) > MAX_REQUIREMENTS:
         raise ValueError("기능 목록을 확인해 주세요.")
     kinds = _document_kinds(docs, payload.get("document_kinds"))
+    kinds.update({path: 'reference' for path in archived})
     previous = _load_baseline(root, data_dir, remote)
+    if archived and (previous is None or any(previous['documents'].get(path) != docs[path] for path in archived)):
+        raise ValueError('보관 문서는 이전에 저장된 문서의 원본 정보를 유지해야 합니다.')
     previous_items = (
         {item["id"]: item for item in previous["requirements"]} if previous else {}
     )
     available = {entry["path"] for entry in _documents(root, *_git_files(root))["documents"]}
     for relative, digest in docs.items():
+        if relative in archived:
+            continue
         if (
             relative not in available
             or _hash(_safe_file(root, relative, {".md"}, MAX_DOC_BYTES).read_bytes())
@@ -603,25 +616,27 @@ def _save_baseline(root: Path, data_dir: Path, remote: str | None, payload: dict
         raise BaselineError(errors)
     target = _store_file(root, data_dir, remote)
     # A baseline still stored under the old path key is rewritten under the remote key.
-    if (
-        previous
-        and previous["documents"] == docs
-        and previous["requirements"] == items
-        and _document_kinds(previous["documents"], previous.get("document_kinds")) == kinds
-        and (remote is None or target.is_file())
-    ):
-        return previous
     unchanged = bool(
         previous
         and previous["documents"] == docs
         and previous["requirements"] == items
         and _document_kinds(previous["documents"], previous.get("document_kinds")) == kinds
+        and set(previous.get('archived_documents', [])) == archived
     )
     submitted_version = payload.get("version", 0)
     if type(submitted_version) is not int or submitted_version < 0:
         raise ValueError("기준 버전이 올바르지 않습니다. 최신 기준을 다시 불러와 주세요.")
-    if previous and not unchanged and submitted_version != previous["version"]:
+    if unchanged and (remote is None or target.is_file()):
+        return previous
+    expected_id = payload.get('baseline_id')
+    if not expected_id and isinstance(payload.get('edit_base'), dict):
+        expected_id = baseline_id(payload['edit_base'])
+    if previous and not unchanged and (
+        submitted_version != previous['version'] or expected_id != previous['baseline_id']
+    ):
         raise BaselineConflict(previous)
+    if previous is None and (submitted_version or expected_id):
+        raise ValueError('편집하던 기준이 사라졌습니다. 초안을 내보내고 최신 기준을 다시 불러와 주세요.')
     version = (previous["version"] + (0 if unchanged else 1)) if previous else 1
     saved = {
         "schema": 1,
@@ -632,8 +647,11 @@ def _save_baseline(root: Path, data_dir: Path, remote: str | None, payload: dict
         "document_kinds": kinds,
         "requirements": items,
     }
+    if archived:
+        saved['archived_documents'] = sorted(archived)
     if remote is not None:
         saved["remote"] = remote
+    saved["baseline_id"] = baseline_id(saved)
     write_json(target, saved)
     return saved
 
@@ -648,11 +666,14 @@ def _load_snapshots(root: Path, data_dir: Path, remote: str | None) -> list[dict
     for target in (_history_file(root, data_dir, remote), _legacy_store_file(root, data_dir).with_suffix(".history.json")):
         if target.is_file():
             try:
-                data = json.loads(target.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError):
-                return []  # history is a convenience: a damaged file must not block progress
-            if data.get("schema") == 1 and isinstance(data.get("snapshots"), list):
-                return data["snapshots"]
+                with target.open('rb') as stream:
+                    raw = stream.read(2_000_001)
+                if len(raw) > 2_000_000:
+                    raise ValueError('history exceeds size limit')
+                data = json.loads(raw)
+                return progress_history.validate_snapshots(data)
+            except (OSError, ValueError, RecursionError) as exc:
+                raise progress_history.HistoryError('진행 이력을 읽지 못했습니다. 원본 파일은 보존했습니다.') from exc
     return []
 
 
@@ -669,10 +690,24 @@ def record_snapshot(path: str | Path, data_dir: Path, report: dict) -> dict:
     return progress_history.summarize(snapshots, report)
 
 
-def progress_history_view(path: str | Path, data_dir: Path, report: dict | None = None) -> dict:
-    """Recorded history and, given the current report, what changed since the last save."""
+def capture_progress_history(path: str | Path, data_dir: Path) -> dict:
+    """Freeze comparison inputs before inspection, even if another writer saves later."""
     root = _repository(path)
-    return progress_history.summarize(_load_snapshots(root, data_dir, _remote_identity(root)), report)
+    remote = _remote_identity(root)
+    try:
+        with store_lock(_history_file(root, data_dir, remote)):
+            return {'snapshots': _load_snapshots(root, data_dir, remote)}
+    except (progress_history.HistoryError, OSError, TimeoutError) as exc:
+        return {'snapshots': [], 'warning': str(exc)}
+
+
+def progress_history_view(path: str | Path, data_dir: Path, report: dict | None = None, *, anchor: dict | None = None) -> dict:
+    """Recorded history and, given the current report, what changed since the last save."""
+    captured = anchor if anchor is not None else capture_progress_history(path, data_dir)
+    result = progress_history.summarize(captured['snapshots'], report)
+    if captured.get('warning'):
+        result['warning'] = captured['warning']
+    return result
 
 
 def _evidence(
@@ -767,9 +802,9 @@ def scan_impact(path: str | Path, data_dir: Path, changes: list[dict]) -> dict |
     return {"version": baseline["version"], "items": items, "documents": documents}
 
 
-def inspect_progress(path: str | Path, data_dir: Path) -> dict:
+def inspect_progress(path: str | Path, data_dir: Path, *, baseline: dict | None = None) -> dict:
     root = _repository(path)
-    baseline = _load_baseline(root, data_dir, _remote_identity(root))
+    baseline = baseline if baseline is not None else _load_baseline(root, data_dir, _remote_identity(root))
     if baseline is None:
         raise ValueError("기준 문서를 선택하고 기능 목록을 확정해 주세요.")
     stale_docs = []
@@ -915,10 +950,10 @@ def evidence_candidates(path: str | Path, item: dict) -> list[dict]:
     return candidates[:10]
 
 
-def check_references(path: str | Path, data_dir: Path) -> dict:
+def check_references(path: str | Path, data_dir: Path, *, baseline: dict | None = None) -> dict:
     """Broken links and file paths in the baseline's documents (read-only)."""
     root = _repository(path)
-    baseline = _load_baseline(root, data_dir, _remote_identity(root))
+    baseline = baseline if baseline is not None else _load_baseline(root, data_dir, _remote_identity(root))
     if baseline is None:
         raise ValueError("기준 문서를 선택하고 기능 목록을 확정해 주세요.")
     tracked, untracked = _git_files(root)
@@ -945,10 +980,10 @@ def check_references(path: str | Path, data_dir: Path) -> dict:
     }
 
 
-def link_test_results(path: str | Path, data_dir: Path, results_file: str | Path) -> dict:
+def link_test_results(path: str | Path, data_dir: Path, results_file: str | Path, *, baseline: dict | None = None) -> dict:
     """Attach a test-result file's outcomes to the saved baseline's items (read-only)."""
     root = _repository(path)
-    baseline = _load_baseline(root, data_dir, _remote_identity(root))
+    baseline = baseline if baseline is not None else _load_baseline(root, data_dir, _remote_identity(root))
     if baseline is None:
         raise ValueError("기준 문서를 선택하고 기능 목록을 확정해 주세요.")
     kinds = _document_kinds(baseline["documents"], baseline.get("document_kinds"))

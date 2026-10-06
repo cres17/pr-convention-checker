@@ -1,4 +1,6 @@
+import { MAX_REQUIREMENTS } from "./limits";
 import type { ProgressBaseline, ProgressItem } from '../../bridge';
+import { activeDocuments } from './documents';
 
 type Choice = 'local' | 'latest';
 type Value = unknown;
@@ -71,8 +73,12 @@ export function rebaseProgress(base: ProgressBaseline | null, local: ProgressBas
     recovery_key: local.recovery_key, recovery_revision: local.recovery_revision,
     documents: merge(base?.documents ?? {}, local.documents, latest.documents, '기준 문서') as ProgressBaseline['documents'],
     document_kinds: merge(base?.document_kinds ?? {}, local.document_kinds ?? {}, latest.document_kinds ?? {}, '문서 종류') as ProgressBaseline['document_kinds'],
+    archived_documents: merge(base?.archived_documents ?? [], local.archived_documents ?? [], latest.archived_documents ?? [], '보관 문서', true) as string[],
   };
   // Extra documents/items require explicit cleanup, never silently truncate edits.
-  const overflow = Object.keys(draft.documents).length > 10 || requirements.length > 120;
+  for (const path of draft.archived_documents ?? []) {
+    draft.document_kinds = { ...draft.document_kinds, [path]: 'reference' };
+  }
+  const overflow = activeDocuments(draft).length > 10 || (draft.archived_documents?.length ?? 0) > 120 || requirements.length > MAX_REQUIREMENTS;
   return { draft, conflicts, overflow };
 }
