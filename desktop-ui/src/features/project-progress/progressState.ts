@@ -84,7 +84,9 @@ function receive(state: ProgressState, event: ProgressEvent): ProgressState {
   if (event.requested_path && event.requested_path !== state.path) return state;
   switch (event.type) {
     case "progressDocs": {
-      const next = { ...state, documents: event.documents, omitted: event.omitted, busy: state.busy === "draft-import" ? "" : finish(state, "documents") };
+      const next = { ...state, documents: event.documents, omitted: event.omitted,
+        report: event.baseline?.version === state.report?.version ? state.report : null,
+        busy: state.busy === "draft-import" ? "" : finish(state, "documents") };
       if (state.dirty) return { ...next, conflict: state.conflict ? event.baseline ?? null : null };
       next.recovery = event.recovery ?? null;
       next.recoveryWarning = event.recovery_warning ?? "";
@@ -128,7 +130,8 @@ function receive(state: ProgressState, event: ProgressEvent): ProgressState {
         showDocuments: false, inspections: state.inspections + (event.type === "progressLatestUsed" ? 1 : 0),
       };
     case "progressReport":
-      return state.dirty ? state : { ...state, report: event.report };
+      return state.dirty || (state.draft?.version !== undefined && state.draft.version !== event.report.version)
+        ? state : { ...state, report: event.report };
     case "progressTests":
       return { ...state, busy: finish(state, "tests"), tests: state.dirty ? state.tests : event };
     case "progressTestsCancelled":
