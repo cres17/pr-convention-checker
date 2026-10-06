@@ -1,6 +1,7 @@
 """Conflicting editors and separate processes must never silently lose edits."""
 from copy import deepcopy
 import multiprocessing
+import time
 
 import pytest
 
@@ -97,6 +98,50 @@ def _draft_session_writer(root, data, draft, owner, ready, finish):
         ready.set()
         finish.wait(timeout=20)
     finally:
+        session.close()
+
+
+def _gate_holder(target, ready, finish):
+    with store_lock(target):
+        ready.set()
+        finish.wait(timeout=20)
+
+
+@pytest.mark.parametrize('saved', [False, True])
+def test_closing_lease_does_not_wait_for_another_process_transaction(tmp_path, saved):
+    from drift_gate.desktop.progress_drafts import DraftSession, cache_draft, discard_draft, recovery_copy
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    session = DraftSession(root, data, 'a' * 32)
+    cache_draft(root, data, extract_requirements(root, ['README.md']), 'a' * 32, session)
+    if saved:
+        discard_draft(root, data, 'a' * 32)
+        assert recovery_copy(root, data, None) == {}
+        assert session.lease.with_suffix('.live.lock').exists()  # Still held by this app.
+    context = multiprocessing.get_context('spawn')
+    ready, finish = context.Event(), context.Event()
+    process = context.Process(target=_gate_holder, args=(session.gate, ready, finish))
+    process.start()
+    try:
+        assert ready.wait(timeout=15)
+        started = time.monotonic()
+        assert session.close() is False
+        assert time.monotonic() - started < 2  # The former timeout was ten seconds.
+        assert session._held is None
+        finish.set()
+        process.join(timeout=15)
+        assert process.exitcode == 0
+        recovery = recovery_copy(root, data, None)
+        if saved:
+            assert recovery == {}
+        else:
+            assert recovery['recovery_options'][0]['active'] is False
+        assert not list((data / 'drafts').glob('*.live.lock'))
+    finally:
+        finish.set()
+        if process.is_alive():
+            process.terminate()
+            process.join(timeout=5)
         session.close()
 
 

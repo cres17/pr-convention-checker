@@ -8,7 +8,8 @@ import { displayStatus, filterProgressItems, inCurrentScope, type ProgressFilter
 import { manualRequirement, patchRequirement } from "./requirement";
 import { rebaseProgress } from "./rebase";
 
-export type ProgressOperation = "" | "documents" | "extract" | "save" | "links" | "tests" | "discard" | "draft-export" | "latest";
+import { retainsEditor, type ProgressOperation } from './operations';
+export type { ProgressOperation } from './operations';
 export type ProgressState = {
   path: string;
   documents: ProjectDocument[];
@@ -83,7 +84,7 @@ function receive(state: ProgressState, event: ProgressEvent): ProgressState {
   if (event.requested_path && event.requested_path !== state.path) return state;
   switch (event.type) {
     case "progressDocs": {
-      const next = { ...state, documents: event.documents, omitted: event.omitted, busy: finish(state, "documents") };
+      const next = { ...state, documents: event.documents, omitted: event.omitted, busy: state.busy === "draft-import" ? "" : finish(state, "documents") };
       if (state.dirty) return { ...next, conflict: state.conflict ? event.baseline ?? null : null };
       next.recovery = event.recovery ?? null;
       next.recoveryWarning = event.recovery_warning ?? "";
@@ -137,6 +138,7 @@ function receive(state: ProgressState, event: ProgressEvent): ProgressState {
     case "progressLinks":
       return { ...state, busy: finish(state, "links"), links: state.dirty ? state.links : event };
     case "progressDraftExported": return { ...state, busy: finish(state, "draft-export"), draftExported: event.file };
+    case "progressDraftImportCancelled": return { ...state, busy: finish(state, "draft-import") };
     case "progressDraftExportCancelled": return { ...state, busy: finish(state, "draft-export") };
     case "progressExported":
       return { ...state, exported: `저장했습니다 · ${event.file}` };
@@ -151,7 +153,7 @@ function receive(state: ProgressState, event: ProgressEvent): ProgressState {
   }
 }
 function transition(state: ProgressState, action: ProgressAction | DraftAction): ProgressState {
-  if (["draft-export", "latest"].includes(state.busy) && ["edit", "kind", "document", "add-manual", "rebase"].includes(action.type)) return state;
+  if (["draft-export", "latest", "draft-import"].includes(state.busy) && ["edit", "kind", "document", "add-manual", "rebase"].includes(action.type)) return state;
   if (!state.dirty && (state.recovery || state.recoveryWarning)
       && ["edit", "kind", "document", "add-manual"].includes(action.type)) return state;
   switch (action.type) {
@@ -171,7 +173,7 @@ function transition(state: ProgressState, action: ProgressAction | DraftAction):
       if (!state.recovery || state.busy || state.dirty || state.recoveryOptions.find((copy) => copy.key === state.recoveryKey)?.active) return state;
       const draft = { ...state.recovery, recovery_key: state.recoveryKey, recovery_revision: state.recoveryRevision };
       const base = draft.edit_base ?? ((draft.version ?? 0) === (state.base?.version ?? 0) ? state.base : null);
-      return { ...state, draft, base, recovery: null, dirty: true, report: null, links: null, tests: null, fieldErrors: [],
+      return { ...state, draft, base, recovery: null, recoveryWarning: '', saveWarning: '초안을 복구했습니다. 내용을 검토한 뒤 기준과 근거 저장을 눌러 주세요.', dirty: true, report: null, links: null, tests: null, fieldErrors: [],
         selectedDocs: Object.keys(draft.documents), documentKinds: draft.document_kinds ?? {},
         selectedId: draft.requirements[0]?.id ?? "", filter: "all", query: "", showDocuments: false };
     }
@@ -179,7 +181,7 @@ function transition(state: ProgressState, action: ProgressAction | DraftAction):
     case "restore":
       return action.retained
         ? { ...action.retained, path: action.path,
-            busy: ["save", "extract", "discard", "draft-export", "latest"].includes(action.retained.busy) ? action.retained.busy : action.connected ? "documents" : "",
+            busy: retainsEditor(action.retained.busy) ? action.retained.busy : action.connected ? "documents" : "",
             candidates: [], inspections: 0 }
         : initialProgressState(action.path, action.connected && action.path ? "documents" : "");
     case "event": return receive(state, action.event);

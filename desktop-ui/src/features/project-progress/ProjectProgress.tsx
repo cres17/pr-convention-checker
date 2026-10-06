@@ -28,6 +28,10 @@ export default function ProjectProgress(props: ProjectProgressProps) {
     );
   return (
     <div className="progress-page">
+      <div className="progress-actions">
+        <button className="secondary" disabled={!!busy || state.dirty} onClick={actions.importDraft}>초안 파일 불러오기</button>
+        {state.dirty && <span>현재 편집을 저장하거나 최신 기준으로 전환한 뒤 파일을 불러올 수 있습니다.</span>}
+      </div>
       {state.saveWarning && <div className="notice" role="status">{state.saveWarning}</div>}
       {state.conflict && view.merge && <div className="notice error" role="alert">
         <div>
@@ -67,7 +71,7 @@ export default function ProjectProgress(props: ProjectProgressProps) {
       {pendingElsewhere > 0 && <div className="notice" role="status">
         다른 프로젝트 {pendingElsewhere}개에 저장하지 않은 현황 편집이 있습니다. 해당 프로젝트를 다시 연결하면 이어서 편집할 수 있습니다.
       </div>}
-      <fieldset className="progress-page" disabled={view.recoveryPending || busy === "draft-export" || busy === "latest"} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
+      <fieldset className="progress-page" disabled={view.recoveryPending || busy === "draft-export" || busy === "latest" || busy === "draft-import"} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
       <DocumentSetup
         path={path}
         documents={documents}

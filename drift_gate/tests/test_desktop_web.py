@@ -642,3 +642,56 @@ def test_export_must_succeed_and_remain_intact_before_using_latest_baseline(tmp_
         assert json.loads(target.read_text(encoding='utf-8'))['draft'] == draft
     finally:
         bridge.closeDraftSessions()
+
+
+def test_import_bridge_cancel_failure_and_recovery_preserve_confirmed_baseline(tmp_path, monkeypatch):
+    from copy import deepcopy
+    from drift_gate.desktop.progress_drafts import export_draft, recovery_copy
+    from drift_gate.desktop.progress_service import extract_requirements, save_baseline, load_baseline
+    QApplication.instance() or QApplication([])
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    baseline = save_baseline(root, data, extract_requirements(root, ['README.md']))
+    draft = deepcopy(baseline)
+    draft['edit_base'] = deepcopy(baseline)
+    draft['requirements'][0]['title'] = '파일 편집'
+    source = tmp_path / 'backup.json'
+    export_draft(root, draft, source)
+    bridge = DesktopBridge()
+    monkeypatch.setattr(bridge, '_progress_dir', lambda: data)
+    messages = []
+    bridge.event.connect(lambda raw: messages.append(json.loads(raw)))
+    monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getOpenFileName', lambda *args: ('', ''))
+    bridge.importProgressDraft(str(root), 'cancel')
+    assert messages[-1]['type'] == 'progressDraftImportCancelled'
+    monkeypatch.setattr('drift_gate.desktop.web_app.QFileDialog.getOpenFileName', lambda *args: (str(source), ''))
+    bridge.importProgressDraft(str(root), 'import')
+    settle(bridge)
+    docs = of_type(messages, 'progressDocs')
+    assert docs['request_id'] == 'import' and docs['request_done']
+    assert docs['baseline'] == baseline and docs['recovery'] == draft
+    assert not docs['recovery_options'][0]['active']
+    source.write_text('{}', encoding='utf-8')
+    bridge.importProgressDraft(str(root), 'invalid')
+    settle(bridge)
+    assert of_type(messages, 'progressError')['request_id'] == 'invalid'
+    assert recovery_copy(root, data, baseline)['recovery'] == draft
+    assert load_baseline(root, data) == baseline
+    bridge.saveProgress(str(root), json.dumps({**draft, 'recovery_key': docs['recovery_key'], 'recovery_revision': docs['recovery_revision']}), 'save')
+    settle(bridge)
+    assert load_baseline(root, data)['requirements'][0]['title'] == '파일 편집'
+    assert recovery_copy(root, data, load_baseline(root, data)) == {}
+
+
+def test_closing_sessions_continues_after_a_cleanup_error(tmp_path, caplog):
+    from types import SimpleNamespace
+    QApplication.instance() or QApplication([])
+    bridge = DesktopBridge()
+    released = []
+    def failing():
+        raise PermissionError('cleanup denied')
+    bridge._draft_sessions = {'failed': SimpleNamespace(close=failing, lease=tmp_path / 'failed'),
+                             'next': SimpleNamespace(close=lambda: released.append(True) or True, lease=tmp_path / 'next')}
+    bridge.closeDraftSessions()
+    assert released == [True] and bridge._draft_sessions == {}
+    assert 'Could not clean up draft lease' in caplog.text

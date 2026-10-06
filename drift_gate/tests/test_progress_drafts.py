@@ -214,3 +214,94 @@ def test_export_preserves_incomplete_inputs_and_original_edit_ancestry(tmp_path)
     payload = json.loads(target.read_text(encoding='utf-8'))
     assert payload['draft'] == draft
     assert payload['draft']['edit_base']['requirements'][0]['title'] != '내 편집'
+
+
+def test_exported_file_import_is_a_separate_copy_and_preserves_baseline_and_ancestry(tmp_path):
+    from copy import deepcopy
+    from drift_gate.desktop.progress_drafts import export_draft, import_draft
+    from drift_gate.desktop.progress_service import load_baseline
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    baseline = save_baseline(root, data, extract_requirements(root, ['README.md']))
+    draft = deepcopy(baseline)
+    draft['edit_base'] = deepcopy(baseline)
+    draft.update(recovery_key='external.json', recovery_revision='external:1')
+    draft['requirements'][0].update(title='파일 편집', evidence={'path': '', 'line': 1.5, 'note': ''})
+    cache_draft(root, data, baseline, 'a' * 32)
+    existing = draft_file(root, data, 'a' * 32).read_bytes()
+    source = tmp_path / 'export.json'
+    export_draft(root, draft, source)
+    original = source.read_bytes()
+    key = import_draft(root, data, source)
+    result = recovery_copy(root, data, baseline, key)
+    assert len(result['recovery_options']) == 2
+    assert result['recovery']['requirements'][0]['title'] == '파일 편집'
+    assert result['recovery']['requirements'][0]['evidence']['line'] == 1.5
+    assert result['recovery']['edit_base'] == baseline
+    assert 'recovery_key' not in result['recovery'] and 'recovery_revision' not in result['recovery']
+    assert source.read_bytes() == original and draft_file(root, data, 'a' * 32).read_bytes() == existing
+    assert load_baseline(root, data) == baseline
+    assert import_draft(root, data, source) != key
+
+
+@pytest.mark.parametrize('mutation', [
+    'schema', 'repository', 'inner_repository', 'base_repository', 'duplicate_ids', 'version',
+    'status', 'test_patterns', 'kinds', 'empty_id', 'invalid_base_line',
+])
+def test_invalid_import_keeps_all_existing_files_unchanged(tmp_path, mutation):
+    from copy import deepcopy
+    from drift_gate.desktop.progress_drafts import import_draft
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    draft = extract_requirements(root, ['README.md'])
+    payload = {'schema': 1, 'repository': str(root.resolve()), 'draft': deepcopy(draft)}
+    modified = payload['draft']
+    if mutation == 'schema': payload['schema'] = True
+    elif mutation == 'repository': payload['repository'] = '/another/project'
+    elif mutation == 'inner_repository': modified['repository'] = '/another/project'
+    elif mutation == 'base_repository': modified['edit_base'] = {**deepcopy(draft), 'repository': '/another/project'}
+    elif mutation == 'duplicate_ids': modified['requirements'].append(deepcopy(modified['requirements'][0]))
+    elif mutation == 'version': modified['version'] = -1
+    elif mutation == 'status': modified['requirements'][0]['implementation_status'] = 'bogus'
+    elif mutation == 'test_patterns': modified['requirements'][0]['test_patterns'] = 'oops'
+    elif mutation == 'kinds': modified['document_kinds'] = {'README.md': []}
+    elif mutation == 'empty_id': modified['requirements'][0]['id'] = ''
+    elif mutation == 'invalid_base_line':
+        modified['edit_base'] = deepcopy(draft)
+        modified['edit_base']['requirements'][0]['evidence'] = {'path': 'x', 'line': 1.5, 'note': ''}
+    cache_draft(root, data, draft, 'a' * 32)
+    before = {path.name: path.read_bytes() for path in (data / 'drafts').glob('*.json')}
+    source = tmp_path / 'invalid.json'
+    source.write_text(json.dumps(payload), encoding='utf-8')
+    with pytest.raises(ValueError): import_draft(root, data, source)
+    assert {path.name: path.read_bytes() for path in (data / 'drafts').glob('*.json')} == before
+
+
+@pytest.mark.parametrize('content', [b'{', b'\xff', b'{"n":NaN}', b'[' * 2000, b'x' * 2_000_001],
+                         ids=['invalid-json', 'invalid-encoding', 'nonfinite', 'deep-nesting', 'oversized'])
+def test_import_rejects_malformed_or_unbounded_files(tmp_path, content):
+    from drift_gate.desktop.progress_drafts import import_draft
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    source = tmp_path / 'invalid.json'
+    source.write_bytes(content)
+    with pytest.raises(ValueError): import_draft(root, data, source)
+    assert not (data / 'drafts').exists()
+
+
+def test_busy_gate_does_not_delay_closing_and_leaves_lease_file_for_gated_cleanup(tmp_path):
+    from drift_gate.desktop.progress_drafts import DraftSession
+    from drift_gate.desktop.store_lock import store_lock
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    session = DraftSession(root, data, 'a' * 32)
+    cache_draft(root, data, extract_requirements(root, ['README.md']), 'a' * 32, session)
+    lease = session.lease.with_suffix('.live.lock')
+    with store_lock(session.gate):
+        assert session.close() is False
+        assert session._held is None and lease.exists()
+        # Handle has been released; shutdown never unlinks outside the gate.
+        with store_lock(session.lease, timeout=0): pass
+    result = recovery_copy(root, data, None)
+    assert not result['recovery_options'][0]['active'] and not lease.exists()
+    assert session.close() is True

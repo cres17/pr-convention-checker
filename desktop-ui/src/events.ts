@@ -18,7 +18,7 @@ export type ProgressEvent = Requested & (
   | ({ type: "progressHistory" } & ProgressHistory)
   | ({ type: "progressLinks" } & LinkReport)
   | { type: "progressExported" | "progressDraftExported"; file: string }
-  | { type: "progressDraftExportCancelled" }
+  | { type: "progressDraftExportCancelled" | "progressDraftImportCancelled" }
   | { type: "progressLatestUsed"; baseline: ProgressBaseline; warning?: string }
   | { type: "progressEvidence"; id: ProgressItem["id"]; candidates: EvidenceCandidate[] }
   | { type: "progressError"; message: string; errors?: ProgressFieldError[]; current_baseline?: ProgressBaseline }
@@ -45,7 +45,7 @@ export function isProgressEvent(event: DesktopEvent): event is ProgressEvent {
     case "progressReport": case "progressTests": case "progressHistory":
     case "progressLinks": case "progressExported": case "progressEvidence":
     case "progressError": case "progressTestsCancelled":
-    case "progressDraftExported": case "progressDraftExportCancelled": case "progressLatestUsed":
+    case "progressDraftExported": case "progressDraftExportCancelled": case "progressDraftImportCancelled": case "progressLatestUsed":
     case "progressDraftCached": case "progressDraftDiscarded": case "progressDraftError": return true;
     default: return false;
   }

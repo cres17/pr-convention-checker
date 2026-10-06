@@ -119,7 +119,7 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
 
   const begin = (purpose: Exclude<ProgressOperation, "">, run: (bridge: Bridge, requestId: string) => void) => {
     if (!connected || !path || !bridge || state.path !== path || state.busy || operation.current) return;
-    if ((view.recoveryPending && purpose !== "discard" && purpose !== 'documents') || (state.conflict && purpose === 'save')) return;
+    if ((view.recoveryPending && purpose !== "discard" && purpose !== 'documents' && purpose !== 'draft-import') || (state.conflict && purpose === 'save')) return;
     operation.current = purpose;
     if ((purpose === "save" || purpose === "latest") && queuedDraft.current) {
       clearTimeout(queuedDraft.current.timer);
@@ -142,6 +142,10 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
     dispatch({ type: "edit", id, patch });
   };
   const actions = {
+    importDraft: () => {
+      if (!state.dirty && bridge?.importProgressDraft)
+        begin('draft-import', (bridge, token) => bridge.importProgressDraft?.(path, token));
+    },
     recoverDraft: () => dispatch({ type: "recover-draft" }),
     keepCopies: () => dispatch({ type: "keep-copies" }),
     chooseRecovery: (key: string) => begin('documents', (bridge, token) => bridge.listProjectDocs(path, token, key)),

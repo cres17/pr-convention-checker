@@ -1,6 +1,7 @@
 import type { ProgressEvent } from '../../events';
 import { progressReducer, type ProgressState } from './progressState';
 import { ProgressRequests } from './requestSession';
+import { retainedOperations, retainsEditor } from './operations';
 
 /** State and write requests share the lifetime of each repository's editor. */
 export class EditorSessions {
@@ -16,7 +17,7 @@ export class EditorSessions {
   leave(path: string) {
     this.requests(path).leave();
     const state = this.get(path);
-    if (state && !['save', 'extract', 'discard', 'draft-export', 'latest'].includes(state.busy))
+    if (state && !retainsEditor(state.busy))
       this.keep({ ...state, busy: '' });
   }
   receiveInactive(event: ProgressEvent) {
@@ -32,7 +33,7 @@ export class EditorSessions {
   prune(active: string) {
     for (const [path, state] of this.states) {
       const requests = this.requests(path);
-      if (path !== active && !state.dirty && !(['save', 'extract', 'discard', 'draft-export', 'latest'] as const).some(
+      if (path !== active && !state.dirty && !state.recovery && !state.recoveryWarning && !retainedOperations.some(
         (purpose) => requests.token(purpose))) {
         this.states.delete(path); this.requestSets.delete(path);
       }
