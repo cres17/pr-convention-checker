@@ -565,6 +565,8 @@ it('keeps an overflowing draft after export cancellation and failure', () => {
   expect(screen.getByRole('button', { name: '기준과 근거 저장' }).matches(':disabled')).toBe(true);
 });
 
+// This renders the full 120-item boundary, including its recovery transitions.
+// The Intel CI runner took 7.86s; the assertions are functional, not a speed budget.
 it('uses latest only after successful export and never revives the discarded autosave', () => {
   vi.useFakeTimers();
   const page = overflowPage();
@@ -580,7 +582,7 @@ it('uses latest only after successful export and never revives the discarded aut
   expect(screen.getByRole('button', { name: '기준과 근거 저장' }).matches(':disabled')).toBe(false);
   page.move('/sample/two');
   expect(page.bridge.cacheProgressDraft).not.toHaveBeenCalled();
-});
+}, 15_000);
 
 it('requires another export after editing the exported draft', () => {
   const page = overflowPage();
