@@ -49,3 +49,23 @@ def test_summary_lists_newest_first_and_changes_since_the_last_save():
     assert h.summarize(snaps, report({"a": "implemented", "b": "unknown"}, complete=1))["since_save"] is None
     assert h.summarize([], now) == {"snapshots": [], "since_save": None}
     assert [row["version"] for row in h.summarize(snaps, None)["snapshots"]] == [1]
+
+
+def test_delayed_old_inspection_does_not_replace_the_latest_save():
+    newer = h.make_snapshot(report({'a': 'implemented'}, version=2, complete=1))
+    older_report = report({'a': 'unknown'}, version=1, at='2026-09-30T00:00:00Z')
+    snaps = h.append_snapshot([newer], h.make_snapshot(older_report))
+    assert [entry['version'] for entry in snaps] == [1, 2]
+    assert snaps[-1]['changes']['gained'] == 1
+    assert snaps[-1]['complete_delta'] == 1
+    # This response is still derived from the caller's v1, even after v2 commits.
+    summary = h.summarize(snaps, older_report)
+    assert [row['version'] for row in summary['snapshots']] == [1]
+    assert summary['since_save'] is None
+    assert h.summarize(snaps, report({'a': 'implemented'}, version=2, complete=1))['since_save'] is None
+
+
+def test_same_version_future_snapshot_cannot_create_false_regression():
+    future = h.make_snapshot(report({'a':'implemented'}, at='2026-09-29T02:00:00Z', complete=1))
+    current = report({'a':'unknown'}, at='2026-09-29T01:00:00Z')
+    assert h.summarize([future], current) == {'snapshots':[], 'since_save':None}

@@ -1,0 +1,56 @@
+{
+  "version": "1.20.0",
+  "platform": "darwin-arm64",
+  "languages": [
+    "python",
+    "typescript",
+    "tsx",
+    "javascript",
+    "go",
+    "java",
+    "kotlin",
+    "ruby"
+  ],
+  "libraries": [
+    {
+      "name": "libtree_sitter_python.dylib",
+      "source_sha256": "a0aca809ab8a578209f465128464b561ed0fd124088c12a49f08777fed76bd53",
+      "sha256": "047e9233dec685337966220cea829b41e5334fd2b1de29665bb63e88fc439ec8"
+    },
+    {
+      "name": "libtree_sitter_typescript.dylib",
+      "source_sha256": "6966cb024d24a85290fba333b9dc0da21c6f77f117c810e36d9b2354d1804eb2",
+      "sha256": "fea3f4a272ed11e56c66356589b52464856c5c91e353c4b17ddee771bdb9aacd"
+    },
+    {
+      "name": "libtree_sitter_tsx.dylib",
+      "source_sha256": "e0c946fb56d8a10c8664c6a0d9f6c4d441647a1cd693eefa658f65ea4245c69e",
+      "sha256": "ca5cbe4a30c3c18c8dbe29c547c41a1204a2547cdb0737e814480ed326e9ccf3"
+    },
+    {
+      "name": "libtree_sitter_javascript.dylib",
+      "source_sha256": "330096a0a3d4c98a77f389fbb43e3aa5a3934209597342b270ee7fcd5feb718b",
+      "sha256": "af400b52d70f34c98cfedd4385d18d19e39311f64bed4cbe814e269ee7bbbc26"
+    },
+    {
+      "name": "libtree_sitter_go.dylib",
+      "source_sha256": "02a737efd613324bfa3670be20cb43e58a6afd445995288e962d19b23828ed74",
+      "sha256": "184c7549e2c1bea31f072d1a214d5c1a49a6401e251cc1508317dbb13152a88f"
+    },
+    {
+      "name": "libtree_sitter_java.dylib",
+      "source_sha256": "d9ac9eccc61d2514b83542985d2ceb2898bbabadbab44869f8f52be766083fca",
+      "sha256": "2dac33f944da4ff17d8a4219672bb8c11c2a8368744bc254b3894af7283d2a0c"
+    },
+    {
+      "name": "libtree_sitter_kotlin.dylib",
+      "source_sha256": "d214c719a0aa503ea359aa5dd3593e89d7c688d58677e0cfbad582b9a8578129",
+      "sha256": "90eba698eb8f6c8361689433790e0f65de0eb2d594a7c63a1113adeb49a1a8e2"
+    },
+    {
+      "name": "libtree_sitter_ruby.dylib",
+      "source_sha256": "2111a990fa96ea9522ab717f8d7e3a96bd9e7890d7d047e83810c39634a25d02",
+      "sha256": "762ded051eb1076522e0fd4bd5e20b9771ff76e941149ff673aa81731ae29018"
+    }
+  ]
+}

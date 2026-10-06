@@ -357,44 +357,32 @@ class TestGitAdapter:
 
         calls = []
 
-        def fake_check_output(args, text=True, encoding=None, errors=None, stderr=None):
+        def fake_git(args, cwd):
             calls.append(args)
+            if "rev-parse" in args:
+                return b"abc123\n"
             if "--name-status" in args:
-                return "M\tsrc/routes/users.ts\n"
-            return (
-                "diff --git a/src/routes/users.ts b/src/routes/users.ts\n"
-                "@@ -1 +1 @@\n"
-                "-old\n"
-                "+new\n"
-            )
+                return b"M\0src/routes/users.ts\0"
+            return b"diff --git a/src/routes/users.ts b/src/routes/users.ts\n@@ -1 +1 @@\n-old\n+new\n"
 
-        monkeypatch.setattr("subprocess.check_output", fake_check_output)
-
+        monkeypatch.setattr("drift_gate.adapters.git.client._git", fake_git)
         files = GitAdapter().get_changed_files("main")
-
-        assert len(files) == 1
-        assert files[0].path == "src/routes/users.ts"
+        assert len(files) == 1 and files[0].path == "src/routes/users.ts"
         assert files[0].patch.startswith("diff --git")
-        assert calls[1] == [
-            "git", "diff", "--find-renames", "main",
-            "--", "src/routes/users.ts",
-        ]
+        assert "abc123" in calls[1] and "-z" in calls[1]
+        assert calls[2][-2:] == ["--", "src/routes/users.ts"]
 
     def test_git_adapter_skips_binary_and_large_patches(self, monkeypatch):
         from drift_gate.adapters.git.client import GitAdapter
-
-        def fake_check_output(args, **kwargs):
+        def fake_git(args, cwd):
+            if "rev-parse" in args:
+                return b"abc123\n"
             if "--name-status" in args:
-                return "M\tassets/logo.png\nM\tsrc/big.py\n"
-            if "assets/logo.png" in args:
-                return "binary data"
-            return "x" * 100
-
-        monkeypatch.setattr("subprocess.check_output", fake_check_output)
+                return b"M\0assets/logo.png\0M\0src/big.py\0"
+            return b"x" * 100
+        monkeypatch.setattr("drift_gate.adapters.git.client._git", fake_git)
         monkeypatch.setenv("DRIFT_GATE_MAX_PATCH_BYTES", "10")
-
         files = GitAdapter().get_changed_files("main")
-
         assert files[0].patch == "[binary file skipped]"
         assert files[1].patch == "[large file skipped]"
 

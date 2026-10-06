@@ -1,0 +1,15 @@
+{
+  "source_sha": "729a3cde70c3457b633798bb50273d815d4d2c12",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "python": "3.11.15",
+  "existing_tests": {
+    "python": 774,
+    "react": 111
+  },
+  "observational_ui_cases": 3,
+  "tsc_exit": 0,
+  "ruff_E9_F": "passed",
+  "local_document_links_checked": 8,
+  "scope": "Local source, synthetic repositories, Qt workers and jsdom; no installed-app or remote CI rerun",
+  "production_code_changed": false
+}

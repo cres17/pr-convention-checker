@@ -1,3 +1,4 @@
+import { MAX_REQUIREMENTS, MAX_RECOVERY_REQUIREMENTS } from "./features/project-progress/limits";
 import { z } from "zod";
 import type { DesktopEvent } from "./events";
 const text = z.string();
@@ -21,14 +22,15 @@ const item = z.object({
     effective_status: z.enum(["unknown", "partial", "implemented", "not_implemented", "excluded"]).optional(),
 }).passthrough();
 const baseline = z.object({
-    repository: text, documents: z.record(text, text), document_kinds: kinds.optional(),
-    requirements: z.array(item).max(120), version: nonnegative.optional(),
+    repository: text, baseline_id: text.optional(), documents: z.record(text, text), document_kinds: kinds.optional(),
+    archived_documents: strings.max(120).optional(),
+    requirements: z.array(item).max(MAX_REQUIREMENTS), version: nonnegative.optional(),
 }).passthrough();
 // Draft inputs can be incomplete; e.g. a negative evidence line must survive recovery.
 const recoveryBaseline = baseline.extend({ edit_base: baseline.nullable().optional(), requirements: z.array(item.extend({
     evidence: z.object({ path: text, line: z.number().finite().nullable(), note: text,
         excerpt: text.optional(), sha256: text.optional() }).nullable(),
-})).max(120) });
+})).max(MAX_RECOVERY_REQUIREMENTS) });
 const report = z.object({
     repository: text, version: nonnegative, at: text, head: text, total: nonnegative,
     stale_documents: strings, counts: numbers, items: z.array(item), limitations: text,
@@ -39,12 +41,14 @@ const changeItem = z.object({ id: text, title: text });
 const changes = { gained: z.array(changeItem), regressed: z.array(changeItem), excluded: z.array(changeItem),
     reincluded: z.array(changeItem), added: z.array(changeItem), removed: z.array(changeItem) };
 const history = {
+    warning: text.optional(),
     snapshots: z.array(z.object({ at: text, version: nonnegative, head: text, total: nonnegative, counts: numbers,
         changes: numbers.nullable().optional(), complete_delta: z.number().nullable().optional() })),
     since_save: z.object({ since: text, version: nonnegative, complete_delta: z.number(), counts: numbers, ...changes }).nullable(),
 };
 const fieldError = z.object({ id: text, field: text, message: text });
-const progressMeta = { requested_path: text, request_id: text, request_done: z.boolean().optional() };
+const progressMeta = { requested_path: text, request_id: text, request_done: z.boolean().optional(),
+    baseline_version: nonnegative.optional(), baseline_id: text.optional(), inspection_id: text.optional() };
 const meta = { requested_path: text.optional(), request_id: text.optional(), request_done: z.boolean().optional() };
 const document = z.object({ path: text, tracked: z.boolean(), bytes: nonnegative });
 const candidate = z.object({ path: text, line: nonnegative, excerpt: text });
@@ -70,7 +74,7 @@ const schema = z.discriminatedUnion("type", [
     z.object({ type: z.literal("progressDraftDiscarded"), ...progressMeta }),
     z.object({ type: z.literal("progressDraftError"), ...progressMeta, message: text }),
     z.object({ type: z.literal("progressPreview"), ...progressMeta, repository: text.optional(), truncated: z.boolean().optional(),
-        documents: z.record(text, text), document_kinds: kinds.optional(), requirements: z.array(item).max(120) }),
+        documents: z.record(text, text), document_kinds: kinds.optional(), requirements: z.array(item).max(MAX_REQUIREMENTS) }),
     z.object({ type: z.literal("progressSaved"), ...progressMeta, baseline, warning: text.optional() }),
     z.object({ type: z.literal("progressReport"), ...progressMeta, report }),
     z.object({ type: z.literal("progressHistory"), ...progressMeta, ...history }),

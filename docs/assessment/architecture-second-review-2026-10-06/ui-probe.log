@@ -1,0 +1,13 @@
+
+> drift-gate-desktop-ui@0.1.0 test
+> vitest run --run src/features/project-progress/secondArchitectureAudit.test.ts
+
+
+ RUN  v4.1.11 /Users/moon/Documents/pr-convention-checker/desktop-ui
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  11:16:25
+   Duration  104ms (transform 37ms, setup 0ms, import 45ms, tests 2ms, environment 0ms)
+

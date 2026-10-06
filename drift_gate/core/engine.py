@@ -28,12 +28,16 @@ def run(
         changed_files: 변경 파일 목록 (adapter에서 수집)
         drift_ignores: PR description에서 파싱된 ignore 지시문
         policy: 이미 로드된 Policy 객체 (있으면 policy_path 무시)
-        policy_path: .drift-gate.yml 경로 (policy가 없을 때 로드)
+        policy_path: 이전 API 호환 인자. 경로만 전달하는 호출은 거부합니다.
+            정책 파일은 adapter에서 로드해 policy로 전달해야 합니다.
 
     Returns:
         EvaluationResult (result 필드에 gate 판정 포함)
     """
     drift_ignores = drift_ignores or []
+
+    if policy is None and policy_path is not None:
+        raise ValueError("Load policy_path in the adapter and pass the Policy as policy.")
 
     # Policy loading is adapter-owned; core stays free of filesystem I/O.
     if policy is None:

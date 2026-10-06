@@ -1,0 +1,27 @@
+import { expect, it } from 'vitest';
+import type { ProgressBaseline } from '../../bridge';
+import { mergeProgressPreview } from './merge';
+import { initialProgressState, progressReducer } from './progressState';
+
+const item = {id:'a',title:'a',criterion:'a',area:'',included:true,
+ source:{path:'README.md',line:1,excerpt:'a',sha256:'h'},implementation_status:'unknown' as const,
+ evidence:null,verification_status:'unverified' as const,verification_note:''};
+const base: ProgressBaseline = {repository:'/fixture',version:1,baseline_id:'one',documents:{'README.md':'h'},requirements:[item]};
+
+it('observes that re-extraction after a document rename retains the missing document', () => {
+ const preview: ProgressBaseline = {...base,documents:{'PLAN.md':'h'},
+ requirements:[{...item,id:'new',source:{...item.source,path:'PLAN.md'}}]};
+ const merged = mergeProgressPreview(base,preview);
+ expect(Object.keys(merged.documents)).toEqual(['README.md','PLAN.md']);
+ expect(merged.requirements.map(i => i.id)).toEqual(['a','new']);
+ expect(merged.document_kinds?.['README.md']).toBe('reference');
+});
+
+it('observes that history with a matching baseline and inspection can still compare to a future save', () => {
+ const state = {...initialProgressState('/fixture'),draft:base,inspectionId:'scan'};
+ const event = {type:'progressHistory' as const,baseline_version:1,baseline_id:'one',inspection_id:'scan',
+ snapshots:[],since_save:{since:'2026-10-06T02:00:00Z',version:1,complete_delta:-1,
+ gained:[],regressed:[{id:'a',title:'a'}],excluded:[],reincluded:[],added:[],removed:[],
+ counts:{gained:0,regressed:1,excluded:0,reincluded:0,added:0,removed:0}}};
+ expect(progressReducer(state,{type:'event',event}).history?.since_save?.counts.regressed).toBe(1);
+});

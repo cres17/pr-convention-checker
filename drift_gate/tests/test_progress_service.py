@@ -443,7 +443,9 @@ def test_history_survives_a_folder_move_and_ignores_a_damaged_file(tmp_path):
     assert len(progress_history_view(moved, state)["snapshots"]) == 1
     history = next(state.glob("*.history.json"))
     history.write_text("{not json", encoding="utf-8")
-    assert progress_history_view(moved, state) == {"snapshots": [], "since_save": None}
+    view = progress_history_view(moved, state)
+    assert view["snapshots"] == [] and view["since_save"] is None
+    assert view["warning"]
 
 
 def test_history_kept_under_the_old_path_key_is_still_read_after_a_remote_is_added(tmp_path):
@@ -606,6 +608,7 @@ def test_merged_reextraction_adds_past_goals_without_losing_evidence_or_history(
     preview["requirements"] = old + [entry for entry in preview["requirements"]
                                     if entry["id"] not in {i["id"] for i in old}]
     preview["version"] = saved["version"]
+    preview["baseline_id"] = saved["baseline_id"]
     merged = save_baseline(repo, state, preview)
     assert merged["requirements"][:2] == old
     assert merged["version"] == 2
@@ -654,6 +657,7 @@ def test_reextracted_document_preserves_review_but_requires_explicit_reconfirmat
         item["source"] = fresh[item["id"]]["source"]
         item["reviewed_documents"] = saved["documents"]
     preview["version"] = saved["version"]
+    preview["baseline_id"] = saved["baseline_id"]
     merged = save_baseline(repo, state, preview)
     assert merged["requirements"][0]["verification_note"] == "검증 기록"
     assert inspect_progress(repo, state)["counts"]["complete"] == 0
@@ -675,6 +679,7 @@ def test_retained_removed_source_is_not_dropped_or_counted_as_reviewed(tmp_path)
     preview = extract_requirements(repo, ["README.md"])
     preview["requirements"] = deepcopy(saved["requirements"]) + preview["requirements"]
     preview["version"] = saved["version"]
+    preview["baseline_id"] = saved["baseline_id"]
     merged = save_baseline(repo, state, preview)
     report = inspect_progress(repo, state)
     assert len(merged["requirements"]) == 3
@@ -719,3 +724,138 @@ def test_document_marker_cannot_be_changed_without_its_source(tmp_path):
     draft["requirements"][0]["source_key"] = "README.md:different"
     with pytest.raises(BaselineError, match="고유 표시"):
         save_baseline(repo, tmp_path / "data", draft)
+
+
+def test_document_withdrawal_preserves_evidence_and_unblocks_renamed_document(tmp_path):
+    repo = project(tmp_path)
+    data = tmp_path / 'data'
+    draft = extract_requirements(repo, ['README.md'])
+    draft['requirements'][0].update(implementation_status='implemented',
+        evidence={'path':'src/login.py','line':1,'note':'확인'}, verification_status='verified', verification_note='검증')
+    saved = save_baseline(repo, data, draft)
+    original = deepcopy(saved['requirements'])
+    (repo / 'README.md').rename(repo / 'PLAN.md')
+    with pytest.raises(ValueError, match='문서가 변경'):
+        save_baseline(repo, data, saved)
+    withdrawn = deepcopy(saved)
+    withdrawn['archived_documents'] = ['README.md']
+    withdrawn['requirements'][1]['title'] = '다른 편집 계속'
+    kept = save_baseline(repo, data, withdrawn)
+    assert kept['requirements'][0] == original[0]
+    assert kept['document_kinds']['README.md'] == 'reference'
+    assert inspect_progress(repo, data)['counts']['excluded'] == 2
+    preview = extract_requirements(repo, ['PLAN.md'])
+    merged = {**kept, 'documents':{**kept['documents'], **preview['documents']},
+        'document_kinds':{**kept['document_kinds'], **preview['document_kinds']},
+        'requirements':kept['requirements'] + preview['requirements']}
+    latest = save_baseline(repo, data, merged)
+    report = inspect_progress(repo, data)
+    assert latest['version'] == 3 and report['total'] == 2
+    assert report['counts']['excluded'] == 2 and not report['stale_documents']
+    assert latest['requirements'][0]['evidence'] == original[0]['evidence']
+
+
+def test_archive_requires_retained_original_hash_and_can_be_reactivated(tmp_path):
+    repo = project(tmp_path)
+    data = tmp_path / 'data'
+    saved = save_baseline(repo, data, extract_requirements(repo, ['README.md']))
+    invalid = deepcopy(saved)
+    invalid.update(archived_documents=['README.md'], documents={'README.md':'forged'})
+    with pytest.raises(ValueError, match='원본 정보'):
+        save_baseline(repo, data, invalid)
+    saved['archived_documents'] = ['README.md']
+    archived = save_baseline(repo, data, saved)
+    archived['archived_documents'] = []
+    archived['document_kinds']['README.md'] = 'current'
+    latest = save_baseline(repo, data, archived)
+    assert latest['version'] == 3 and inspect_progress(repo, data)['total'] == 2
+
+
+def test_recreated_same_version_baseline_rejects_old_editor_and_preserves_new_edits(tmp_path):
+    from drift_gate.desktop.progress_service import BaselineConflict
+    repo = project(tmp_path)
+    data = tmp_path / 'data'
+    old = save_baseline(repo, data, extract_requirements(repo, ['README.md']))
+    next(data.glob('*.json')).unlink()
+    replacement = extract_requirements(repo, ['README.md'])
+    replacement['requirements'][1]['title'] = '새 기준의 독립 편집'
+    current = save_baseline(repo, data, replacement)
+    old['requirements'][0]['title'] = '오래된 창의 편집'
+    assert old['version'] == current['version'] == 1
+    with pytest.raises(BaselineConflict):
+        save_baseline(repo, data, old)
+    assert load_baseline(repo, data) == current
+    assert save_baseline(repo, data, deepcopy(current)) == current
+
+
+def test_missing_baseline_and_legacy_numeric_only_edit_never_overwrite(tmp_path):
+    from drift_gate.desktop.progress_service import BaselineConflict
+    repo = project(tmp_path)
+    data = tmp_path / 'data'
+    saved = save_baseline(repo, data, extract_requirements(repo, ['README.md']))
+    legacy = deepcopy(saved)
+    legacy.pop('baseline_id')
+    legacy['requirements'][0]['title'] = '복구 편집'
+    with pytest.raises(BaselineConflict): save_baseline(repo, data, legacy)
+    legacy['edit_base'] = deepcopy(saved)
+    assert save_baseline(repo, data, legacy)['version'] == 2
+    next(data.glob('*.json')).unlink()
+    with pytest.raises(ValueError, match='사라졌습니다'):
+        save_baseline(repo, data, legacy)
+    assert load_baseline(repo, data) is None
+
+
+@pytest.mark.parametrize('content', ['{not json', '[]', 'null', '{"schema":1,"snapshots":[{}]}',
+    '{"schema":1,"snapshots":[{"at":null}]}'])
+def test_bad_optional_history_is_visible_and_never_overwritten(tmp_path, content):
+    from drift_gate.desktop.progress_history import HistoryError
+    repo = project(tmp_path)
+    data = tmp_path / 'data'
+    save_baseline(repo, data, extract_requirements(repo, ['README.md']))
+    report = inspect_progress(repo, data)
+    history = next(data.glob('*.json')).with_suffix('.history.json')
+    history.write_text(content, encoding='utf-8')
+    view = progress_history_view(repo, data, report)
+    assert view['warning'] and view['snapshots'] == [] and view['since_save'] is None
+    with pytest.raises(HistoryError): record_snapshot(repo, data, report)
+    assert history.read_text(encoding='utf-8') == content
+
+
+def test_history_anchor_is_immutable_across_same_version_concurrent_write(tmp_path):
+    from drift_gate.desktop.progress_service import capture_progress_history
+    repo = project(tmp_path)
+    data = tmp_path / 'data'
+    save_baseline(repo, data, extract_requirements(repo, ['README.md']))
+    before = inspect_progress(repo, data)
+    record_snapshot(repo, data, before)
+    anchor = capture_progress_history(repo, data)
+    future = deepcopy(before)
+    future['at'] = '2099-01-01T00:00:00Z'
+    future['items'][0]['effective_status'] = 'implemented'
+    future['counts']['implemented'] = 1
+    future['counts']['unknown'] -= 1
+    record_snapshot(repo, data, future)
+    result = progress_history_view(repo, data, before, anchor=anchor)
+    assert len(result['snapshots']) == 1 and result['since_save'] is None
+    assert len(progress_history_view(repo, data)['snapshots']) == 2
+    assert progress_history_view(repo, data, before)['since_save'] is None
+
+
+def test_archived_document_does_not_consume_an_active_binding_slot(tmp_path):
+    repo = project(tmp_path)
+    data = tmp_path / 'data'
+    paths = ['README.md']
+    for n in range(9):
+        path = f'plan{n}.md'
+        paths.append(path)
+        (repo / path).write_text(f'- [ ] 기능 {n}\n', encoding='utf-8')
+    saved = save_baseline(repo, data, extract_requirements(repo, paths))
+    (repo / 'README.md').rename(repo / 'RENAMED.md')
+    preview = extract_requirements(repo, ['RENAMED.md'])
+    candidate = {**saved, 'archived_documents':['README.md'],
+        'documents':{**saved['documents'], **preview['documents']},
+        'document_kinds':{**saved['document_kinds'], **preview['document_kinds']},
+        'requirements':saved['requirements'] + preview['requirements']}
+    latest = save_baseline(repo, data, candidate)
+    assert len(latest['documents']) == 11 and latest['archived_documents'] == ['README.md']
+    assert inspect_progress(repo, data)['total'] == len(saved['requirements'])

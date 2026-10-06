@@ -23,6 +23,7 @@ export function inCurrentScope(
     item.included &&
     requirementSources(item).some(
       (source) =>
+        !baseline.archived_documents?.includes(source.path) &&
         (baseline.document_kinds?.[source.path] ?? "current") === "current",
     )
   );

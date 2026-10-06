@@ -89,7 +89,7 @@ def test_old_draft_survives_temporarily_missing_repository(tmp_path):
     root.rename(offline)
     other = tmp_path / 'other'
     other.mkdir()
-    cache_draft(other, data, draft)
+    cache_draft(other, data, {**draft, 'repository': str(other.resolve())})
     offline.rename(root)
     assert current.read_bytes() == original
     assert recovery_copy(root, data, None)['recovery']['requirements'] == draft['requirements']
@@ -305,3 +305,123 @@ def test_busy_gate_does_not_delay_closing_and_leaves_lease_file_for_gated_cleanu
     result = recovery_copy(root, data, None)
     assert not result['recovery_options'][0]['active'] and not lease.exists()
     assert session.close() is True
+
+
+def test_clone_backup_roundtrip_normalizes_checkout_without_sharing_drafts(tmp_path):
+    import shutil
+    import subprocess
+    from copy import deepcopy
+    from drift_gate.desktop.progress_service import load_baseline
+    from drift_gate.desktop.progress_drafts import export_draft, import_draft
+    root = project(tmp_path)
+    subprocess.run(['git', '-C', str(root), 'remote', 'add', 'origin', 'https://example.invalid/a/project.git'], check=True)
+    data = tmp_path / 'data'
+    original = save_baseline(root, data, extract_requirements(root, ['README.md']))
+    clone = tmp_path / 'clone'
+    shutil.copytree(root, clone)
+    baseline = load_baseline(clone, data)
+    assert baseline['repository'] == str(clone.resolve())
+    assert baseline['origin_repository'] == original['repository']
+    baseline['edit_base'] = deepcopy(baseline)
+    cache_draft(root, data, original, 'a' * 32)
+    source = tmp_path / 'backup.json'
+    export_draft(clone, baseline, source)
+    key = import_draft(clone, data, source)
+    restored = recovery_copy(clone, data, baseline, key)['recovery']
+    assert restored['repository'] == restored['edit_base']['repository'] == str(clone.resolve())
+    assert draft_file(root, data, 'a' * 32).is_file()
+
+
+def test_recovery_can_preserve_legacy_overflow_and_large_edit_for_explicit_cleanup(tmp_path):
+    from copy import deepcopy
+    from drift_gate.desktop.progress_drafts import export_draft, import_draft
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    draft = extract_requirements(root, ['README.md'])
+    draft['requirements'] = [{**deepcopy(draft['requirements'][0]), 'id': str(i)} for i in range(121)]
+    source = tmp_path / 'overflow.json'
+    export_draft(root, draft, source)
+    key = import_draft(root, data, source)
+    assert len(recovery_copy(root, data, None, key)['recovery']['requirements']) == 121
+    with pytest.raises(ValueError): save_baseline(root, data, draft)
+    draft['requirements'] = draft['requirements'][:120]
+    draft['requirements'][0]['verification_note'] = 'x' * 2_000_001
+    export_draft(root, draft, source)
+    key = import_draft(root, data, source)
+    assert len(recovery_copy(root, data, None, key)['recovery']['requirements'][0]['verification_note']) == 2_000_001
+
+
+def test_missing_edit_base_repository_is_normalized_before_wire_delivery(tmp_path):
+    from copy import deepcopy
+    from drift_gate.desktop.progress_drafts import export_draft, import_draft
+    root = project(tmp_path)
+    draft = extract_requirements(root, ['README.md'])
+    draft['edit_base'] = deepcopy(draft)
+    draft['edit_base'].pop('repository')
+    source = tmp_path / 'backup.json'
+    export_draft(root, draft, source)
+    key = import_draft(root, tmp_path / 'data', source)
+    recovery = recovery_copy(root, tmp_path / 'data', None, key)['recovery']
+    assert recovery['edit_base']['repository'] == str(root.resolve())
+
+
+def test_legacy_cached_base_path_is_bound_without_mutating_the_input(tmp_path):
+    from copy import deepcopy
+    root = project(tmp_path)
+    draft = extract_requirements(root, ['README.md'])
+    draft['edit_base'] = deepcopy(draft)
+    draft['edit_base'].pop('repository')
+    cache_draft(root, tmp_path / 'data', draft)
+    assert recovery_copy(root, tmp_path / 'data', None)['recovery']['edit_base']['repository'] == str(root.resolve())
+    assert 'repository' not in draft['edit_base']
+
+
+def test_backup_at_its_exact_byte_limit_round_trips(tmp_path, monkeypatch):
+    from drift_gate.desktop import progress_drafts as drafts
+    root = project(tmp_path)
+    draft = extract_requirements(root, ['README.md'])
+    target = tmp_path / 'backup.json'
+    drafts.export_draft(root, draft, target)
+    ceiling = target.stat().st_size
+    monkeypatch.setattr(drafts, 'MAX_BACKUP_BYTES', ceiling)
+    drafts.export_draft(root, draft, target)
+    key = drafts.import_draft(root, tmp_path / 'data', target)
+    recovered = drafts.recovery_copy(root, tmp_path / 'data', None, key)
+    assert recovered['recovery']['requirements'] == draft['requirements']
+    before = target.read_bytes()
+    draft['requirements'][0]['title'] += '한글'
+    with pytest.raises(ValueError, match='16MB'):
+        drafts.export_draft(root, draft, target)
+    assert target.read_bytes() == before
+
+
+def test_shared_recovery_contract_and_limits(tmp_path):
+    from pathlib import Path
+    from drift_gate.desktop import progress_limits
+    fixture = json.loads((Path(__file__).parent / 'contracts/progress.json').read_text(encoding='utf-8'))
+    assert fixture['limits'] == {'confirmed': progress_limits.MAX_REQUIREMENTS,
+                                 'recovery': progress_limits.MAX_RECOVERY_REQUIREMENTS}
+    draft = fixture['recovery']
+    draft['repository'] = draft['edit_base']['repository'] = str(tmp_path.resolve())
+    cache_draft(tmp_path, tmp_path / 'data', draft)
+    assert recovery_copy(tmp_path, tmp_path / 'data', None)['recovery'] == draft
+    draft['requirements'][0]['evidence']['line'] = 'invalid'
+    with pytest.raises(ValueError, match='형식'):
+        cache_draft(tmp_path, tmp_path / 'data', draft)
+
+
+def test_archived_provenance_survives_backup_and_recovery(tmp_path):
+    from copy import deepcopy
+    from drift_gate.desktop.progress_drafts import export_draft, import_draft
+    root = project(tmp_path)
+    data = tmp_path / 'data'
+    baseline = save_baseline(root, data, extract_requirements(root, ['README.md']))
+    draft = deepcopy(baseline)
+    draft['edit_base'] = deepcopy(baseline)
+    draft['archived_documents'] = ['README.md']
+    draft['document_kinds'] = {'README.md':'reference'}
+    source = tmp_path / 'archive.json'
+    export_draft(root, draft, source)
+    import_draft(root, data, source)
+    assert recovery_copy(root, data, baseline)['recovery']['archived_documents'] == ['README.md']
+    assert recovery_copy(root, data, baseline)['recovery']['requirements'] == baseline['requirements']

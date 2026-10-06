@@ -8,8 +8,50 @@ excluded.
 
 from __future__ import annotations
 
+from datetime import datetime
+
 MAX_SNAPSHOTS = 50
 MAX_LISTED = 20
+
+
+class HistoryError(ValueError):
+    """Invalid optional history; never replace its file with an empty history."""
+
+
+def timestamp(value: str) -> datetime:
+    result = datetime.fromisoformat(value.replace('Z', '+00:00'))
+    if result.tzinfo is None:
+        raise ValueError('history timestamp must include a timezone')
+    return result
+
+
+def validate_snapshots(data: object) -> list[dict]:
+    """Validate bounded schema-1 history before sorting, comparing or rewriting it."""
+    try:
+        if not isinstance(data, dict) or data.get('schema') != 1:
+            raise ValueError('invalid schema')
+        rows = data.get('snapshots')
+        if not isinstance(rows, list) or len(rows) > MAX_SNAPSHOTS:
+            raise ValueError('invalid snapshots')
+        statuses = {'implemented', 'partial', 'not_implemented', 'unknown', 'excluded'}
+        for row in rows:
+            if (not isinstance(row, dict) or type(row.get('version')) is not int or row['version'] < 0
+                    or not isinstance(row.get('head'), str) or type(row.get('total')) is not int or row['total'] < 0
+                    or not isinstance(row.get('items'), dict) or len(row['items']) > 120
+                    or not all(isinstance(key, str) and value in statuses for key, value in row['items'].items())):
+                raise ValueError('invalid snapshot')
+            timestamp(row['at'])
+            for key in ('counts', 'changes'):
+                numbers = row.get(key)
+                if key == 'changes' and numbers is None:
+                    continue
+                if not isinstance(numbers, dict) or not all(type(n) is int and n >= 0 for n in numbers.values()):
+                    raise ValueError('invalid counts')
+            if row.get('complete_delta') is not None and type(row['complete_delta']) is not int:
+                raise ValueError('invalid delta')
+        return rows
+    except (ValueError, TypeError, KeyError, AttributeError) as exc:
+        raise HistoryError('진행 이력의 형식을 읽지 못했습니다. 원본 파일은 보존했습니다.') from exc
 
 
 def make_snapshot(report: dict) -> dict:
@@ -59,24 +101,28 @@ def append_snapshot(snapshots: list[dict], snapshot: dict) -> list[dict]:
 
     An unchanged state (same baseline version, statuses and counts) is not recorded twice.
     """
-    if snapshots:
-        last = snapshots[-1]
-        if (
-            last["version"] == snapshot["version"]
-            and last["items"] == snapshot["items"]
-            and last["counts"] == snapshot["counts"]
-        ):
-            return snapshots
-        snapshot = {
-            **snapshot,
-            "changes": counts_of(diff_states(last["items"], snapshot["items"])),
-            "complete_delta": snapshot["counts"].get("complete", 0) - last["counts"].get("complete", 0),
-        }
-    return [*snapshots, snapshot][-MAX_SNAPSHOTS:]
+    # A slow inspection can finish after another process records a newer save.
+    # Completion order must not turn that old baseline into the latest save.
+    ordered = sorted([*snapshots, snapshot], key=lambda entry: (entry['version'], timestamp(entry['at'])))
+    result = []
+    for entry in ordered:
+        last = result[-1] if result else None
+        if last is not None and all(last[key] == entry[key] for key in ('version', 'items', 'counts')):
+            continue
+        entry = {key: value for key, value in entry.items() if key not in ('changes', 'complete_delta')}
+        if last is not None:
+            entry.update(changes=counts_of(diff_states(last['items'], entry['items'])),
+                         complete_delta=entry['counts'].get('complete', 0) - last['counts'].get('complete', 0))
+        result.append(entry)
+    return result[-MAX_SNAPSHOTS:]
 
 
 def summarize(snapshots: list[dict], report: dict | None) -> dict:
     """History rows for display plus what changed since the latest snapshot."""
+    if report is not None:
+        # A response derived from v1 must not compare against a concurrent v2 save.
+        snapshots = [entry for entry in snapshots if entry['version'] <= report['version']
+                     and timestamp(entry['at']) <= timestamp(report['at'])]
     rows = [{key: snap.get(key) for key in ("at", "version", "head", "total", "counts", "changes", "complete_delta")}
             for snap in reversed(snapshots)]
     since = None

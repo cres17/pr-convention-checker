@@ -22,13 +22,15 @@ from drift_gate.desktop.review_dialog import ReviewWorker, review_html
 from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
 from drift_gate.adapters.report_naming import default_report_path, detect_project
 from drift_gate.desktop.progress_report import render_markdown
+from drift_gate.desktop.progress_context import inspection_context
+from drift_gate.desktop.progress_limits import MAX_DRAFT_BYTES
 from drift_gate.desktop.progress_drafts import (
     DraftSession, cache_draft, recovery_copy, discard_draft, discard_recovery, discard_recoveries, export_draft, import_draft,
 )
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.desktop.progress_service import (
     BaselineConflict, BaselineError, check_references, evidence_candidates, extract_requirements, inspect_progress,
-    link_test_results, list_documents, load_baseline, progress_history_view, record_snapshot, repository_root,
+    link_test_results, list_documents, load_baseline, progress_history_view, capture_progress_history, record_snapshot, repository_root,
     save_baseline, scan_impact,
 )
 
@@ -71,18 +73,26 @@ class ProgressTask(QRunnable):
     def run(self):
         try:
             events = [{'type': kind, 'requested_path': self.path, **data} for kind, data in self.work()]
+            if not events and self.request_id:
+                raise ValueError('작업 결과를 받지 못했습니다. 다시 시도해 주세요.')
+            encoded = self._encode(events)
         except BaselineConflict as exc:
-            events = [{'type': 'progressError', 'requested_path': self.path,
-                       'message': str(exc), 'current_baseline': exc.baseline}]
+            encoded = self._encode([{'type': 'progressError', 'message': str(exc), 'current_baseline': exc.baseline}])
         except BaselineError as exc:
-            events = [{'type': self.error_type, 'requested_path': self.path,
-                       'message': str(exc), 'errors': exc.errors}]
-        except (ValueError, OSError, json.JSONDecodeError, KeyError) as exc:
-            events = [{'type': self.error_type, 'requested_path': self.path, 'message': str(exc)}]
-        for index, event in enumerate(events):
-            event['request_id'] = self.request_id
-            event['request_done'] = index == len(events) - 1
-            self.signals.raw.emit(json.dumps(event, ensure_ascii=False))
+            encoded = self._encode([{'type': self.error_type, 'message': str(exc), 'errors': exc.errors}])
+        except (ValueError, OSError, KeyError) as exc:
+            encoded = self._encode([{'type': self.error_type, 'message': str(exc)}])
+        except Exception:
+            logging.getLogger(__name__).exception('Progress request failed: %s', self.request_id)
+            encoded = self._encode([{'type': self.error_type, 'message': '작업을 완료하지 못했습니다. 다시 시도해 주세요.'}])
+        for raw in encoded:
+            self.signals.raw.emit(raw)
+
+    def _encode(self, events):
+        # Encode the whole batch before emitting, including the terminal outcome.
+        return [json.dumps({**event, 'requested_path': self.path, 'request_id': self.request_id,
+                           'request_done': index == len(events) - 1}, ensure_ascii=False, allow_nan=False)
+                for index, event in enumerate(events)]
 
 
 class DesktopBridge(QObject):
@@ -166,14 +176,24 @@ class DesktopBridge(QObject):
                 key, revision = payload.get('recovery_key'), payload.get('recovery_revision')
                 if isinstance(key, str) and key and isinstance(revision, str) and revision:
                     discard_recovery(repository_root(path), directory, key, revision)
-            except (OSError, ValueError):
+            except Exception:
+                logging.getLogger(__name__).exception("Committed save draft cleanup failed")
                 warning = '기준과 근거는 저장했습니다. 이전 초안 파일을 지우지 못했습니다. 다음 실행에서 오래된 초안이 보이면 삭제해 주세요.'
             events = [('progressSaved', {'baseline': baseline, 'warning': warning})]
             try:
-                report = inspect_progress(path, directory)
-                events += [('progressReport', {'report': report}),
-                           ('progressHistory', record_snapshot(path, directory, report))]
-            except (OSError, ValueError):
+                report = inspect_progress(path, directory, baseline=baseline)
+                context = inspection_context(baseline)
+                events.append(('progressReport', {'report': report, **context}))
+                try:
+                    history = record_snapshot(path, directory, report)
+                except Exception:
+                    logging.getLogger(__name__).exception('Committed save history recording failed')
+                    history = {'snapshots': [], 'since_save': None,
+                               'warning': '진행 이력 기록에 실패했습니다. 기존 이력 파일은 보존했습니다.'}
+                    events[0][1]['warning'] += ' 기준과 근거는 저장했지만 이력 기록에 실패했습니다.'
+                events.append(('progressHistory', {**history, **context}))
+            except Exception:
+                logging.getLogger(__name__).exception("Committed save inspection failed")
                 events[0][1]['warning'] += ' 기준과 근거는 저장했지만 현황 재검사 또는 이력 기록에 실패했습니다. 다시 검사해 주세요.'
             return events
         self._run_progress(path, work, request_id=request_id)
@@ -182,7 +202,7 @@ class DesktopBridge(QObject):
     def cacheProgressDraft(self, path, payload_json, request_id):
         directory = self._progress_dir()
         def work():
-            if len(payload_json.encode('utf-8')) > 2_000_000:
+            if len(payload_json.encode('utf-8')) > MAX_DRAFT_BYTES:
                 raise ValueError('편집 초안이 보관 상한을 넘었습니다.')
             root = repository_root(path)
             payload = json.loads(payload_json)
@@ -272,13 +292,18 @@ class DesktopBridge(QObject):
         remembered = str(self.settings.value(self._results_key(path), '') or '')
 
         def work():
-            report = inspect_progress(path, directory)
-            events = [('progressReport', {'report': report}),
-                      ('progressHistory', progress_history_view(path, directory, report))]
+            baseline = load_baseline(path, directory)
+            if baseline is None:
+                raise ValueError('기준 문서를 먼저 저장해 주세요.')
+            anchor = capture_progress_history(path, directory)
+            report = inspect_progress(path, directory, baseline=baseline)
+            context = inspection_context(baseline)
+            events = [('progressReport', {'report': report, **context}),
+                      ('progressHistory', {**progress_history_view(path, directory, report, anchor=anchor), **context})]
             if remembered and Path(remembered).is_file():
                 try:  # a file that vanished or went bad is skipped quietly; picking another replaces it
-                    events.append(('progressTests', {**link_test_results(path, directory, remembered),
-                                                     'remembered': True}))
+                    events.append(('progressTests', {**link_test_results(path, directory, remembered, baseline=baseline),
+                                                     'remembered': True, **context}))
                 except (ValueError, OSError):
                     pass
             return events
@@ -288,7 +313,12 @@ class DesktopBridge(QObject):
     @Slot(str, str)
     def checkProgressLinks(self, path, request_id=""):
         directory = self._progress_dir()
-        self._run_progress(path, lambda: [('progressLinks', check_references(path, directory))], request_id=request_id)
+        def work():
+            baseline = load_baseline(path, directory)
+            if baseline is None:
+                raise ValueError('기준 문서를 먼저 저장해 주세요.')
+            return [('progressLinks', {**check_references(path, directory, baseline=baseline), **inspection_context(baseline)})]
+        self._run_progress(path, work, request_id=request_id)
 
     @Slot(str)
     @Slot(str, str)
@@ -305,7 +335,12 @@ class DesktopBridge(QObject):
             return
         directory = self._progress_dir()
         self.settings.setValue(self._results_key(path), filename)  # re-read next time this project opens
-        self._run_progress(path, lambda: [('progressTests', link_test_results(path, directory, filename))], request_id=request_id)
+        def work():
+            baseline = load_baseline(path, directory)
+            if baseline is None:
+                raise ValueError('기준 문서를 먼저 저장해 주세요.')
+            return [('progressTests', {**link_test_results(path, directory, filename, baseline=baseline), **inspection_context(baseline)})]
+        self._run_progress(path, work, request_id=request_id)
 
     @Slot(bool)
     def setProgressDirty(self, dirty):
@@ -339,8 +374,9 @@ class DesktopBridge(QObject):
             return
 
         def work():
+            anchor = capture_progress_history(root, directory)
             report = inspect_progress(root, directory)
-            history = progress_history_view(root, directory, report)
+            history = progress_history_view(root, directory, report, anchor=anchor)
             project = detect_project(root)
             identity = {'name': project.name, 'branch': project.branch,
                         'version': project.version, 'commit': project.commit}

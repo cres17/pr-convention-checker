@@ -1,5 +1,7 @@
+import { MAX_REQUIREMENTS } from "./limits";
 import type { DocumentKind, ProgressBaseline, ProgressItem } from "../../bridge";
 import { documentReview } from "./requirement";
+import { activeDocuments } from "./documents";
 
 /** Refresh extracted locations, retain context provenance, and reject overflow atomically. */
 function mergeDuplicates(item: ProgressItem, candidate: ProgressItem, kinds: Record<string, DocumentKind>) {
@@ -29,10 +31,12 @@ export function mergeProgressPreview(
 ): ProgressBaseline {
   if (!previous) return preview;
   const documents = { ...previous.documents, ...preview.documents };
+  const archived_documents = (previous.archived_documents ?? []).filter((path) => !(path in preview.documents));
   const document_kinds = { ...preview.document_kinds };
   for (const path of Object.keys(previous.documents)) {
     document_kinds[path] ??= path in preview.documents ? "current" : "reference";
   }
+  for (const path of archived_documents) document_kinds[path] = "reference";
   const candidates = new Map(preview.requirements.map((item) => [item.id, item]));
   const previousIds = new Set(previous.requirements.map((item) => item.id));
   const unmatched = previous.requirements.filter((item) => !candidates.has(item.id));
@@ -72,9 +76,10 @@ export function mergeProgressPreview(
     };
   });
   requirements.push(...candidates.values());
-  if (Object.keys(documents).length > 10 || requirements.length > 120)
+  const merged = { ...previous, ...preview, documents, document_kinds, archived_documents, requirements };
+  if (activeDocuments(merged).length > 10 || archived_documents.length > 120 || requirements.length > MAX_REQUIREMENTS)
     throw new Error(
       "기존 근거를 보존한 목록이 상한(문서 10개·기능 120개)을 넘습니다. 기존 항목은 유지했습니다.",
     );
-  return { ...previous, ...preview, documents, document_kinds, requirements };
+  return merged;
 }

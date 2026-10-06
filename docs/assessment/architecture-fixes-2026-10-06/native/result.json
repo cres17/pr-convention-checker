@@ -1,0 +1,81 @@
+{
+  "kind": "macOS source Qt + built React + actual QWebChannel + temporary Git repository",
+  "events": [
+    {
+      "type": "ready",
+      "request_id": null,
+      "request_done": null
+    },
+    {
+      "type": "progressDocs",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:1",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:2",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:2",
+      "request_done": true
+    },
+    {
+      "type": "progressDraftImportCancelled",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:3",
+      "request_done": true
+    },
+    {
+      "type": "progressError",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:4",
+      "request_done": true
+    },
+    {
+      "type": "progressDocs",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:5",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:6",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:6",
+      "request_done": true
+    },
+    {
+      "type": "progressDraftCached",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:7",
+      "request_done": true
+    },
+    {
+      "type": "progressSaved",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:8",
+      "request_done": false
+    },
+    {
+      "type": "progressReport",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:8",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "9f3f5acc-be65-4d46-a40c-d4326b6e1267:8",
+      "request_done": true
+    }
+  ],
+  "checks": {
+    "cancel_keeps_baseline": true,
+    "wrong_repository_rejected_without_baseline_change": true,
+    "import_keeps_confirmed_baseline": true,
+    "import_stored_separately_and_selectable": true,
+    "partial_input_recovered_and_import_disabled_while_dirty": true,
+    "explicit_save_commits_imported_edit": true,
+    "source_backup_preserved_and_recovered_copy_removed": true,
+    "saved_autosave_not_revived": true
+  },
+  "copy_key": "f4540055ad25946829f9e48f.bb8d1a6571184151933a07f8b7355acb.json"
+}

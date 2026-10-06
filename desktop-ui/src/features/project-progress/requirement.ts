@@ -1,4 +1,6 @@
+import { MAX_REQUIREMENTS } from "./limits";
 import type { ProgressBaseline, ProgressItem } from "../../bridge";
+import { activeDocuments } from "./documents";
 
 /** Primary and repeated document locations share the same scope/review rules. */
 export function requirementSources(item: ProgressItem) {
@@ -33,7 +35,8 @@ export function patchRequirement(item: ProgressItem, patch: Partial<ProgressItem
 }
 
 export function manualRequirement(id: string, baseline: ProgressBaseline): ProgressItem | null {
-  const path = Object.keys(baseline.documents).find(
+  if (baseline.requirements.length >= MAX_REQUIREMENTS) return null;
+  const path = activeDocuments(baseline).find(
     (path) => (baseline.document_kinds?.[path] ?? "current") === "current",
   );
   if (!path) return null;

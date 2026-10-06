@@ -9,9 +9,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from drift_gate.desktop.json_store import write_json
+from drift_gate.desktop.progress_documents import archived_documents
+from drift_gate.desktop.progress_limits import MAX_BACKUP_BYTES, MAX_DRAFT_BYTES, MAX_RECOVERY_REQUIREMENTS, MAX_REQUIREMENTS
 from drift_gate.desktop.store_lock import store_lock
-
-MAX_DRAFT_BYTES = 2_000_000
 
 
 def _draft_line(value):
@@ -33,7 +33,7 @@ def _valid_draft(draft: object) -> bool:
     if not isinstance(draft, dict):
         return False
     base = draft.get('edit_base')
-    if base is not None and (not isinstance(base, dict) or 'edit_base' in base or not _valid_draft(base)):
+    if base is not None and (not isinstance(base, dict) or 'edit_base' in base or not _valid_draft(base) or len(base.get('requirements', [])) > MAX_REQUIREMENTS):
         return False
     if base is not None and any(item.get('evidence') is not None and (
         type(item['evidence']['line']) is not int or item['evidence']['line'] < 0) for item in base['requirements']):
@@ -46,10 +46,12 @@ def _valid_draft(draft: object) -> bool:
     if not isinstance(kinds, dict) or not all(isinstance(path, str) and kind in
         ('current', 'future', 'past', 'reference') for path, kind in kinds.items()):
         return False
-    docs, items = draft.get("documents"), draft.get("requirements")
-    if not isinstance(docs, dict) or not 1 <= len(docs) <= 10 or not all(
-        isinstance(path, str) and isinstance(digest, str) for path, digest in docs.items()
-    ) or not isinstance(items, list) or len(items) > 120:
+    items = draft.get("requirements")
+    try:
+        archived_documents(draft)
+    except ValueError:
+        return False
+    if not isinstance(items, list) or len(items) > MAX_RECOVERY_REQUIREMENTS:
         return False
     ids = set()
     for item in items:
@@ -95,6 +97,26 @@ def _valid_draft(draft: object) -> bool:
             type(place.get('line')) is int and place['line'] >= 0 for place in duplicates):
             return False
     return True
+
+
+def _checkout_draft(root: Path, draft: dict) -> dict:
+    """Bind optional legacy presentation paths to this recovery envelope."""
+    repository = str(root.resolve())
+    base = draft.get('edit_base')
+    if draft.get('repository', repository) != repository or (base is not None and
+            base.get('repository', repository) != repository):
+        raise ValueError('초안과 원래 편집 기준의 프로젝트가 일치하지 않습니다.')
+    result = {**draft, 'repository': repository}
+    if base is not None:
+        result['edit_base'] = {**base, 'repository': repository}
+    return result
+
+
+def _draft_payload(root: Path, draft: dict) -> dict:
+    # Export and recovery use the same envelope and fixed-width timestamp. The
+    # file that passes export's size limit must also fit when imported again.
+    return {"schema": 1, "repository": str(root.resolve()),
+            "updated_at": datetime.now(timezone.utc).isoformat(timespec='microseconds'), "draft": draft}
 
 
 class DraftSession:
@@ -150,13 +172,13 @@ def _active_locked(target: Path) -> bool:
     return False
 
 
-def cache_draft(root: Path, data_dir: Path, draft: dict, owner: str = '', session: DraftSession | None = None) -> None:
+def cache_draft(root: Path, data_dir: Path, draft: dict, owner: str = '', session: DraftSession | None = None, *, backup: bool = False) -> None:
     if not _valid_draft(draft):
         raise ValueError("편집 초안의 형식이 올바르지 않습니다.")
-    payload = {"schema": 1, "repository": str(root.resolve()),
-               "updated_at": datetime.now(timezone.utc).isoformat(), "draft": draft}
-    if len(json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")) > MAX_DRAFT_BYTES:
-        raise ValueError("편집 초안이 보관 상한(2MB)을 넘었습니다. 기준과 근거 저장을 사용해 주세요.")
+    draft = _checkout_draft(root, draft)
+    payload = _draft_payload(root, draft)
+    if len(json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")) > (MAX_BACKUP_BYTES if backup else MAX_DRAFT_BYTES):
+        raise ValueError("편집 초안이 보관 상한을 넘었습니다. 자동 보관은 2MB, 복구 파일은 16MB까지 지원합니다. 초안 파일로 내보내기를 사용해 주세요.")
     target = draft_file(root, data_dir, owner)
     with store_lock(draft_file(root, data_dir)):
         if session is not None:
@@ -197,13 +219,14 @@ def _recovery_copy_locked(root: Path, data_dir: Path, baseline: dict | None, sel
                for copy, info in copies]
     context = {'recovery_key': target.name, 'recovery_revision': _revision(metadata), 'recovery_options': options}
     try:
-        if target.stat().st_size > MAX_DRAFT_BYTES:
+        if target.stat().st_size > MAX_BACKUP_BYTES:
             raise ValueError("초안 크기 상한 초과")
         payload = json.loads(target.read_text(encoding="utf-8"))
         draft = payload.get("draft")
         if payload.get("schema") != 1 or payload.get("repository") != str(root.resolve()) or not _valid_draft(draft):
             raise ValueError("초안 형식 불일치")
-    except (ValueError, AttributeError, OSError):
+        draft = _checkout_draft(root, draft)
+    except (ValueError, AttributeError, OSError, RecursionError):
         return {**context, "recovery_warning": "보관된 초안을 읽지 못했습니다. 확정된 기준은 유지했습니다. 초안을 삭제하고 다시 편집할 수 있습니다."}
     # Recover explicitly, including when another app has since updated the baseline.
     changed = draft.get("version", 0) != (baseline or {}).get("version", 0)
@@ -257,7 +280,10 @@ def discard_recoveries(root: Path, data_dir: Path, selections: list) -> None:
 def export_draft(root: Path, draft: dict, target: Path) -> None:
     if not _valid_draft(draft):
         raise ValueError('편집 초안의 형식이 올바르지 않습니다.')
-    payload = {'schema': 1, 'repository': str(root.resolve()), 'draft': draft}
+    draft = _checkout_draft(root, draft)
+    payload = _draft_payload(root, draft)
+    if len(json.dumps(payload, ensure_ascii=False, indent=2).encode('utf-8')) > MAX_BACKUP_BYTES:
+        raise ValueError('초안 파일이 백업 상한(16MB)을 넘었습니다. 내용을 정리한 뒤 다시 내보내 주세요.')
     write_json(target, payload)
     if json.loads(target.read_text(encoding='utf-8')) != payload:
         raise OSError('내보낸 초안 파일을 확인하지 못했습니다.')
@@ -266,9 +292,9 @@ def export_draft(root: Path, draft: dict, target: Path) -> None:
 def import_draft(root: Path, data_dir: Path, source: Path) -> str:
     """Read a bounded backup and add a new recovery copy, never a baseline."""
     with source.open('rb') as stream:
-        content = stream.read(MAX_DRAFT_BYTES + 1)
-    if len(content) > MAX_DRAFT_BYTES:
-        raise ValueError('초안 파일이 불러오기 상한(2MB)을 넘었습니다.')
+        content = stream.read(MAX_BACKUP_BYTES + 1)
+    if len(content) > MAX_BACKUP_BYTES:
+        raise ValueError('초안 파일이 불러오기 상한(16MB)을 넘었습니다.')
     def reject_constant(value):
         raise ValueError(f'유효하지 않은 JSON 숫자입니다: {value}')
     try:
@@ -283,11 +309,9 @@ def import_draft(root: Path, data_dir: Path, source: Path) -> str:
     draft = payload.get('draft')
     if not _valid_draft(draft):
         raise ValueError('편집 초안의 형식이 올바르지 않습니다.')
-    if draft.get('repository', repository) != repository or (draft.get('edit_base') is not None and
-            draft['edit_base'].get('repository', repository) != repository):
-        raise ValueError('초안과 원래 편집 기준의 프로젝트가 일치하지 않습니다.')
+    draft = _checkout_draft(root, draft)
     # External recovery metadata must never authorize deletion of another copy.
     draft = {key: value for key, value in draft.items() if key not in ('recovery_key', 'recovery_revision')}
     owner = uuid.uuid4().hex
-    cache_draft(root, data_dir, draft, owner)
+    cache_draft(root, data_dir, draft, owner, backup=True)
     return draft_file(root, data_dir, owner).name

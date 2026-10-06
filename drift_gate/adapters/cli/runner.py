@@ -35,7 +35,7 @@ from drift_gate.adapters.eval.runner import (
     write_case_reports,
 )
 from drift_gate.adapters.ast.analyzer import enrich_semantic_signals
-from drift_gate.adapters.git.client import GitAdapter
+from drift_gate.adapters.git.client import GitAdapter, GitInputError
 from drift_gate.adapters.github.client import GitHubAdapter, parse_drift_ignores
 from drift_gate.adapters.history.store import (
     DEFAULT_HISTORY_PATH,
@@ -370,7 +370,11 @@ def run_cli(argv=None):
         _run_serve(args)
         return
 
-    _run_check(args)
+    try:
+        _run_check(args)
+    except GitInputError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(2)
 
 
 def _build_parser() -> argparse.ArgumentParser:

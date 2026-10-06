@@ -179,6 +179,11 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
       sessions.current.requests(state.path).invalidateReads(); sessions.current.requests(state.path).cancel('draft');
       dispatch({ type: "kind", path, kind });
     },
+    archiveDocument: (path: string) => {
+      if (!state.draft || state.busy || !window.confirm(`${path}의 연결을 해제할까요? 기존 기능과 코드 근거는 보관하고 이 문서에서만 나온 기능은 현재 목표 집계에서 제외합니다.`)) return;
+      sessions.current.requests(state.path).invalidateReads(); sessions.current.requests(state.path).cancel('draft');
+      dispatch({ type: "archive-document", path });
+    },
     edit,
     confirmRequirement: (id: string) => {
       const item = state.draft?.requirements.find((item) => item.id === id);
@@ -195,6 +200,7 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
       ), token));
     },
     save: () => { if (state.draft) begin("save", (bridge, token) => bridge.saveProgress(path, JSON.stringify(state.draft), token)); },
+    removeItem: (id: string) => { sessions.current.requests(state.path).invalidateReads(); sessions.current.requests(state.path).cancel("draft"); dispatch({ type: "remove-item", id }); },
     addManual: () => { sessions.current.requests(state.path).invalidateReads(); sessions.current.requests(state.path).cancel('draft'); dispatch({ type: "add-manual", id: crypto.randomUUID() }); },
     goToFirstError: () => dispatch({ type: "first-error" }),
     startEvidence: () => dispatch({ type: "start-evidence" }),

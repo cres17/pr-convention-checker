@@ -1,0 +1,54 @@
+// @vitest-environment jsdom
+// Observational audit only. Temporarily copy beside ProjectProgress.test.tsx.
+import { afterEach, expect, it, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import type { Bridge, ProgressBaseline, ProgressItem } from '../../bridge';
+import ProjectProgress from './ProjectProgress';
+import { initialProgressState, progressReducer } from './progressState';
+import { decodeDesktopEvent } from '../../eventSchema';
+
+afterEach(cleanup);
+const item = (id: string): ProgressItem => ({ id, title: id, criterion: id, area: '', included: true,
+ source: { path: 'README.md', line: 0, excerpt: '사용자가 직접 추가', sha256: 'h' },
+ implementation_status: 'unknown', evidence: null, verification_status: 'unverified', verification_note: '' });
+const baseline = (count = 1): ProgressBaseline => ({ repository: '/audit', version: 1,
+ documents: { 'README.md': 'h' }, requirements: Array.from({length: count}, (_, i) => item(String(i))) });
+
+it('AUDIT: manual addition crosses the limit and exposes no export escape', () => {
+ const bridge = { listProjectDocs: vi.fn(), inspectProgress: vi.fn(), saveProgress: vi.fn() } as unknown as Bridge;
+ const page = render(<ProjectProgress path="/audit" connected bridge={bridge} events={[]} />);
+ page.rerender(<ProjectProgress path="/audit" connected bridge={bridge} events={[{
+  type: 'progressDocs', requested_path: '/audit', request_id: vi.mocked(bridge.listProjectDocs).mock.calls[0][1]!,
+  request_done: true, documents: [], omitted: 0, baseline: baseline(120), _seq: 1,
+ }]} />);
+ fireEvent.click(screen.getByRole('button', {name: '직접 추가'}));
+ fireEvent.click(screen.getByRole('button', {name: '기준과 근거 저장'}));
+ const payload = JSON.parse(vi.mocked(bridge.saveProgress).mock.calls[0][1]);
+ expect(payload.requirements).toHaveLength(121);
+ expect(screen.queryByRole('button', {name: '내 초안 파일로 내보내기'})).toBeNull();
+ console.log('AUDIT manual-add: sent requirements=121; export escape absent');
+});
+
+it('AUDIT: an import with edit_base lacking repository is discarded only at the UI boundary', () => {
+ const recovery = {...baseline(), edit_base: {...baseline(), repository: undefined}};
+ const decoded = decodeDesktopEvent(JSON.stringify({type: 'progressDocs', requested_path: '/audit', request_id: 'r',
+  request_done: true, documents: [], omitted: 0, recovery}));
+ expect(decoded.type).toBe('progressDocs');
+ if(decoded.type === 'progressDocs') {
+  expect(decoded.recovery).toBeNull();
+  expect(decoded.recovery_warning).toContain('형식');
+ }
+});
+
+it('AUDIT: newer report is rejected but its history and tests still populate the old editor', () => {
+ let state = progressReducer(initialProgressState('/audit'), {type:'event', event:{type:'progressSaved', baseline:baseline()}});
+ state = progressReducer(state, {type:'event', event:{type:'progressReport', report:{
+  repository:'/audit', version:2, at:'2026-10-06', head:'b', total:1, stale_documents:[],
+  counts:{unknown:1}, items:[item('newer')], limitations:''}}});
+ state = progressReducer(state, {type:'event', event:{type:'progressHistory', snapshots:[{
+  at:'2026-10-06', version:2, head:'b', total:1, counts:{unknown:1}}], since_save:null}});
+ expect(state.draft?.version).toBe(1);
+ expect(state.report).toBeNull();
+ expect(state.history?.snapshots[0].version).toBe(2);
+ console.log('AUDIT snapshot mismatch: draft=1, accepted history=2, report rejected');
+});

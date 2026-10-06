@@ -18,6 +18,7 @@ export default function History({ history }: { history: ProgressHistory }) {
   const since = history.since_save;
   return (
     <>
+      {history.warning && <div className="notice" role="status">{history.warning} 현황 검사는 완료됐습니다. 이력 비교는 사용할 수 없습니다.</div>}
       {since && (
         <div className={`notice ${since.counts.regressed ? "error" : ""}`} role="status">
           마지막 저장(기준 v{since.version}) 이후 변화: {changeText(since.counts) || "완료 확인 수만 달라졌습니다"}
