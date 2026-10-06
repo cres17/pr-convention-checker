@@ -175,6 +175,15 @@ def test_policy_expansion_and_new_rule_can_preserve_old_obligations():
     assert weakening_reasons(trusted, candidate) == []
 
 
+def test_any_group_cannot_shadow_a_trusted_all_group():
+    from copy import deepcopy
+    from drift_gate.core.policy.guard import weakening_reasons
+    trusted = load_policy_from_text(POLICY)
+    candidate = deepcopy(trusted)
+    candidate.rules[0].require.groups[0].any_changed = ['unrelated.md']
+    assert weakening_reasons(trusted, candidate)
+
+
 def test_remote_cli_does_not_require_a_local_git_checkout(tmp_path, monkeypatch, capsys):
     from drift_gate.adapters.cli import runner
     monkeypatch.chdir(tmp_path)
