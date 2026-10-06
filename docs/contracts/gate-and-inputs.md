@@ -37,3 +37,5 @@ rename은 이전/현재 경로로 trigger와 ignore를 판단하며 양쪽 모�
 `*extra`, `**options`, `#define`을 공통 prefix만으로 주석 처리하지 않는다. Python 로컬 Git 분석은 최대1MB before/after 원문을 어휘 문맥에 사용하지만 보고서에는 원문 사본을 넣지 않는다. 원격/API 및 합성 입력에 원문이 없으면 Python diff 토큰 추정은 휴리스틱이다. hunk 밖에서 시작한 문자열 문맥은 여전히 한계다. 지원하지 않는 언어의 주석 조각은 보수적으로 구현 변경으로 남아 경고가 늘 수 있다. 문자열 값 변경은 구현 변경이다.
 
 self-audit schema2의 `related-evidence-found`는 관련 변경 참조만 뜻하며 항상 `behavior_verified=false`이다. 경로 조각으로 모든 파일을 연결하지 않고 정확한 경로나 유일한 파일명만 연결한다. 이는 주장 내용의 진위를 자동 검증하지 않는다.
+
+정책 의무 비교는 기존 all_changed 그룹에 any_changed를 추가해 우선순위를 바꾸는 완화도 거부한다. evaluator에서 any_changed가 우선하므로 배열 포함 여부만 비교하지 않는다.
