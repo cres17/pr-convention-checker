@@ -159,6 +159,8 @@ def test_broken_bundle_fails_before_any_download(bundled, monkeypatch, damage):
 def valid_result(module):
     return {"frozen": True, "bridge_ready": True, "ui_text": "검사 완료",
             "network_probes": [{"error": "blocked"}, {"error": "blocked"}],
+            "hardening_checks": [{'case': case, 'result': {'result': 'warn', 'violations': [{'rule_id': 'offline-api-docs'}]}}
+                                 for case in ['signature', 'rename']],
             "scan": {"result": {"result": "warn", "violations": [{"rule_id": "offline-api-docs"}],
                                 "scan_metrics": {"analysis_notes": [
                 {"path": "src/" + name, "method": "grammar+heuristic"} for name in module.SOURCES]}}}}

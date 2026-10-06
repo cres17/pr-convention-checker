@@ -215,8 +215,8 @@ rules:
 
 @pytest.mark.parametrize('frame', [[], None, 3, 'bad', {'jsonrpc':'2.0', 'method':[]},
     {'jsonrpc':'2.0', 'method':'tools/list', 'params':[]},
-    {'jsonrpc':'2.0', 'method':'tools/call', 'params':{'name':[], 'arguments':{}}},
-    {'jsonrpc':'2.0', 'method':'tools/call', 'params':{'name':'drift_gate_history', 'arguments':[]}},
+    {'jsonrpc':'2.0', 'id':1, 'method':'tools/call', 'params':{'name':[], 'arguments':{}}},
+    {'jsonrpc':'2.0', 'id':1, 'method':'tools/call', 'params':{'name':'drift_gate_history', 'arguments':[]}},
     {'tool':[], 'args':{}}, {'tool':'drift_gate_history', 'args':[]}])
 def test_mcp_rejects_bad_shapes_without_raising(frame):
     response = handle_request(frame)

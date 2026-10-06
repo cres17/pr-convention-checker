@@ -278,7 +278,7 @@ class TestTemporalGateE2E:
         history_path = tmp_path / "history.jsonl"
         policy_path = tmp_path / ".drift-gate.yml"
         policy_path.write_text(
-            "rules: []\ngate:\n  fail_on_blocker: true\n  fail_on_major_count: 2\n",
+            "rules:\n  - id: history-check\n    when: {any_changed: [src/**]}\n    require: {groups: [{name: docs, any_changed: [docs/**]}]}\n    severity: minor\ngate:\n  fail_on_blocker: true\n  fail_on_major_count: 2\n",
             encoding="utf-8",
         )
 

@@ -62,6 +62,8 @@ class AuditedItem:
             "section": self.section,
             "evidence": self.evidence,
             "status": self.status,
+            "verification_level": 'related-evidence-only',
+            "behavior_verified": False,
         }
 
 
@@ -87,6 +89,8 @@ class SelfAuditResult:
     def to_dict(self) -> dict:
         return {
             "self_audit": {
+                "schema_version": 2,
+                "notice": 'Diff references indicate related changes, not verified behavior or truthful claims.',
                 "checklist_items": [i.to_dict() for i in self.checklist_items],
                 "warnings": [w.to_dict() for w in self.warnings],
             }
@@ -114,7 +118,7 @@ def match_checklist(
     for item in items:
         ev = _find_evidence(item, evidence)
         if item.checked:
-            status = "supported" if ev else "unsupported"
+            status = "related-evidence-found" if ev else "no-related-evidence"
             if not ev:
                 warnings.append(SelfAuditWarning(
                     kind="checklist-code-mismatch",
@@ -160,23 +164,17 @@ def _find_evidence(item, evidence: DiffEvidence) -> List[str]:
 
     item_text_lower = item.text.lower()
 
-    # Match against changed file paths
+    # Only exact paths or unambiguous basenames qualify; directory fragments do not.
     for f in evidence.changed_files:
-        # Partial path match: any hint appears in the file path or vice-versa
+        from pathlib import PurePosixPath
         f_lower = f.lower()
         for hint in item.file_hints:
             hint_lower = hint.lower()
-            if hint_lower in f_lower or f_lower.endswith(hint_lower):
+            basename = PurePosixPath(f_lower).name
+            unique = sum(PurePosixPath(p.lower()).name == basename for p in evidence.changed_files) == 1
+            if hint_lower == f_lower or ('/' not in hint_lower and hint_lower == basename and unique):
                 found.append(f)
                 break
-        else:
-            # Fallback: any segment of the file path appears in the item text
-            from pathlib import PurePosixPath
-            parts = PurePosixPath(f).parts
-            for part in parts:
-                if len(part) > 3 and part.lower() in item_text_lower:
-                    found.append(f)
-                    break
 
     # Match against added functions
     for func in evidence.added_functions:

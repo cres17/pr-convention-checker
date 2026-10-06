@@ -1,0 +1,2212 @@
+{
+  "head": "f43cada2ea177b63cb0ac4a79be37071113a5191",
+  "measured_at_utc": "2026-10-06T06:25:33.913843+00:00",
+  "harness_sha256": "83e2903249bb6ea6cd392c9766391b2786d1c148373e442bfb431a3d3a4ce2a6",
+  "saved_evidence_sha256": {
+    "pr/self-check.json": "1f20f0160d17f4c6154e4586f1341f616127ce0a7148d9e08912f459cdea54cf",
+    "pr-run.json": "ead06dd84350e8576c94053c695bfc9c52fae05429bd1f5674c48434f8f8e8df",
+    "push/self-check.json": "d58cef5a346d08c501bb6ea298ee035a923e732c1ff85835efe6f8dc363feec3",
+    "push-run.json": "094d2fb5ac2edfe2866ca0abc758ec9a7abde09b7efc866bbd6036b8e2bfedd1"
+  },
+  "comparison_exclusion": "runtime_seconds only",
+  "cases": [
+    {
+      "name": "push-replay",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "01e28e1620941a539d3e9c14972201b30adafd3b",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/push-replay.json"
+      ],
+      "expected": "pass",
+      "actual": "pass",
+      "exit_code": 0,
+      "matches_expected": true,
+      "expected_exit_code": 0,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {
+          ".drift-gate.self.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/ci.yml": [
+            "self-package-operations"
+          ],
+          "drift_gate/adapters/cli/runner.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/mcp/server.py": [
+            "self-mcp-contract"
+          ],
+          "drift_gate/core/classification/intensity.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/evaluation/contracts.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/python_syntax.py": [
+            "self-engine-contract"
+          ],
+          "scripts/check_self.py": [
+            "self-package-operations"
+          ]
+        },
+        "unmatched": [
+          "docs/assessment/self-verification-2026-10-06/README.md",
+          "docs/assessment/self-verification-2026-10-06/baseline-behavior-test.log",
+          "docs/assessment/self-verification-2026-10-06/baseline-test-execution.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/results.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probes.py",
+          "docs/assessment/self-verification-2026-10-06/product-run/changed-files.txt",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.html",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/manifest.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/policy.yml",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/summary.json",
+          "docs/assessment/self-verification-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-2026-10-06/trace_behavior.py",
+          "docs/assessment/self-verification-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-2026-10-06/validation.json",
+          "docs/assessment/self-verification-2026-10-06/verify.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/README.md",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization-final.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/git-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/results.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/validate_candidate.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validation.json",
+          "docs/contracts/desktop-bridge.md",
+          "docs/contracts/gate-and-inputs.md",
+          "docs/contracts/mcp-transport.md",
+          "docs/contracts/progress-storage.md",
+          "docs/ops/drift-gate-self-check.md",
+          "docs/review/drift-gate-self-verification-2026-10-06.md",
+          "docs/review/self-verification-fixes-2026-10-06.md"
+        ],
+        "ignored": [
+          "drift_gate/tests/test_contract_route_regressions.py",
+          "drift_gate/tests/test_development_regressions.py",
+          "drift_gate/tests/test_git_collection.py",
+          "drift_gate/tests/test_mcp_tools.py",
+          "drift_gate/tests/test_self_policy.py"
+        ]
+      },
+      "git_path_set_equal": true,
+      "saved_evidence_equal_except_runtime": true
+    },
+    {
+      "name": "pr-replay",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "bffc6550fd0b7da0509fe9ae8838efcf5fe9bc8c",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/pr-replay.json"
+      ],
+      "expected": "pass",
+      "actual": "pass",
+      "exit_code": 0,
+      "matches_expected": true,
+      "expected_exit_code": 0,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {
+          ".drift-gate.self.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/benchmark.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/ci.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/desktop-build.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/desktop-release.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/parser-hashes.yml": [
+            "self-package-operations"
+          ],
+          "desktop-ui/src/App.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/WorkspacePanels.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/bridge.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/approval-card/_adapter.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/approval-card/approval-card.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/approval-card/index.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/approval-card/schema.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/code-diff/_adapter.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/code-diff/code-diff.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/code-diff/index.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/code-diff/schema.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/option-list/_adapter.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/option-list/index.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/option-list/option-list.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/option-list/schema.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/option-list/selection.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/progress-tracker/_adapter.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/progress-tracker/index.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/progress-tracker/progress-tracker.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/progress-tracker/schema.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/shared/_adapter.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/shared/action-buttons.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/shared/actions-config.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/shared/contract.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/shared/embedded-actions.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/shared/parse.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/shared/schema.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/shared/use-action-buttons.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/shared/use-copy-to-clipboard.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/stats-display/_adapter.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/stats-display/index.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/stats-display/schema.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/stats-display/sparkline.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/tool-ui/stats-display/stats-display.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/ui/button.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/ui/card.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/ui/collapsible.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/components/ui/separator.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/eventSchema.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/events.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/DocumentSetup.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/DraftRecovery.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/History.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/ProgressOverview.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/ProjectProgress.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/ReferenceChecks.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/RequirementDetail.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/RequirementList.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/documents.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/editorSessions.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/limits.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/merge.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/operations.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/presentation.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/progressState.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/rebase.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/requestSession.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/requirement.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/status.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/project-progress/useProjectProgress.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/review/AnalysisNotice.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/review/PolicySetup.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/review/ReviewDiff.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/review/ScanImpact.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/review/ViolationGuide.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/features/review/violations.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/lib/ui/cn.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/lib/utils.ts": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/main.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/presentation.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/preview-fixture.json": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/preview.tsx": [
+            "self-ui-bridge-contract"
+          ],
+          "desktop-ui/src/style.css": [
+            "self-ui-bridge-contract"
+          ],
+          "drift_gate/adapters/ast/__init__.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/adapters/ast/analyzer.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/adapters/ast/python_adapter.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/adapters/ast/tree_sitter_support.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/adapters/ast/typescript_adapter.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/adapters/cli/runner.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/docs/checklist.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/adapters/docs/content.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/adapters/docs/readme_contract.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/adapters/git/client.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/github/approvals.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/github/client.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/github_action/runner.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/mcp/server.py": [
+            "self-mcp-contract"
+          ],
+          "drift_gate/adapters/mcp/tools.py": [
+            "self-mcp-contract"
+          ],
+          "drift_gate/core/classification/intensity.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/engine.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/evaluation/contracts.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/evaluation/evaluator.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/models/changed_file.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/models/policy.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/models/result.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/policy/validator.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/python_syntax.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/route_syntax.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/self_audit/matcher.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/desktop/json_store.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/progress_context.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/progress_documents.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/progress_drafts.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/progress_history.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/progress_limits.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/progress_report.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/progress_scope.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/progress_service.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/store_lock.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/verification_records.py": [
+            "self-progress-contract"
+          ],
+          "drift_gate/desktop/web_app.py": [
+            "self-ui-bridge-contract"
+          ],
+          "drift_gate/reporters/html.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/reporters/markdown.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/utils/glob_matcher.py": [
+            "self-engine-contract"
+          ],
+          "packaging/collect_parser_hashes.py": [
+            "self-package-operations"
+          ],
+          "packaging/prepare_parsers.py": [
+            "self-package-operations"
+          ],
+          "packaging/seal_parsers.py": [
+            "self-package-operations"
+          ],
+          "packaging/verify_package.py": [
+            "self-package-operations"
+          ],
+          "packaging/windows/DriftGate.iss": [
+            "self-package-operations"
+          ],
+          "pyproject.toml": [
+            "self-cli-contract"
+          ],
+          "scripts/check_self.py": [
+            "self-package-operations"
+          ]
+        },
+        "unmatched": [
+          ".claude/commands/CC-AI-TOOLKIT-LICENSE",
+          ".claude/commands/figma-to-code.md",
+          ".claude/commands/sync-design-tokens.md",
+          ".gitignore",
+          "CLAUDE.md",
+          "README.md",
+          "action.yml",
+          "desktop-ui/TOOL-UI-LICENSE.md",
+          "desktop-ui/index.html",
+          "desktop-ui/package-lock.json",
+          "desktop-ui/package.json",
+          "desktop-ui/preview.html",
+          "desktop-ui/public/TOOL-UI-LICENSE.txt",
+          "desktop-ui/tool-ui-provenance.json",
+          "desktop-ui/tsconfig.json",
+          "desktop-ui/vite.config.ts",
+          "docs/README.md",
+          "docs/architecture/target-architecture-2026-10-06.md",
+          "docs/architecture/target-architecture-v2-2026-10-06.md",
+          "docs/assessment/after-v1/benchmark-full.json",
+          "docs/assessment/after-v1/comparison.md",
+          "docs/assessment/after-v1/docs-check.json",
+          "docs/assessment/after-v1/environment.txt",
+          "docs/assessment/after-v1/pytest.txt",
+          "docs/assessment/after-v1/pytest.xml",
+          "docs/assessment/after-v1/summary.json",
+          "docs/assessment/architecture-fixes-2026-10-06/README.md",
+          "docs/assessment/architecture-fixes-2026-10-06/native-run.log",
+          "docs/assessment/architecture-fixes-2026-10-06/native/finished.png",
+          "docs/assessment/architecture-fixes-2026-10-06/native/imported-copy.png",
+          "docs/assessment/architecture-fixes-2026-10-06/native/recovered.png",
+          "docs/assessment/architecture-fixes-2026-10-06/native/result.json",
+          "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+          "docs/assessment/architecture-fixes-2026-10-06/python-tests.log",
+          "docs/assessment/architecture-fixes-2026-10-06/react-tests.log",
+          "docs/assessment/architecture-fixes-2026-10-06/ruff.log",
+          "docs/assessment/architecture-fixes-2026-10-06/ui-build.log",
+          "docs/assessment/architecture-fixes-2026-10-06/validation.json",
+          "docs/assessment/architecture-review-2026-10-06/README.md",
+          "docs/assessment/architecture-review-2026-10-06/bridge-results.json",
+          "docs/assessment/architecture-review-2026-10-06/bridge-stderr.log",
+          "docs/assessment/architecture-review-2026-10-06/bridge_audit.py",
+          "docs/assessment/architecture-review-2026-10-06/python-tests.log",
+          "docs/assessment/architecture-review-2026-10-06/react-tests.log",
+          "docs/assessment/architecture-review-2026-10-06/reproduce.py",
+          "docs/assessment/architecture-review-2026-10-06/results.json",
+          "docs/assessment/architecture-review-2026-10-06/ui-audit.log",
+          "docs/assessment/architecture-review-2026-10-06/ui-audit.tsx.fixture",
+          "docs/assessment/architecture-review-2026-10-06/validation.json",
+          "docs/assessment/architecture-second-fixes-2026-10-06/README.md",
+          "docs/assessment/architecture-second-fixes-2026-10-06/native-run.log",
+          "docs/assessment/architecture-second-fixes-2026-10-06/native/finished.png",
+          "docs/assessment/architecture-second-fixes-2026-10-06/native/result.json",
+          "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+          "docs/assessment/architecture-second-fixes-2026-10-06/python-tests.log",
+          "docs/assessment/architecture-second-fixes-2026-10-06/react-tests.log",
+          "docs/assessment/architecture-second-fixes-2026-10-06/ruff.log",
+          "docs/assessment/architecture-second-fixes-2026-10-06/ui-build.log",
+          "docs/assessment/architecture-second-fixes-2026-10-06/validation.json",
+          "docs/assessment/architecture-second-review-2026-10-06/README.md",
+          "docs/assessment/architecture-second-review-2026-10-06/bridge-results.json",
+          "docs/assessment/architecture-second-review-2026-10-06/bridge-run.log",
+          "docs/assessment/architecture-second-review-2026-10-06/bridge_probe.py",
+          "docs/assessment/architecture-second-review-2026-10-06/python-tests.log",
+          "docs/assessment/architecture-second-review-2026-10-06/react-tests.log",
+          "docs/assessment/architecture-second-review-2026-10-06/reproduce.py",
+          "docs/assessment/architecture-second-review-2026-10-06/results.json",
+          "docs/assessment/architecture-second-review-2026-10-06/ruff.log",
+          "docs/assessment/architecture-second-review-2026-10-06/ui-build.log",
+          "docs/assessment/architecture-second-review-2026-10-06/ui-probe.log",
+          "docs/assessment/architecture-second-review-2026-10-06/ui-probe.ts.fixture",
+          "docs/assessment/architecture-second-review-2026-10-06/validation.json",
+          "docs/assessment/baseline-2026-09-22/benchmark-full.json",
+          "docs/assessment/baseline-2026-09-22/docs-check.json",
+          "docs/assessment/baseline-2026-09-22/environment.txt",
+          "docs/assessment/baseline-2026-09-22/pytest.txt",
+          "docs/assessment/baseline-2026-09-22/pytest.xml",
+          "docs/assessment/baseline-2026-09-22/summary.json",
+          "docs/assessment/baseline-requirements.txt",
+          "docs/assessment/challenge-v1.json",
+          "docs/assessment/desktop-release-2026-10-01/README.md",
+          "docs/assessment/desktop-release-2026-10-01/baseline-audit.json",
+          "docs/assessment/desktop-release-2026-10-01/controlled-12.json",
+          "docs/assessment/desktop-release-2026-10-01/published-source-audit.json",
+          "docs/assessment/desktop-release-2026-10-01/release-audit.json",
+          "docs/assessment/desktop-release-2026-10-01/release-downloads.json",
+          "docs/assessment/desktop-release-2026-10-01/summary.json",
+          "docs/assessment/desktop-release-2026-10-01/workflow-verification.json",
+          "docs/assessment/draft-import-2026-10-06/native/finished.png",
+          "docs/assessment/draft-import-2026-10-06/native/imported-copy.png",
+          "docs/assessment/draft-import-2026-10-06/native/recovered.png",
+          "docs/assessment/draft-import-2026-10-06/native/result.json",
+          "docs/assessment/draft-import-2026-10-06/native_harness.py",
+          "docs/assessment/draft-management-2026-10-02/ci/Windows/offline-installer/bundled-grammars.json",
+          "docs/assessment/draft-management-2026-10-02/ci/Windows/offline-installer/result.json",
+          "docs/assessment/draft-management-2026-10-02/ci/Windows/offline-package/bundled-grammars.json",
+          "docs/assessment/draft-management-2026-10-02/ci/Windows/offline-package/result.json",
+          "docs/assessment/draft-management-2026-10-02/ci/macOS-arm64/offline-dmg/bundled-grammars.json",
+          "docs/assessment/draft-management-2026-10-02/ci/macOS-arm64/offline-dmg/result.json",
+          "docs/assessment/draft-management-2026-10-02/ci/macOS-arm64/offline-package/bundled-grammars.json",
+          "docs/assessment/draft-management-2026-10-02/ci/macOS-arm64/offline-package/result.json",
+          "docs/assessment/draft-management-2026-10-02/ci/macOS-intel/offline-dmg/bundled-grammars.json",
+          "docs/assessment/draft-management-2026-10-02/ci/macOS-intel/offline-dmg/result.json",
+          "docs/assessment/draft-management-2026-10-02/ci/macOS-intel/offline-package/bundled-grammars.json",
+          "docs/assessment/draft-management-2026-10-02/ci/macOS-intel/offline-package/result.json",
+          "docs/assessment/draft-management-2026-10-02/ci/summary.json",
+          "docs/assessment/draft-management-2026-10-02/native-overflow/finished.png",
+          "docs/assessment/draft-management-2026-10-02/native-overflow/overflow.png",
+          "docs/assessment/draft-management-2026-10-02/native-overflow/result.json",
+          "docs/assessment/draft-management-2026-10-02/native-recovery/active-and-cleanup.png",
+          "docs/assessment/draft-management-2026-10-02/native-recovery/finished.png",
+          "docs/assessment/draft-management-2026-10-02/native-recovery/result.json",
+          "docs/assessment/draft-management-2026-10-02/native_harness.py",
+          "docs/assessment/draft-management-2026-10-02/python.log",
+          "docs/assessment/draft-management-2026-10-02/react.log",
+          "docs/assessment/draft-management-2026-10-02/ui-build.log",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-Windows/offline-installer/bundled-grammars.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-Windows/offline-installer/firewall.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-Windows/offline-installer/result.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-Windows/offline-package/bundled-grammars.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-Windows/offline-package/firewall.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-Windows/offline-package/result.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-macOS-arm64/offline-dmg/bundled-grammars.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-macOS-arm64/offline-dmg/result.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-macOS-arm64/offline-package/bundled-grammars.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-macOS-arm64/offline-package/result.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-macOS-intel/offline-dmg/bundled-grammars.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-macOS-intel/offline-dmg/result.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-macOS-intel/offline-package/bundled-grammars.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/Offline-check-macOS-intel/offline-package/result.json",
+          "docs/assessment/editor-concurrency-2026-10-02/ci/summary.json",
+          "docs/assessment/editor-concurrency-2026-10-02/controlled/result.json",
+          "docs/assessment/editor-concurrency-2026-10-02/generalization.json",
+          "docs/assessment/editor-concurrency-2026-10-02/local-qt/conflict.png",
+          "docs/assessment/editor-concurrency-2026-10-02/local-qt/conflict_harness.py",
+          "docs/assessment/editor-concurrency-2026-10-02/local-qt/recovery_harness.py",
+          "docs/assessment/editor-concurrency-2026-10-02/local-qt/result.json",
+          "docs/assessment/editor-concurrency-2026-10-02/local-qt/saved.png",
+          "docs/assessment/editor-concurrency-2026-10-02/local-recovery/recovery.png",
+          "docs/assessment/editor-concurrency-2026-10-02/local-recovery/result.json",
+          "docs/assessment/editor-concurrency-2026-10-02/local/python.log",
+          "docs/assessment/editor-concurrency-2026-10-02/local/react.log",
+          "docs/assessment/env-after-v1.json",
+          "docs/assessment/env-baseline-2026-09-22.json",
+          "docs/assessment/env-contract-v1.json",
+          "docs/assessment/generalization-audit-v1.json",
+          "docs/assessment/generalization-original.json",
+          "docs/assessment/generalization-ver2.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/before-bundled-offline.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/before-bundled-online.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/before-bundled-warm-offline.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/before-entrypoint-layout.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/before-package-inventory.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/bundled-grammars.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/arm-checks.log",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/arm64/offline-dmg/app.log",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/arm64/offline-dmg/bundled-grammars.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/arm64/offline-dmg/result.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/arm64/offline-package/app.log",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/arm64/offline-package/bundled-grammars.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/arm64/offline-package/result.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/intel-checks.log",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/intel/offline-dmg/app.log",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/intel/offline-dmg/bundled-grammars.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/intel/offline-dmg/result.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/intel/offline-package/app.log",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/intel/offline-package/bundled-grammars.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/intel/offline-package/result.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/run.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/summary.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/windows-checks.log",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/windows/offline-installer/app.log",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/windows/offline-installer/bundled-grammars.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/windows/offline-installer/firewall.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/windows/offline-installer/result.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/windows/offline-package/app.log",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/windows/offline-package/bundled-grammars.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/windows/offline-package/firewall.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/ci/windows/offline-package/result.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/local-dmg.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/local-package.json",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/python.log",
+          "docs/assessment/offline-packaged-analysis-2026-10-01/react.log",
+          "docs/assessment/package-verification-2026-10-06/README.md",
+          "docs/assessment/package-verification-2026-10-06/ci-corrections.md",
+          "docs/assessment/package-verification-2026-10-06/local-validation.json",
+          "docs/assessment/package-verification-2026-10-06/offline-dmg/bundled-grammars.json",
+          "docs/assessment/package-verification-2026-10-06/offline-dmg/result.json",
+          "docs/assessment/package-verification-2026-10-06/offline-installed/bundled-grammars.json",
+          "docs/assessment/package-verification-2026-10-06/offline-installed/result.json",
+          "docs/assessment/package-verification-2026-10-06/offline-installed/result.png",
+          "docs/assessment/package-verification-2026-10-06/offline-package/bundled-grammars.json",
+          "docs/assessment/package-verification-2026-10-06/offline-package/result.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/arm64/offline-dmg/app.log",
+          "docs/assessment/parser-integrity-2026-10-02/ci/arm64/offline-dmg/bundled-grammars.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/arm64/offline-dmg/result.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/arm64/offline-dmg/result.png",
+          "docs/assessment/parser-integrity-2026-10-02/ci/arm64/offline-package/app.log",
+          "docs/assessment/parser-integrity-2026-10-02/ci/arm64/offline-package/bundled-grammars.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/arm64/offline-package/result.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/arm64/offline-package/result.png",
+          "docs/assessment/parser-integrity-2026-10-02/ci/intel/offline-dmg/app.log",
+          "docs/assessment/parser-integrity-2026-10-02/ci/intel/offline-dmg/bundled-grammars.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/intel/offline-dmg/result.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/intel/offline-dmg/result.png",
+          "docs/assessment/parser-integrity-2026-10-02/ci/intel/offline-package/app.log",
+          "docs/assessment/parser-integrity-2026-10-02/ci/intel/offline-package/bundled-grammars.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/intel/offline-package/result.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/intel/offline-package/result.png",
+          "docs/assessment/parser-integrity-2026-10-02/ci/run.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/summary.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/test-counts.log",
+          "docs/assessment/parser-integrity-2026-10-02/ci/windows/offline-installer/app.log",
+          "docs/assessment/parser-integrity-2026-10-02/ci/windows/offline-installer/bundled-grammars.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/windows/offline-installer/firewall.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/windows/offline-installer/result.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/windows/offline-installer/result.png",
+          "docs/assessment/parser-integrity-2026-10-02/ci/windows/offline-package/app.log",
+          "docs/assessment/parser-integrity-2026-10-02/ci/windows/offline-package/bundled-grammars.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/windows/offline-package/firewall.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/windows/offline-package/result.json",
+          "docs/assessment/parser-integrity-2026-10-02/ci/windows/offline-package/result.png",
+          "docs/assessment/parser-integrity-2026-10-02/hash-candidates/darwin-arm64.json",
+          "docs/assessment/parser-integrity-2026-10-02/hash-candidates/darwin-x86_64.json",
+          "docs/assessment/parser-integrity-2026-10-02/hash-candidates/linux-x86_64.json",
+          "docs/assessment/parser-integrity-2026-10-02/hash-candidates/run.json",
+          "docs/assessment/parser-integrity-2026-10-02/hash-candidates/win32-x86_64.json",
+          "docs/assessment/parser-integrity-2026-10-02/local-dmg/app.log",
+          "docs/assessment/parser-integrity-2026-10-02/local-dmg/bundled-grammars.json",
+          "docs/assessment/parser-integrity-2026-10-02/local-dmg/result.json",
+          "docs/assessment/parser-integrity-2026-10-02/local-dmg/result.png",
+          "docs/assessment/parser-integrity-2026-10-02/local-fallback/result.json",
+          "docs/assessment/parser-integrity-2026-10-02/local-fallback/result.png",
+          "docs/assessment/parser-integrity-2026-10-02/local-package/app.log",
+          "docs/assessment/parser-integrity-2026-10-02/local-package/bundled-grammars.json",
+          "docs/assessment/parser-integrity-2026-10-02/local-package/result.json",
+          "docs/assessment/parser-integrity-2026-10-02/local-package/result.png",
+          "docs/assessment/parser-integrity-2026-10-02/python.log",
+          "docs/assessment/parser-integrity-2026-10-02/react.log",
+          "docs/assessment/progress-draft-recovery-2026-10-01/README.md",
+          "docs/assessment/progress-draft-recovery-2026-10-01/SHA256SUMS.txt",
+          "docs/assessment/progress-draft-recovery-2026-10-01/build-final.log",
+          "docs/assessment/progress-draft-recovery-2026-10-01/desktop-first-attempt-failure.log",
+          "docs/assessment/progress-draft-recovery-2026-10-01/lint-after.log",
+          "docs/assessment/progress-draft-recovery-2026-10-01/lint-before.log",
+          "docs/assessment/progress-draft-recovery-2026-10-01/native-confirm.json",
+          "docs/assessment/progress-draft-recovery-2026-10-01/native-edit.json",
+          "docs/assessment/progress-draft-recovery-2026-10-01/native-recover.json",
+          "docs/assessment/progress-draft-recovery-2026-10-01/native-restart.py",
+          "docs/assessment/progress-draft-recovery-2026-10-01/native.log",
+          "docs/assessment/progress-draft-recovery-2026-10-01/python-all.log",
+          "docs/assessment/progress-draft-recovery-2026-10-01/release-ci-first-attempt-failure.log",
+          "docs/assessment/progress-draft-recovery-2026-10-01/release-downloads.json",
+          "docs/assessment/progress-draft-recovery-2026-10-01/results.json",
+          "docs/assessment/progress-draft-recovery-2026-10-01/ui-final.log",
+          "docs/assessment/progress-event-refactor-2026-10-01/summary.json",
+          "docs/assessment/progress-scope-card-toggle-2026-10-01/summary.json",
+          "docs/assessment/progress-session-review-2026-10-01/README.md",
+          "docs/assessment/progress-session-review-2026-10-01/SessionRegression.test.tsx.txt",
+          "docs/assessment/progress-session-review-2026-10-01/build-final-contract.log",
+          "docs/assessment/progress-session-review-2026-10-01/native-final5.log",
+          "docs/assessment/progress-session-review-2026-10-01/native-result.json",
+          "docs/assessment/progress-session-review-2026-10-01/native-smoke.py",
+          "docs/assessment/progress-session-review-2026-10-01/python-all.log",
+          "docs/assessment/progress-session-review-2026-10-01/qt-events.json",
+          "docs/assessment/progress-session-review-2026-10-01/regression-after.log",
+          "docs/assessment/progress-session-review-2026-10-01/regression-before.log",
+          "docs/assessment/progress-session-review-2026-10-01/results.json",
+          "docs/assessment/progress-session-review-2026-10-01/ui-final-contract.log",
+          "docs/assessment/progress-session-review-2026-10-01/ui-final.log",
+          "docs/assessment/progress-structure-review-2026-10-01/summary.json",
+          "docs/assessment/published-recheck-2026-09-29/generalization.json",
+          "docs/assessment/reextraction-merge-2026-10-01/summary.json",
+          "docs/assessment/self-verification-2026-10-06/README.md",
+          "docs/assessment/self-verification-2026-10-06/baseline-behavior-test.log",
+          "docs/assessment/self-verification-2026-10-06/baseline-test-execution.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/results.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probes.py",
+          "docs/assessment/self-verification-2026-10-06/product-run/changed-files.txt",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.html",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/manifest.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/policy.yml",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/summary.json",
+          "docs/assessment/self-verification-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-2026-10-06/trace_behavior.py",
+          "docs/assessment/self-verification-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-2026-10-06/validation.json",
+          "docs/assessment/self-verification-2026-10-06/verify.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/README.md",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization-final.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/git-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/results.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/validate_candidate.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validation.json",
+          "docs/assessment/subscription-review-2026-09-28/claude.json",
+          "docs/assessment/subscription-review-2026-09-28/codex.json",
+          "docs/assessment/v1-ver2-controlled-2026-09-23/cases.json",
+          "docs/assessment/v1-ver2-controlled-2026-09-23/post-discovery-recheck/result.json",
+          "docs/assessment/v1-ver2-controlled-2026-09-23/post-fix-715335f/result.json",
+          "docs/assessment/v1-ver2-controlled-2026-09-23/post-fix-generalization-715335f.json",
+          "docs/assessment/v1-ver2-controlled-2026-09-23/protocol.md",
+          "docs/assessment/v1-ver2-controlled-2026-09-23/run-1/result.json",
+          "docs/assessment/v1-ver2-controlled-2026-09-23/run-2/result.json",
+          "docs/assessment/v1-ver2-controlled-2026-09-23/run-3/result.json",
+          "docs/assessment/v1-ver2-controlled-2026-09-23/run-4/result.json",
+          "docs/assessment/v5-summary-card-split-2026-10-01/summary.json",
+          "docs/assets/cross-agent-desktop.png",
+          "docs/assets/desktop-preview.png",
+          "docs/assets/offline-installed-windows-2026-10-01.png",
+          "docs/assets/offline-packaged-analysis-2026-10-01.png",
+          "docs/assets/progress-draft-recovery-2026-10-01.png",
+          "docs/assets/progress-session-preserved-2026-10-01.png",
+          "docs/assets/project-progress-document-kinds.png",
+          "docs/assets/project-progress-event-refactor.png",
+          "docs/assets/project-progress-excluded-scope.png",
+          "docs/assets/project-progress-roles-empty.png",
+          "docs/assets/project-progress-structure-review.png",
+          "docs/assets/project-progress-summary-split-narrow.png",
+          "docs/assets/project-progress-summary-split.png",
+          "docs/assets/project-progress.png",
+          "docs/assets/subscription-review.png",
+          "docs/content-verification.md",
+          "docs/contracts/desktop-bridge.md",
+          "docs/contracts/gate-and-inputs.md",
+          "docs/contracts/mcp-transport.md",
+          "docs/contracts/progress-storage.md",
+          "docs/conversation-summary-2026-10-01.md",
+          "docs/design/desktop-redesign-skill-workflow.md",
+          "docs/design/tool-ui-integration-2026-09-29.md",
+          "docs/desktop-app.md",
+          "docs/detector-guide.md",
+          "docs/development-results-2026-09-22.md",
+          "docs/development-roadmap.md",
+          "docs/e05-contract-drift-fix-design-2026-09-23.md",
+          "docs/generalization-audit-2026-09-22.md",
+          "docs/handoff-2026-10-01.md",
+          "docs/migration-guide.md",
+          "docs/ops/desktop-ci.md",
+          "docs/ops/drift-gate-self-check.md",
+          "docs/published-recheck-2026-09-29.md",
+          "docs/review/architecture-audit-2026-10-06.md",
+          "docs/review/architecture-fixes-2026-10-06.md",
+          "docs/review/architecture-second-audit-2026-10-06.md",
+          "docs/review/architecture-second-fixes-2026-10-06.md",
+          "docs/review/document-kinds-v5-v7-2026-10-01.md",
+          "docs/review/draft-import-2026-10-06.md",
+          "docs/review/draft-management-2026-10-02.md",
+          "docs/review/drift-gate-self-verification-2026-10-06.md",
+          "docs/review/editor-concurrency-2026-10-02.md",
+          "docs/review/offline-packaged-analysis-2026-10-01.md",
+          "docs/review/parser-integrity-2026-10-02.md",
+          "docs/review/progress-draft-recovery-2026-10-01.md",
+          "docs/review/progress-event-refactor-2026-10-01.md",
+          "docs/review/progress-scope-card-toggle-2026-10-01.md",
+          "docs/review/progress-session-review-2026-10-01.md",
+          "docs/review/progress-structure-review-2026-10-01.md",
+          "docs/review/reextraction-merge-2026-10-01.md",
+          "docs/review/release-readiness-2026-10-01.md",
+          "docs/review/self-verification-fixes-2026-10-06.md",
+          "docs/review/v5-summary-card-split-2026-10-01.md",
+          "docs/review/ver2-analysis-2026-09-29.md",
+          "docs/subscription-llm-review.md",
+          "docs/v1-ver2-contract-fix-results-2026-09-23.md",
+          "docs/v1-ver2-controlled-comparison-2026-09-23.md",
+          "drift_gate/adapters/eval/runner.py",
+          "drift_gate/adapters/grammar_resources.py",
+          "drift_gate/adapters/parser_hashes.json",
+          "drift_gate/adapters/report_naming.py",
+          "drift_gate/desktop/__init__.py",
+          "drift_gate/desktop/app.py",
+          "drift_gate/desktop/doc_links.py",
+          "drift_gate/desktop/package_check.py",
+          "drift_gate/desktop/policy_setup.py",
+          "drift_gate/desktop/resources.py",
+          "drift_gate/desktop/review_dialog.py",
+          "drift_gate/desktop/service.py",
+          "drift_gate/desktop/subscription_review.py",
+          "scripts/audit_generalization.py",
+          "scripts/compare_v1_ver2.py",
+          "scripts/compare_v1_ver2_postfix.py",
+          "scripts/measure_development.py",
+          "scripts/measure_env_contract.py",
+          "scripts/smoke_subscription_review.py",
+          "계획.md"
+        ],
+        "ignored": [
+          "desktop-ui/src/App.test.tsx",
+          "desktop-ui/src/eventSchema.test.ts",
+          "desktop-ui/src/features/project-progress/ProgressOverview.test.tsx",
+          "desktop-ui/src/features/project-progress/ProjectProgress.test.tsx",
+          "desktop-ui/src/features/project-progress/editorLifecycle.test.tsx",
+          "desktop-ui/src/features/project-progress/merge.test.ts",
+          "desktop-ui/src/features/project-progress/presentation.test.ts",
+          "desktop-ui/src/features/project-progress/progressContracts.test.ts",
+          "desktop-ui/src/features/project-progress/rebase.test.ts",
+          "desktop-ui/src/features/project-progress/requestSession.test.ts",
+          "desktop-ui/src/features/review/AnalysisNotice.test.tsx",
+          "drift_gate/tests/contracts/progress.json",
+          "drift_gate/tests/test_contract_route_regressions.py",
+          "drift_gate/tests/test_desktop_service.py",
+          "drift_gate/tests/test_desktop_ui.py",
+          "drift_gate/tests/test_desktop_web.py",
+          "drift_gate/tests/test_development_regressions.py",
+          "drift_gate/tests/test_doc_links.py",
+          "drift_gate/tests/test_docs_check.py",
+          "drift_gate/tests/test_engine.py",
+          "drift_gate/tests/test_enricher.py",
+          "drift_gate/tests/test_eval_runner.py",
+          "drift_gate/tests/test_git_collection.py",
+          "drift_gate/tests/test_github_client.py",
+          "drift_gate/tests/test_history.py",
+          "drift_gate/tests/test_html_reporter.py",
+          "drift_gate/tests/test_intensity_classifier.py",
+          "drift_gate/tests/test_mcp_tools.py",
+          "drift_gate/tests/test_packaging.py",
+          "drift_gate/tests/test_policy_setup.py",
+          "drift_gate/tests/test_progress_concurrency.py",
+          "drift_gate/tests/test_progress_drafts.py",
+          "drift_gate/tests/test_progress_history.py",
+          "drift_gate/tests/test_progress_report.py",
+          "drift_gate/tests/test_progress_service.py",
+          "drift_gate/tests/test_report_naming.py",
+          "drift_gate/tests/test_review.py",
+          "drift_gate/tests/test_self_audit.py",
+          "drift_gate/tests/test_self_policy.py",
+          "drift_gate/tests/test_subscription_review.py",
+          "drift_gate/tests/test_validator.py",
+          "drift_gate/tests/test_verification_records.py"
+        ]
+      },
+      "git_path_set_equal": true,
+      "saved_evidence_equal_except_runtime": true
+    },
+    {
+      "name": "latest-html-agrees-with-remote-evaluation",
+      "matches_expected": true,
+      "actual": "pass",
+      "expected": "pass",
+      "exit_code": 0
+    },
+    {
+      "name": "missing-required-1",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "01e28e1620941a539d3e9c14972201b30adafd3b",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/missing-required-1.json"
+      ],
+      "expected": "fail",
+      "actual": "fail",
+      "exit_code": 1,
+      "matches_expected": true,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {
+          ".drift-gate.self.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/ci.yml": [
+            "self-package-operations"
+          ],
+          "drift_gate/adapters/cli/runner.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/mcp/server.py": [
+            "self-mcp-contract"
+          ],
+          "drift_gate/core/classification/intensity.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/evaluation/contracts.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/python_syntax.py": [
+            "self-engine-contract"
+          ],
+          "scripts/check_self.py": [
+            "self-package-operations"
+          ]
+        },
+        "unmatched": [
+          "docs/assessment/self-verification-2026-10-06/README.md",
+          "docs/assessment/self-verification-2026-10-06/baseline-behavior-test.log",
+          "docs/assessment/self-verification-2026-10-06/baseline-test-execution.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/results.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probes.py",
+          "docs/assessment/self-verification-2026-10-06/product-run/changed-files.txt",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.html",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/manifest.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/policy.yml",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/summary.json",
+          "docs/assessment/self-verification-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-2026-10-06/trace_behavior.py",
+          "docs/assessment/self-verification-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-2026-10-06/validation.json",
+          "docs/assessment/self-verification-2026-10-06/verify.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/README.md",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization-final.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/git-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/results.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/validate_candidate.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validation.json",
+          "docs/contracts/desktop-bridge.md",
+          "docs/contracts/mcp-transport.md",
+          "docs/contracts/progress-storage.md",
+          "docs/ops/drift-gate-self-check.md",
+          "docs/review/drift-gate-self-verification-2026-10-06.md",
+          "docs/review/self-verification-fixes-2026-10-06.md"
+        ],
+        "ignored": [
+          "drift_gate/tests/test_contract_route_regressions.py",
+          "drift_gate/tests/test_development_regressions.py",
+          "drift_gate/tests/test_git_collection.py",
+          "drift_gate/tests/test_mcp_tools.py",
+          "drift_gate/tests/test_self_policy.py"
+        ]
+      }
+    },
+    {
+      "name": "missing-required-2",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "01e28e1620941a539d3e9c14972201b30adafd3b",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/missing-required-2.json"
+      ],
+      "expected": "fail",
+      "actual": "fail",
+      "exit_code": 1,
+      "matches_expected": true,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {
+          ".drift-gate.self.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/ci.yml": [
+            "self-package-operations"
+          ],
+          "drift_gate/adapters/cli/runner.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/mcp/server.py": [
+            "self-mcp-contract"
+          ],
+          "drift_gate/core/classification/intensity.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/evaluation/contracts.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/python_syntax.py": [
+            "self-engine-contract"
+          ],
+          "scripts/check_self.py": [
+            "self-package-operations"
+          ]
+        },
+        "unmatched": [
+          "docs/assessment/self-verification-2026-10-06/README.md",
+          "docs/assessment/self-verification-2026-10-06/baseline-behavior-test.log",
+          "docs/assessment/self-verification-2026-10-06/baseline-test-execution.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/results.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probes.py",
+          "docs/assessment/self-verification-2026-10-06/product-run/changed-files.txt",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.html",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/manifest.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/policy.yml",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/summary.json",
+          "docs/assessment/self-verification-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-2026-10-06/trace_behavior.py",
+          "docs/assessment/self-verification-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-2026-10-06/validation.json",
+          "docs/assessment/self-verification-2026-10-06/verify.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/README.md",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization-final.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/git-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/results.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/validate_candidate.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validation.json",
+          "docs/contracts/desktop-bridge.md",
+          "docs/contracts/gate-and-inputs.md",
+          "docs/contracts/progress-storage.md",
+          "docs/ops/drift-gate-self-check.md",
+          "docs/review/drift-gate-self-verification-2026-10-06.md",
+          "docs/review/self-verification-fixes-2026-10-06.md"
+        ],
+        "ignored": [
+          "drift_gate/tests/test_contract_route_regressions.py",
+          "drift_gate/tests/test_development_regressions.py",
+          "drift_gate/tests/test_git_collection.py",
+          "drift_gate/tests/test_mcp_tools.py",
+          "drift_gate/tests/test_self_policy.py"
+        ]
+      }
+    },
+    {
+      "name": "missing-required-3",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "01e28e1620941a539d3e9c14972201b30adafd3b",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/missing-required-3.json"
+      ],
+      "expected": "fail",
+      "actual": "fail",
+      "exit_code": 1,
+      "matches_expected": true,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {
+          ".drift-gate.self.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/ci.yml": [
+            "self-package-operations"
+          ],
+          "drift_gate/adapters/cli/runner.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/mcp/server.py": [
+            "self-mcp-contract"
+          ],
+          "drift_gate/core/classification/intensity.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/evaluation/contracts.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/python_syntax.py": [
+            "self-engine-contract"
+          ],
+          "scripts/check_self.py": [
+            "self-package-operations"
+          ]
+        },
+        "unmatched": [
+          "docs/assessment/self-verification-2026-10-06/README.md",
+          "docs/assessment/self-verification-2026-10-06/baseline-behavior-test.log",
+          "docs/assessment/self-verification-2026-10-06/baseline-test-execution.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/results.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probes.py",
+          "docs/assessment/self-verification-2026-10-06/product-run/changed-files.txt",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.html",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/manifest.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/policy.yml",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/summary.json",
+          "docs/assessment/self-verification-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-2026-10-06/trace_behavior.py",
+          "docs/assessment/self-verification-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-2026-10-06/validation.json",
+          "docs/assessment/self-verification-2026-10-06/verify.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/README.md",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization-final.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/git-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/results.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/validate_candidate.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validation.json",
+          "docs/contracts/desktop-bridge.md",
+          "docs/contracts/gate-and-inputs.md",
+          "docs/contracts/mcp-transport.md",
+          "docs/contracts/progress-storage.md",
+          "docs/review/drift-gate-self-verification-2026-10-06.md",
+          "docs/review/self-verification-fixes-2026-10-06.md"
+        ],
+        "ignored": [
+          "drift_gate/tests/test_contract_route_regressions.py",
+          "drift_gate/tests/test_development_regressions.py",
+          "drift_gate/tests/test_git_collection.py",
+          "drift_gate/tests/test_mcp_tools.py",
+          "drift_gate/tests/test_self_policy.py"
+        ]
+      }
+    },
+    {
+      "name": "unrelated-report-cannot-substitute",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "01e28e1620941a539d3e9c14972201b30adafd3b",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/unrelated-report-cannot-substitute.json"
+      ],
+      "expected": "fail",
+      "actual": "fail",
+      "exit_code": 1,
+      "matches_expected": true,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {
+          ".drift-gate.self.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/ci.yml": [
+            "self-package-operations"
+          ],
+          "drift_gate/adapters/cli/runner.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/mcp/server.py": [
+            "self-mcp-contract"
+          ],
+          "drift_gate/core/classification/intensity.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/evaluation/contracts.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/python_syntax.py": [
+            "self-engine-contract"
+          ],
+          "scripts/check_self.py": [
+            "self-package-operations"
+          ]
+        },
+        "unmatched": [
+          "docs/assessment/self-verification-2026-10-06/README.md",
+          "docs/assessment/self-verification-2026-10-06/baseline-behavior-test.log",
+          "docs/assessment/self-verification-2026-10-06/baseline-test-execution.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/results.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probes.py",
+          "docs/assessment/self-verification-2026-10-06/product-run/changed-files.txt",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.html",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/manifest.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/policy.yml",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/summary.json",
+          "docs/assessment/self-verification-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-2026-10-06/trace_behavior.py",
+          "docs/assessment/self-verification-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-2026-10-06/validation.json",
+          "docs/assessment/self-verification-2026-10-06/verify.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/README.md",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization-final.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/git-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/results.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/validate_candidate.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validation.json",
+          "docs/contracts/desktop-bridge.md",
+          "docs/contracts/progress-storage.md",
+          "docs/review/drift-gate-self-verification-2026-10-06.md",
+          "docs/review/self-verification-fixes-2026-10-06.md",
+          "docs/review/unrelated.md"
+        ],
+        "ignored": [
+          "drift_gate/tests/test_contract_route_regressions.py",
+          "drift_gate/tests/test_development_regressions.py",
+          "drift_gate/tests/test_git_collection.py",
+          "drift_gate/tests/test_mcp_tools.py",
+          "drift_gate/tests/test_self_policy.py"
+        ]
+      }
+    },
+    {
+      "name": "content-free-contract-substitution",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "01e28e1620941a539d3e9c14972201b30adafd3b",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/content-free-contract-substitution.json"
+      ],
+      "expected": "fail",
+      "actual": "pass",
+      "exit_code": 0,
+      "matches_expected": false,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {
+          ".drift-gate.self.yml": [
+            "self-package-operations"
+          ],
+          ".github/workflows/ci.yml": [
+            "self-package-operations"
+          ],
+          "drift_gate/adapters/cli/runner.py": [
+            "self-cli-contract"
+          ],
+          "drift_gate/adapters/mcp/server.py": [
+            "self-mcp-contract"
+          ],
+          "drift_gate/core/classification/intensity.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/evaluation/contracts.py": [
+            "self-engine-contract"
+          ],
+          "drift_gate/core/python_syntax.py": [
+            "self-engine-contract"
+          ],
+          "scripts/check_self.py": [
+            "self-package-operations"
+          ]
+        },
+        "unmatched": [
+          "docs/assessment/self-verification-2026-10-06/README.md",
+          "docs/assessment/self-verification-2026-10-06/baseline-behavior-test.log",
+          "docs/assessment/self-verification-2026-10-06/baseline-test-execution.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/results.json",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stdout",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stderr",
+          "docs/assessment/self-verification-2026-10-06/probe-run/valid.stdout",
+          "docs/assessment/self-verification-2026-10-06/probes.py",
+          "docs/assessment/self-verification-2026-10-06/product-run/changed-files.txt",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.html",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/gate.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/generalization.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/manifest.json",
+          "docs/assessment/self-verification-2026-10-06/product-run/policy.yml",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stderr",
+          "docs/assessment/self-verification-2026-10-06/product-run/review.stdout",
+          "docs/assessment/self-verification-2026-10-06/product-run/summary.json",
+          "docs/assessment/self-verification-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-2026-10-06/trace_behavior.py",
+          "docs/assessment/self-verification-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-2026-10-06/validation.json",
+          "docs/assessment/self-verification-2026-10-06/verify.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/README.md",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization-final.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/generalization.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/git-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/results.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/python-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/react-tests.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff-final.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/ruff.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/typescript.log",
+          "docs/assessment/self-verification-fixes-2026-10-06/validate_candidate.py",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/manifest.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.json",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stderr",
+          "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stdout",
+          "docs/assessment/self-verification-fixes-2026-10-06/validation.json",
+          "docs/contracts/desktop-bridge.md",
+          "docs/contracts/gate-and-inputs.md",
+          "docs/contracts/mcp-transport.md",
+          "docs/contracts/progress-storage.md",
+          "docs/ops/drift-gate-self-check.md",
+          "docs/review/drift-gate-self-verification-2026-10-06.md",
+          "docs/review/self-verification-fixes-2026-10-06.md"
+        ],
+        "ignored": [
+          "drift_gate/tests/test_contract_route_regressions.py",
+          "drift_gate/tests/test_development_regressions.py",
+          "drift_gate/tests/test_git_collection.py",
+          "drift_gate/tests/test_mcp_tools.py",
+          "drift_gate/tests/test_self_policy.py"
+        ]
+      }
+    },
+    {
+      "name": "invalid-base",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "meta-audit-absent-ref",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/invalid-base.json"
+      ],
+      "expected": "input_error",
+      "actual": "input_error",
+      "exit_code": 2,
+      "matches_expected": true,
+      "expected_exit_code": 2
+    },
+    {
+      "name": "missing-policy",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "01e28e1620941a539d3e9c14972201b30adafd3b",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/missing-policy.json"
+      ],
+      "expected": "input_error",
+      "actual": "input_error",
+      "exit_code": 2,
+      "matches_expected": true,
+      "expected_exit_code": 2
+    },
+    {
+      "name": "malformed-policy",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "01e28e1620941a539d3e9c14972201b30adafd3b",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/malformed-policy.json"
+      ],
+      "expected": "input_error",
+      "actual": "input_error",
+      "exit_code": 2,
+      "matches_expected": true,
+      "expected_exit_code": 2
+    },
+    {
+      "name": "wrong-valid-base-head",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "f43cada2ea177b63cb0ac4a79be37071113a5191",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/wrong-valid-base-head.json"
+      ],
+      "expected": "fail",
+      "actual": "pass",
+      "exit_code": 0,
+      "matches_expected": false,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {},
+        "unmatched": [],
+        "ignored": []
+      }
+    },
+    {
+      "name": "untracked-new-source",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "f43cada2ea177b63cb0ac4a79be37071113a5191",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/untracked-new-source.json"
+      ],
+      "expected": "fail",
+      "actual": "pass",
+      "exit_code": 0,
+      "matches_expected": false,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {},
+        "unmatched": [],
+        "ignored": []
+      }
+    },
+    {
+      "name": "staged-new-source",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "f43cada2ea177b63cb0ac4a79be37071113a5191",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/staged-new-source.json"
+      ],
+      "expected": "fail",
+      "actual": "fail",
+      "exit_code": 1,
+      "matches_expected": true,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {
+          "drift_gate/core/meta_audit_new.py": [
+            "self-engine-contract"
+          ]
+        },
+        "unmatched": [],
+        "ignored": []
+      }
+    },
+    {
+      "name": "policy-removes-all-its-own-rules",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "f43cada2ea177b63cb0ac4a79be37071113a5191",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/policy-removes-all-its-own-rules.json"
+      ],
+      "expected": "fail",
+      "actual": "pass",
+      "exit_code": 0,
+      "matches_expected": false,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {},
+        "unmatched": [
+          ".drift-gate.self.yml",
+          "drift_gate/core/engine.py"
+        ],
+        "ignored": []
+      }
+    },
+    {
+      "name": "uncovered-production-source",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "f43cada2ea177b63cb0ac4a79be37071113a5191",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/uncovered-production-source.json"
+      ],
+      "expected": "fail",
+      "actual": "pass",
+      "exit_code": 0,
+      "matches_expected": false,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {},
+        "unmatched": [
+          "drift_gate/desktop/resources.py"
+        ],
+        "ignored": []
+      }
+    },
+    {
+      "name": "deleted-contract-cannot-substitute",
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "f43cada2ea177b63cb0ac4a79be37071113a5191",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/meta-verification-2026-10-06/verified-run/deleted-contract-cannot-substitute.json"
+      ],
+      "expected": "fail",
+      "actual": "fail",
+      "exit_code": 1,
+      "matches_expected": true,
+      "expected_exit_code": 1,
+      "coverage": {
+        "kind": "declared path matches, before intensity filtering",
+        "matched": {
+          "drift_gate/core/engine.py": [
+            "self-engine-contract"
+          ]
+        },
+        "unmatched": [
+          "docs/contracts/gate-and-inputs.md"
+        ],
+        "ignored": []
+      }
+    },
+    {
+      "name": "historical-html-integrity-and-replay",
+      "matches_expected": true,
+      "old_head": "01e28e1620941a539d3e9c14972201b30adafd3b",
+      "old_base": "729a3cde70c3457b633798bb50273d815d4d2c12",
+      "exit_code": 0,
+      "actual": "warn",
+      "expected": "warn",
+      "note": "Historical HTML is authentic but describes an older commit and example policy."
+    }
+  ],
+  "limitations_found": [
+    "content-free-contract-substitution",
+    "wrong-valid-base-head",
+    "untracked-new-source",
+    "policy-removes-all-its-own-rules",
+    "uncovered-production-source"
+  ]
+}

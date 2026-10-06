@@ -1,0 +1,179 @@
+{
+  "requested_base": "52c4f493f5301c1b66a4fc95ba3e9cf0f19e03e8",
+  "evaluation": {
+    "summary": {
+      "blocker": 0,
+      "major": 1,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "fail"
+    },
+    "scan_metrics": {
+      "scanned_files": 1,
+      "skipped_ignored_files": 0,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 6,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": "elsewhere/audit_subject.py",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        }
+      ]
+    },
+    "result": "fail",
+    "change_types": [
+      "other"
+    ],
+    "violations": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "confidence": "low",
+        "change_types": [
+          "other"
+        ],
+        "change_type": "other",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": "elsewhere/audit_subject.py",
+            "status": "renamed",
+            "previous_path": "drift_gate/core/audit_subject.py",
+            "patch": "diff --git a/drift_gate/core/audit_subject.py b/elsewhere/audit_subject.py\nsimilarity index 100%\nrename from drift_gate/core/audit_subject.py\nrename to elsewhere/audit_subject.py\n",
+            "semantic_signals": [],
+            "semantic_evidence": [
+              "No changed code lines to parse"
+            ],
+            "analysis_method": "heuristic",
+            "analysis_reason": "No changed code lines to parse",
+            "documented_env_keys": null
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "checklist": [
+          "Gate and analysis contract 업데이트"
+        ],
+        "ignored": false,
+        "change_intensity": "impl-only",
+        "change_intensities": [
+          "impl-only"
+        ],
+        "trigger_patterns": [
+          "drift_gate/core/**"
+        ],
+        "blast_radius": [
+          "missing requirement group: Gate and analysis contract"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": []
+      }
+    ],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "fail",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "drift_gate/core/**"
+        ],
+        "trigger_files": [
+          "elsewhere/audit_subject.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ]
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {},
+    "unmatched": [
+      "elsewhere/audit_subject.py"
+    ],
+    "ignored": []
+  }
+}

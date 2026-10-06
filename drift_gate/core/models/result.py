@@ -376,6 +376,7 @@ class EvaluationResult:
     skip: bool = False
     skip_reason: str = ""
     no_policy: bool = False
+    execution: dict = field(default_factory=dict)
 
     @property
     def blocker_count(self) -> int:
@@ -404,6 +405,9 @@ class EvaluationResult:
             },
             "scan_metrics": self.scan_metrics.to_dict(),
             "result": self.result,
+            "skip": self.skip,
+            "skip_reason": self.skip_reason,
+            "no_policy": self.no_policy,
             "change_types": self.change_types,
             "violations": [v.to_dict() for v in self.violations],
             "rule_decisions": [d.to_dict() for d in self.rule_decisions],
@@ -417,4 +421,6 @@ class EvaluationResult:
         }
         if self.enrichment_metrics is not None:
             d["enrichment_metrics"] = self.enrichment_metrics.to_dict()
+        if self.execution:
+            d['execution'] = self.execution
         return d

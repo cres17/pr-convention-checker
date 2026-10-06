@@ -40,6 +40,11 @@ class MarkdownReporter:
             "## Drift Gate Report",
             "",
         ]
+        lines += [f"**No policy:** `{result.no_policy}`",
+                  f"**Skip reason:** `{result.skip_reason or 'none'}`", ""]
+        if result.execution:
+            lines += [f"**Execution:** `{result.execution.get('run_id', '')}`",
+                      ""]
 
         if result.no_policy:
             lines += self._no_policy_section()
@@ -62,7 +67,7 @@ class MarkdownReporter:
         if not result.violations:
             lines += [
                 "",
-                "**No contract drift found.** All configured policy rules passed.",
+                "**No contract drift found.** No applied rule has an unsatisfied contract.",
             ]
         else:
             lines += ["", "### Required Action", ""]

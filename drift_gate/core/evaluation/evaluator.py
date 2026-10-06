@@ -5,6 +5,7 @@ from datetime import date
 from typing import List, Tuple
 
 from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.change_paths import is_ignored, triggers
 from drift_gate.core.models.policy import Policy, Group, CrossFileRelation
 from drift_gate.core.models.result import (
     Violation, UnsatisfiedGroup, SatisfiedGroup, RuleDecision,
@@ -36,7 +37,7 @@ def evaluate(
 
     relevant_files = [
         f for f in changed_files
-        if not matches_any(f.path, policy.ignore_paths)
+        if not is_ignored(f, policy.ignore_paths)
     ]
 
     violations: List[Violation] = []
@@ -96,8 +97,7 @@ def evaluate(
 
         trigger_files = [
             f for f in relevant_files
-            if f.status != "unchanged" and (matches_any(f.path, when_patterns)
-            or (f.previous_path and matches_any(f.previous_path, when_patterns)))
+            if triggers(f, when_patterns)
         ]
         min_intensity = rule.when.min_change_intensity
         if min_intensity and min_intensity != "any":

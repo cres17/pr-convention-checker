@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "input_error",
+    "message": "failed to parse policy YAML: while parsing a flow sequence\n  in \"<unicode string>\", line 1, column 8:\n    rules: [broken\n           ^\nexpected ',' or ']', but got '<stream end>'\n  in \"<unicode string>\", line 1, column 15:\n    rules: [broken\n                  ^"
+  }
+}

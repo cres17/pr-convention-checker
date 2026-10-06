@@ -1,0 +1,12 @@
+C01  tool=supported   verdict=accepted
+C02  tool=supported   verdict=partially accepted
+C03  tool=supported   verdict=accepted
+C04  tool=supported   verdict=accepted with caveat
+C05  tool=supported   verdict=rejected
+C06  tool=supported   verdict=accepted
+C07  tool=supported   verdict=accepted
+C08  tool=supported   verdict=partially accepted
+C09  tool=supported   verdict=rejected
+C10  tool=supported   verdict=accepted
+C11  tool=supported   verdict=partially accepted
+C12  tool=supported   verdict=rejected

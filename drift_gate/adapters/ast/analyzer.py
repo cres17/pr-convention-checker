@@ -15,6 +15,7 @@ from dataclasses import replace
 from typing import Iterable
 
 from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.patch_lines import changed_lines
 from drift_gate.adapters.ast import TREE_SITTER_AVAILABLE, TREE_SITTER_ERROR
 from drift_gate.adapters.ast.typescript_adapter import TypeScriptAdapter
 from drift_gate.adapters.ast.python_adapter import PythonAdapter
@@ -57,8 +58,9 @@ def enrich_semantic_signals(files: Iterable[ChangedFile]) -> list[ChangedFile]:
         suffix = _suffix(file.path)
         # Removed declarations are contract changes too. Keep the two sides
         # separate: concatenating them can produce a misleading syntax tree.
-        added_lines = [line for line in _added_lines(file.patch) if not _comment_line(line)]
-        removed_lines = [line for line in _removed_lines(file.patch) if not _comment_line(line)]
+        code_lines = changed_lines(file, code_only=True)
+        added_lines = [line for marker, line in code_lines if marker == '+']
+        removed_lines = [line for marker, line in code_lines if marker == '-']
         for lines in (added_lines, removed_lines):
             if suffix in {".ts", ".tsx", ".js", ".jsx"}:
                 _merge(signals, evidence, _typescript_signals(lines))
@@ -84,7 +86,7 @@ def _analysis_status(file, suffix, added_lines, removed_lines):
     if not file.patch.strip() or file.patch.startswith(("[binary file skipped]", "[large file skipped]")):
         return "unavailable", "Patch unavailable; intensity cannot exclude a contract change"
     if not added_lines and not removed_lines:
-        return "heuristic", "No changed code lines to parse"
+        return "heuristic", "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
     languages = {".py": "python", ".ts": "typescript", ".tsx": "tsx", ".js": "javascript",
                  ".jsx": "javascript", ".go": "go", ".java": "java", ".kt": "kotlin", ".kts": "kotlin", ".rb": "ruby"}
     language = languages.get(suffix)
@@ -102,10 +104,6 @@ def _analysis_status(file, suffix, added_lines, removed_lines):
         return "grammar+heuristic", ""
     except Exception as exc:
         return "heuristic", f"Grammar unavailable ({type(exc).__name__}); using patch heuristics"
-
-
-def _comment_line(line):
-    return line.lstrip().startswith(("#", "//", "/*", "*", "*/"))
 
 
 def _typescript_signals(lines: list[str]) -> tuple[set[str], set[str]]:

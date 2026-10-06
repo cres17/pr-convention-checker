@@ -1,0 +1,7 @@
+diff --git a/drift_gate/core/new_audit.py b/drift_gate/core/new_audit.py
+new file mode 100644
+index 0000000..b15b1b0
+--- /dev/null
++++ b/drift_gate/core/new_audit.py
+@@ -0,0 +1 @@
++VALUE = 1

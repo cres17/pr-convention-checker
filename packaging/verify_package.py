@@ -94,6 +94,12 @@ def validate(result):
     actual = {n["path"]: n for n in notes}
     if len(notes) != len(expected) or set(actual) != expected or any(n["method"] != "grammar+heuristic" for n in notes):
         raise RuntimeError(f"Installed-app grammar analysis failed: {notes}")
+    checks = {c['case']: c['result'] for c in result.get('hardening_checks', [])}
+    if set(checks) != {'signature', 'rename'} or any(
+        r['result'] == 'pass' or not any(v['rule_id'] == 'offline-api-docs' for v in r['violations'])
+        for r in checks.values()
+    ):
+        raise RuntimeError('Installed app did not reject signature/rename drift through its actual bridge')
 
 
 def verify(executable, output):

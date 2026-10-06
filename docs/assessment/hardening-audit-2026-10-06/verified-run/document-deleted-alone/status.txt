@@ -1,0 +1,1 @@
+ D docs/contracts/gate-and-inputs.md

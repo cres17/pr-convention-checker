@@ -6,6 +6,7 @@ review target. That makes local preflight useful before a commit is created.
 """
 import subprocess
 import os
+import hashlib
 from pathlib import Path, PurePosixPath
 from typing import List, Optional
 
@@ -74,12 +75,34 @@ class GitAdapter:
     def __init__(self, repo_root: str | Path | None = None):
         self.repo_root = Path(repo_root) if repo_root is not None else None
 
-    def get_changed_files(self, base: str = "HEAD~1") -> List[ChangedFile]:
+    def get_changed_files(self, base: str = "HEAD~1", *, comparison_mode: str = 'commit') -> List[ChangedFile]:
+        self.repo_root = repository_root(self.repo_root)
         if not base or base.startswith("-"):
             raise GitInputError("비교 기준이 올바르지 않습니다.")
         commit = _git(["rev-parse", "--verify", "--end-of-options", f"{base}^{{commit}}"], self.repo_root).decode('ascii').strip()
+        if comparison_mode == 'merge-base':
+            commit = _git(['merge-base', commit, 'HEAD'], self.repo_root).decode('ascii').strip()
+        elif comparison_mode != 'commit':
+            raise GitInputError('Unknown comparison mode')
+        self.provenance = {'requested_base': base, 'resolved_base': commit,
+            'comparison_mode': comparison_mode,
+            'head': _git(['rev-parse', 'HEAD'], self.repo_root).decode('ascii').strip(),
+            'dirty': bool(_git(['status', '--porcelain'], self.repo_root)),
+            'untracked_skipped': _git(['ls-files', '--others', '--exclude-standard', '-z'], self.repo_root).decode('utf-8', errors='replace').strip('\0').split('\0')}
+        if self.provenance['untracked_skipped'] == ['']:
+            self.provenance['untracked_skipped'] = []
         output = _git(["diff", "--no-ext-diff", "--no-textconv", "--name-status", "-z", "--find-renames", commit, "--"], self.repo_root)
-        return [_with_patch(file, commit, self.repo_root) for file in _parse_name_status(output)]
+        snapshot_args = ['diff', '--no-ext-diff', '--no-textconv', '--find-renames', commit, '--']
+        snapshot = _git(snapshot_args, self.repo_root)
+        files = [_with_patch(file, commit, self.repo_root) for file in _parse_name_status(output)]
+        if _git(snapshot_args, self.repo_root) != snapshot:
+            raise GitInputError('Repository changed during collection; rerun the inspection')
+        self.provenance['snapshot_sha256'] = hashlib.sha256(snapshot).hexdigest()
+        return files
+
+
+def repository_root(cwd=None):
+    return Path(_git(['rev-parse', '--show-toplevel'], cwd).decode('utf-8').strip())
 
 
 def _git(args: list[str], cwd: Path | None) -> bytes:
@@ -124,7 +147,19 @@ def _with_patch(file: ChangedFile, diff_base: str, cwd: Path | None = None) -> C
         patch = _git(["diff", "--no-ext-diff", "--no-textconv", "--find-renames", diff_base, "--", *paths], cwd).decode('utf-8', errors='replace')
         if len(patch.encode('utf-8')) > _max_patch_bytes():
             patch = "[large file skipped]"
-    return ChangedFile(path=file.path, status=file.status, previous_path=file.previous_path, patch=patch)
+    before = after = None
+    if file.path.endswith('.py') and not patch.startswith('['):
+        old_path = file.previous_path or file.path
+        if file.status != 'added':
+            size = _git(['cat-file', '-s', f'{diff_base}:{old_path}'], cwd)
+            if int(size) <= 1_000_000:
+                before = _git(['show', f'{diff_base}:{old_path}'], cwd).decode('utf-8', errors='replace')
+        target = cwd / file.path
+        if (file.status != 'deleted' and not target.is_symlink()
+            and target.resolve().is_relative_to(cwd) and target.stat().st_size <= 1_000_000):
+            after = target.read_text(encoding='utf-8', errors='replace')
+    return ChangedFile(path=file.path, status=file.status, previous_path=file.previous_path,
+                       patch=patch, before_source=before, after_source=after)
 
 
 def _is_binary_path(path: str) -> bool:

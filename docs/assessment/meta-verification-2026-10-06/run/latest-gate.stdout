@@ -1,0 +1,838 @@
+{
+  "summary": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 0,
+    "nit": 0,
+    "gate_decision": "pass"
+  },
+  "scan_metrics": {
+    "scanned_files": 137,
+    "skipped_ignored_files": 5,
+    "skipped_binary_files": 0,
+    "skipped_large_files": 0,
+    "evaluated_rules": 6,
+    "runtime_seconds": 0.016939665976678953,
+    "analysis_notes": [
+      {
+        "path": ".drift-gate.self.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": ".github/workflows/ci.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/README.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/baseline-behavior-test.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/baseline-test-execution.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stderr",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stdout",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stderr",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stdout",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stderr",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stderr",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/results.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/valid.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probe-run/valid.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/probes.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/changed-files.txt",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/gate.html",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/gate.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/gate.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/generalization.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/generalization.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/manifest.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/policy.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/review.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/review.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/product-run/summary.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/python-tests.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/react-tests.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/ruff.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/trace_behavior.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/typescript.log",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/validation.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-2026-10-06/verify.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/README.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/manifest.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/manifest.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/generalization-final.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/generalization.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/git-tests-final.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stderr",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stderr",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stderr",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/results.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/python-tests-final.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/python-tests.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/react-tests.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/ruff-final.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/ruff.log",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/typescript.log",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validate_candidate.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/manifest.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stderr",
+        "method": "heuristic",
+        "reason": "No changed code lines to parse"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stdout",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/assessment/self-verification-fixes-2026-10-06/validation.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/contracts/desktop-bridge.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/contracts/gate-and-inputs.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/contracts/mcp-transport.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/contracts/progress-storage.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/ops/drift-gate-self-check.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/review/drift-gate-self-verification-2026-10-06.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/review/self-verification-fixes-2026-10-06.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "drift_gate/adapters/cli/runner.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/mcp/server.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/classification/intensity.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/contracts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/python_syntax.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_contract_route_regressions.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_development_regressions.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_git_collection.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/tests/test_mcp_tools.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_self_policy.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "scripts/check_self.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      }
+    ]
+  },
+  "result": "pass",
+  "change_types": [
+    "other",
+    "workflow-ci"
+  ],
+  "violations": [],
+  "rule_decisions": [
+    {
+      "rule_id": "self-engine-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "drift_gate/core/**"
+      ],
+      "trigger_files": [
+        "drift_gate/core/classification/intensity.py",
+        "drift_gate/core/evaluation/contracts.py",
+        "drift_gate/core/python_syntax.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Gate and analysis contract",
+          "required": [
+            "docs/contracts/gate-and-inputs.md"
+          ],
+          "type": "all_changed",
+          "evidence": ""
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-cli-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "drift_gate/adapters/cli/**"
+      ],
+      "trigger_files": [
+        "drift_gate/adapters/cli/runner.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Input and CLI contract",
+          "required": [
+            "docs/contracts/gate-and-inputs.md"
+          ],
+          "type": "all_changed",
+          "evidence": ""
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-mcp-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "drift_gate/adapters/mcp/**"
+      ],
+      "trigger_files": [
+        "drift_gate/adapters/mcp/server.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "MCP transport contract",
+          "required": [
+            "docs/contracts/mcp-transport.md"
+          ],
+          "type": "all_changed",
+          "evidence": ""
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-progress-contract",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-ui-bridge-contract",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-package-operations",
+      "severity": "MAJOR",
+      "status": "pass",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        ".drift-gate.self.yml",
+        ".github/workflows/**",
+        "scripts/check_self.py"
+      ],
+      "trigger_files": [
+        ".drift-gate.self.yml",
+        ".github/workflows/ci.yml",
+        "scripts/check_self.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Self-check and package operations",
+          "required": [
+            "docs/ops/drift-gate-self-check.md"
+          ],
+          "type": "all_changed",
+          "evidence": ""
+        }
+      ],
+      "unsatisfied_groups": []
+    }
+  ],
+  "skipped_rules": [],
+  "rejected_ignores": [],
+  "ignore_audit": [],
+  "temporal_warnings": [],
+  "gate": {
+    "fail_on_blocker": true,
+    "fail_on_major_count": 1
+  }
+}

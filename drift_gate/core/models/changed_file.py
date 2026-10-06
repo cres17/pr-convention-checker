@@ -14,6 +14,9 @@ class ChangedFile:
     analysis_reason: str = ""
     # Only key names are retained from document content, never values.
     documented_env_keys: Optional[List[str]] = None
+    # Bounded adapter snapshots; never serialized into reports or history.
+    before_source: Optional[str] = field(default=None, repr=False)
+    after_source: Optional[str] = field(default=None, repr=False)
 
     def to_dict(self) -> dict:
         return {

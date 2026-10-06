@@ -1,0 +1,8 @@
+diff --git a/drift_gate/core/audit_subject.py b/drift_gate/core/audit_subject.py
+deleted file mode 100644
+index 5b76021..0000000
+--- a/drift_gate/core/audit_subject.py
++++ /dev/null
+@@ -1,2 +0,0 @@
+-def calculate():
+-    return 1

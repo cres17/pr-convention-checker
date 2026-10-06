@@ -1,0 +1,20 @@
+{
+  "revision": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+  "checks": {
+    "cases": 13,
+    "related_pytest_passed": 161,
+    "ruff_E9_F": "pass",
+    "previous_plan_hash_preserved": true,
+    "missing_links": []
+  },
+  "artifacts": {
+    "docs/review/drift-gate-hardening-plan-2026-10-06.md": "425f85ac66299f8e2e1cec1926cf9bd0ef5fe0b3a7d75bfc186b05d3576bcab8",
+    "docs/review/drift-gate-plan-revalidation-2026-10-06.md": "b88510048cbeabcfdad9b2e7217ca620645532ddde4064fa3798884593b95091",
+    "docs/assessment/plan-revalidation-2026-10-06/README.md": "f610d0386709da64d657aa141e1d79a9a5a710f4d01b5685af91817b40cbfe17",
+    "docs/assessment/plan-revalidation-2026-10-06/related-tests.log": "c9a313f8635289a9052b37a039e3c3cbb265ae8b9f2bb549ac4d08a1c15551d5",
+    "docs/assessment/plan-revalidation-2026-10-06/results.json": "df2ace94c7b42ff246baf7da795134a4febde0e43e24e1dd2fd382f009793921",
+    "docs/assessment/plan-revalidation-2026-10-06/probe.py": "8156269a055106bcb874f463124c4917177517d26be4b4eb3f1be5a3690154e8",
+    "docs/assessment/plan-revalidation-2026-10-06/plan-before.md": "1ca62af9bf6082ccf4f5a49aa2ee53c2163f5d85fbe4e6c779836940aa369f06",
+    "docs/assessment/plan-revalidation-2026-10-06/local-refs.json": "de0f06ac61f4c72363356006c7ecaac248dd6c38248ba90a6648b730562eabfc"
+  }
+}

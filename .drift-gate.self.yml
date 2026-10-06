@@ -3,7 +3,7 @@
 rules:
   - id: self-engine-contract
     when:
-      any_changed: ['drift_gate/core/**', 'drift_gate/adapters/ast/**', 'drift_gate/adapters/docs/**', 'drift_gate/utils/**', 'drift_gate/reporters/**']
+      any_changed: ['drift_gate/core/**', 'drift_gate/adapters/ast/**', 'drift_gate/adapters/docs/**', 'drift_gate/utils/**', 'drift_gate/reporters/**', 'drift_gate/adapters/*.py', 'drift_gate/adapters/claude/**', 'drift_gate/adapters/eval/**', 'drift_gate/adapters/history/**', 'drift_gate/__init__.py', 'drift_gate/__main__.py']
       min_change_intensity: impl-only
     require:
       groups:
@@ -39,7 +39,7 @@ rules:
     severity: major
   - id: self-ui-bridge-contract
     when:
-      any_changed: ['desktop-ui/src/**', 'drift_gate/desktop/web_app.py']
+      any_changed: ['desktop-ui/src/**', 'drift_gate/desktop/web_app.py', 'drift_gate/desktop/app.py', 'drift_gate/desktop/service.py', 'drift_gate/desktop/resources.py', 'drift_gate/desktop/package_check.py', 'drift_gate/desktop/policy_setup.py', 'drift_gate/desktop/review_dialog.py', 'drift_gate/desktop/subscription_review.py', 'drift_gate/desktop/doc_links.py', 'drift_gate/desktop/__init__.py', 'desktop-ui/package.json', 'desktop-ui/package-lock.json', 'desktop-ui/vite.config.ts']
       min_change_intensity: impl-only
     require:
       groups:
@@ -48,7 +48,7 @@ rules:
     severity: major
   - id: self-package-operations
     when:
-      any_changed: ['packaging/**', '.github/workflows/**', '.drift-gate.self.yml', 'scripts/check_self.py']
+      any_changed: ['packaging/**', '.github/workflows/**', '.drift-gate.self.yml', 'scripts/check_self.py', 'action.yml', 'drift_gate/adapters/parser_hashes.json']
       min_change_intensity: impl-only
     require:
       groups:

@@ -1,0 +1,1312 @@
+{
+  "revision": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+  "scope": "Tracked Python product files including __init__, UI ts/tsx/css, packaging, workflows, explicit build config; excludes Python tests and other audit scripts, retains UI tests as ignored.",
+  "files": [
+    {
+      "path": ".github/workflows/benchmark.yml",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    },
+    {
+      "path": ".github/workflows/desktop-build.yml",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    },
+    {
+      "path": ".github/workflows/desktop-release.yml",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    },
+    {
+      "path": ".github/workflows/parser-hashes.yml",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    },
+    {
+      "path": "action.yml",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "desktop-ui/package-lock.json",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "desktop-ui/package.json",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "desktop-ui/src/App.test.tsx",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/App.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/WorkspacePanels.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/bridge.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/approval-card/_adapter.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/approval-card/approval-card.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/approval-card/index.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/approval-card/schema.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/code-diff/_adapter.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/code-diff/code-diff.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/code-diff/index.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/code-diff/schema.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/option-list/_adapter.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/option-list/index.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/option-list/option-list.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/option-list/schema.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/option-list/selection.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/progress-tracker/_adapter.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/progress-tracker/index.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/progress-tracker/progress-tracker.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/progress-tracker/schema.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/shared/_adapter.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/shared/action-buttons.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/shared/actions-config.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/shared/contract.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/shared/embedded-actions.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/shared/parse.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/shared/schema.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/shared/use-action-buttons.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/shared/use-copy-to-clipboard.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/stats-display/_adapter.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/stats-display/index.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/stats-display/schema.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/stats-display/sparkline.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/tool-ui/stats-display/stats-display.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/ui/button.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/ui/card.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/ui/collapsible.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/components/ui/separator.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/eventSchema.test.ts",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/eventSchema.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/events.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/DocumentSetup.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/DraftRecovery.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/History.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/ProgressOverview.test.tsx",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/ProgressOverview.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/ProjectProgress.test.tsx",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/ProjectProgress.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/ReferenceChecks.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/RequirementDetail.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/RequirementList.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/documents.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/editorLifecycle.test.tsx",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/editorSessions.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/limits.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/merge.test.ts",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/merge.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/operations.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/presentation.test.ts",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/presentation.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/progressContracts.test.ts",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/progressState.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/rebase.test.ts",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/rebase.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/requestSession.test.ts",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/requestSession.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/requirement.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/status.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/project-progress/useProjectProgress.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/review/AnalysisNotice.test.tsx",
+      "ignored": true,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/review/AnalysisNotice.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/review/PolicySetup.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/review/ReviewDiff.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/review/ScanImpact.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/review/ViolationGuide.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/features/review/violations.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/lib/ui/cn.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/lib/utils.ts",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/main.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/presentation.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/preview.tsx",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/src/style.css",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "desktop-ui/vite.config.ts",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/__init__.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/__main__.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/__init__.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/ast/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/ast/analyzer.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/ast/go_adapter.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/ast/interface.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/ast/java_kotlin_adapter.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/ast/python_adapter.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/ast/ruby_adapter.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/ast/tree_sitter_python_adapter.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/ast/tree_sitter_support.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/ast/tree_sitter_typescript_adapter.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/ast/typescript_adapter.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/claude/__init__.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/claude/enricher.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/cli/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/cli/runner.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/docs/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/docs/checklist.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/docs/content.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/docs/readme_contract.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/eval/__init__.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/eval/runner.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/git/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/git/client.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/github/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/github/approvals.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/github/client.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/github/commenter.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/github_action/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/github_action/runner.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/grammar_resources.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/history/__init__.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/history/store.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/mcp/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-mcp-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/mcp/server.py",
+      "ignored": false,
+      "rules": [
+        "self-mcp-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/mcp/tools.py",
+      "ignored": false,
+      "rules": [
+        "self-mcp-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/adapters/parser_hashes.json",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/policy_loader.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/adapters/report_naming.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/core/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/classification/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/classification/classifier.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/classification/intensity.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/engine.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/evaluation/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/evaluation/contracts.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/evaluation/evaluator.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/gating/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/gating/gate.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/gating/temporal.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/models/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/models/changed_file.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/models/policy.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/models/result.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/policy/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/policy/loader.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/policy/validator.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/python_syntax.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/reasoning/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/reasoning/checklist.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/review/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/review/heuristics.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/route_syntax.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/self_audit/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/core/self_audit/matcher.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/__init__.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/desktop/app.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/desktop/doc_links.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/desktop/json_store.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/package_check.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/desktop/policy_setup.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/desktop/progress_context.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/progress_documents.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/progress_drafts.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/progress_history.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/progress_limits.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/progress_report.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/progress_scope.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/progress_service.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/resources.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/desktop/review_dialog.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/desktop/service.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/desktop/store_lock.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/subscription_review.py",
+      "ignored": false,
+      "rules": []
+    },
+    {
+      "path": "drift_gate/desktop/verification_records.py",
+      "ignored": false,
+      "rules": [
+        "self-progress-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/desktop/web_app.py",
+      "ignored": false,
+      "rules": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/reporters/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/reporters/html.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/reporters/json_reporter.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/reporters/markdown.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/utils/__init__.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "drift_gate/utils/glob_matcher.py",
+      "ignored": false,
+      "rules": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "path": "main.py",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "packaging/collect_parser_hashes.py",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    },
+    {
+      "path": "packaging/prepare_parsers.py",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    },
+    {
+      "path": "packaging/seal_parsers.py",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    },
+    {
+      "path": "packaging/verify_package.py",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    },
+    {
+      "path": "packaging/windows/DriftGate.iss",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    },
+    {
+      "path": "pyproject.toml",
+      "ignored": false,
+      "rules": [
+        "self-cli-contract"
+      ]
+    },
+    {
+      "path": "scripts/check_self.py",
+      "ignored": false,
+      "rules": [
+        "self-package-operations"
+      ]
+    }
+  ]
+}

@@ -49,12 +49,13 @@ from drift_gate.adapters.claude.enricher import ClaudeEnricher
 from drift_gate.core.engine import run
 from drift_gate.core.gating.temporal import apply_temporal_gate
 from drift_gate.core.policy.loader import PolicyLoadError
-from drift_gate.adapters.policy_loader import load_policy
+from drift_gate.adapters.policy_loader import load_policy, read_policy
 from drift_gate.core.policy.validator import validate
 from drift_gate.reporters.json_reporter import JsonReporter
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.reporters.markdown import MarkdownReporter
 from drift_gate.utils.glob_matcher import match_glob
+from drift_gate.adapters.execution import identity, digest, atomic_text, atomic_json
 
 
 POLICY_TEMPLATE = """# Drift Gate policy
@@ -336,11 +337,21 @@ def run_cli(argv=None):
     inspections = {"check": _run_check, "report": _run_check,
                    "review": _run_review, "self-audit": _run_self_audit}
     if args.command in inspections:
+        args.execution = identity()
         try:
             inspections[args.command](args)
-        except GitInputError as exc:
+        except (GitInputError, PolicyLoadError, OSError, UnicodeError) as exc:
+            error = {'execution': {**args.execution, 'status': 'input_error'},
+                     'error': {'code': 'input_error', 'message': str(exc)}}
+            for output in (getattr(args, 'out_json', None), getattr(args, 'out', None)):
+                if output:
+                    atomic_json(output, error)
+            for output in (getattr(args, 'out_html', None), getattr(args, 'out_md', None)):
+                if output:
+                    import html
+                    atomic_text(output, '<pre>' + html.escape(json.dumps(error, ensure_ascii=False)) + '</pre>')
             if getattr(args, "json_output", False) or getattr(args, "format", "") == "json":
-                _write_stdout(json.dumps({"error": {"code": "input_error", "message": str(exc)}}, ensure_ascii=False))
+                _write_stdout(json.dumps(error, ensure_ascii=False))
             print(str(exc), file=sys.stderr)
             sys.exit(2)
         return
@@ -604,7 +615,8 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _add_check_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--policy", default=".drift-gate.yml", help="Policy file path")
+    parser.add_argument("--policy", default=None, help="Policy file path (explicit paths use the calling directory)")
+    parser.add_argument('--comparison-mode', choices=['commit', 'merge-base'], default='commit')
     parser.add_argument("--pr", type=int, help="GitHub PR number")
     parser.add_argument("--repo", help="GitHub repository in owner/repo format")
     parser.add_argument(
@@ -708,16 +720,22 @@ def _add_eval_args(parser: argparse.ArgumentParser) -> None:
 
 
 def _run_check(args) -> None:
+    from drift_gate.adapters.git.client import repository_root
+    if bool(args.pr) != bool(args.repo):
+        raise GitInputError('Specify both --pr and --repo for remote PR inspection')
+    root = Path.cwd() if args.pr else repository_root()
+    args.policy = str(Path(args.policy).resolve() if args.policy is not None else root / '.drift-gate.yml')
+    args.policy_source, args.loaded_policy = read_policy(args.policy)
+    if not args.loaded_policy.rules:
+        raise PolicyLoadError('check requires at least one configured rule; use init/doctor to configure a policy')
+    args.local_root = root
     changed_files, drift_ignores = _collect_inputs(args)
 
     start = time.perf_counter()
-    try:
-        policy_for_run = load_policy(args.policy)
-    except FileNotFoundError:
-        policy_for_run = None
+    policy_for_run = args.loaded_policy
     if policy_for_run and not (args.pr and args.repo):
         from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
-        changed_files = attach_env_documents(changed_files, policy_for_run, local_document_reader(Path.cwd()))
+        changed_files = attach_env_documents(changed_files, policy_for_run, local_document_reader(root))
     result = run(
         changed_files=changed_files,
         drift_ignores=drift_ignores,
@@ -725,7 +743,11 @@ def _run_check(args) -> None:
     )
     runtime_seconds = time.perf_counter() - start
     result.scan_metrics.runtime_seconds = runtime_seconds
-    policy = _load_policy_optional(args.policy)
+    policy = policy_for_run
+    result.execution = {**args.execution, 'status': 'success',
+        **getattr(args, 'input_provenance', {}), 'policy_path': args.policy,
+        'policy_sha256': digest(args.policy_source), 'warnings': policy.load_warnings,
+        'input_sha256': digest(json.dumps([f.to_dict() for f in changed_files], sort_keys=True))}
     if args.temporal_gate:
         threshold = (
             args.temporal_threshold
@@ -760,7 +782,7 @@ def _run_check(args) -> None:
     json_report = JsonReporter().render(result)
     html_report = HtmlReporter().render(
         result,
-        policy_source=_read_policy_source(args.policy),
+        policy_source=args.policy_source,
     )
 
     if args.json_output:
@@ -773,17 +795,14 @@ def _run_check(args) -> None:
             _write_stdout(prefix + result.enrichment_metrics.format_report())
 
     if args.out_md:
-        Path(args.out_md).write_text(markdown, encoding="utf-8")
+        atomic_text(args.out_md, markdown)
 
     if args.out_json:
-        Path(args.out_json).write_text(
-            json.dumps(json_report, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        atomic_json(args.out_json, json_report)
 
     if args.out_html:
         html_path = Path(args.out_html)
-        html_path.write_text(html_report, encoding="utf-8")
+        atomic_text(html_path, html_report)
         if args.open:
             _open_file(html_path)
     elif args.open:
@@ -1066,7 +1085,6 @@ def _run_explain(args) -> None:
 
 
 def _run_review(args) -> None:
-    from pathlib import Path as _Path
     from drift_gate.adapters.git.client import GitAdapter
     from drift_gate.core.review.heuristics import (
         find_reporter_field_gaps,
@@ -1075,10 +1093,12 @@ def _run_review(args) -> None:
         SEVERITY_ORDER,
     )
 
+    from drift_gate.adapters.git.client import repository_root
+    root = repository_root()
     patch_text = ""
     # Collect files to review
     if args.all_files:
-        file_paths = _collect_python_files(_Path.cwd())
+        file_paths = [str(Path(p).relative_to(root)) for p in _collect_python_files(root)]
     else:
         changed_objs = GitAdapter().get_changed_files(args.base)
         file_paths = [f.path for f in changed_objs if f.path.endswith(".py") and f.status != "deleted"]
@@ -1086,7 +1106,7 @@ def _run_review(args) -> None:
 
     def _read_file(path: str) -> str:
         try:
-            return _Path(path).read_text(encoding="utf-8", errors="replace")
+            return (root / path).read_text(encoding="utf-8", errors="replace")
         except OSError as exc:
             raise GitInputError(f"검사할 파일을 읽지 못했습니다: {path}") from exc
 
@@ -1193,8 +1213,7 @@ def _run_self_audit(args) -> None:
 
     checklist_path = _Path(args.checklist)
     if not checklist_path.exists():
-        print(f"ERROR: checklist file not found: {checklist_path}", file=sys.stderr)
-        sys.exit(1)
+        raise GitInputError(f'checklist file not found: {checklist_path}')
 
     items = parse_checklist(checklist_path)
 
@@ -1230,13 +1249,13 @@ def _run_self_audit(args) -> None:
     warnings = audit_result.warnings
     mismatch_count = sum(1 for w in warnings if w.kind == "checklist-code-mismatch")
     missing_count = sum(1 for w in warnings if w.kind == "missing-progress-entry")
-    supported = sum(1 for i in audit_result.checklist_items if i.status == "supported")
+    supported = sum(1 for i in audit_result.checklist_items if i.status == "related-evidence-found")
     checked = sum(1 for i in audit_result.checklist_items if i.checked)
 
     if not args.json_output:
         _write_stdout("")
         _write_stdout(
-            f"Self-audit: {supported}/{checked} checked items supported by diff evidence"
+            f"Self-audit: {supported}/{checked} checked items with related diff references (behavior not verified)"
         )
         if warnings:
             _write_stdout(
@@ -1249,12 +1268,12 @@ def _run_self_audit(args) -> None:
 
 def _format_self_audit_markdown(audit_result) -> str:
     lines = ["# Self-Audit Report", ""]
-    supported = [i for i in audit_result.checklist_items if i.status == "supported"]
-    unsupported = [i for i in audit_result.checklist_items if i.status == "unsupported"]
+    supported = [i for i in audit_result.checklist_items if i.status == "related-evidence-found"]
+    unsupported = [i for i in audit_result.checklist_items if i.status == "no-related-evidence"]
     unchecked = [i for i in audit_result.checklist_items if i.status == "unchecked"]
 
     lines.append(
-        f"**{len(supported)} supported** / **{len(supported)+len(unsupported)} checked** "
+        f"**{len(supported)} with related evidence** / **{len(supported)+len(unsupported)} checked** "
         f"/ {len(unchecked)} unchecked"
     )
     lines.append("")
@@ -1280,8 +1299,8 @@ def _format_self_audit_markdown(audit_result) -> str:
 
 def _render_self_audit_html(audit_result) -> str:
     import html as _html
-    supported = [i for i in audit_result.checklist_items if i.status == "supported"]
-    unsupported = [i for i in audit_result.checklist_items if i.status == "unsupported"]
+    supported = [i for i in audit_result.checklist_items if i.status == "related-evidence-found"]
+    unsupported = [i for i in audit_result.checklist_items if i.status == "no-related-evidence"]
     unchecked = [i for i in audit_result.checklist_items if i.status == "unchecked"]
 
     def _item_rows(items, badge_class, badge_label):
@@ -1317,7 +1336,7 @@ def _render_self_audit_html(audit_result) -> str:
   </div>"""
 
     all_rows = (
-        _item_rows(supported, "green", "supported")
+        _item_rows(supported, "green", "related reference")
         + _item_rows(unsupported, "red", "unsupported")
         + _item_rows(unchecked, "gray", "unchecked")
     )
@@ -1347,7 +1366,7 @@ def _render_self_audit_html(audit_result) -> str:
   <h1>Drift Gate — Self-Audit Report</h1>
   <div class="card">
     <p class="summary">
-      <strong>{len(supported)}</strong> supported &nbsp;/&nbsp;
+      <strong>{len(supported)}</strong> related references &nbsp;/&nbsp;
       <strong>{len(supported) + len(unsupported)}</strong> checked &nbsp;/&nbsp;
       {len(unchecked)} unchecked
     </p>
@@ -1494,20 +1513,21 @@ def _collect_inputs(args) -> tuple[list, list]:
     if args.pr and args.repo:
         token = os.environ.get("GITHUB_TOKEN", "")
         if not token:
-            print("ERROR: GITHUB_TOKEN is required for GitHub PR mode", file=sys.stderr)
-            sys.exit(1)
+            raise GitInputError('GITHUB_TOKEN is required for GitHub PR mode')
         github = GitHubAdapter(token=token, repo=args.repo)
         changed_files, pr_body = github.get_pr_files_and_body(args.pr)
         from drift_gate.adapters.github.approvals import verify_ignores
         directives = parse_drift_ignores(pr_body)
-        policy = _load_policy_optional(args.policy)
+        policy = args.loaded_policy
         if policy:
             directives = verify_ignores(github, args.pr, directives, policy, changed_files)
             changed_files = github.attach_env_documents(args.pr, changed_files, policy)
         return enrich_semantic_signals(changed_files), directives
 
-    git = GitAdapter()
-    return enrich_semantic_signals(git.get_changed_files(args.base)), []
+    git = GitAdapter(args.local_root)
+    files = git.get_changed_files(args.base, comparison_mode=args.comparison_mode)
+    args.input_provenance = git.provenance
+    return enrich_semantic_signals(files), []
 
 
 def _git_ok(args: list[str]) -> bool:

@@ -40,7 +40,7 @@ def test_self_policy_requires_its_own_contract_not_an_unrelated_report(source, d
 def test_self_policy_tests_and_comment_only_changes_do_not_require_contract_rewrites():
     files = [ChangedFile(path='drift_gate/tests/test_example.py', status='modified', patch='+def test_case(): pass\n'),
              ChangedFile(path='desktop-ui/src/example.test.ts', status='modified', patch='+test("x", () => {});\n'),
-             ChangedFile(path='drift_gate/core/engine.py', status='modified', patch='+# explanatory comment\n')]
+             ChangedFile(path='drift_gate/core/engine.py', status='modified', patch='+# explanatory comment\n', before_source='', after_source='# explanatory comment\n')]
     assert run(files, policy=POLICY).result == 'pass'
 
 
@@ -52,6 +52,13 @@ def test_self_check_collects_real_diff_and_reports_uncovered_paths(tmp_path):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text('value = 2\n', encoding='utf-8')
     git(root, 'add', 'drift_gate/core/engine.py', 'elsewhere.py')
+    for document in (ROOT / 'docs/contracts').glob('*.md'):
+        target = root / 'docs/contracts' / document.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(document, target)
+    target = root / 'docs/ops/drift-gate-self-check.md'
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(ROOT / 'docs/ops/drift-gate-self-check.md', target)
     result = inspect_repository(root, 'HEAD')
     assert result['evaluation']['result'] == 'fail'
     assert result['coverage']['matched']['drift_gate/core/engine.py'] == ['self-engine-contract']

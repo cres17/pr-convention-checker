@@ -1,0 +1,61 @@
+{
+  "requested_base": "52c4f493f5301c1b66a4fc95ba3e9cf0f19e03e8",
+  "evaluation": {
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass"
+    },
+    "scan_metrics": {
+      "scanned_files": 3,
+      "skipped_ignored_files": 0,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 0,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": ".drift-gate.self.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/ops/drift-gate-self-check.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/core/audit_subject.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        }
+      ]
+    },
+    "result": "pass",
+    "change_types": [
+      "other"
+    ],
+    "violations": [],
+    "rule_decisions": [],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {},
+    "unmatched": [
+      ".drift-gate.self.yml",
+      "docs/ops/drift-gate-self-check.md",
+      "drift_gate/core/audit_subject.py"
+    ],
+    "ignored": []
+  }
+}

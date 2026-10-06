@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "input_error",
+    "message": "policy YAML root must be a mapping"
+  }
+}
