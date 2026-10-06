@@ -10,6 +10,7 @@ from typing import Iterable, List
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.route_syntax import METHOD_PATTERN, route_registration_method
 from drift_gate.core.python_syntax import environment_keys, without_literals
+from drift_gate.core.patch_lines import changed_lines as patch_changed_lines
 
 INTENSITY_ORDER = {
     "any": -1,
@@ -149,12 +150,14 @@ def classify_file_intensity(file: ChangedFile) -> str:
     if not file.patch:
         return "signature-change"
 
-    changed_lines = list(_changed_content_lines(file.patch))
+    changed_lines = patch_changed_lines(file)
     if not changed_lines:
         return "impl-only"
 
-    if all(_is_comment_or_blank(line) for line in changed_lines):
+    if not patch_changed_lines(file, code_only=True):
         return "comment-only"
+
+    changed_lines = patch_changed_lines(file, code_only=True)
 
     added_lines = [line for marker, line in changed_lines if marker == "+"]
     removed_lines = [line for marker, line in changed_lines if marker == "-"]
@@ -208,27 +211,6 @@ def meets_min_intensity(actual: str, minimum: str) -> bool:
     if minimum in ("", "any", None):
         return True
     return INTENSITY_ORDER.get(actual, 2) >= INTENSITY_ORDER.get(minimum, 2)
-
-
-def _changed_content_lines(patch: str) -> Iterable[tuple[str, str]]:
-    for raw in patch.splitlines():
-        if not raw or raw.startswith(("+++", "---", "@@", "diff --git", "index ")):
-            continue
-        if raw.startswith("\\ No newline"):
-            continue
-        marker = raw[0]
-        if marker in ("+", "-"):
-            yield marker, raw[1:]
-
-
-def _is_comment_or_blank(item: tuple[str, str]) -> bool:
-    _, line = item
-    stripped = line.strip()
-    return (
-        not stripped
-        or stripped.startswith(("#", "//", "/*", "*", "*/"))
-        or stripped in ('"""', "'''")
-    )
 
 
 def _matches_any(line: str, patterns: List[re.Pattern]) -> bool:

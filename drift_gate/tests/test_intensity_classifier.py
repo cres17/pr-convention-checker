@@ -42,21 +42,21 @@ class TestCommentOnly:
         patch = "@@ -1,1 +1,1 @@\n-# old comment\n+# new comment\n"
         assert classify_file_intensity(_file(patch=patch)) == "comment-only"
 
-    def test_js_line_comment(self):
+    def test_unknown_comment_syntax_is_conservative(self):
         patch = "@@ -1,1 +1,1 @@\n-// old\n+// new\n"
-        assert classify_file_intensity(_file(patch=patch)) == "comment-only"
+        assert classify_file_intensity(_file(patch=patch)) == "impl-only"
 
-    def test_block_comment_star(self):
+    def test_star_fragment_is_not_proven_comment(self):
         patch = "@@ -1,1 +1,1 @@\n-* @param x\n+* @param y\n"
-        assert classify_file_intensity(_file(patch=patch)) == "comment-only"
+        assert classify_file_intensity(_file(patch=patch)) == "impl-only"
 
     def test_blank_lines_only(self):
         patch = "@@ -1,2 +1,2 @@\n-\n+\n"
         assert classify_file_intensity(_file(patch=patch)) == "comment-only"
 
-    def test_docstring_triple_quote_only(self):
+    def test_incomplete_string_delimiters_are_not_comments(self):
         patch = '@@ -1,1 +1,1 @@\n-"""\n+"""\n'
-        assert classify_file_intensity(_file(patch=patch)) == "comment-only"
+        assert classify_file_intensity(_file(patch=patch)) == "impl-only"
 
 
 # ── config-key-added ──────────────────────────────────────────────────────────

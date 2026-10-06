@@ -153,7 +153,7 @@ class TestMatcher:
             changed_files=["drift_gate/adapters/claude/enricher.py"]
         )
         result = match_checklist([item], ev)
-        assert result.checklist_items[0].status == "supported"
+        assert result.checklist_items[0].status == "related-evidence-found"
         assert len(result.warnings) == 0
 
     def test_checked_item_without_evidence_is_unsupported(self):
@@ -162,7 +162,7 @@ class TestMatcher:
         )
         ev = DiffEvidence.from_raw(changed_files=["drift_gate/core/engine.py"])
         result = match_checklist([item], ev)
-        assert result.checklist_items[0].status == "unsupported"
+        assert result.checklist_items[0].status == "no-related-evidence"
 
     def test_checklist_code_mismatch_warning_on_unsupported(self):
         item = self._make_item(
@@ -247,9 +247,9 @@ class TestMatcher:
         )
         result = match_checklist(items, ev)
         statuses = [i.status for i in result.checklist_items]
-        assert statuses[0] == "supported"
+        assert statuses[0] == "related-evidence-found"
         assert statuses[1] == "unchecked"
-        assert statuses[2] == "unsupported"
+        assert statuses[2] == "no-related-evidence"
 
 
 # ── fixture scenarios ─────────────────────────────────────────────────────────
@@ -286,7 +286,7 @@ class TestFixtureScenarios:
             patch_text="+class EnrichmentMetrics:\n",
         )
         result = match_checklist(items, ev)
-        supported = [i for i in result.checklist_items if i.status == "supported"]
+        supported = [i for i in result.checklist_items if i.status == "related-evidence-found"]
         assert len(supported) >= 1
 
     def test_fixture_unsupported(self):
@@ -294,7 +294,7 @@ class TestFixtureScenarios:
         items = parse_checklist_text(FIXTURE_UNSUPPORTED_MD)
         ev = DiffEvidence.from_raw(changed_files=[])
         result = match_checklist(items, ev)
-        assert result.checklist_items[0].status == "unsupported"
+        assert result.checklist_items[0].status == "no-related-evidence"
         assert any(w.kind == "checklist-code-mismatch" for w in result.warnings)
 
     def test_fixture_missing_progress_entry(self):

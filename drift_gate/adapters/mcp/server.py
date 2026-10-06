@@ -14,6 +14,7 @@ from drift_gate.adapters.mcp import tools
 
 MAX_REQUEST_BYTES = 1_000_000
 MAX_RESPONSE_BYTES = 2_000_000
+ALLOWED_ROOT = None  # fixed when the server starts; requests cannot widen it
 
 
 TOOL_MAP = {
@@ -44,7 +45,11 @@ def handle_request(request: dict) -> dict:
     if not isinstance(request, dict):
         return _jsonrpc_error(None, -32600, "request must be an object; batches are unsupported")
     if "method" in request:
-        return _handle_jsonrpc(request)
+        response = _handle_jsonrpc(request)
+        if ('id' not in request and request.get('jsonrpc') == '2.0'
+            and isinstance(request.get('method'), str) and isinstance(request.get('params', {}), dict)):
+            return {}
+        return response
 
     tool_name = request.get("tool", "")
     args = request.get("args", {})
@@ -90,7 +95,7 @@ def _handle_jsonrpc(request: dict) -> dict:
             result = {
                 "content": [{
                     "type": "text",
-                    "text": json.dumps(tool_result, ensure_ascii=False, indent=2),
+                    "text": json.dumps(tool_result, ensure_ascii=False, indent=2, allow_nan=False),
                 }]
             }
         elif method.startswith("notifications/"):
@@ -113,10 +118,17 @@ def _jsonrpc_error(request_id, code: int, message: str) -> dict:
 def _call_tool(name: str, arguments: dict):
     function = TOOL_MAP[name]
     bound = inspect.signature(function).bind(**arguments)
+    bound.apply_defaults()
     for key, value in bound.arguments.items():
         annotation = inspect.signature(function).parameters[key].annotation
         if annotation in (str, int, bool) and type(value) is not annotation:
             raise TypeError(f'{key} must be {annotation.__name__}')
+        if ALLOWED_ROOT is not None and key in ('path', 'policy_path', 'repo_root'):
+            target = Path(value).expanduser().resolve()
+            if not target.is_relative_to(ALLOWED_ROOT):
+                raise ValueError(f'{key} is outside the server repository')
+            if target.is_file() and target.stat().st_size > MAX_REQUEST_BYTES:
+                raise ValueError(f'{key} exceeds the server file size limit')
     return function(**arguments)
 
 
@@ -142,9 +154,11 @@ def _tool_schema(name: str) -> dict:
 
 
 def main(argv=None) -> None:
+    global ALLOWED_ROOT
     repo = _parse_repo_arg(sys.argv[1:] if argv is None else argv)
     if repo:
         os.chdir(repo)
+    ALLOWED_ROOT = Path.cwd().resolve()
     while True:
         line = sys.stdin.buffer.readline(MAX_REQUEST_BYTES + 1)
         if not line:
@@ -158,10 +172,10 @@ def main(argv=None) -> None:
             continue
         request = None
         try:
-            request = json.loads(line.decode('utf-8'))
+            request = json.loads(line.decode('utf-8'), parse_constant=lambda value: (_ for _ in ()).throw(ValueError(f'non-finite JSON number: {value}')))
             response = handle_request(request)
-        except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as exc:
-            response = {"ok": False, "error": f"invalid json: {exc}"}
+        except (UnicodeDecodeError, json.JSONDecodeError, RecursionError, ValueError) as exc:
+            response = _jsonrpc_error(None, -32700, f'invalid json: {exc}')
         except Exception as exc:
             # A bad frame or tool must not terminate the remaining stdio session.
             response = _jsonrpc_error(None, -32603, str(exc))

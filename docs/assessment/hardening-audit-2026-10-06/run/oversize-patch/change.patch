@@ -1,0 +1,18 @@
+diff --git a/docs/contracts/gate-and-inputs.md b/docs/contracts/gate-and-inputs.md
+index 77e53fa..ef09a4a 100644
+--- a/docs/contracts/gate-and-inputs.md
++++ b/docs/contracts/gate-and-inputs.md
+@@ -25,3 +25,5 @@ Gate는 정책이 요구한 변경과 근거의 충족을 판정한다. 코드 
+ ## 회귀 기준
+ 
+ `test_git_collection.py`, `test_contract_route_regressions.py`, `test_development_regressions.py`의 오류/정상 통제를 유지한다. 고정 합성 평가를 수정 전후 같은 입력으로 비교하고, 새 변형 검사는 기존 합성 점수와 따로 기록한다. 테스트 이름 힌트는 실제 행동 테스트 부재의 증명이 아니다.
++
++calculate now returns 2.
+diff --git a/drift_gate/core/audit_subject.py b/drift_gate/core/audit_subject.py
+index 5b76021..2ff874f 100644
+--- a/drift_gate/core/audit_subject.py
++++ b/drift_gate/core/audit_subject.py
+@@ -1,2 +1,2 @@
+ def calculate():
+-    return 1
++    return 2

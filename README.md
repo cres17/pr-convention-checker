@@ -394,3 +394,7 @@ Claude를 활용해 개발한 개인 프로젝트입니다. 코드와 재현 가
 [MIT License](LICENSE)
 
 새 화면의 컴포넌트 사용·검증 범위는 [UI 개편 기록](docs/design/tool-ui-integration-2026-09-29.md)에 정리했습니다.
+
+### 로컬 브랜치 비교와 검증 결과 해석
+
+내 브랜치가 main에서 갈라진 뒤의 변경은 `drift-gate check --base main --comparison-mode merge-base`로 검사합니다. 지정 커밋과 작업 폴더 자체를 비교하려면 기본 commit 모드를 사용합니다. 기본 정책은 Git 루트에서 탐색하며 정책 오타나 빈 규칙은 입력 오류입니다. self-audit의 related-evidence-found는 관련 파일 참조이고 행동 검증이나 AI 주장 수용을 뜻하지 않습니다.

@@ -369,8 +369,8 @@ class TestGitAdapter:
         files = GitAdapter().get_changed_files("main")
         assert len(files) == 1 and files[0].path == "src/routes/users.ts"
         assert files[0].patch.startswith("diff --git")
-        assert "abc123" in calls[1] and "-z" in calls[1]
-        assert calls[2][-2:] == ["--", "src/routes/users.ts"]
+        assert any("abc123" in call and "-z" in call for call in calls)
+        assert any(call[-2:] == ["--", "src/routes/users.ts"] for call in calls)
 
     def test_git_adapter_skips_binary_and_large_patches(self, monkeypatch):
         from drift_gate.adapters.git.client import GitAdapter
@@ -404,7 +404,7 @@ class TestGitAdapter:
         }))
 
         assert result.scan_metrics.scanned_files == 125
-        assert result.scan_metrics.evaluated_rules == 1
+        assert result.scan_metrics.evaluated_rules == 0  # docs-only: no rules evaluated
 
 
 # ─── patch intensity classifier ───────────────────────────────────────────────

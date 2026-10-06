@@ -12,7 +12,7 @@ from drift_gate.core.models.result import EvaluationResult, DriftIgnoreDirective
 from drift_gate.core.classification.classifier import classify_change_types
 from drift_gate.core.evaluation.evaluator import evaluate
 from drift_gate.core.gating.gate import decide_gate
-from drift_gate.utils.glob_matcher import matches_any
+from drift_gate.core.change_paths import is_ignored, triggers
 
 
 def run(
@@ -72,7 +72,9 @@ def run(
     change_types = classify_change_types(changed_files)
 
     # docs-only / test-only → 평가 생략
-    if change_types and change_types[0] in ("docs-only", "test-only"):
+    explicit_trigger = any(triggers(f, r.when.any_changed) and not is_ignored(f, policy.ignore_paths)
+                           for f in changed_files for r in policy.rules)
+    if change_types and change_types[0] in ("docs-only", "test-only") and not explicit_trigger:
         result = EvaluationResult(
             change_types=change_types,
             violations=[],
@@ -102,6 +104,8 @@ def run(
         scan_metrics=_scan_metrics(changed_files, policy),
     )
 
+    result.scan_metrics.evaluated_rules = sum(d.status in ('pass', 'fail', 'rejected-ignore') for d in rule_decisions)
+
     # CI 게이트 판정
     decide_gate(result)
 
@@ -121,7 +125,7 @@ def _scan_metrics(changed_files: List[ChangedFile], policy: Policy) -> ScanMetri
     return ScanMetrics(
         scanned_files=len(changed_files),
         skipped_ignored_files=sum(
-            1 for f in changed_files if matches_any(f.path, policy.ignore_paths)
+            1 for f in changed_files if is_ignored(f, policy.ignore_paths)
         ),
         skipped_binary_files=sum(
             1 for f in changed_files if "binary file skipped" in f.patch.lower()
@@ -129,7 +133,7 @@ def _scan_metrics(changed_files: List[ChangedFile], policy: Policy) -> ScanMetri
         skipped_large_files=sum(
             1 for f in changed_files if "large file skipped" in f.patch.lower()
         ),
-        evaluated_rules=len(policy.rules),
+        evaluated_rules=0,
         analysis_notes=[{"path": f.path, "method": f.analysis_method, "reason": f.analysis_reason}
                         for f in changed_files if f.analysis_method != "not-analyzed"],
     )

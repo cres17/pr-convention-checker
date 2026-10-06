@@ -1,0 +1,10 @@
+diff --git a/drift_gate/core/audit_args.py b/drift_gate/core/audit_args.py
+index 00220c5..5fa1751 100644
+--- a/drift_gate/core/audit_args.py
++++ b/drift_gate/core/audit_args.py
+@@ -1,4 +1,5 @@
+ def make(a,
++         *extra,
+          b=1,
+ ):
+     return a

@@ -1,0 +1,4 @@
+diff --git a/drift_gate/core/audit_subject.py b/tests/audit_subject.py
+similarity index 100%
+rename from drift_gate/core/audit_subject.py
+rename to tests/audit_subject.py

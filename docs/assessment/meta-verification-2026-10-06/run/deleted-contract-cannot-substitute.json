@@ -1,0 +1,189 @@
+{
+  "requested_base": "f43cada2ea177b63cb0ac4a79be37071113a5191",
+  "evaluation": {
+    "summary": {
+      "blocker": 0,
+      "major": 1,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "fail"
+    },
+    "scan_metrics": {
+      "scanned_files": 2,
+      "skipped_ignored_files": 0,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 6,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/core/engine.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        }
+      ]
+    },
+    "result": "fail",
+    "change_types": [
+      "other"
+    ],
+    "violations": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "confidence": "low",
+        "change_types": [
+          "other"
+        ],
+        "change_type": "other",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": "drift_gate/core/engine.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "diff --git a/drift_gate/core/engine.py b/drift_gate/core/engine.py\nindex 4b7e742..6ac20c4 100644\n--- a/drift_gate/core/engine.py\n+++ b/drift_gate/core/engine.py\n@@ -133,3 +133,5 @@ def _scan_metrics(changed_files: List[ChangedFile], policy: Policy) -> ScanMetri\n         analysis_notes=[{\"path\": f.path, \"method\": f.analysis_method, \"reason\": f.analysis_reason}\n                         for f in changed_files if f.analysis_method != \"not-analyzed\"],\n     )\n+\n+META_AUDIT_VALUE = 42\n",
+            "semantic_signals": [],
+            "semantic_evidence": [],
+            "analysis_method": "grammar+heuristic",
+            "analysis_reason": "",
+            "documented_env_keys": null
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "checklist": [
+          "Gate and analysis contract 업데이트"
+        ],
+        "ignored": false,
+        "change_intensity": "config-key-added",
+        "change_intensities": [
+          "config-key-added"
+        ],
+        "trigger_patterns": [
+          "drift_gate/core/**"
+        ],
+        "blast_radius": [
+          ".env.example consumers",
+          "deployment configuration",
+          "missing requirement group: Gate and analysis contract",
+          "runtime operators"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": []
+      }
+    ],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "fail",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "drift_gate/core/**"
+        ],
+        "trigger_files": [
+          "drift_gate/core/engine.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ]
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {
+      "drift_gate/core/engine.py": [
+        "self-engine-contract"
+      ]
+    },
+    "unmatched": [
+      "docs/contracts/gate-and-inputs.md"
+    ],
+    "ignored": []
+  }
+}

@@ -1,0 +1,1290 @@
+{
+  "requested_base": "01e28e1620941a539d3e9c14972201b30adafd3b",
+  "evaluation": {
+    "summary": {
+      "blocker": 0,
+      "major": 4,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "fail"
+    },
+    "scan_metrics": {
+      "scanned_files": 135,
+      "skipped_ignored_files": 5,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 6,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": ".drift-gate.self.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/baseline-behavior-test.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/baseline-test-execution.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stderr",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stdout",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stderr",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stdout",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stderr",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stderr",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/results.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/valid.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probe-run/valid.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/probes.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/changed-files.txt",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/gate.html",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/gate.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/gate.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/generalization.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/generalization.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/manifest.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/policy.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/review.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/review.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/product-run/summary.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/python-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/react-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/ruff.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/trace_behavior.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/typescript.log",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/validation.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-2026-10-06/verify.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/manifest.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/manifest.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/generalization-final.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/generalization.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/git-tests-final.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stderr",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stderr",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stderr",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/results.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/python-tests-final.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/python-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/react-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/ruff-final.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/ruff.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/typescript.log",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validate_candidate.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/manifest.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stderr",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stdout",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/self-verification-fixes-2026-10-06/validation.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/desktop-bridge.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/progress-storage.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/drift-gate-self-verification-2026-10-06.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/self-verification-fixes-2026-10-06.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/unrelated.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/mcp/server.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/classification/intensity.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation/contracts.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/python_syntax.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_contract_route_regressions.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_development_regressions.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_git_collection.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/tests/test_mcp_tools.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_self_policy.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "scripts/check_self.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        }
+      ]
+    },
+    "result": "fail",
+    "change_types": [
+      "other",
+      "workflow-ci"
+    ],
+    "violations": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "confidence": "low",
+        "change_types": [
+          "other"
+        ],
+        "change_type": "other",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": "drift_gate/core/classification/intensity.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "diff --git a/drift_gate/core/classification/intensity.py b/drift_gate/core/classification/intensity.py\nindex 5216560..cf5ea92 100644\n--- a/drift_gate/core/classification/intensity.py\n+++ b/drift_gate/core/classification/intensity.py\n@@ -9,6 +9,7 @@ from typing import Iterable, List\n \n from drift_gate.core.models.changed_file import ChangedFile\n from drift_gate.core.route_syntax import METHOD_PATTERN, route_registration_method\n+from drift_gate.core.python_syntax import environment_keys, without_literals\n \n INTENSITY_ORDER = {\n     \"any\": -1,\n@@ -157,13 +158,14 @@ def classify_file_intensity(file: ChangedFile) -> str:\n \n     added_lines = [line for marker, line in changed_lines if marker == \"+\"]\n     removed_lines = [line for marker, line in changed_lines if marker == \"-\"]\n-    if _adds_config_key(added_lines, removed_lines):\n+    if _adds_config_key(added_lines, removed_lines, file.path):\n         return \"config-key-added\"\n \n     if any(_matches_any(line, CONFIG_SCHEMA_PATTERNS) for _, line in changed_lines):\n         return \"config-key-added\"\n \n-    if any(_matches_any(line, CI_SECRET_PATTERNS) for _, line in changed_lines):\n+    word_lines = without_literals([line for _, line in changed_lines]) if file.path.endswith('.py') else [line for _, line in changed_lines]\n+    if any(_matches_any(line, CI_SECRET_PATTERNS) for line in word_lines):\n         return \"ci-secret-change\"\n \n     if any(_matches_any(line, CLI_PUBLIC_PATTERNS) for _, line in changed_lines):\n@@ -244,13 +246,22 @@ def _semantic_intensity(signals: List[str]) -> str:\n     return strongest\n \n \n-def _adds_config_key(added_lines: List[str], removed_lines: List[str]) -> bool:\n-    added_keys = _extract_config_keys(added_lines)\n-    removed_keys = _extract_config_keys(removed_lines)\n+def _adds_config_key(added_lines: List[str], removed_lines: List[str], path: str = '') -> bool:\n+    added_keys = _extract_config_keys(added_lines, path)\n+    removed_keys = _extract_config_keys(removed_lines, path)\n     return bool(added_keys - removed_keys)\n \n \n-def _extract_config_keys(lines: List[str]) -> set[str]:\n+def _extract_config_keys(lines: List[str], path: str = '') -> set[str]:\n+    if path.endswith('.py'):\n+        parsed = environment_keys(lines)\n+        if parsed is not None:\n+            # Plain uppercase Python configuration assignments remain supported.\n+            for line in without_literals(lines):\n+                match = re.match(r'^\\s*([A-Z][A-Z0-9_]*)\\s*=', line)\n+                if match:\n+                    parsed.add(match.group(1))\n+            return parsed\n     keys = set()\n     for line in lines:\n         for pattern in ENV_KEY_PATTERNS:\n",
+            "semantic_signals": [
+              "function-signature-changed"
+            ],
+            "semantic_evidence": [
+              "Python function signature changed"
+            ],
+            "analysis_method": "grammar+heuristic",
+            "analysis_reason": "",
+            "documented_env_keys": null
+          },
+          {
+            "path": "drift_gate/core/evaluation/contracts.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "diff --git a/drift_gate/core/evaluation/contracts.py b/drift_gate/core/evaluation/contracts.py\nindex 361f65d..fee6fd0 100644\n--- a/drift_gate/core/evaluation/contracts.py\n+++ b/drift_gate/core/evaluation/contracts.py\n@@ -3,6 +3,7 @@ import re\n \n from drift_gate.utils.glob_matcher import matches_any\n from drift_gate.core.route_syntax import METHOD_PATTERN, literal_route\n+from drift_gate.core.python_syntax import environment_keys\n \n DOC_ROUTE = re.compile(rf\"\\b({METHOD_PATTERN})[ \\t]+(/[^\\s`'\\\"<>]+)\", re.I)\n DOC_TABLE_ROUTE = re.compile(rf\"^\\s*\\|\\s*({METHOD_PATTERN})\\s*\\|\\s*(/[^\\s|`'\\\"<>]+)\\s*\\|\", re.I)\n@@ -20,7 +21,11 @@ def patch_lines(patch, marker):\n             if line.startswith(marker) and not line.startswith(marker * 3)]\n \n \n-def env_keys_in_code(lines):\n+def env_keys_in_code(lines, path=''):\n+    if path.endswith('.py'):\n+        parsed = environment_keys(lines)\n+        if parsed is not None:\n+            return parsed\n     keys = set()\n     for line in lines:\n         if line.lstrip().startswith((\"#\", \"//\", \"*\")):\n@@ -37,8 +42,8 @@ def env_keys_in_document(text):\n def added_env_keys(files):\n     added, removed = set(), set()\n     for file in files:\n-        added.update(env_keys_in_code(patch_lines(file.patch, \"+\")))\n-        removed.update(env_keys_in_code(patch_lines(file.patch, \"-\")))\n+        added.update(env_keys_in_code(patch_lines(file.patch, \"+\"), file.path))\n+        removed.update(env_keys_in_code(patch_lines(file.patch, \"-\"), file.path))\n     return added - removed\n \n \n@@ -98,7 +103,7 @@ def content_requirement(group, triggers, changed_files):\n         candidates = [f for f in docs if matches_any(f.path, [pattern])]\n         plus = set().union(*(_routes(patch_lines(f.patch, \"+\"), docs=True) for f in candidates))\n         minus = set().union(*(_routes(patch_lines(f.patch, \"-\"), docs=True) for f in candidates))\n-        return added <= plus and removed <= minus\n+        return added <= plus and removed <= (minus - plus)\n     ok = all(covered(p) for p in patterns) if group.all_changed else covered_patterns(docs, added, removed)\n     labels = [f\"add {m} {p}\" for m, p in sorted(added)] + [f\"remove {m} {p}\" for m, p in sorted(removed)]\n     return ok, \"API documentation must reflect: \" + \"; \".join(labels)\n@@ -107,4 +112,4 @@ def content_requirement(group, triggers, changed_files):\n def covered_patterns(docs, added, removed):\n     plus = set().union(*(_routes(patch_lines(f.patch, \"+\"), docs=True) for f in docs))\n     minus = set().union(*(_routes(patch_lines(f.patch, \"-\"), docs=True) for f in docs))\n-    return added <= plus and removed <= minus\n+    return added <= plus and removed <= (minus - plus)\n",
+            "semantic_signals": [
+              "function-signature-changed"
+            ],
+            "semantic_evidence": [
+              "Python function signature changed"
+            ],
+            "analysis_method": "grammar+heuristic",
+            "analysis_reason": "",
+            "documented_env_keys": null
+          },
+          {
+            "path": "drift_gate/core/python_syntax.py",
+            "status": "added",
+            "previous_path": null,
+            "patch": "diff --git a/drift_gate/core/python_syntax.py b/drift_gate/core/python_syntax.py\nnew file mode 100644\nindex 0000000..f63df8e\n--- /dev/null\n+++ b/drift_gate/core/python_syntax.py\n@@ -0,0 +1,60 @@\n+\"\"\"Pure, bounded-scope Python fragment facts; invalid fragments stay unknown.\"\"\"\n+import ast\n+import io\n+import re\n+import textwrap\n+import tokenize\n+\n+\n+def environment_keys(lines: list[str]) -> set[str] | None:\n+    \"\"\"Static os.getenv/os.environ accesses, excluding comments and literals.\n+\n+    None means the diff fragment could not be parsed, not an empty key set.\n+    Aliased and dynamic keys remain outside this detector's supported scope.\n+    \"\"\"\n+    try:\n+        tree = ast.parse(textwrap.dedent('\\n'.join(lines)))\n+    except (SyntaxError, ValueError, RecursionError):\n+        return None\n+    keys = set()\n+    for node in ast.walk(tree):\n+        key = None\n+        if isinstance(node, ast.Call) and node.args:\n+            if _name(node.func) in {'os.getenv', 'os.environ.get', 'getenv'}:\n+                key = node.args[0]\n+        elif isinstance(node, ast.Subscript) and _name(node.value) == 'os.environ':\n+            key = node.slice\n+        if isinstance(key, ast.Constant) and isinstance(key.value, str) and re.fullmatch(r'[A-Z][A-Z0-9_]*', key.value):\n+            keys.add(key.value)\n+    return keys\n+\n+\n+def _name(node) -> str:\n+    if isinstance(node, ast.Name):\n+        return node.id\n+    if isinstance(node, ast.Attribute):\n+        return _name(node.value) + '.' + node.attr\n+    return ''\n+\n+\n+def without_literals(lines: list[str]) -> list[str]:\n+    \"\"\"Mask strings/comments only for word-based heuristics, retaining layout.\n+\n+    On an incomplete token stream retain the original conservative input.\n+    Literal-dependent checks (routes, environment keys) use their own detector.\n+    \"\"\"\n+    source = '\\n'.join(lines)\n+    masked = [list(line) for line in lines]\n+    try:\n+        for token in tokenize.generate_tokens(io.StringIO(source).readline):\n+            if token.type not in (tokenize.STRING, tokenize.COMMENT):\n+                continue\n+            (first, start), (last, end) = token.start, token.end\n+            for number in range(first, last + 1):\n+                row = masked[number - 1]\n+                left = start if number == first else 0\n+                right = end if number == last else len(row)\n+                row[left:right] = ' ' * (right - left)\n+    except (tokenize.TokenError, IndentationError, SyntaxError):\n+        return lines\n+    return [''.join(line) for line in masked]\n",
+            "semantic_signals": [
+              "function-signature-changed"
+            ],
+            "semantic_evidence": [
+              "Python function signature changed"
+            ],
+            "analysis_method": "grammar+heuristic",
+            "analysis_reason": "",
+            "documented_env_keys": null
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "checklist": [
+          "Gate and analysis contract 업데이트"
+        ],
+        "ignored": false,
+        "change_intensity": "signature-change",
+        "change_intensities": [
+          "signature-change"
+        ],
+        "trigger_patterns": [
+          "drift_gate/core/**"
+        ],
+        "blast_radius": [
+          "missing requirement group: Gate and analysis contract"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": []
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "confidence": "low",
+        "change_types": [
+          "other"
+        ],
+        "change_type": "other",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": "drift_gate/adapters/cli/runner.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "diff --git a/drift_gate/adapters/cli/runner.py b/drift_gate/adapters/cli/runner.py\nindex d0a1d06..ad6b744 100644\n--- a/drift_gate/adapters/cli/runner.py\n+++ b/drift_gate/adapters/cli/runner.py\n@@ -333,6 +333,18 @@ def run_cli(argv=None):\n     parser = _build_parser()\n     args = parser.parse_args(argv)\n \n+    inspections = {\"check\": _run_check, \"report\": _run_check,\n+                   \"review\": _run_review, \"self-audit\": _run_self_audit}\n+    if args.command in inspections:\n+        try:\n+            inspections[args.command](args)\n+        except GitInputError as exc:\n+            if getattr(args, \"json_output\", False) or getattr(args, \"format\", \"\") == \"json\":\n+                _write_stdout(json.dumps({\"error\": {\"code\": \"input_error\", \"message\": str(exc)}}, ensure_ascii=False))\n+            print(str(exc), file=sys.stderr)\n+            sys.exit(2)\n+        return\n+\n     if args.command == \"demo\":\n         _run_demo(args)\n         return\n@@ -351,15 +363,9 @@ def run_cli(argv=None):\n     if args.command == \"explain\":\n         _run_explain(args)\n         return\n-    if args.command == \"self-audit\":\n-        _run_self_audit(args)\n-        return\n     if args.command == \"docs-check\":\n         _run_docs_check(args)\n         return\n-    if args.command == \"review\":\n-        _run_review(args)\n-        return\n     if args.command == \"install\":\n         _run_install(args)\n         return\n@@ -370,12 +376,6 @@ def run_cli(argv=None):\n         _run_serve(args)\n         return\n \n-    try:\n-        _run_check(args)\n-    except GitInputError as exc:\n-        print(str(exc), file=sys.stderr)\n-        sys.exit(2)\n-\n \n def _build_parser() -> argparse.ArgumentParser:\n     parser = argparse.ArgumentParser(\n@@ -1080,26 +1080,20 @@ def _run_review(args) -> None:\n     if args.all_files:\n         file_paths = _collect_python_files(_Path.cwd())\n     else:\n-        try:\n-            git = GitAdapter()\n-            changed_objs = git.get_changed_files(args.base)\n-            file_paths = [\n-                f.path for f in changed_objs\n-                if f.path.endswith(\".py\")\n-            ]\n-            patch_text = _collect_patch_text(args.base)\n-        except Exception as exc:\n-            print(f\"WARNING: could not collect git diff: {exc}\", file=sys.stderr)\n-            file_paths = []\n-\n-    if not file_paths:\n-        _write_stdout(\"No Python files to review.\")\n-        sys.exit(0)\n+        changed_objs = GitAdapter().get_changed_files(args.base)\n+        file_paths = [f.path for f in changed_objs if f.path.endswith(\".py\") and f.status != \"deleted\"]\n+        patch_text = \"\\n\".join(f.patch for f in changed_objs)\n \n     def _read_file(path: str) -> str:\n-        return _Path(path).read_text(encoding=\"utf-8\", errors=\"replace\")\n+        try:\n+            return _Path(path).read_text(encoding=\"utf-8\", errors=\"replace\")\n+        except OSError as exc:\n+            raise GitInputError(f\"검사할 파일을 읽지 못했습니다: {path}\") from exc\n \n-    result = review_files(file_paths, _read_file)\n+    # The core review helper tolerates unavailable files; CLI automation must\n+    # distinguish incomplete input from a successfully reviewed empty set.\n+    contents = {path: _read_file(path) for path in file_paths}\n+    result = review_files(file_paths, contents.__getitem__)\n \n     if patch_text and not args.all_files:\n         result.test_gaps = find_test_gaps(patch_text, file_paths)\n@@ -1205,15 +1199,9 @@ def _run_self_audit(args) -> None:\n     items = parse_checklist(checklist_path)\n \n     # Collect git diff evidence\n-    try:\n-        git = GitAdapter()\n-        changed_files_objs = git.get_changed_files(args.base)\n-        changed_file_paths = [f.path for f in changed_files_objs]\n-        patch_text = _collect_patch_text(args.base)\n-    except Exception as exc:\n-        print(f\"WARNING: could not collect git diff: {exc}\", file=sys.stderr)\n-        changed_file_paths = []\n-        patch_text = \"\"\n+    changed_files_objs = GitAdapter().get_changed_files(args.base)\n+    changed_file_paths = [f.path for f in changed_files_objs]\n+    patch_text = \"\\n\".join(f.patch for f in changed_files_objs)\n \n     evidence = DiffEvidence.from_raw(\n         changed_files=changed_file_paths,\n@@ -1259,21 +1247,6 @@ def _run_self_audit(args) -> None:\n     sys.exit(0)\n \n \n-def _collect_patch_text(base: str) -> str:\n-    \"\"\"Return the unified diff text from git diff base.\"\"\"\n-    import subprocess\n-    try:\n-        return subprocess.check_output(\n-            [\"git\", \"diff\", base],\n-            stderr=subprocess.DEVNULL,\n-            text=True,\n-            encoding=\"utf-8\",\n-            errors=\"replace\",\n-        )\n-    except Exception:\n-        return \"\"\n-\n-\n def _format_self_audit_markdown(audit_result) -> str:\n     lines = [\"# Self-Audit Report\", \"\"]\n     supported = [i for i in audit_result.checklist_items if i.status == \"supported\"]\n",
+            "semantic_signals": [
+              "function-signature-changed"
+            ],
+            "semantic_evidence": [
+              "Python function signature changed"
+            ],
+            "analysis_method": "grammar+heuristic",
+            "analysis_reason": "",
+            "documented_env_keys": null
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Input and CLI contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "checklist": [
+          "Input and CLI contract 업데이트"
+        ],
+        "ignored": false,
+        "change_intensity": "signature-change",
+        "change_intensities": [
+          "signature-change"
+        ],
+        "trigger_patterns": [
+          "drift_gate/adapters/cli/**"
+        ],
+        "blast_radius": [
+          "missing requirement group: Input and CLI contract"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": []
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "confidence": "low",
+        "change_types": [
+          "other"
+        ],
+        "change_type": "other",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": "drift_gate/adapters/mcp/server.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "diff --git a/drift_gate/adapters/mcp/server.py b/drift_gate/adapters/mcp/server.py\nindex be652bf..4b24f43 100644\n--- a/drift_gate/adapters/mcp/server.py\n+++ b/drift_gate/adapters/mcp/server.py\n@@ -146,20 +146,21 @@ def main(argv=None) -> None:\n     if repo:\n         os.chdir(repo)\n     while True:\n-        line = sys.stdin.readline(MAX_REQUEST_BYTES + 1)\n+        line = sys.stdin.buffer.readline(MAX_REQUEST_BYTES + 1)\n         if not line:\n             break\n-        if len(line.encode('utf-8')) > MAX_REQUEST_BYTES:\n-            while line and not line.endswith('\\n'):\n-                line = sys.stdin.readline(MAX_REQUEST_BYTES + 1)\n+        if len(line) > MAX_REQUEST_BYTES:\n+            while line and not line.endswith(b'\\n'):\n+                line = sys.stdin.buffer.readline(MAX_REQUEST_BYTES + 1)\n             print(json.dumps(_jsonrpc_error(None, -32600, 'request exceeds size limit')), flush=True)\n             continue\n         if not line.strip():\n             continue\n+        request = None\n         try:\n-            request = json.loads(line)\n+            request = json.loads(line.decode('utf-8'))\n             response = handle_request(request)\n-        except (json.JSONDecodeError, RecursionError) as exc:\n+        except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as exc:\n             response = {\"ok\": False, \"error\": f\"invalid json: {exc}\"}\n         except Exception as exc:\n             # A bad frame or tool must not terminate the remaining stdio session.\n",
+            "semantic_signals": [],
+            "semantic_evidence": [
+              "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+            ],
+            "analysis_method": "heuristic",
+            "analysis_reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+            "documented_env_keys": null
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "MCP transport contract",
+            "required": [
+              "docs/contracts/mcp-transport.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "checklist": [
+          "MCP transport contract 업데이트"
+        ],
+        "ignored": false,
+        "change_intensity": "impl-only",
+        "change_intensities": [
+          "impl-only"
+        ],
+        "trigger_patterns": [
+          "drift_gate/adapters/mcp/**"
+        ],
+        "blast_radius": [
+          "missing requirement group: MCP transport contract"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "confidence": "medium",
+        "change_types": [
+          "other",
+          "workflow-ci"
+        ],
+        "change_type": "other",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": ".drift-gate.self.yml",
+            "status": "added",
+            "previous_path": null,
+            "patch": "diff --git a/.drift-gate.self.yml b/.drift-gate.self.yml\nnew file mode 100644\nindex 0000000..f419173\n--- /dev/null\n+++ b/.drift-gate.self.yml\n@@ -0,0 +1,64 @@\n+# Repository-specific contract checks. The root .drift-gate.yml stays an example\n+# for web projects; use --policy .drift-gate.self.yml when reviewing Drift Gate.\n+rules:\n+  - id: self-engine-contract\n+    when:\n+      any_changed: ['drift_gate/core/**', 'drift_gate/adapters/ast/**', 'drift_gate/adapters/docs/**', 'drift_gate/utils/**', 'drift_gate/reporters/**']\n+      min_change_intensity: impl-only\n+    require:\n+      groups:\n+        - name: Gate and analysis contract\n+          all_changed: ['docs/contracts/gate-and-inputs.md']\n+    severity: major\n+  - id: self-cli-contract\n+    when:\n+      any_changed: ['drift_gate/adapters/cli/**', 'drift_gate/adapters/git/**', 'drift_gate/adapters/github/**', 'drift_gate/adapters/github_action/**', 'main.py', 'pyproject.toml']\n+      min_change_intensity: impl-only\n+    require:\n+      groups:\n+        - name: Input and CLI contract\n+          all_changed: ['docs/contracts/gate-and-inputs.md']\n+    severity: major\n+  - id: self-mcp-contract\n+    when:\n+      any_changed: ['drift_gate/adapters/mcp/**']\n+      min_change_intensity: impl-only\n+    require:\n+      groups:\n+        - name: MCP transport contract\n+          all_changed: ['docs/contracts/mcp-transport.md']\n+    severity: major\n+  - id: self-progress-contract\n+    when:\n+      any_changed: ['drift_gate/desktop/progress*', 'drift_gate/desktop/json_store.py', 'drift_gate/desktop/store_lock.py', 'drift_gate/desktop/verification_records.py']\n+      min_change_intensity: impl-only\n+    require:\n+      groups:\n+        - name: Progress persistence contract\n+          all_changed: ['docs/contracts/progress-storage.md']\n+    severity: major\n+  - id: self-ui-bridge-contract\n+    when:\n+      any_changed: ['desktop-ui/src/**', 'drift_gate/desktop/web_app.py']\n+      min_change_intensity: impl-only\n+    require:\n+      groups:\n+        - name: Desktop event and editing contract\n+          all_changed: ['docs/contracts/desktop-bridge.md']\n+    severity: major\n+  - id: self-package-operations\n+    when:\n+      any_changed: ['packaging/**', '.github/workflows/**', '.drift-gate.self.yml', 'scripts/check_self.py']\n+      min_change_intensity: impl-only\n+    require:\n+      groups:\n+        - name: Self-check and package operations\n+          all_changed: ['docs/ops/drift-gate-self-check.md']\n+    severity: major\n+gate:\n+  fail_on_blocker: true\n+  fail_on_major_count: 1\n+ignore_paths:\n+  - 'drift_gate/tests/**'\n+  - '**/*.test.ts'\n+  - '**/*.test.tsx'\n",
+            "semantic_signals": [],
+            "semantic_evidence": [
+              "No grammar-backed detector for this file type"
+            ],
+            "analysis_method": "heuristic",
+            "analysis_reason": "No grammar-backed detector for this file type",
+            "documented_env_keys": null
+          },
+          {
+            "path": ".github/workflows/ci.yml",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml\nindex 960dc34..9489150 100644\n--- a/.github/workflows/ci.yml\n+++ b/.github/workflows/ci.yml\n@@ -9,6 +9,41 @@ on:\n     types: [published]\n \n jobs:\n+  self-check:\n+    if: github.event_name == 'push' || github.event_name == 'pull_request'\n+    runs-on: ubuntu-latest\n+    permissions:\n+      contents: read\n+    steps:\n+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4\n+        with:\n+          fetch-depth: 0\n+      - uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4\n+        with:\n+          python-version: '3.11'\n+      - name: Install local checker\n+        run: pip install -e . zstandard==0.25.0\n+      - name: Restore grammar downloads\n+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4\n+        with:\n+          path: ${{ runner.temp }}/driftgate-parser-cache\n+          key: grammars-${{ runner.os }}-${{ runner.arch }}-language-pack-1.20.0\n+      - name: Prepare checked grammars\n+        env:\n+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache\n+        run: python packaging/prepare_parsers.py\n+      - name: Check the actual change with repository policy\n+        env:\n+          SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}\n+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache\n+        run: python scripts/check_self.py --base \"$SELF_CHECK_BASE\" --out build/self-check.json\n+      - name: Preserve policy coverage and gate evidence\n+        if: always()\n+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4\n+        with:\n+          name: drift-gate-self-check\n+          path: build/self-check.json\n+\n   test:\n     runs-on: ${{ matrix.os }}\n     strategy:\n",
+            "semantic_signals": [],
+            "semantic_evidence": [
+              "No grammar-backed detector for this file type"
+            ],
+            "analysis_method": "heuristic",
+            "analysis_reason": "No grammar-backed detector for this file type",
+            "documented_env_keys": null
+          },
+          {
+            "path": "scripts/check_self.py",
+            "status": "added",
+            "previous_path": null,
+            "patch": "diff --git a/scripts/check_self.py b/scripts/check_self.py\nnew file mode 100644\nindex 0000000..b601b62\n--- /dev/null\n+++ b/scripts/check_self.py\n@@ -0,0 +1,51 @@\n+\"\"\"Run the repository's own policy with explicit input and coverage evidence.\"\"\"\n+import argparse\n+import json\n+from pathlib import Path\n+import sys\n+\n+ROOT = Path(__file__).resolve().parents[1]\n+sys.path.insert(0, str(ROOT))\n+\n+from drift_gate.adapters.ast.analyzer import enrich_semantic_signals\n+from drift_gate.adapters.git.client import GitAdapter, GitInputError\n+from drift_gate.adapters.policy_loader import load_policy\n+from drift_gate.core.engine import run\n+from drift_gate.core.policy.loader import PolicyLoadError\n+from drift_gate.utils.glob_matcher import matches_any\n+\n+\n+def inspect_repository(root: Path, base: str) -> dict:\n+    policy = load_policy(root / '.drift-gate.self.yml')\n+    files = GitAdapter(root).get_changed_files(base)\n+    evaluation = run(enrich_semantic_signals(files), policy=policy)\n+    ignored = [file.path for file in files if matches_any(file.path, policy.ignore_paths)]\n+    matches = {file.path: [rule.id for rule in policy.rules if matches_any(file.path, rule.when.any_changed)]\n+               for file in files if file.path not in ignored}\n+    return {'requested_base': base, 'evaluation': evaluation.to_dict(),\n+            'coverage': {'kind': 'declared path matches, before intensity filtering',\n+                         'matched': {path: rules for path, rules in matches.items() if rules},\n+                         'unmatched': [path for path, rules in matches.items() if not rules],\n+                         'ignored': ignored}}\n+\n+\n+def main():\n+    parser = argparse.ArgumentParser(description=__doc__)\n+    parser.add_argument('--base', required=True)\n+    parser.add_argument('--repo', type=Path, default=ROOT)\n+    parser.add_argument('--out', type=Path, required=True)\n+    args = parser.parse_args()\n+    try:\n+        result = inspect_repository(args.repo.resolve(), args.base)\n+        code = int(result['evaluation']['result'] == 'fail')\n+    except (GitInputError, PolicyLoadError, OSError, ValueError) as exc:\n+        result = {'error': {'code': 'input_error', 'message': str(exc)}}\n+        code = 2\n+    args.out.parent.mkdir(parents=True, exist_ok=True)\n+    args.out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\\n', encoding='utf-8')\n+    print(json.dumps({'output': str(args.out), 'exit_code': code}))\n+    raise SystemExit(code)\n+\n+\n+if __name__ == '__main__':\n+    main()\n",
+            "semantic_signals": [
+              "function-signature-changed",
+              "public-cli-change"
+            ],
+            "semantic_evidence": [
+              "Python CLI command or option changed",
+              "Python function signature changed"
+            ],
+            "analysis_method": "grammar+heuristic",
+            "analysis_reason": "",
+            "documented_env_keys": null
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Self-check and package operations",
+            "required": [
+              "docs/ops/drift-gate-self-check.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ],
+        "checklist": [
+          "Self-check and package operations 업데이트"
+        ],
+        "ignored": false,
+        "change_intensity": "export-added",
+        "change_intensities": [
+          "auth-policy-change",
+          "export-added",
+          "public-cli-change"
+        ],
+        "trigger_patterns": [
+          ".drift-gate.self.yml",
+          ".github/workflows/**",
+          "scripts/check_self.py"
+        ],
+        "blast_radius": [
+          "CI/CD pipeline",
+          "CLI users",
+          "README/help documentation",
+          "authorization behavior",
+          "automation scripts",
+          "missing requirement group: Self-check and package operations",
+          "ops/runbook owners",
+          "repository secrets",
+          "role/permission owners",
+          "security documentation"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": []
+      }
+    ],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "fail",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "drift_gate/core/**"
+        ],
+        "trigger_files": [
+          "drift_gate/core/classification/intensity.py",
+          "drift_gate/core/evaluation/contracts.py",
+          "drift_gate/core/python_syntax.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ]
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "fail",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "drift_gate/adapters/cli/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/cli/runner.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Input and CLI contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ]
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "fail",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "drift_gate/adapters/mcp/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/mcp/server.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "MCP transport contract",
+            "required": [
+              "docs/contracts/mcp-transport.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ]
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "fail",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          ".drift-gate.self.yml",
+          ".github/workflows/**",
+          "scripts/check_self.py"
+        ],
+        "trigger_files": [
+          ".drift-gate.self.yml",
+          ".github/workflows/ci.yml",
+          "scripts/check_self.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Self-check and package operations",
+            "required": [
+              "docs/ops/drift-gate-self-check.md"
+            ],
+            "type": "all_changed",
+            "evidence": ""
+          }
+        ]
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {
+      ".drift-gate.self.yml": [
+        "self-package-operations"
+      ],
+      ".github/workflows/ci.yml": [
+        "self-package-operations"
+      ],
+      "drift_gate/adapters/cli/runner.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/mcp/server.py": [
+        "self-mcp-contract"
+      ],
+      "drift_gate/core/classification/intensity.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/contracts.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/python_syntax.py": [
+        "self-engine-contract"
+      ],
+      "scripts/check_self.py": [
+        "self-package-operations"
+      ]
+    },
+    "unmatched": [
+      "docs/assessment/self-verification-2026-10-06/README.md",
+      "docs/assessment/self-verification-2026-10-06/baseline-behavior-test.log",
+      "docs/assessment/self-verification-2026-10-06/baseline-test-execution.json",
+      "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stderr",
+      "docs/assessment/self-verification-2026-10-06/probe-run/bad-json-then-valid.stdout",
+      "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stderr",
+      "docs/assessment/self-verification-2026-10-06/probe-run/bad-utf8-then-valid.stdout",
+      "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stderr",
+      "docs/assessment/self-verification-2026-10-06/probe-run/cosmetic-docs.stdout",
+      "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stderr",
+      "docs/assessment/self-verification-2026-10-06/probe-run/invalid-check.stdout",
+      "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stderr",
+      "docs/assessment/self-verification-2026-10-06/probe-run/invalid-review.stdout",
+      "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stderr",
+      "docs/assessment/self-verification-2026-10-06/probe-run/invalid-self-audit.stdout",
+      "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stderr",
+      "docs/assessment/self-verification-2026-10-06/probe-run/missing-docs.stdout",
+      "docs/assessment/self-verification-2026-10-06/probe-run/results.json",
+      "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stderr",
+      "docs/assessment/self-verification-2026-10-06/probe-run/updated-contract.stdout",
+      "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stderr",
+      "docs/assessment/self-verification-2026-10-06/probe-run/valid-review.stdout",
+      "docs/assessment/self-verification-2026-10-06/probe-run/valid.stderr",
+      "docs/assessment/self-verification-2026-10-06/probe-run/valid.stdout",
+      "docs/assessment/self-verification-2026-10-06/probes.py",
+      "docs/assessment/self-verification-2026-10-06/product-run/changed-files.txt",
+      "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stderr",
+      "docs/assessment/self-verification-2026-10-06/product-run/docs-check.stdout",
+      "docs/assessment/self-verification-2026-10-06/product-run/gate.html",
+      "docs/assessment/self-verification-2026-10-06/product-run/gate.stderr",
+      "docs/assessment/self-verification-2026-10-06/product-run/gate.stdout",
+      "docs/assessment/self-verification-2026-10-06/product-run/generalization.json",
+      "docs/assessment/self-verification-2026-10-06/product-run/generalization.stderr",
+      "docs/assessment/self-verification-2026-10-06/product-run/generalization.stdout",
+      "docs/assessment/self-verification-2026-10-06/product-run/manifest.json",
+      "docs/assessment/self-verification-2026-10-06/product-run/policy.yml",
+      "docs/assessment/self-verification-2026-10-06/product-run/review.stderr",
+      "docs/assessment/self-verification-2026-10-06/product-run/review.stdout",
+      "docs/assessment/self-verification-2026-10-06/product-run/summary.json",
+      "docs/assessment/self-verification-2026-10-06/python-tests.log",
+      "docs/assessment/self-verification-2026-10-06/react-tests.log",
+      "docs/assessment/self-verification-2026-10-06/ruff.log",
+      "docs/assessment/self-verification-2026-10-06/trace_behavior.py",
+      "docs/assessment/self-verification-2026-10-06/typescript.log",
+      "docs/assessment/self-verification-2026-10-06/validation.json",
+      "docs/assessment/self-verification-2026-10-06/verify.py",
+      "docs/assessment/self-verification-fixes-2026-10-06/README.md",
+      "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/behavior-trace.log",
+      "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/example-policy.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/manifest.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/own-policy.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/policy-controls.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/candidate-run/review.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/example-policy.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/manifest.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/policy-controls.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/review.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/generalization-final.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/generalization.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/git-tests-final.log",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-json-then-valid.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/bad-utf8-then-valid.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/cosmetic-docs.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-check.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-review.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/invalid-self-audit.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/missing-docs.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/results.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/updated-contract.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/valid-review.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/probes/valid.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/python-tests-final.log",
+      "docs/assessment/self-verification-fixes-2026-10-06/python-tests.log",
+      "docs/assessment/self-verification-fixes-2026-10-06/react-tests.log",
+      "docs/assessment/self-verification-fixes-2026-10-06/ruff-final.log",
+      "docs/assessment/self-verification-fixes-2026-10-06/ruff.log",
+      "docs/assessment/self-verification-fixes-2026-10-06/typescript.log",
+      "docs/assessment/self-verification-fixes-2026-10-06/validate_candidate.py",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/example-policy.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/manifest.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy-full-review.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.json",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/own-policy.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/policy-controls.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stderr",
+      "docs/assessment/self-verification-fixes-2026-10-06/validated-candidate-run/review.stdout",
+      "docs/assessment/self-verification-fixes-2026-10-06/validation.json",
+      "docs/contracts/desktop-bridge.md",
+      "docs/contracts/progress-storage.md",
+      "docs/review/drift-gate-self-verification-2026-10-06.md",
+      "docs/review/self-verification-fixes-2026-10-06.md",
+      "docs/review/unrelated.md"
+    ],
+    "ignored": [
+      "drift_gate/tests/test_contract_route_regressions.py",
+      "drift_gate/tests/test_development_regressions.py",
+      "drift_gate/tests/test_git_collection.py",
+      "drift_gate/tests/test_mcp_tools.py",
+      "drift_gate/tests/test_self_policy.py"
+    ]
+  }
+}

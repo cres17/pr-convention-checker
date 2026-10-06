@@ -36,7 +36,7 @@ jobs:
         env:
           SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
           TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
-        run: python scripts/check_self.py --base "$SELF_CHECK_BASE" --out build/self-check.json
+        run: python scripts/check_self.py --base "$SELF_CHECK_BASE" --trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b --out build/self-check.json
       - name: Preserve policy coverage and gate evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-rioerqbo/repo/scripts/check_self.py", line 51, in <module>
+    main()
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-rioerqbo/repo/scripts/check_self.py", line 39, in main
+    result = inspect_repository(args.repo.resolve(), args.base)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-rioerqbo/repo/scripts/check_self.py", line 19, in inspect_repository
+    policy = load_policy(root / '.drift-gate.self.yml')
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-rioerqbo/repo/drift_gate/adapters/policy_loader.py", line 18, in load_policy
+    return load_policy_from_text(text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-rioerqbo/repo/drift_gate/core/policy/loader.py", line 44, in load_policy_from_text
+    return load_policy_from_dict(data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-rioerqbo/repo/drift_gate/core/policy/loader.py", line 17, in load_policy_from_dict
+    policy = Policy.from_dict(data or {})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-rioerqbo/repo/drift_gate/core/models/policy.py", line 172, in from_dict
+    rules=[Rule.from_dict(r) for r in d.get("rules", [])],
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-rioerqbo/repo/drift_gate/core/models/policy.py", line 172, in <listcomp>
+    rules=[Rule.from_dict(r) for r in d.get("rules", [])],
+           ^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-rioerqbo/repo/drift_gate/core/models/policy.py", line 82, in from_dict
+    id=d["id"],
+       ~^^^^^^
+TypeError: 'NoneType' object is not subscriptable
