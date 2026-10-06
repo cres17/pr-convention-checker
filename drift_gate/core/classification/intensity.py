@@ -9,6 +9,7 @@ from typing import Iterable, List
 
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.route_syntax import METHOD_PATTERN, route_registration_method
+from drift_gate.core.python_syntax import environment_keys, without_literals
 
 INTENSITY_ORDER = {
     "any": -1,
@@ -157,13 +158,14 @@ def classify_file_intensity(file: ChangedFile) -> str:
 
     added_lines = [line for marker, line in changed_lines if marker == "+"]
     removed_lines = [line for marker, line in changed_lines if marker == "-"]
-    if _adds_config_key(added_lines, removed_lines):
+    if _adds_config_key(added_lines, removed_lines, file.path):
         return "config-key-added"
 
     if any(_matches_any(line, CONFIG_SCHEMA_PATTERNS) for _, line in changed_lines):
         return "config-key-added"
 
-    if any(_matches_any(line, CI_SECRET_PATTERNS) for _, line in changed_lines):
+    word_lines = without_literals([line for _, line in changed_lines]) if file.path.endswith('.py') else [line for _, line in changed_lines]
+    if any(_matches_any(line, CI_SECRET_PATTERNS) for line in word_lines):
         return "ci-secret-change"
 
     if any(_matches_any(line, CLI_PUBLIC_PATTERNS) for _, line in changed_lines):
@@ -244,13 +246,22 @@ def _semantic_intensity(signals: List[str]) -> str:
     return strongest
 
 
-def _adds_config_key(added_lines: List[str], removed_lines: List[str]) -> bool:
-    added_keys = _extract_config_keys(added_lines)
-    removed_keys = _extract_config_keys(removed_lines)
+def _adds_config_key(added_lines: List[str], removed_lines: List[str], path: str = '') -> bool:
+    added_keys = _extract_config_keys(added_lines, path)
+    removed_keys = _extract_config_keys(removed_lines, path)
     return bool(added_keys - removed_keys)
 
 
-def _extract_config_keys(lines: List[str]) -> set[str]:
+def _extract_config_keys(lines: List[str], path: str = '') -> set[str]:
+    if path.endswith('.py'):
+        parsed = environment_keys(lines)
+        if parsed is not None:
+            # Plain uppercase Python configuration assignments remain supported.
+            for line in without_literals(lines):
+                match = re.match(r'^\s*([A-Z][A-Z0-9_]*)\s*=', line)
+                if match:
+                    parsed.add(match.group(1))
+            return parsed
     keys = set()
     for line in lines:
         for pattern in ENV_KEY_PATTERNS:

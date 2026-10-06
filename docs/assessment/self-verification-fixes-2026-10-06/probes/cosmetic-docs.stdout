@@ -1,0 +1,122 @@
+{
+  "summary": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 0,
+    "nit": 0,
+    "gate_decision": "pass"
+  },
+  "scan_metrics": {
+    "scanned_files": 3,
+    "skipped_ignored_files": 0,
+    "skipped_binary_files": 0,
+    "skipped_large_files": 0,
+    "evaluated_rules": 5,
+    "runtime_seconds": 0.008390708011575043,
+    "analysis_notes": [
+      {
+        "path": "CHANGELOG.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/spec.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "src/routes/session.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      }
+    ]
+  },
+  "result": "pass",
+  "change_types": [
+    "api-surface",
+    "other"
+  ],
+  "violations": [],
+  "rule_decisions": [
+    {
+      "rule_id": "api-contract-sync",
+      "severity": "BLOCKER",
+      "status": "pass",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "src/routes/**"
+      ],
+      "trigger_files": [
+        "src/routes/session.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "API 계약 문서",
+          "required": [
+            "docs/spec.md",
+            "docs/api/**"
+          ],
+          "type": "any_changed",
+          "evidence": ""
+        },
+        {
+          "name": "릴리즈 공지",
+          "required": [
+            "CHANGELOG.md"
+          ],
+          "type": "all_changed",
+          "evidence": ""
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "schema-migration-proof",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "env-config-sync",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "workflow-ops-doc",
+      "severity": "MINOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "auth-security-doc",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    }
+  ],
+  "skipped_rules": [],
+  "rejected_ignores": [],
+  "ignore_audit": [],
+  "temporal_warnings": [],
+  "gate": {
+    "fail_on_blocker": true,
+    "fail_on_major_count": 2
+  }
+}

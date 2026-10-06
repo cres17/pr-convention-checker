@@ -146,20 +146,21 @@ def main(argv=None) -> None:
     if repo:
         os.chdir(repo)
     while True:
-        line = sys.stdin.readline(MAX_REQUEST_BYTES + 1)
+        line = sys.stdin.buffer.readline(MAX_REQUEST_BYTES + 1)
         if not line:
             break
-        if len(line.encode('utf-8')) > MAX_REQUEST_BYTES:
-            while line and not line.endswith('\n'):
-                line = sys.stdin.readline(MAX_REQUEST_BYTES + 1)
+        if len(line) > MAX_REQUEST_BYTES:
+            while line and not line.endswith(b'\n'):
+                line = sys.stdin.buffer.readline(MAX_REQUEST_BYTES + 1)
             print(json.dumps(_jsonrpc_error(None, -32600, 'request exceeds size limit')), flush=True)
             continue
         if not line.strip():
             continue
+        request = None
         try:
-            request = json.loads(line)
+            request = json.loads(line.decode('utf-8'))
             response = handle_request(request)
-        except (json.JSONDecodeError, RecursionError) as exc:
+        except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as exc:
             response = {"ok": False, "error": f"invalid json: {exc}"}
         except Exception as exc:
             # A bad frame or tool must not terminate the remaining stdio session.

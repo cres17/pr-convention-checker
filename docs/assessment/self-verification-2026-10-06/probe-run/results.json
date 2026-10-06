@@ -1,0 +1,114 @@
+{
+  "head": "01e28e1620941a539d3e9c14972201b30adafd3b",
+  "invalid_base": {
+    "check": {
+      "exit_code": 2,
+      "arguments": [
+        "check",
+        "--base",
+        "missing-review-ref",
+        "--json",
+        "--anthropic-api-key",
+        ""
+      ],
+      "stdout": "",
+      "stderr": "Git 변경을 읽지 못했습니다. 저장소와 비교 기준을 확인하고 다시 검사해 주세요.\n"
+    },
+    "review": {
+      "exit_code": 0,
+      "arguments": [
+        "review",
+        "--base",
+        "missing-review-ref",
+        "--format",
+        "json",
+        "--fail-on",
+        "low"
+      ],
+      "stdout": "No Python files to review.\n",
+      "stderr": "WARNING: could not collect git diff: Git 변경을 읽지 못했습니다. 저장소와 비교 기준을 확인하고 다시 검사해 주세요.\n"
+    },
+    "self_audit": {
+      "exit_code": 0,
+      "arguments": [
+        "self-audit",
+        "--base",
+        "missing-review-ref",
+        "--checklist",
+        "checklist.md",
+        "--json"
+      ],
+      "stdout": "{\n  \"self_audit\": {\n    \"checklist_items\": [],\n    \"warnings\": []\n  }\n}\n",
+      "stderr": "WARNING: could not collect git diff: Git 변경을 읽지 못했습니다. 저장소와 비교 기준을 확인하고 다시 검사해 주세요.\n"
+    },
+    "valid_review_control": {
+      "exit_code": 0,
+      "arguments": [
+        "review",
+        "--base",
+        "HEAD",
+        "--format",
+        "json"
+      ],
+      "stdout": "No Python files to review.\n",
+      "stderr": ""
+    }
+  },
+  "rejected_cleanup_proposal": {
+    "active_before_close": true,
+    "active_deletion_rejected": true,
+    "active_after_close": false,
+    "recoverable_title_before_proposed_cleanup": "종료 전에 편집한 미저장 제목",
+    "inactive_candidates": 1,
+    "recovery_after_proposed_cleanup": {},
+    "confirmed_title": "로그인 기능",
+    "confirmed_baseline_unchanged": true,
+    "scope": "real service APIs; proposed automatic selection simulated in a disposable repository"
+  },
+  "path_policy_controls": {
+    "missing-docs": {
+      "exit_code": 1,
+      "gate": "fail",
+      "violations": [
+        "api-contract-sync"
+      ]
+    },
+    "cosmetic-docs": {
+      "exit_code": 0,
+      "gate": "pass",
+      "violations": []
+    },
+    "updated-contract": {
+      "exit_code": 0,
+      "gate": "pass",
+      "violations": []
+    }
+  },
+  "mcp_frames": {
+    "valid": {
+      "exit_code": 0,
+      "following_request_answered": true,
+      "stderr": ""
+    },
+    "bad-json-then-valid": {
+      "exit_code": 0,
+      "following_request_answered": true,
+      "stderr": ""
+    },
+    "bad-utf8-then-valid": {
+      "exit_code": 1,
+      "following_request_answered": false,
+      "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/Users/moon/Documents/pr-convention-checker/drift_gate/adapters/mcp/server.py\", line 196, in <module>\n    main()\n  File \"/Users/moon/Documents/pr-convention-checker/drift_gate/adapters/mcp/server.py\", line 152, in main\n    if len(line.encode('utf-8')) > MAX_REQUEST_BYTES:\n           ^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'utf-8' codec can't encode character '\\udcff' in position 0: surrogates not allowed\n"
+    }
+  },
+  "policy_coverage": {
+    "changed_files": 103,
+    "matched": {
+      ".github/workflows/desktop-build.yml": [
+        "workflow-ops-doc"
+      ]
+    },
+    "production_file_count": 28,
+    "production_matched": {}
+  }
+}

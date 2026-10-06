@@ -1,0 +1,67 @@
+{
+  "base": "729a3cde70c3457b633798bb50273d815d4d2c12",
+  "head": "01e28e1620941a539d3e9c14972201b30adafd3b",
+  "scope": "committed changes, isolated checkout",
+  "python": "3.11.15 (main, Mar  3 2026, 00:52:57) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "runs": [
+    {
+      "name": "gate",
+      "arguments": [
+        "-m",
+        "drift_gate",
+        "check",
+        "--base",
+        "729a3cde70c3457b633798bb50273d815d4d2c12",
+        "--json",
+        "--anthropic-api-key",
+        "",
+        "--out-html",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/self-verification-2026-10-06/product-run/gate.html"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-06T05:25:58.299010+00:00"
+    },
+    {
+      "name": "review",
+      "arguments": [
+        "-m",
+        "drift_gate",
+        "review",
+        "--base",
+        "729a3cde70c3457b633798bb50273d815d4d2c12",
+        "--format",
+        "json"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-06T05:25:58.980275+00:00"
+    },
+    {
+      "name": "docs-check",
+      "arguments": [
+        "-m",
+        "drift_gate",
+        "docs-check",
+        "README.md",
+        "--json",
+        "--fail-on-warn"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-06T05:25:59.762313+00:00"
+    },
+    {
+      "name": "generalization",
+      "arguments": [
+        "scripts/audit_generalization.py",
+        "--source-root",
+        "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-self-verification-1th84vss/checkout",
+        "--revision",
+        "01e28e1620941a539d3e9c14972201b30adafd3b",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/self-verification-2026-10-06/product-run/generalization.json"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-06T05:25:59.828437+00:00"
+    }
+  ],
+  "harness_sha256": "114c58cdab347ea70a6544e14a553685a8886c44e35d0941c9ae4b24d60c66a2"
+}

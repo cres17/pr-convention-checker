@@ -1,0 +1,49 @@
+{
+  "review": {
+    "files_reviewed": [
+      "drift_gate/adapters/cli/runner.py",
+      "drift_gate/adapters/mcp/server.py",
+      "drift_gate/core/classification/intensity.py",
+      "drift_gate/core/evaluation/contracts.py",
+      "drift_gate/core/python_syntax.py",
+      "drift_gate/tests/test_contract_route_regressions.py",
+      "drift_gate/tests/test_development_regressions.py",
+      "drift_gate/tests/test_git_collection.py",
+      "drift_gate/tests/test_mcp_tools.py",
+      "drift_gate/tests/test_self_policy.py",
+      "scripts/check_self.py"
+    ],
+    "finding_count": 0,
+    "findings": [],
+    "test_gaps": [
+      {
+        "source_file": "drift_gate/core/evaluation/contracts.py",
+        "function_name": "env_keys_in_code",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/core/python_syntax.py",
+        "function_name": "environment_keys",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/core/python_syntax.py",
+        "function_name": "without_literals",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "scripts/check_self.py",
+        "function_name": "inspect_repository",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      }
+    ]
+  }
+}

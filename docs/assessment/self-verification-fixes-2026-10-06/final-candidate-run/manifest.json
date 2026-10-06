@@ -1,0 +1,84 @@
+{
+  "base": "01e28e1620941a539d3e9c14972201b30adafd3b",
+  "scope": "working candidate copied into isolated checkout and indexed there",
+  "excluded_existing_deletions": [
+    "docs/conversation-summary-2026-10-01.md",
+    "docs/handoff-2026-10-01.md"
+  ],
+  "source_sha256": {
+    ".drift-gate.self.yml": "3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb",
+    ".github/workflows/ci.yml": "4b7f5c0db60efbaa27d9f86cc3a0d9f8c1b0bf8e02a8762e8ba0354c97aea710",
+    "docs/contracts/desktop-bridge.md": "c95543ab866dc01e4c7706761c659f24a7a1ba9f77a7fe6d78a06cf4c50b05d8",
+    "docs/contracts/gate-and-inputs.md": "6e4a5e67e97458d678bfc412419249e08d16b1916d719fd66f950047d8ce82f0",
+    "docs/contracts/mcp-transport.md": "8c4512270756e5b778131ec4068c3d142f4db3a8de13546ec4909e3223708a1e",
+    "docs/contracts/progress-storage.md": "fc6ad09258523fdb43c3263c16b543edce68071a78cfb9b24444c2d7e5324676",
+    "docs/ops/drift-gate-self-check.md": "7680c3ed85d1e68c653d9765422fbce4b9127f63d528083f0831f8c9d12c3e05",
+    "drift_gate/adapters/cli/runner.py": "4eb7680a2ea25351557f9584dc40091220975b0191128758f9024d09360bc6d2",
+    "drift_gate/adapters/mcp/server.py": "0648e1ca42f4c418c16dabe558a847bd2d77de1785731f687424c8f411bc99a8",
+    "drift_gate/core/classification/intensity.py": "10558dc5e0882deedb5d7dea34e6d174c33dff689d1d9873b31de1cd31586e61",
+    "drift_gate/core/evaluation/contracts.py": "11b7df3d087bfff114cead813454bc80a56a7ceef136e021813e20702ceb3e1c",
+    "drift_gate/core/python_syntax.py": "c894c0b50c4f2bc70363bcc1d0836bed0442e68f01077c14cc08b09fcebec387",
+    "drift_gate/tests/test_contract_route_regressions.py": "68591197ce384515736fbfff61eb61aa601a47fa54239fd8a7a3be4a09556553",
+    "drift_gate/tests/test_development_regressions.py": "43d2a08a2cedbf61ec258ba0a216dd0353c017657ff07f2fa47c520163ff5017",
+    "drift_gate/tests/test_git_collection.py": "afe49a6f1354710ed29b5ca646f7d1f4379acaf536155640b5de94fd80e257fb",
+    "drift_gate/tests/test_mcp_tools.py": "0ed9a188da59ba11bc160c9ef5ee8833151471f47880ecc2de3a2809cee62961",
+    "drift_gate/tests/test_self_policy.py": "8bf5e5570f23bb7af4539850ed676d3ccec9a382c299ba763be7abba2ed69844",
+    "scripts/check_self.py": "dcd1204d21f985f98ec2cd3ed5a9826d5d4088790a026889cc546e9bf78073dc"
+  },
+  "commands": {
+    "own-policy": {
+      "exit_code": 0,
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "HEAD",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy.json"
+      ]
+    },
+    "own-policy-full-review": {
+      "exit_code": 0,
+      "arguments": [
+        "scripts/check_self.py",
+        "--base",
+        "729a3cd",
+        "--out",
+        "/Users/moon/Documents/pr-convention-checker/docs/assessment/self-verification-fixes-2026-10-06/final-candidate-run/own-policy-full-review.json"
+      ]
+    },
+    "example-policy": {
+      "exit_code": 0,
+      "arguments": [
+        "-m",
+        "drift_gate",
+        "check",
+        "--base",
+        "HEAD",
+        "--json",
+        "--anthropic-api-key",
+        ""
+      ]
+    },
+    "review": {
+      "exit_code": 0,
+      "arguments": [
+        "-m",
+        "drift_gate",
+        "review",
+        "--base",
+        "HEAD",
+        "--format",
+        "json"
+      ]
+    },
+    "policy-controls": {
+      "exit_code": 0,
+      "arguments": [
+        "-m",
+        "pytest",
+        "-q",
+        "drift_gate/tests/test_self_policy.py"
+      ]
+    }
+  }
+}

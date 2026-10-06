@@ -9,6 +9,41 @@ on:
     types: [published]
 
 jobs:
+  self-check:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
+        with:
+          python-version: '3.11'
+      - name: Install local checker
+        run: pip install -e . zstandard==0.25.0
+      - name: Restore grammar downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/driftgate-parser-cache
+          key: grammars-${{ runner.os }}-${{ runner.arch }}-language-pack-1.20.0
+      - name: Prepare checked grammars
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: python packaging/prepare_parsers.py
+      - name: Check the actual change with repository policy
+        env:
+          SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: python scripts/check_self.py --base "$SELF_CHECK_BASE" --out build/self-check.json
+      - name: Preserve policy coverage and gate evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: drift-gate-self-check
+          path: build/self-check.json
+
   test:
     runs-on: ${{ matrix.os }}
     strategy:

@@ -84,3 +84,24 @@ def test_existing_indented_route_and_plain_doc_format_still_work():
     assert route_delta([source]) == ({("GET", "/health")}, set())
     assert classify_file_intensity(source) == "route-contract-change"
     assert _routes(["GET /health"], docs=True) == {("GET", "/health")}
+
+
+@pytest.mark.parametrize('group_type', ['any_changed', 'all_changed'])
+@pytest.mark.parametrize('old_route', ['/orders', '/billing/v2'])
+def test_removed_route_cannot_remain_in_updated_document(group_type, old_route):
+    policy = Policy.from_dict({'rules': [{'id': 'contract', 'severity': 'blocker',
+        'when': {'any_changed': ['src/routes/**']}, 'require': {'groups': [
+            {'name': 'API', group_type: ['docs/api/routes.md'], 'content': 'api-routes'}]}}]})
+    source = code(f"-@app.delete('{old_route}')\n+@app.delete('/replacement')\n")
+    document = ChangedFile(path='docs/api/routes.md', status='modified',
+        patch=f'-DELETE {old_route}\n+| DELETE | {old_route} | unchanged |\n+DELETE /replacement\n')
+    assert run([source, document], policy=policy).result == 'fail'
+    document.patch = f'-DELETE {old_route}\n+DELETE /replacement\n'
+    assert run([source, document], policy=policy).result == 'pass'
+
+
+def test_removed_route_copied_between_matching_documents_is_not_removed():
+    source = code("-@app.get('/retired')\n")
+    documents = [ChangedFile(path='docs/api/old.md', status='modified', patch='-GET /retired\n'),
+                 ChangedFile(path='docs/api/new.md', status='added', patch='+GET /retired\n')]
+    assert run([source, *documents], policy=POLICY).result == 'fail'

@@ -3,6 +3,7 @@ import re
 
 from drift_gate.utils.glob_matcher import matches_any
 from drift_gate.core.route_syntax import METHOD_PATTERN, literal_route
+from drift_gate.core.python_syntax import environment_keys
 
 DOC_ROUTE = re.compile(rf"\b({METHOD_PATTERN})[ \t]+(/[^\s`'\"<>]+)", re.I)
 DOC_TABLE_ROUTE = re.compile(rf"^\s*\|\s*({METHOD_PATTERN})\s*\|\s*(/[^\s|`'\"<>]+)\s*\|", re.I)
@@ -20,7 +21,11 @@ def patch_lines(patch, marker):
             if line.startswith(marker) and not line.startswith(marker * 3)]
 
 
-def env_keys_in_code(lines):
+def env_keys_in_code(lines, path=''):
+    if path.endswith('.py'):
+        parsed = environment_keys(lines)
+        if parsed is not None:
+            return parsed
     keys = set()
     for line in lines:
         if line.lstrip().startswith(("#", "//", "*")):
@@ -37,8 +42,8 @@ def env_keys_in_document(text):
 def added_env_keys(files):
     added, removed = set(), set()
     for file in files:
-        added.update(env_keys_in_code(patch_lines(file.patch, "+")))
-        removed.update(env_keys_in_code(patch_lines(file.patch, "-")))
+        added.update(env_keys_in_code(patch_lines(file.patch, "+"), file.path))
+        removed.update(env_keys_in_code(patch_lines(file.patch, "-"), file.path))
     return added - removed
 
 
@@ -98,7 +103,7 @@ def content_requirement(group, triggers, changed_files):
         candidates = [f for f in docs if matches_any(f.path, [pattern])]
         plus = set().union(*(_routes(patch_lines(f.patch, "+"), docs=True) for f in candidates))
         minus = set().union(*(_routes(patch_lines(f.patch, "-"), docs=True) for f in candidates))
-        return added <= plus and removed <= minus
+        return added <= plus and removed <= (minus - plus)
     ok = all(covered(p) for p in patterns) if group.all_changed else covered_patterns(docs, added, removed)
     labels = [f"add {m} {p}" for m, p in sorted(added)] + [f"remove {m} {p}" for m, p in sorted(removed)]
     return ok, "API documentation must reflect: " + "; ".join(labels)
@@ -107,4 +112,4 @@ def content_requirement(group, triggers, changed_files):
 def covered_patterns(docs, added, removed):
     plus = set().union(*(_routes(patch_lines(f.patch, "+"), docs=True) for f in docs))
     minus = set().union(*(_routes(patch_lines(f.patch, "-"), docs=True) for f in docs))
-    return added <= plus and removed <= minus
+    return added <= plus and removed <= (minus - plus)

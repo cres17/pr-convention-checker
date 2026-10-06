@@ -262,3 +262,37 @@ def test_mcp_oversized_frame_is_drained_without_losing_the_next_request():
     rows = [json.loads(line) for line in result.stdout.splitlines()]
     assert len(rows) == 2 and rows[0]['error']['code'] == -32600
     assert rows[1]['id'] == 7 and 'result' in rows[1]
+
+
+@pytest.mark.parametrize('broken', [b'\xff\n', b'\xe2\x82\n', b'{"id":"\xff"}\n'])
+def test_mcp_invalid_utf8_does_not_lose_surrounding_requests(broken):
+    import json
+    import subprocess
+    import sys
+    valid = b'{"jsonrpc":"2.0","id":7,"method":"tools/list"}\n'
+    result = subprocess.run([sys.executable, '-m', 'drift_gate.adapters.mcp.server'],
+        input=valid + broken + valid, capture_output=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    rows = [json.loads(line) for line in result.stdout.splitlines()]
+    assert len(rows) == 3 and 'error' in rows[1]
+    assert all(row['id'] == 7 and 'result' in row for row in (rows[0], rows[2]))
+
+
+@pytest.mark.parametrize('extra_byte', [False, True])
+def test_mcp_limit_counts_utf8_bytes_and_recovers_at_boundary(extra_byte):
+    import json
+    import subprocess
+    import sys
+    from drift_gate.adapters.mcp.server import MAX_REQUEST_BYTES
+    prefix = '{"jsonrpc":"2.0","id":9,"method":"tools/list","padding":"'.encode()
+    suffix = b'"}\n'
+    remaining = MAX_REQUEST_BYTES - len(prefix) - len(suffix)
+    body = ('가' * (remaining // 3)).encode() + b' ' * (remaining % 3 + int(extra_byte))
+    valid = b'{"jsonrpc":"2.0","id":7,"method":"tools/list"}\n'
+    result = subprocess.run([sys.executable, '-m', 'drift_gate.adapters.mcp.server'],
+        input=prefix + body + suffix + valid, capture_output=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    rows = [json.loads(line) for line in result.stdout.splitlines()]
+    assert len(rows) == 2
+    assert ('error' in rows[0]) == extra_byte
+    assert rows[1]['id'] == 7 and 'result' in rows[1]

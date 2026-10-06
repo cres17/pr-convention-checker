@@ -333,6 +333,18 @@ def run_cli(argv=None):
     parser = _build_parser()
     args = parser.parse_args(argv)
 
+    inspections = {"check": _run_check, "report": _run_check,
+                   "review": _run_review, "self-audit": _run_self_audit}
+    if args.command in inspections:
+        try:
+            inspections[args.command](args)
+        except GitInputError as exc:
+            if getattr(args, "json_output", False) or getattr(args, "format", "") == "json":
+                _write_stdout(json.dumps({"error": {"code": "input_error", "message": str(exc)}}, ensure_ascii=False))
+            print(str(exc), file=sys.stderr)
+            sys.exit(2)
+        return
+
     if args.command == "demo":
         _run_demo(args)
         return
@@ -351,14 +363,8 @@ def run_cli(argv=None):
     if args.command == "explain":
         _run_explain(args)
         return
-    if args.command == "self-audit":
-        _run_self_audit(args)
-        return
     if args.command == "docs-check":
         _run_docs_check(args)
-        return
-    if args.command == "review":
-        _run_review(args)
         return
     if args.command == "install":
         _run_install(args)
@@ -369,12 +375,6 @@ def run_cli(argv=None):
     if args.command == "serve":
         _run_serve(args)
         return
-
-    try:
-        _run_check(args)
-    except GitInputError as exc:
-        print(str(exc), file=sys.stderr)
-        sys.exit(2)
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -1080,26 +1080,20 @@ def _run_review(args) -> None:
     if args.all_files:
         file_paths = _collect_python_files(_Path.cwd())
     else:
-        try:
-            git = GitAdapter()
-            changed_objs = git.get_changed_files(args.base)
-            file_paths = [
-                f.path for f in changed_objs
-                if f.path.endswith(".py")
-            ]
-            patch_text = _collect_patch_text(args.base)
-        except Exception as exc:
-            print(f"WARNING: could not collect git diff: {exc}", file=sys.stderr)
-            file_paths = []
-
-    if not file_paths:
-        _write_stdout("No Python files to review.")
-        sys.exit(0)
+        changed_objs = GitAdapter().get_changed_files(args.base)
+        file_paths = [f.path for f in changed_objs if f.path.endswith(".py") and f.status != "deleted"]
+        patch_text = "\n".join(f.patch for f in changed_objs)
 
     def _read_file(path: str) -> str:
-        return _Path(path).read_text(encoding="utf-8", errors="replace")
+        try:
+            return _Path(path).read_text(encoding="utf-8", errors="replace")
+        except OSError as exc:
+            raise GitInputError(f"검사할 파일을 읽지 못했습니다: {path}") from exc
 
-    result = review_files(file_paths, _read_file)
+    # The core review helper tolerates unavailable files; CLI automation must
+    # distinguish incomplete input from a successfully reviewed empty set.
+    contents = {path: _read_file(path) for path in file_paths}
+    result = review_files(file_paths, contents.__getitem__)
 
     if patch_text and not args.all_files:
         result.test_gaps = find_test_gaps(patch_text, file_paths)
@@ -1205,15 +1199,9 @@ def _run_self_audit(args) -> None:
     items = parse_checklist(checklist_path)
 
     # Collect git diff evidence
-    try:
-        git = GitAdapter()
-        changed_files_objs = git.get_changed_files(args.base)
-        changed_file_paths = [f.path for f in changed_files_objs]
-        patch_text = _collect_patch_text(args.base)
-    except Exception as exc:
-        print(f"WARNING: could not collect git diff: {exc}", file=sys.stderr)
-        changed_file_paths = []
-        patch_text = ""
+    changed_files_objs = GitAdapter().get_changed_files(args.base)
+    changed_file_paths = [f.path for f in changed_files_objs]
+    patch_text = "\n".join(f.patch for f in changed_files_objs)
 
     evidence = DiffEvidence.from_raw(
         changed_files=changed_file_paths,
@@ -1257,21 +1245,6 @@ def _run_self_audit(args) -> None:
             )
 
     sys.exit(0)
-
-
-def _collect_patch_text(base: str) -> str:
-    """Return the unified diff text from git diff base."""
-    import subprocess
-    try:
-        return subprocess.check_output(
-            ["git", "diff", base],
-            stderr=subprocess.DEVNULL,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-        )
-    except Exception:
-        return ""
 
 
 def _format_self_audit_markdown(audit_result) -> str:
