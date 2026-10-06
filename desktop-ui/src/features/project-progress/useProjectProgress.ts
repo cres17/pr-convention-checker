@@ -127,7 +127,7 @@ export default function useProjectProgress({ path, connected, bridge, events, fo
     }
     const requests = sessions.current.requests(path);
     if (purpose === 'latest') requests.cancel('draft');
-    if (purpose === "save" || purpose === "extract" || purpose === "latest") requests.invalidateReads();
+    if (purpose === "save" || purpose === "extract" || purpose === "latest" || purpose === "draft-import") requests.invalidateReads();
     dispatch({ type: "begin", operation: purpose });
     operationToken.current = requests.start(purpose);
     run(bridge, operationToken.current);

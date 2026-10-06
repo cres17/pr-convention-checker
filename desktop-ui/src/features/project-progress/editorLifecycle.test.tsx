@@ -188,3 +188,23 @@ it('retains imported recovery in its original repository after a background comp
   act(() => p.hook.result.current.actions.recoverDraft());
   expect(p.hook.result.current.state.draft?.requirements[0].title).toBe('background import');
 });
+
+it.each(['delayed', 'already shown'])('does not attach an %s old inspection to the newer imported baseline', (mode) => {
+  const p = page();
+  const [path, oldInspection] = vi.mocked(p.bridge.inspectProgress).mock.calls.at(-1)!;
+  const oldReport = { repository: path, version: 1, at: '', head: '', stale_documents: [], total: 1,
+    counts: { complete: 1 }, items: baseline(path).requirements, limitations: '' };
+  if (mode === 'already shown') p.emit({ type: 'progressReport', requested_path: path,
+    request_id: oldInspection, request_done: true, report: oldReport });
+  act(() => p.hook.result.current.actions.importDraft());
+  const [, request_id] = vi.mocked(p.bridge.importProgressDraft!).mock.calls.at(-1)!;
+  const latest = { ...baseline(path), version: 2 };
+  act(() => {
+    p.emit({ type: 'progressDocs', requested_path: path, request_id, request_done: true, documents: [], omitted: 0,
+      baseline: latest, recovery: baseline(path), recovery_key: 'import.json', recovery_revision: 'r' });
+    if (mode === 'delayed') p.emit({ type: 'progressReport', requested_path: path,
+      request_id: oldInspection, request_done: true, report: oldReport });
+  });
+  expect(p.hook.result.current.state.draft?.version).toBe(2);
+  expect(p.hook.result.current.state.report).toBeNull();
+});
