@@ -1,0 +1,53 @@
+{
+  "schema": "platform-regression-diagnostics-v1",
+  "source_commit": "211c533a1cdb9d3f9b26dfe45a339a373817f75b",
+  "ci_run_id": 37650850165,
+  "desktop_run_id": 37650850167,
+  "windows_failures": 13,
+  "causes": [
+    "UTF-8 report parsed with platform default encoding",
+    "LF policy hash asserted against Windows CRLF fixture bytes",
+    "invalid YAML LF asserted against Windows CRLF fixture bytes",
+    "Node ESM import used a drive path instead of a file URL"
+  ],
+  "self_policy_rejection": {
+    "result": "fail",
+    "missing_contracts": [
+      "docs/contracts/gate-and-inputs.md",
+      "docs/contracts/desktop-bridge.md"
+    ],
+    "action": "update primary contracts; keep policy unchanged"
+  },
+  "files": [
+    {
+      "path": "windows-pytest.log.gz",
+      "raw_bytes": 237778,
+      "raw_sha256": "d3cf60ed6988927debf46e1bc52a5f124bc3e4d28eddd77e509b43ec2f5fe9ff",
+      "stored_sha256": "842ac382b14800c21c2b1a605cb75a722d9dac7b759fe9df126c892ebc48b118"
+    },
+    {
+      "path": "windows-desktop-desktop-pytest.log.gz",
+      "raw_bytes": 76652,
+      "raw_sha256": "6df65e367b79ad601980ec06a3d1401a20a186564c7440d05feebb7b892a33e6",
+      "stored_sha256": "0fa8e60cd4e522aa726d85519b631548fc064bded645c3fb9892767d921fbf10"
+    },
+    {
+      "path": "self-check-self-check.json",
+      "raw_bytes": 25069,
+      "raw_sha256": "eb04699d2eb390456c49d80f109405d27226a0b326c39bbe151f5ac657e3dcbd",
+      "stored_sha256": "eb04699d2eb390456c49d80f109405d27226a0b326c39bbe151f5ac657e3dcbd"
+    },
+    {
+      "path": "jobs.json",
+      "raw_bytes": 42000,
+      "raw_sha256": "bbd8d260808691cb167d8ae6febea7a1fcdbb762d70017e1ea5a47843d0b2c96",
+      "stored_sha256": "bbd8d260808691cb167d8ae6febea7a1fcdbb762d70017e1ea5a47843d0b2c96"
+    },
+    {
+      "path": "desktop-artifacts.json",
+      "raw_bytes": 5705,
+      "raw_sha256": "e3caeb938401d74133378bc9977df58b1c4b1d745967aed63d06007b80113429",
+      "stored_sha256": "e3caeb938401d74133378bc9977df58b1c4b1d745967aed63d06007b80113429"
+    }
+  ]
+}

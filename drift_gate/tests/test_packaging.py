@@ -385,7 +385,7 @@ def test_package_runner_requires_matching_challenge_and_fixture(tmp_path, monkey
     monkeypatch.setattr(module.subprocess, "Popen", OldResultProcess)
     if fresh:
         module.verify(executable, tmp_path / "fresh-output")
-        assert json.loads((tmp_path / "fresh-output/result.json").read_text())["fresh_cache_files"] == []
+        assert json.loads((tmp_path / "fresh-output/result.json").read_text(encoding='utf-8'))["fresh_cache_files"] == []
     else:
         with pytest.raises(RuntimeError, match="different verification run"):
             module.verify(executable, tmp_path / "fresh-output")

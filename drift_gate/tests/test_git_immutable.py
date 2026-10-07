@@ -95,6 +95,20 @@ def test_caller_git_environment_cannot_redirect_immutable_inputs(repo, monkeypat
     assert actual.payload == expected.payload and actual.git_evidence == expected.git_evidence
 
 
+def test_cli_immutable_root_probe_ignores_caller_repository_redirection(repo, monkeypatch, capsys):
+    root, base, head = repo
+    monkeypatch.chdir(root / 'src')  # Paths in the frozen policy remain repository-relative.
+    monkeypatch.setenv('GIT_DIR', '/not-the-selected-repository')
+    monkeypatch.setenv('GIT_WORK_TREE', '/not-the-selected-worktree')
+    with pytest.raises(SystemExit) as done:
+        run_cli(['check', '--base', base, '--head', head, '--trusted-policy-ref', base,
+            '--trusted-policy-sha256', sha256(POLICY.encode()).hexdigest(), '--json'])
+    assert done.value.code == 1
+    result = json.loads(capsys.readouterr().out)
+    assert result['verification'] == 'verified'
+    assert result['execution']['input_capture']['git_input']['subject']['head_oid'] == head
+
+
 def test_replacement_refs_cannot_change_pinned_commit_or_blob(repo):
     root, base, head = repo
     expected = capture(repo)

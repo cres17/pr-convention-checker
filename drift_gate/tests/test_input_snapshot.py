@@ -292,9 +292,10 @@ def test_policy_reader_and_manifest_bind_same_crlf_source(tmp_path):
     assert artifact(snapshot, '@policy', 'policy-source').content == path.read_bytes()
 
 
-def test_readable_invalid_yaml_retains_raw_text_but_not_verified_document_semantics(tmp_path):
+@pytest.mark.parametrize('newline', ['\n', '\r\n'], ids=['lf', 'crlf'])
+def test_readable_invalid_yaml_retains_raw_text_but_not_verified_document_semantics(tmp_path, newline):
     (tmp_path / 'docs').mkdir()
-    text = 'paths: [invalid\n'; (tmp_path / 'docs/api.yaml').write_text(text)
+    text = f'paths: [invalid{newline}'; (tmp_path / 'docs/api.yaml').write_bytes(text.encode('utf-8'))
     data = deepcopy(POLICY_DATA)
     data['rules'][0]['require']['groups'][0]['any_changed'] = ['docs/api.yaml']
     source = yaml.safe_dump(data); policy = load_policy_from_text(source)
@@ -303,7 +304,7 @@ def test_readable_invalid_yaml_retains_raw_text_but_not_verified_document_semant
     result = inspection.inspect(changed_files=attached, policy=policy, policy_source=source, context=CONTEXT)
     assert result.verification == 'unverified'
     snapshot = result.input_snapshot
-    assert artifact(snapshot, 'docs/api.yaml', 'after-source').content == text.encode()
+    assert artifact(snapshot, 'docs/api.yaml', 'after-source').content == text.encode('utf-8')
     assert artifact(snapshot, 'docs/api.yaml', 'document-json').state == ArtifactState.UNAVAILABLE
 
 

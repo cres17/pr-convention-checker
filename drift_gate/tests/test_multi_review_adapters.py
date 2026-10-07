@@ -31,7 +31,7 @@ def repository(tmp_path):
     git(tmp_path, 'init', '-q')
     git(tmp_path, 'config', 'user.email', 'test@example.invalid')
     git(tmp_path, 'config', 'user.name', 'Test')
-    (tmp_path / '.drift-gate.yml').write_text(POLICY, encoding='utf-8')
+    (tmp_path / '.drift-gate.yml').write_bytes(POLICY.encode('utf-8'))
     (tmp_path / 'src').mkdir()
     (tmp_path / 'src/old.py').write_text('value = 1\n', encoding='utf-8')
     git(tmp_path, 'add', '.')
@@ -93,7 +93,7 @@ def test_real_stdio_mcp_preserves_untracked_warning_and_provenance(tmp_path, mod
         'name': 'drift_gate_check_local', 'arguments': {'mode': mode, 'token_budget': budget}}}
     process = subprocess.run([sys.executable, '-m', 'drift_gate.adapters.mcp.server',
                               '--repo', str(root)], input=json.dumps(request) + '\n',
-                             capture_output=True, text=True, timeout=30)
+                             capture_output=True, encoding='utf-8', timeout=30)
     assert process.returncode == 0, process.stderr
     response = json.loads(process.stdout)
     result = json.loads(response['result']['content'][0]['text'])
@@ -123,7 +123,7 @@ def test_real_stdio_mcp_empty_policy_is_tool_error(tmp_path, mode):
         'name': 'drift_gate_check_local', 'arguments': {'mode': mode}}}
     process = subprocess.run([sys.executable, '-m', 'drift_gate.adapters.mcp.server',
                               '--repo', str(root)], input=json.dumps(request) + '\n',
-                             capture_output=True, text=True, timeout=30)
+                             capture_output=True, encoding='utf-8', timeout=30)
     assert process.returncode == 0, process.stderr
     response = json.loads(process.stdout)
     assert 'result' not in response

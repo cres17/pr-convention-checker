@@ -68,7 +68,7 @@ def test_local_cli_mcp_desktop_and_action_match(tmp_path, monkeypatch, capsys, c
                         "GITHUB_OUTPUT": "", "GITHUB_STEP_SUMMARY": ""}.items():
         monkeypatch.setenv(name, value)
     action.main()
-    github = json.loads((tmp_path / "drift_gate_report.json").read_text())
+    github = json.loads((tmp_path / "drift_gate_report.json").read_text(encoding='utf-8'))
     for result in [cli, mcp, desktop, github]:
         assert result["result"] == expected
         assert result["rule_decisions"] == cli["rule_decisions"]

@@ -156,3 +156,24 @@ Mac 전체 1,748개 통과·skip 0, Ruff·공백 검사 통과다. [반례·수�
 
 이 오류는 실제 재현한 회귀 테스트 결함이다. 원격 정체 전부의 원인이라고 단정하지
 않는다. 최종 소스의 새 원격 회귀와 v2 설치본 검증 결과는 아래에 별도로 기록한다.
+
+
+## Windows 회귀와 자체 정책의 거부
+
+`211c533` 원격 CI는 Linux·Mac 6개 조합에서 성공했고 Windows 3개 조합에서 각각
+13개가 실패했다. 로그를 내려받아 네 종류의 fixture 문제를 확인했다. UTF-8 JSON을
+기본 인코딩으로 읽는 테스트, LF 해시를 Windows CRLF 텍스트 쓰기와 비교하는 테스트,
+잘못된 YAML의 raw LF/CRLF 기대값, Node ESM의 Windows drive 경로 import다.
+명시 UTF-8·raw bytes·file URI로 고쳤다. 잘못된 YAML은 LF와 CRLF를 각각 대조한다.
+제품의 raw 보존이나 판정 기대값을 완화하지 않았다.
+
+같은 실행의 자체 정책은 CLI·설치본 계약 문서가 변경되지 않아 두 규칙을 fail로
+판정했다. 이 거부는 올바르다. 기본 계약 문서에 객체만 읽는 diff와 schema v2의
+격리 조건을 추가했고 정책 규칙은 유지했다. 별도로 CLI의 초기 저장소 탐색도
+immutable collector가 처리하게 해 caller `GIT_DIR`·`GIT_WORK_TREE` 우회를 막았다.
+하위 폴더 실행과 환경변수 변형을 같은 head/verification으로 확인하는 회귀가 있다.
+
+현재 Mac 전체는 1,750개 통과·skip 0, 관련 205개와 Ruff·공백 검사·자체 정책은 통과다.
+고정된 Python Git 14개와 Express Git 8개는 facts/decision/verification/gate 네 축 모두
+기대값과 같고, 동결 입력 5개의 SHA-256은 바뀌지 않았다. [실패 원본·수정 영수증](../assessment/git-trust-implementation-2026-10-07/platform-portability/verification.json)을
+보존한다. 이 로컬 결과를 새 Windows·설치본 원격 성공으로 대신하지 않는다.

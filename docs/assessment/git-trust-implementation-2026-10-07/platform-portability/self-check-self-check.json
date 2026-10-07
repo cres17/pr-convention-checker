@@ -1,0 +1,379 @@
+{
+  "requested_base": "fadaabe7c99a42f45fa6a9427397996874574adb",
+  "inputs": {
+    "requested_base": "fadaabe7c99a42f45fa6a9427397996874574adb",
+    "resolved_base": "fadaabe7c99a42f45fa6a9427397996874574adb",
+    "comparison_mode": "commit",
+    "head": "211c533a1cdb9d3f9b26dfe45a339a373817f75b",
+    "dirty": false,
+    "untracked_skipped": [],
+    "snapshot_sha256": "bb4248227e124343999c977011f02213718a5acbfc2fd53ce398031d6a92a7c5"
+  },
+  "policy_sha256": "3b21d87ef6f284f5b0ce8697c4467084a2d15659c12d33b6555b3a4e581f9abe",
+  "trusted_policy_ref": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+  "warnings": [],
+  "evaluation": {
+    "schema_version": 3,
+    "verification": "unverified",
+    "summary": {
+      "blocker": 0,
+      "major": 2,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "fail",
+      "undetermined_rules": 0,
+      "unverified_rules": 2
+    },
+    "scan_metrics": {
+      "scanned_files": 12,
+      "skipped_ignored_files": 1,
+      "skipped_binary_files": 2,
+      "skipped_large_files": 1,
+      "evaluated_rules": 2,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/after-attributes.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/before-attributes.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/linux-before-failure.log.gz",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/linux-environment.txt",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/linux-prototype-full.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/python-full.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/targeted.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/verification.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/drift-gate-git-trust-implementation-2026-10-07.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/adapters/git/immutable.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/desktop/package_git_check.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/tests/test_git_immutable.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        }
+      ]
+    },
+    "result": "fail",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "other"
+    ],
+    "violations": [
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "confidence": "low",
+        "confidence_basis": "path-specificity; not a probability of correctness",
+        "change_types": [
+          "other"
+        ],
+        "change_type": "other",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": "drift_gate/adapters/git/immutable.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "diff --git a/drift_gate/adapters/git/immutable.py b/drift_gate/adapters/git/immutable.py\nindex f69a916..1621fc0 100644\n--- a/drift_gate/adapters/git/immutable.py\n+++ b/drift_gate/adapters/git/immutable.py\n@@ -1,8 +1,11 @@\n \"\"\"Collect exact immutable Git objects without working-tree or replacement refs.\"\"\"\n from datetime import datetime, timezone\n+from contextlib import contextmanager\n from hashlib import sha256\n+import os\n from pathlib import Path\n import subprocess\n+from tempfile import TemporaryDirectory\n \n from drift_gate.adapters.docs.content import attach_env_documents\n from drift_gate.adapters.git.client import GitInputError, _parse_name_status\n@@ -21,14 +24,43 @@ MAX_TREE_ENTRIES = 20_000\n MAX_PATCH_BYTES = 256_000\n \n \n-def _git(root, args):\n+def _git_environment():\n+    # Git's caller environment can redirect repositories, attribute sources and\n+    # config. None of those are inputs to an immutable-object collection.\n+    return {**{key: value for key, value in os.environ.items() if not key.startswith('GIT_')},\n+            'GIT_CONFIG_GLOBAL': os.devnull, 'GIT_CONFIG_SYSTEM': os.devnull,\n+            'GIT_CONFIG_NOSYSTEM': '1', 'GIT_ATTR_NOSYSTEM': '1',\n+            'GIT_TERMINAL_PROMPT': '0', 'GIT_NO_LAZY_FETCH': '1', 'LC_ALL': 'C'}\n+\n+\n+def _git(root, args, *, env=None):\n     try:\n         return subprocess.check_output(['git', '--no-replace-objects', '--literal-pathspecs', *args],\n-            cwd=root, stderr=subprocess.PIPE, timeout=30)\n+            cwd=root, env=_git_environment() if env is None else env,\n+            stderr=subprocess.PIPE, timeout=30)\n     except (OSError, subprocess.SubprocessError) as exc:\n         raise GitInputError('Could not read immutable Git objects') from exc\n \n \n+@contextmanager\n+def _raw_diff(root, object_format):\n+    \"\"\"Read objects through a private bare repository with no caller attributes.\n+\n+    Even a commit-to-commit diff consults working/index/info attributes. Sharing\n+    only the object directory avoids those inputs and local diff-driver config.\n+    The source repository's index, config and object store are never written.\n+    \"\"\"\n+    objects = Path(_git(root, ['rev-parse', '--git-path', 'objects']).decode('utf-8').strip())\n+    if not objects.is_absolute():\n+        objects = Path(root) / objects\n+    with TemporaryDirectory(prefix='driftgate-raw-diff-') as directory:\n+        env = _git_environment()\n+        _git(directory, ['init', '--bare', '--template=', '--object-format=' + object_format], env=env)\n+        env['GIT_OBJECT_DIRECTORY'] = str(objects.resolve())\n+        yield lambda arguments: _git(directory,\n+            ['diff', '--no-ext-diff', '--no-textconv', '--find-renames', *arguments], env=env)\n+\n+\n def _resolve(root, ref):\n     if not isinstance(ref, str) or not ref or ref.startswith('-'):\n         raise GitInputError('Invalid Git ref')\n@@ -138,27 +170,26 @@ def collect_git_snapshot(*, root, base, head, trusted_policy_ref, trusted_policy\n     reasons = weakening_reasons(trusted, candidate)\n     if reasons:\n         raise GitInputError('Candidate weakened pinned policy: ' + '; '.join(reasons))\n-    changed = _parse_name_status(_git(reader.root, ['diff', '--no-ext-diff', '--no-textconv',\n-        '--name-status', '-z', '--find-renames', base_oid, head_oid, '--']))\n     files = []\n-    for file in changed:\n-        old_path = file.previous_path or file.path\n-        before = reader.read(base_oid, old_path)\n-        after = reader.read(head_oid, file.path)\n-        paths = [old_path, file.path] if old_path != file.path else [file.path]\n-        patch_bytes = _git(reader.root, ['diff', '--no-ext-diff', '--no-textconv', '--find-renames',\n-                                       base_oid, head_oid, '--', *paths])\n-        patch = patch_bytes.decode('utf-8', errors='strict') if len(patch_bytes) <= MAX_PATCH_BYTES else '[large file skipped]'\n-        binary_diff = any(line.startswith(b'Binary files ') and line.endswith(b' differ')\n-                          for line in patch_bytes.splitlines())\n-        if binary_diff or any(item.mode not in {'', '100644', '100755'} for item in (before, after)):\n-            patch = '[binary file skipped]'\n-            before_text = after_text = None\n-        else:\n-            before_text = reader.text(base_oid, old_path)\n-            after_text = reader.text(head_oid, file.path)\n-        files.append(ChangedFile(file.path, file.status, previous_path=file.previous_path,\n-            patch=patch, before_source=before_text, after_source=after_text))\n+    with _raw_diff(reader.root, 'sha1' if len(head_oid) == 40 else 'sha256') as diff:\n+        changed = _parse_name_status(diff(['--name-status', '-z', base_oid, head_oid, '--']))\n+        for file in changed:\n+            old_path = file.previous_path or file.path\n+            before = reader.read(base_oid, old_path)\n+            after = reader.read(head_oid, file.path)\n+            paths = [old_path, file.path] if old_path != file.path else [file.path]\n+            patch_bytes = diff([base_oid, head_oid, '--', *paths])\n+            patch = patch_bytes.decode('utf-8', errors='strict') if len(patch_bytes) <= MAX_PATCH_BYTES else '[large file skipped]'\n+            binary_diff = any(line.startswith(b'Binary files ') and line.endswith(b' differ')\n+                              for line in patch_bytes.splitlines())\n+            if binary_diff or any(item.mode not in {'', '100644', '100755'} for item in (before, after)):\n+                patch = '[binary file skipped]'\n+                before_text = after_text = None\n+            else:\n+                before_text = reader.text(base_oid, old_path)\n+                after_text = reader.text(head_oid, file.path)\n+            files.append(ChangedFile(file.path, file.status, previous_path=file.previous_path,\n+                patch=patch, before_source=before_text, after_source=after_text))\n     files = attach_env_documents(files, trusted, lambda path: reader.text(head_oid, path))\n     # Document-only unchanged observations need a before record for replay binding.\n     for file in files:\n@@ -171,5 +202,6 @@ def collect_git_snapshot(*, root, base, head, trusted_policy_ref, trusted_policy\n     return capture_inspection(changed_files=files, policy=trusted, policy_source=trusted_source,\n         context=context or EvaluationContext(datetime.now(timezone.utc).date()),\n         provenance={'source': 'immutable-git', 'head': head_oid, 'resolved_base': base_oid,\n-                    'comparison_mode': comparison_mode, 'policy_revision': trusted_oid},\n+                    'comparison_mode': comparison_mode, 'policy_revision': trusted_oid,\n+                    'diff_mode': 'isolated-raw-git'},\n         contract_proofs=contract_proofs, git_evidence=evidence)\n",
+            "semantic_signals": [
+              "function-signature-changed"
+            ],
+            "semantic_evidence": [
+              "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+              "Python function signature changed"
+            ],
+            "analysis_method": "heuristic",
+            "analysis_reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+            "documented_env_keys": null,
+            "document_input_state": ""
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Input and CLI contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "violated",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "checklist": [
+          "Input and CLI contract 업데이트"
+        ],
+        "ignored": false,
+        "change_intensity": "signature-change",
+        "change_intensities": [
+          "signature-change"
+        ],
+        "trigger_patterns": [
+          "drift_gate/adapters/git/**"
+        ],
+        "blast_radius": [
+          "missing requirement group: Input and CLI contract"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "confidence": "low",
+        "confidence_basis": "path-specificity; not a probability of correctness",
+        "change_types": [
+          "other"
+        ],
+        "change_type": "other",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": "drift_gate/desktop/package_git_check.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "diff --git a/drift_gate/desktop/package_git_check.py b/drift_gate/desktop/package_git_check.py\nindex a45b322..1aa9dcc 100644\n--- a/drift_gate/desktop/package_git_check.py\n+++ b/drift_gate/desktop/package_git_check.py\n@@ -60,6 +60,11 @@ def run_git_controls():\n                 raise RuntimeError(f'Immutable package control accepted {name}')\n         (root / 'src/api.py').write_bytes(source('/uncommitted').encode())\n         (root / '.drift-gate.yml').write_bytes(b'rules: []\\n')\n+        (root / '.gitattributes').write_bytes(b'src/api.py binary\\n')\n+        git('add', '.gitattributes')\n+        (root / '.gitattributes').unlink()\n+        (root / '.git/info/attributes').write_bytes(b'src/api.py binary\\n')\n+        git('config', 'diff.noprefix', 'true')\n         replay = inspect(stale)\n         evidence = old_result['execution']['input_capture']['git_input']\n         entries = evidence['artifacts']\n@@ -68,11 +73,14 @@ def run_git_controls():\n                   'current_document_accepted': new_result['result'] == 'pass',\n                   'wrong_pin_rejected': 'SHA-256' in rejected['wrong-pin'],\n                   'weakening_rejected': 'weakened' in rejected['weakened-policy'],\n-                  'working_tree_ignored': replay['rule_decisions'] == old_result['rule_decisions'],\n+                  'working_tree_ignored': (replay['rule_decisions'] == old_result['rule_decisions']\n+                      and replay['verification'] == old_result['verification']\n+                      and replay['execution']['input_capture'] == old_result['execution']['input_capture']),\n                   'original_crlf_bytes_bound': after['raw_sha256'] == sha256(source('/new').encode()).hexdigest()}\n         if not all(checks.values()):\n             raise RuntimeError('Frozen Git object/policy controls failed')\n-        return {'schema': 'packaged-git-controls-v1', 'checks': checks,\n+        return {'schema': 'packaged-git-controls-v2', 'checks': checks,\n+                'working_tree_mutations': ['source', 'policy', 'index-attributes', 'info-attributes', 'diff-config'],\n                 'subject': {'base': base, 'stale': stale, 'current': current, 'weakened': weakened},\n                 'policy_pin': pin, 'rejected': rejected,\n                 'cases': {'stale': old_result, 'current': new_result, 'working-tree-edited': replay}}\n@@ -81,7 +89,8 @@ def run_git_controls():\n def validate_git_controls(data):\n     expected_checks = {'stale_document_rejected', 'current_document_accepted', 'wrong_pin_rejected',\n                        'weakening_rejected', 'working_tree_ignored', 'original_crlf_bytes_bound'}\n-    if (data.get('schema') != 'packaged-git-controls-v1' or set(data.get('checks', {})) != expected_checks\n+    if (data.get('schema') != 'packaged-git-controls-v2' or set(data.get('checks', {})) != expected_checks\n+        or data.get('working_tree_mutations') != ['source', 'policy', 'index-attributes', 'info-attributes', 'diff-config']\n         or any(value is not True for value in data['checks'].values())):\n         raise RuntimeError('Missing packaged Git object/policy controls')\n     expected_pin = sha256(POLICY.encode()).hexdigest()\n@@ -90,7 +99,8 @@ def validate_git_controls(data):\n     for case, expected in [('stale', 'fail'), ('current', 'pass'), ('working-tree-edited', 'fail')]:\n         result = data['cases'][case]\n         git = result['execution']['input_capture']['git_input']\n-        if (result['result'] != expected or git['policy_anchor']['sha256'] != expected_pin\n+        if (result['result'] != expected or result['execution'].get('diff_mode') != 'isolated-raw-git'\n+            or git['policy_anchor']['sha256'] != expected_pin\n             or git['policy_anchor']['organization_approval_verified']\n             or git['subject']['base_oid'] != data['subject']['base']\n             or git['subject']['head_oid'] != data['subject']['current' if case == 'current' else 'stale']):\n@@ -101,3 +111,7 @@ def validate_git_controls(data):\n         if (entry is None or entry['raw_sha256'] != sha256(raw).hexdigest()\n             or entry['object_id'] != object_oid('blob', raw, len(entry['object_id']))):\n             raise RuntimeError('Packaged raw Git blob does not match frozen fixture')\n+    original, edited = (data['cases'][key] for key in ('stale', 'working-tree-edited'))\n+    if (edited['execution']['input_capture'] != original['execution']['input_capture']\n+        or edited['verification'] != original['verification']):\n+        raise RuntimeError('Packaged Git control accepted unpinned diff inputs')\n",
+            "semantic_signals": [],
+            "semantic_evidence": [
+              "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+            ],
+            "analysis_method": "heuristic",
+            "analysis_reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+            "documented_env_keys": null,
+            "document_input_state": ""
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Desktop event and editing contract",
+            "required": [
+              "docs/contracts/desktop-bridge.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "violated",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "checklist": [
+          "Desktop event and editing contract 업데이트"
+        ],
+        "ignored": false,
+        "change_intensity": "auth-policy-change",
+        "change_intensities": [
+          "auth-policy-change"
+        ],
+        "trigger_patterns": [
+          "drift_gate/desktop/package_git_check.py"
+        ],
+        "blast_radius": [
+          "authorization behavior",
+          "missing requirement group: Desktop event and editing contract",
+          "role/permission owners",
+          "security documentation"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": []
+      }
+    ],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "fail",
+        "decision": "violated",
+        "verification": "unverified",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "drift_gate/adapters/git/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/git/immutable.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Input and CLI contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "violated",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ]
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "fail",
+        "decision": "violated",
+        "verification": "unverified",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "drift_gate/desktop/package_git_check.py"
+        ],
+        "trigger_files": [
+          "drift_gate/desktop/package_git_check.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "Desktop event and editing contract",
+            "required": [
+              "docs/contracts/desktop-bridge.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "violated",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ]
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1,
+      "on_unverified": "fail"
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {
+      "drift_gate/adapters/git/immutable.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/desktop/package_git_check.py": [
+        "self-ui-bridge-contract"
+      ]
+    },
+    "unmatched": [
+      "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/after-attributes.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/before-attributes.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/linux-before-failure.log.gz",
+      "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/linux-environment.txt",
+      "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/linux-prototype-full.log",
+      "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/python-full.log",
+      "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/targeted.log",
+      "docs/assessment/git-trust-implementation-2026-10-07/attribute-isolation/verification.json",
+      "docs/review/drift-gate-git-trust-implementation-2026-10-07.md"
+    ],
+    "ignored": [
+      "drift_gate/tests/test_git_immutable.py"
+    ]
+  },
+  "execution": {
+    "schema_version": 2,
+    "run_id": "f9bc065542154f3aaf2adc0d1d1e50c3",
+    "started_at": "2026-10-07T16:17:34.965436+00:00",
+    "status": "success"
+  }
+}
