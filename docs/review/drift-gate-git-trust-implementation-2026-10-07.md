@@ -30,6 +30,11 @@
 [실제 다운로드 실행](../assessment/git-trust-implementation-2026-10-07/remote-final/downloaded-execution.json)을
 각각 보존했다. installer 원본 zip의 SHA-256도 GitHub artifact digest와 일치한다.
 
+최초 근거 자료 커밋 `eba5935`는 Windows 파일 7개의 CRLF를 Git이 LF로 변환했다.
+후속 수정은 최종 근거 폴더만 `-text`로 설정해 다운로드 원본 bytes를 복원했다.
+영수증을 작업 폴더와 staged/committed blob 모두에 대조한다. [원본 보존 대조](../assessment/git-trust-implementation-2026-10-07/remote-final/byte-preservation.json)에
+잘못 정규화된 이전 blob과 복원한 원본 해시를 구분해 남겼다. 운영 소스는 바꾸지 않았다.
+
 Windows 3.12의 native probe에서 path stat과 fstat의 `st_ctime_ns` 불일치를 실제 확인했다.
 고정 입력에서 예전 혼합 API 비교는 거부, 수정한 handle 비교는 수용이다. 다른 8개
 조합에서는 이 fixture의 불일치가 없었다. 이 직접 관찰은 이전 실패 로그에 없던 field

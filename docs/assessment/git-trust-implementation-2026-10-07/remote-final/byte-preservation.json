@@ -1,0 +1,58 @@
+{
+  "schema": "published-evidence-byte-preservation-v1",
+  "previous_evidence_commit": "eba5935e7660baadc945724bd4c44bdd9d4152f1",
+  "normalized_files_count": 7,
+  "restored_files": [
+    {
+      "path": "desktop-regressions/desktop-regression-Windows/desktop-pytest.log",
+      "downloaded_raw_sha256": "45b6cec1b649b4d4ff5d112668bfd048d4e90a2f95950b99641ea74ce5e53492",
+      "previous_normalized_blob_sha256": "be746365dedd127769e00d330b9d52b4cbc5080139ebea7193aae2fbd834971e",
+      "restored_index_blob_sha256": "45b6cec1b649b4d4ff5d112668bfd048d4e90a2f95950b99641ea74ce5e53492",
+      "restored_raw_bytes": 1341
+    },
+    {
+      "path": "native/Offline-check-Windows/offline-installer/bundled-grammars.json",
+      "downloaded_raw_sha256": "143376f1dc2c77e006cdc3d0fa0ce477777087e3c61ac9b8f3b2dd1633770965",
+      "previous_normalized_blob_sha256": "1a522afb4f9ed3fe83852a8b49f9a4eb7560729b238a1cea1dd0e10b1a65bfa9",
+      "restored_index_blob_sha256": "143376f1dc2c77e006cdc3d0fa0ce477777087e3c61ac9b8f3b2dd1633770965",
+      "restored_raw_bytes": 2074
+    },
+    {
+      "path": "native/Offline-check-Windows/offline-installer/firewall.json",
+      "downloaded_raw_sha256": "3d865f7bf0f72c83c3493a3a5e307c2bcd95dcf49606b43dd29029a518dd7c78",
+      "previous_normalized_blob_sha256": "f787f063dee22395d077763d68efdd573e30706785b2dc7d2fdcc7caf115349f",
+      "restored_index_blob_sha256": "3d865f7bf0f72c83c3493a3a5e307c2bcd95dcf49606b43dd29029a518dd7c78",
+      "restored_raw_bytes": 339
+    },
+    {
+      "path": "native/Offline-check-Windows/offline-installer/result.json",
+      "downloaded_raw_sha256": "4494a3d28a4f47ab0769ccf51ecdf27160e920a92f3e78b16e90210e93abd67e",
+      "previous_normalized_blob_sha256": "417c5e7fd53d602ec60971bd7c9e1060b05f58a26f7e946bba29d623d9312e50",
+      "restored_index_blob_sha256": "4494a3d28a4f47ab0769ccf51ecdf27160e920a92f3e78b16e90210e93abd67e",
+      "restored_raw_bytes": 106806
+    },
+    {
+      "path": "native/Offline-check-Windows/offline-package/bundled-grammars.json",
+      "downloaded_raw_sha256": "143376f1dc2c77e006cdc3d0fa0ce477777087e3c61ac9b8f3b2dd1633770965",
+      "previous_normalized_blob_sha256": "1a522afb4f9ed3fe83852a8b49f9a4eb7560729b238a1cea1dd0e10b1a65bfa9",
+      "restored_index_blob_sha256": "143376f1dc2c77e006cdc3d0fa0ce477777087e3c61ac9b8f3b2dd1633770965",
+      "restored_raw_bytes": 2074
+    },
+    {
+      "path": "native/Offline-check-Windows/offline-package/firewall.json",
+      "downloaded_raw_sha256": "5e6de1a7513e6de805f7ec24968540ed3e328378951630c4b130300ced2c4a9c",
+      "previous_normalized_blob_sha256": "c9b46726adbdff60c222d01fc3fb7c573f438c16d2cf463689f3e60b5752826b",
+      "restored_index_blob_sha256": "5e6de1a7513e6de805f7ec24968540ed3e328378951630c4b130300ced2c4a9c",
+      "restored_raw_bytes": 339
+    },
+    {
+      "path": "native/Offline-check-Windows/offline-package/result.json",
+      "downloaded_raw_sha256": "55327b7794252547942f3d0f5a5b31de113f432f0b7cc04723e32996f13e859e",
+      "previous_normalized_blob_sha256": "e540fb5bebe4fb795c8103cab536b540f9213cb4c5037bc72cf8400689752f4e",
+      "restored_index_blob_sha256": "55327b7794252547942f3d0f5a5b31de113f432f0b7cc04723e32996f13e859e",
+      "restored_raw_bytes": 106870
+    }
+  ],
+  "all_evidence_index_blobs_match_raw_receipt": true,
+  "scope": "Git -text attribute limited to the final downloaded evidence directory; source files unchanged"
+}
