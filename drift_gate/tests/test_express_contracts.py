@@ -85,11 +85,12 @@ def test_real_express_http_agrees_with_static_chained_paths(tmp_path, method):
     if not oracle or not shutil.which('node'):
         pytest.skip('set DRIFT_GATE_EXPRESS_ORACLE_DIR to a fixed Express 4.21.2 installation')
     package = Path(oracle) / 'node_modules/express/package.json'
-    assert json.loads(package.read_text())['version'] == '4.21.2'
+    assert json.loads(package.read_text(encoding='utf-8'))['version'] == '4.21.2'
     # Only these authored strings enter the runtime oracle. User code is never
     # imported or run. Dynamic import uses an explicitly pinned test dependency.
     source = fixture(method=method)
-    module = source.replace("import express from 'express';", f"import express from {json.dumps(str(package.parent / 'index.js'))};")
+    module = source.replace("import express from 'express';",
+        f"import express from {json.dumps((package.parent / 'index.js').resolve().as_uri())};")
     script = tmp_path / 'oracle.mjs'
     script.write_text(module + f"""
 const server = app.listen(0, '127.0.0.1');
@@ -103,7 +104,7 @@ try {{
   }}
   console.log(JSON.stringify(statuses));
 }} finally {{ await new Promise(resolve => server.close(resolve)); }}
-""")
-    result = subprocess.run(['node', str(script)], check=True, capture_output=True, text=True, timeout=15)
+""", encoding='utf-8', newline='\n')
+    result = subprocess.run(['node', str(script)], check=True, capture_output=True, encoding='utf-8', timeout=15)
     assert json.loads(result.stdout) == [200, 404, 404]
     assert extract_express_routes(source) == {(method.upper(), '/v1/catalog')}

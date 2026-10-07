@@ -48,3 +48,13 @@ signature·rename 대조는 변경 source 1개와 `docs/api.md` 부재 관찰 1�
 첫 grammar 단계는 8개 source와 같은 문서 부재 관찰을 포함하므로 총 9개 관찰이다.
 8개 source에 문법 분석이 적용됐는지와 문서의 명시 부재를 각각 검증한다. 모든 단계는
 공통 관찰 범위 검증기를 사용하며, 다른 source·누락·중복 patch 관찰은 실패해야 한다.
+
+Git 진단의 현재 schema는 `packaged-git-controls-v2`다. working-tree 대조는 source,
+policy, index attributes, info attributes, diff config를 실제로 변형하고, 판정뿐 아니라
+`verification`과 `input_capture`가 변형 전과 같은지도 검사한다. 외부 검증기는
+`diff_mode=isolated-raw-git`와 이 변형 목록·capture 일치를 확인한다. v1 진단 JSON은
+과거 계약의 근거로만 보존하며 v2 격리 완료의 근거로 인정하지 않는다.
+
+진단 JSON은 UTF-8로 읽고 쓴다. 플랫폼 기본 인코딩으로 결과를 해석하지 않는다.
+원본 정책·문서 대조 fixture는 LF/CRLF bytes를 명시하며, Windows의 텍스트 쓰기 변환이
+예상 해시를 바꾸지 않도록 한다. 진단 검증 조건을 플랫폼별로 완화하지 않는다.

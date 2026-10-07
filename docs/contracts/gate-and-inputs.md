@@ -327,3 +327,16 @@ CLI 기본 local 모드와 PR API 모드는 유지한다. immutable 모드를 �
 틀리면 input error·종료 2이며 정상 pass 결과가 없다. 원격 GitHub API 자동 수집의 새
 trust 모드나 화면 설정은 이번 단계에 추가하지 않는다. 원본은 메모리에만 남으며
 장기 디스크 bundle과 최신 결과 게시는 다음 단계다.
+
+immutable diff는 원본 object directory를 읽는 임시 bare 저장소에서 만든다.
+working tree·index fallback·`info/attributes`·global/system 속성·local diff 설정과
+호출자의 `GIT_*` 환경변수를 배제하고, 원본 index·config·objects를 수정하지 않는다.
+커밋된 `.gitattributes`도 이 raw 비교에는 적용하지 않는다. 공개 provenance에는
+`diff_mode=isolated-raw-git`를 기록한다. 같은 고정 객체의 검사에서는 이러한 주변
+상태가 바뀌어도 input capture·원본 evidence·verification이 같아야 한다.
+
+CLI의 immutable 저장소 탐색에도 같은 환경 격리를 적용한다. 저장소 하위 폴더에서
+실행해도 호출자의 `GIT_DIR`·`GIT_WORK_TREE`가 다른 저장소로 입력을 돌리지 않는다.
+정책·문서의 LF/CRLF는 raw bytes대로 보존하며, 플랫폼 기본 문자 인코딩이나 줄바꿈으로
+기대 해시를 바꾸지 않는다. 이 격리는 caller가 선택한 ref/hash의 무결성 계약이며,
+조직 승인이나 현재 엔진의 외부 인증을 추가로 주장하지 않는다.

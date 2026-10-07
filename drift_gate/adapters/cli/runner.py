@@ -731,7 +731,9 @@ def _run_check(args) -> None:
     from drift_gate.adapters.git.client import repository_root
     if bool(args.pr) != bool(args.repo):
         raise GitInputError('Specify both --pr and --repo for remote PR inspection')
-    root = Path.cwd() if args.pr else repository_root()
+    # Immutable collection resolves the repository with its isolated Git
+    # environment; the legacy root probe would honor caller GIT_DIR/GIT_WORK_TREE.
+    root = Path.cwd() if args.pr or args.head else repository_root()
     start = time.perf_counter()
     if args.head:
         if args.pr or not args.trusted_policy_ref or not args.trusted_policy_sha256:

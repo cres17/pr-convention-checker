@@ -1,0 +1,238 @@
+{
+  "requested_base": "211c533a1cdb9d3f9b26dfe45a339a373817f75b",
+  "inputs": {
+    "requested_base": "211c533a1cdb9d3f9b26dfe45a339a373817f75b",
+    "resolved_base": "211c533a1cdb9d3f9b26dfe45a339a373817f75b",
+    "comparison_mode": "commit",
+    "head": "211c533a1cdb9d3f9b26dfe45a339a373817f75b",
+    "dirty": true,
+    "untracked_skipped": [
+      "docs/assessment/git-trust-implementation-2026-10-07/platform-portability/desktop-artifacts.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/platform-portability/express-git.log",
+      "docs/assessment/git-trust-implementation-2026-10-07/platform-portability/failures.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/platform-portability/jobs.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/platform-portability/python-git.log",
+      "docs/assessment/git-trust-implementation-2026-10-07/platform-portability/self-check-self-check.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/platform-portability/targeted.log",
+      "docs/assessment/git-trust-implementation-2026-10-07/platform-portability/windows-desktop-desktop-pytest.log.gz",
+      "docs/assessment/git-trust-implementation-2026-10-07/platform-portability/windows-pytest.log.gz"
+    ],
+    "snapshot_sha256": "1e232d43aff3cf5c3ea778323dc669424290b42f68ab751952cd4815a8ed10b6"
+  },
+  "policy_sha256": "3b21d87ef6f284f5b0ce8697c4467084a2d15659c12d33b6555b3a4e581f9abe",
+  "trusted_policy_ref": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+  "warnings": [],
+  "evaluation": {
+    "schema_version": 3,
+    "verification": "unverified",
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass",
+      "undetermined_rules": 0,
+      "unverified_rules": 1
+    },
+    "scan_metrics": {
+      "scanned_files": 11,
+      "skipped_ignored_files": 6,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 1,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": "docs/contracts/desktop-bridge.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_express_contracts.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/tests/test_git_immutable.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_input_snapshot.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_logical_entrypoints.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_adapters.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/tests/test_packaging.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        }
+      ]
+    },
+    "result": "pass",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "other"
+    ],
+    "violations": [],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/cli/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/cli/runner.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Input and CLI contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1,
+      "on_unverified": "fail"
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {
+      "drift_gate/adapters/cli/runner.py": [
+        "self-cli-contract"
+      ]
+    },
+    "unmatched": [
+      "docs/contracts/desktop-bridge.md",
+      "docs/contracts/gate-and-inputs.md",
+      "docs/conversation-summary-2026-10-01.md",
+      "docs/handoff-2026-10-01.md"
+    ],
+    "ignored": [
+      "drift_gate/tests/test_express_contracts.py",
+      "drift_gate/tests/test_git_immutable.py",
+      "drift_gate/tests/test_input_snapshot.py",
+      "drift_gate/tests/test_logical_entrypoints.py",
+      "drift_gate/tests/test_multi_review_adapters.py",
+      "drift_gate/tests/test_packaging.py"
+    ]
+  },
+  "execution": {
+    "schema_version": 2,
+    "run_id": "678bc5e5fadd4ae0b0621bfed3111d7c",
+    "started_at": "2026-10-07T16:33:12.532204+00:00",
+    "status": "success"
+  }
+}
