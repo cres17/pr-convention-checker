@@ -37,7 +37,8 @@ def main():
                       'bytes': report.stat().st_size,
                       'frozen': data['frozen'], 'bridge_ready': data['bridge_ready'],
                       'network_isolation': data.get('isolation'),
-                      'grammar_analyses': len(data['scan']['result']['scan_metrics']['analysis_notes']),
+                      'grammar_analyses': sum(n['method'] == 'grammar+heuristic'
+                          for n in data['scan']['result']['scan_metrics']['analysis_notes']),
                       'git_object_checks': data['git_object_checks']['checks'],
                       'verification_identity': data['verification']})
     args.out.write_text(json.dumps({'schema': 'native-evidence-recheck-v1',

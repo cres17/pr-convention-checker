@@ -97,3 +97,8 @@ raw SHA-256 `3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb`�
 출력 `object-self-check.json`에는 고정 subject와 원본 해시 근거가 남는다.
 native build의 package 및 DMG/Windows 설치 후 검사는 모두 새 Git 객체 대조도 수행한다.
 원격 결과와 다운로드한 artifact의 해시·오프라인 JSON은 별도 실행 문서에 기록한다.
+
+native 검증기의 grammar 관찰은 source 8개와 configured 문서 부재 1개다. 문법 적용
+확인은 source 8개에 한정하고, 문서 부재는 input capture로 따로 검증한다. signature와
+rename도 source 1개·문서 부재 1개를 공통 범위 검사로 확인한다. 통과 boolean이나 총
+관찰 수를 언어 분석 수로 오인하지 않으며, 예상 밖 patch 관찰은 실패 처리한다.

@@ -170,15 +170,20 @@ def valid_result(module):
             {'path': path, 'role': 'patch'},
             {'path': 'docs/api.md', 'role': 'patch', 'observed_text_bytes': 0},
             {'path': 'docs/api.md', 'role': 'after-source', 'state': 'absent'}]}
+    grammar_capture = {'artifacts': [
+        *({'path': 'src/' + name, 'role': 'patch'} for name in module.SOURCES),
+        {'path': 'docs/api.md', 'role': 'patch', 'observed_text_bytes': 0},
+        {'path': 'docs/api.md', 'role': 'after-source', 'state': 'absent'}]}
     return {"frozen": True, "bridge_ready": True, "ui_text": "검사 완료",
             "verification": {"run_id": "a" * 32, "repository": "/fixture"},
             "network_probes": [{"error": "blocked"}, {"error": "blocked"}],
             "hardening_checks": [{"case": "signature", "result": signature}, {"case": "rename", "result": rename}],
             "scan": {"repository": "/fixture", "result": {"result": "warn",
-                     "execution": {"run_id": "1" * 32, "status": "success"},
+                     "execution": {"run_id": "1" * 32, "status": "success", 'input_capture': grammar_capture},
                      "violations": [{"rule_id": "offline-api-docs"}],
-                     "scan_metrics": {"analysis_notes": [
-                         {"path": "src/" + name, "method": "grammar+heuristic"} for name in module.SOURCES]}}}}
+                     "scan_metrics": {'scanned_files': 9, "analysis_notes": [
+                         *({'path': "src/" + name, "method": "grammar+heuristic"} for name in module.SOURCES),
+                         {'path': 'docs/api.md', 'method': 'unavailable'}]}}}}
 
 
 @pytest.mark.parametrize("damage", ["not-frozen", "no-ui", "no-bridge", "network", "fallback", "missing-file", "gate", "no-violation"])
@@ -316,15 +321,20 @@ def test_actual_package_phase_preparation_and_scans_preserve_exact_observation_s
     from drift_gate.desktop.service import scan_repository
     module = verifier()
     module.fixture(tmp_path)
+    control = valid_result(module)
+    control['scan']['result'] = scan_repository(tmp_path).result.to_dict()
     state = SimpleNamespace(repository=str(tmp_path), phase='grammar',
                             window=SimpleNamespace(bridge=SimpleNamespace(startScan=lambda *args: None)))
-    seen = {validate_phase('grammar', scan_repository(tmp_path).result.to_dict(), set())}
+    seen = {validate_phase('grammar', control['scan']['result'], set())}
+    control['hardening_checks'] = []
     for case in ['signature', 'rename']:
         PackageCheck.prepare_next_scan(state)
         assert state.phase == case
         result = scan_repository(tmp_path).result.to_dict()
         seen.add(validate_phase(case, result, seen))
         assert result['scan_metrics']['scanned_files'] == 2
+        control['hardening_checks'].append({'case': case, 'result': result})
+    module.validate(control)
 
 
 def test_package_verifier_preserves_old_output_without_launching(tmp_path, monkeypatch):
