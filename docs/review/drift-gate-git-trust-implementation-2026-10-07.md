@@ -80,3 +80,12 @@ CRLF 원본 SHA-256과 blob OID를 확인한다. 거짓 통과·잘못된 원본
 [원격 첫 오류](../assessment/git-trust-implementation-2026-10-07/first-arm64-package-error.json)와
 [소스 재현](../assessment/git-trust-implementation-2026-10-07/package-scope-reproduction.json)을
 보존했다. 원격 재실행의 최종 결과는 아래에 기록한다.
+
+원격 Mac 대기 중 같은 소스로 임시 native 앱도 만들었다. 앱 내부의 세 scan 단계와
+Git 대조 6건은 통과했지만 외부 validator도 grammar source 8개에 문서 부재 관찰을
+섞어 9개를 문법 분석으로 잘못 비교했다. 공통 `validate_observation_scope`로 내부·외부
+검사를 통일했다. 8개 문법 분석과 문서의 명시 부재를 별개로 검사하며 다른 관찰은
+거부한다. 최종 임시 앱은 외부 통신 차단·빈 파서 캐시에서 화면·브리지·8개 언어와
+Git 대조 6/6을 통과했다. 이는 원격 installer 다운로드 검증과 구별한다.
+[임시 native 결과](../assessment/git-trust-implementation-2026-10-07/local-native-result.json)를
+보존했다. 최종 외부 validator와 같은 수정 상태에서 전체 Python 1,739개가 통과했다.

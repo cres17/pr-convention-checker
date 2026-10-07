@@ -44,3 +44,7 @@ signature·rename 대조는 변경 source 1개와 `docs/api.md` 부재 관찰 1�
 공개 input capture의 patch 경로 집합과 빈 문서 patch·명시 absent를 함께 검사하고,
 다른 관찰이 끼면 거부한다. 실패 응답은 단계와 마지막 fixture scan을 남겨 설치본
 실패를 재현할 수 있게 한다. 성공 조건이나 예상 drift 판정을 완화하지 않는다.
+
+첫 grammar 단계는 8개 source와 같은 문서 부재 관찰을 포함하므로 총 9개 관찰이다.
+8개 source에 문법 분석이 적용됐는지와 문서의 명시 부재를 각각 검증한다. 모든 단계는
+공통 관찰 범위 검증기를 사용하며, 다른 source·누락·중복 patch 관찰은 실패해야 한다.

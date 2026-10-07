@@ -11,7 +11,7 @@ import sys
 import tempfile
 import uuid
 
-from drift_gate.desktop.package_check_contract import validate_phases
+from drift_gate.desktop.package_check_contract import validate_phases, validate_observation_scope
 
 
 SOURCES = {
@@ -99,7 +99,10 @@ def validate(result, *, expected_identity=None):
     notes = result["scan"]["result"]["scan_metrics"]["analysis_notes"]
     expected = {f"src/{name}" for name in SOURCES}
     actual = {n["path"]: n for n in notes}
-    if len(notes) != len(expected) or set(actual) != expected or any(n["method"] != "grammar+heuristic" for n in notes):
+    validate_observation_scope(gate, expected)
+    if (len(notes) != len(expected) + 1 or set(actual) != expected | {'docs/api.md'}
+        or any(actual[path]['method'] != 'grammar+heuristic' for path in expected)
+        or actual['docs/api.md']['method'] != 'unavailable'):
         raise RuntimeError(f"Installed-app grammar analysis failed: {notes}")
     validate_phases(result)
 
