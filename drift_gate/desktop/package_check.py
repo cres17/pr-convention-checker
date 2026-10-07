@@ -59,7 +59,8 @@ class PackageCheck(QObject):
         if self.finished:
             return
         self.finished = True
-        self.output.write_text(json.dumps({"error": reason}), encoding="utf-8")
+        self.output.write_text(json.dumps({"error": reason, 'phase': self.phase,
+                                          'last_scan': self.last_scan}, ensure_ascii=False), encoding="utf-8")
         self.app.exit(1)
 
     def on_bridge_event(self, raw):

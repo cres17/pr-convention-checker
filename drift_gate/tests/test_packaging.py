@@ -159,12 +159,17 @@ def test_broken_bundle_fails_before_any_download(bundled, monkeypatch, damage):
 def valid_result(module):
     def phase(number, changed):
         return {"result": "warn", "execution": {"run_id": f"{number:032x}", "status": "success"},
-                "scan_metrics": {"scanned_files": 1},
+                "scan_metrics": {"scanned_files": 2},
                 "violations": [{"rule_id": "offline-api-docs", "trigger_files": [changed]}]}
     signature = phase(2, {"path": "src/api.py", "status": "modified", "previous_path": None,
                           "patch": "@@ -1,4 +1,6 @@\n def api(a,\n+        *extra,\n         b=1,\n+        **options,\n ):\n     return a\n"})
     rename = phase(3, {"path": "docs/api.py", "status": "renamed", "previous_path": "src/api.py",
                        "patch": "diff --git a/src/api.py b/docs/api.py\nsimilarity index 100%\nrename from src/api.py\nrename to docs/api.py\n"})
+    for result, path in ((signature, 'src/api.py'), (rename, 'docs/api.py')):
+        result['execution']['input_capture'] = {'artifacts': [
+            {'path': path, 'role': 'patch'},
+            {'path': 'docs/api.md', 'role': 'patch', 'observed_text_bytes': 0},
+            {'path': 'docs/api.md', 'role': 'after-source', 'state': 'absent'}]}
     return {"frozen": True, "bridge_ready": True, "ui_text": "검사 완료",
             "verification": {"run_id": "a" * 32, "repository": "/fixture"},
             "network_probes": [{"error": "blocked"}, {"error": "blocked"}],
@@ -265,7 +270,8 @@ def test_mac_framework_cleanup_never_discards_real_resources(tmp_path, monkeypat
 
 @pytest.mark.parametrize("damage", ["old-challenge", "wrong-repository", "reused-initial", "reused-id",
                                      "duplicate-phase", "reordered-phase", "wrong-rename", "wrong-signature",
-                                     "extra-change", "missing-id", "failed-execution"])
+                                     "extra-change", "missing-id", "failed-execution",
+                                     "extra-observation", "missing-document-observation"])
 def test_package_check_binds_each_phase_to_fresh_expected_input(damage):
     import copy
     module = verifier()
@@ -292,10 +298,33 @@ def test_package_check_binds_each_phase_to_fresh_expected_input(damage):
         checks[0]["result"]["violations"][0]["trigger_files"][0]["patch"] += "+extra = 2\n"
     elif damage == "missing-id":
         checks[0]["result"].pop("execution")
+    elif damage == 'extra-observation':
+        checks[0]['result']['execution']['input_capture']['artifacts'].append(
+            {'path': 'unexpected.py', 'role': 'patch'})
+    elif damage == 'missing-document-observation':
+        checks[0]['result']['execution']['input_capture']['artifacts'].pop()
     else:
         checks[0]["result"]["execution"]["status"] = "input_error"
     with pytest.raises(RuntimeError):
         module.validate(result, expected_identity=expected)
+
+
+def test_actual_package_phase_preparation_and_scans_preserve_exact_observation_scope(tmp_path):
+    pytest.importorskip('PySide6')
+    from drift_gate.desktop.package_check import PackageCheck
+    from drift_gate.desktop.package_check_contract import validate_phase
+    from drift_gate.desktop.service import scan_repository
+    module = verifier()
+    module.fixture(tmp_path)
+    state = SimpleNamespace(repository=str(tmp_path), phase='grammar',
+                            window=SimpleNamespace(bridge=SimpleNamespace(startScan=lambda *args: None)))
+    seen = {validate_phase('grammar', scan_repository(tmp_path).result.to_dict(), set())}
+    for case in ['signature', 'rename']:
+        PackageCheck.prepare_next_scan(state)
+        assert state.phase == case
+        result = scan_repository(tmp_path).result.to_dict()
+        seen.add(validate_phase(case, result, seen))
+        assert result['scan_metrics']['scanned_files'] == 2
 
 
 def test_package_verifier_preserves_old_output_without_launching(tmp_path, monkeypatch):
