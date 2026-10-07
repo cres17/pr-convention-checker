@@ -1,0 +1,27 @@
+{
+  "schema": "downloaded-native-execution-v1",
+  "source_commit": "7bf680db2cf9e417cb424e10c2a7bb2866d60939",
+  "ci_run_id": 37640190692,
+  "artifact_id": 11492151514,
+  "artifact_archive_digest": "sha256:64ff62001aa6ed63e03cf9cbab01a4c1879ce26533d60073b022dbbcfb16c501",
+  "dmg_sha256": "5da56fe6898285116f0fe6e251f33b4cbea759282fd7e8fcfde76ff5861d88f4",
+  "dmg_bytes": 243139437,
+  "binary_sha256": "350d45a7b5f1e14834eaa974123dee0d3ad60a87e36bb14de1e2d8c0f750ccab",
+  "binary_bytes": 2604688,
+  "local_test_result": "pass",
+  "source_grammar_analyses": 8,
+  "git_controls_passed": 6,
+  "git_controls_total": 6,
+  "parser_cache_files": [],
+  "os_network_isolation": "macOS sandbox-exec outbound deny",
+  "app_verification_identity": {
+    "run_id": "c3edfd968e8243d7b8054e11204e52ce",
+    "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-offline-check-75nue5wh/fixture"
+  },
+  "installer_method": "DMG mounted read-only, app copied to temporary installation directory, DMG detached, copied app executed",
+  "not_verified": [
+    "Windows/Intel installer execution on this local machine",
+    "interactive user acceptance",
+    "publisher signing/notarization"
+  ]
+}

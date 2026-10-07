@@ -66,11 +66,13 @@ jobs:
       - name: Install fixed Express HTTP oracle
         run: npm install --prefix "${{ runner.temp }}/express-oracle" --no-audit --no-fund express@4.21.2
       - name: Check desktop behavior
+        timeout-minutes: 15
+        shell: bash
         env:
           TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
           DRIFT_GATE_EXPRESS_ORACLE_DIR: ${{ runner.temp }}/express-oracle
         run: >
-          python -m pytest -q
+          python -m pytest -q -o faulthandler_timeout=120
           drift_gate/tests/test_desktop_service.py
           drift_gate/tests/test_desktop_ui.py
           drift_gate/tests/test_desktop_web.py
@@ -104,6 +106,13 @@ jobs:
           drift_gate/tests/test_logical_rereview.py
           drift_gate/tests/test_contract_followup.py
           drift_gate/tests/test_fastapi_oracle.py
+          2>&1 | tee build/desktop-pytest.log
+      - name: Preserve desktop regression diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: desktop-regression-${{ matrix.label }}
+          path: build/desktop-pytest.log
       - name: Build native app
         run: pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack --add-data "drift_gate/adapters/parser_hashes.json:drift_gate/adapters" --add-data "drift_gate/desktop/web:drift_gate/desktop/web" --add-data "build/parser-libraries:drift_gate/grammars" drift_gate/desktop/web_app.py
       - name: Seal packaged grammar bytes

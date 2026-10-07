@@ -89,3 +89,17 @@ Git 대조 6건은 통과했지만 외부 validator도 grammar source 8개에 �
 Git 대조 6/6을 통과했다. 이는 원격 installer 다운로드 검증과 구별한다.
 [임시 native 결과](../assessment/git-trust-implementation-2026-10-07/local-native-result.json)를
 보존했다. 최종 외부 validator와 같은 수정 상태에서 전체 Python 1,739개가 통과했다.
+
+`7bf680d`의 원격 Mac 두 플랫폼은 앱·DMG 검사 모두 통과했고, 다운로드한 JSON 4건도
+재검증했다. 원격 arm64 DMG를 이 컴퓨터의 임시 설치 위치에 복사하고 DMG를 해제한 뒤,
+새 challenge·빈 캐시·OS 외부 통신 차단으로 실행해 통과했다. Git 대조 6/6과 실제 문법
+분석 8개를 확인했다. [다운로드 설치 앱 실행 영수증](../assessment/git-trust-implementation-2026-10-07/downloaded-arm64-execution.json)에
+원격 artifact ID, source commit, DMG와 executable 해시를 연결했다.
+
+같은 커밋의 일반 CI와 Windows 회귀는 30분 가까이 종료되지 않았다. API에서 실행 중
+로그와 종료된 이전 로그를 받지 못했다. 원인을 인프라로 단정하지 않는다. Mac의
+얕은 원격 체크아웃·최소 dev/oracle 환경에서는 1,690개 통과·4개 skip으로 36초에 끝나
+같은 정체를 재현하지 못했다. 원격 판정을 통과로 바꾸지 않고 pytest 단계 시간 제한,
+120초 per-test 스택 덤프, pipefail과 항상 보관하는 진단 로그를 워크플로에 추가했다.
+[조건 대조와 파이프 종료 코드 확인](../assessment/git-trust-implementation-2026-10-07/ci-diagnostic-controls.json)을
+보존했다. 새 원격 실행의 결과는 완료 후 별도 영수증에 기록한다.
