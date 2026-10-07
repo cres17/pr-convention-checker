@@ -300,6 +300,7 @@
   "downloaded_arm64_fresh_executions": 3,
   "git_diagnostic_protocol": "packaged-git-controls-v2",
   "evidence_hashes": {
+    "byte-preservation.json": "d8b9b83646d168cc6cdd3b88e41574c0c7ece87d7bb8aadb33a1f0f445502640",
     "desktop-artifacts.json": "e385db4dec406b06f7a045774236b10992d65889f5f859b98d1674f3d5667d40",
     "desktop-jobs.json": "59e41021278b081ca09df4718b782a56470b334a59218a7669fdecafe17612e3",
     "desktop-regressions/desktop-regression-Windows/desktop-pytest.log": "45b6cec1b649b4d4ff5d112668bfd048d4e90a2f95950b99641ea74ce5e53492",
@@ -404,5 +405,10 @@
       "result": "success",
       "jobs_passed": 3
     }
+  },
+  "git_publication": {
+    "all_index_blob_bytes_match_original_receipt": true,
+    "repaired_windows_files": 7,
+    "attribute_scope": "docs/assessment/git-trust-implementation-2026-10-07/remote-final/** -text whitespace=cr-at-eol"
   }
 }

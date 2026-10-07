@@ -118,3 +118,8 @@ pytest와 그 뒤 네 축 평가의 종료 상태를 따로 확인한다. pytest
 mtime·ctime을 비교하고 안정적인 파일을 받아들여야 한다. 기존 path/handle 혼합 비교가
 달라지는 필드는 원격 native 관찰로 확인한다. 이 probe는 입력 파일 내용을 한 번 읽는
 제품 계약을 바꾸지 않으며 사용자 저장소 대신 임시 fixture만 사용한다.
+
+다운로드한 최종 원격 근거 폴더는 Git의 텍스트 줄바꿈 변환 대상에서 제외한다.
+Windows JSON·로그의 CRLF도 원본 SHA-256과 같게 보관하며, 작업 폴더 해시만이 아니라
+staged/committed Git blob bytes를 영수증과 대조한다. 이 속성은 해당 근거 폴더에만
+적용하고 일반 소스 파일의 줄바꿈 규칙이나 immutable raw diff 계약은 바꾸지 않는다.
