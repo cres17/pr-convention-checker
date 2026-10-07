@@ -3,8 +3,11 @@
 ## 최종 확인 — 2026-10-08 KST
 
 검증한 기능 소스는 `2a78160b78b110532a69c3f5a073cc04329b8cdc`다. 아래 근거를
-추가하는 후속 커밋은 문서·증거만 바꾸며, [소스 영수증](../assessment/git-trust-implementation-2026-10-07/remote-final/source-receipt.json)의
-284개 소스 해시와 고정 입력 5개는 최종 로컬 검사 상태와 같다.
+추가하는 후속 커밋은 문서·증거와 해당 근거 폴더의 줄바꿈 보존 속성을 바꾼다.
+[소스 영수증](../assessment/git-trust-implementation-2026-10-07/remote-final/source-receipt.json)의 284개 경로는
+검증 소스 `2a78160`의 Git blob과 일치한다. 자료 공개 후 운영코드는 같고, 운영 설명
+문서 1개에는 원본 보존 규칙을 덧붙였다. 고정 입력 5개는 그대로다. [공개 상태 대조](../assessment/git-trust-implementation-2026-10-07/publication-verification.json)는
+검증 시점 소스와 후속 문서 변경을 구분해 기록한다.
 
 | 확인 범위 | 결과 |
 | --- | --- |
