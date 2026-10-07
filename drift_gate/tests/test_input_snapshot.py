@@ -271,16 +271,53 @@ def test_bounded_reads_preserve_newlines_and_reject_growth_invalid_utf8_and_syml
     with pytest.raises(ValueError, match='symlink'): read_bounded_text(link)
 
 
-def test_file_replaced_between_read_and_final_stat_is_rejected(tmp_path, monkeypatch):
+def test_file_replaced_between_read_and_final_observation_is_rejected(tmp_path, monkeypatch):
     import drift_gate.adapters.snapshot as module
     path = tmp_path / 'input'; path.write_text('first')
-    real = module.Path.stat
+    real = module.os.open
+    opens = 0
     def replace_after_read(target, *args, **kwargs):
-        # Final path stat is after the stream closes, including on Windows.
+        nonlocal opens
         if target == path:
-            newer = tmp_path / 'newer'; newer.write_text('second'); os.replace(newer, path)
+            opens += 1
+            # The second handle opens after the first has closed, on Windows too.
+            if opens == 2:
+                before = path.stat()
+                newer = tmp_path / 'newer'; newer.write_bytes(b'later')
+                os.utime(newer, ns=(before.st_atime_ns, before.st_mtime_ns))
+                os.replace(newer, path)
         return real(target, *args, **kwargs)
-    monkeypatch.setattr(module.Path, 'stat', replace_after_read)
+    monkeypatch.setattr(module.os, 'open', replace_after_read)
+    with pytest.raises(ValueError, match='snapshot_unstable'): read_bounded_text(path)
+
+
+def test_stable_read_does_not_compare_path_ctime_to_handle_ctime(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    import drift_gate.adapters.snapshot as module
+    path = tmp_path / 'input'; path.write_bytes(b'stable\r\n')
+    real = module.Path.stat
+    def path_stat_with_distinct_ctime(target, *args, **kwargs):
+        value = real(target, *args, **kwargs)
+        return SimpleNamespace(**{key: getattr(value, key) + 123 if key == 'st_ctime_ns' else getattr(value, key)
+            for key in dir(value) if key.startswith('st_')})
+    monkeypatch.setattr(module.Path, 'stat', path_stat_with_distinct_ctime)
+    assert read_bounded_text(path) == 'stable\r\n'
+
+
+@pytest.mark.parametrize('field', ['st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns'])
+def test_observed_handle_identity_and_metadata_change_remain_rejected(tmp_path, monkeypatch, field):
+    from types import SimpleNamespace
+    import drift_gate.adapters.snapshot as module
+    path = tmp_path / 'input'; path.write_bytes(b'stable\r\n')
+    real = module.os.fstat
+    observations = 0
+    def changed_after_read(fd):
+        nonlocal observations
+        observations += 1
+        value = real(fd)
+        return SimpleNamespace(**{key: getattr(value, key) + 1 if key == field and observations == 2 else getattr(value, key)
+            for key in dir(value) if key.startswith('st_')})
+    monkeypatch.setattr(module.os, 'fstat', changed_after_read)
     with pytest.raises(ValueError, match='snapshot_unstable'): read_bounded_text(path)
 
 

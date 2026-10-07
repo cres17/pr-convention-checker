@@ -231,3 +231,26 @@ def test_possible_route_witness_excludes_comments_and_strings(patch):
     p.rules[0].when.min_change_intensity = 'route-contract-change'
     result = run([ChangedFile('src/api.py', 'modified', patch=patch)], policy=p)
     assert result.rule_decisions[0].status == 'unmatched'
+
+
+def test_git_evaluation_harness_preserves_utf8_under_non_utf8_text_defaults(tmp_path, monkeypatch):
+    import json
+    from pathlib import Path
+    from scripts import audit_auto_contracts as harness
+    suite = json.loads((harness.ROOT / 'drift_gate/tests/contracts/auto-contracts-v2.json').read_text(encoding='utf-8'))
+    suite['cases'] = suite['cases'][:1]
+    suite['protocol']['authorship'] = '한국어 검증 사례'
+    suite_path, output = tmp_path / 'suite.json', tmp_path / 'result.json'
+    suite_path.write_bytes(json.dumps(suite, ensure_ascii=False).encode('utf-8'))
+    real = Path.open
+    def non_utf8_default(path, mode='r', buffering=-1, encoding=None, errors=None, newline=None):
+        if 'b' not in mode and encoding is None:
+            encoding = 'cp1252'
+        return real(path, mode, buffering, encoding, errors, newline)
+    monkeypatch.setattr(Path, 'open', non_utf8_default)
+    monkeypatch.setattr(harness.sys, 'argv', ['audit', '--suite', str(suite_path), '--out', str(output)])
+    assert harness.main() == 0
+    result = json.loads(output.read_text(encoding='utf-8'))
+    assert result['protocol']['authorship'] == '한국어 검증 사례'
+    assert b'\r\n' not in output.read_bytes()
+    assert all(row['correct'] == row['total'] == 1 for row in result['counts'].values())

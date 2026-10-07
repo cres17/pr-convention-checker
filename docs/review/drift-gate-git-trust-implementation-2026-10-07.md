@@ -177,3 +177,30 @@ immutable collector가 처리하게 해 caller `GIT_DIR`·`GIT_WORK_TREE` 우회
 고정된 Python Git 14개와 Express Git 8개는 facts/decision/verification/gate 네 축 모두
 기대값과 같고, 동결 입력 5개의 SHA-256은 바뀌지 않았다. [실패 원본·수정 영수증](../assessment/git-trust-implementation-2026-10-07/platform-portability/verification.json)을
 보존한다. 이 로컬 결과를 새 Windows·설치본 원격 성공으로 대신하지 않는다.
+
+
+## Windows native 수집과 평가 출력 수정
+
+`6d33001`의 Windows 3.10·3.11은 Python 1,696개 통과·9 skip이었지만 다음 Git 평가
+보고서를 cp1252로 쓰다가 한글 `UnicodeEncodeError`로 실패했다. harness의 suite 읽기와
+결과 쓰기를 UTF-8로 명시하고 결과 줄바꿈을 LF로 고정했다. 비 UTF-8 기본 환경에서도
+한글 suite·결과를 그대로 보관하는 회귀를 추가했다. suite와 기대값은 바꾸지 않았다.
+
+Windows 3.12는 별개로 30개 실패·1,666개 통과·9 skip이었다. 로컬 bounded read에서
+handle `fstat`와 path `stat`가 같다고 가정해 안정적인 정책도 `snapshot_unstable`로
+거부했다. Windows의 두 API ctime 불일치는 [CPython 원본 이슈](https://github.com/python/cpython/issues/157671)에도
+보고돼 있다. 이전 실패 로그는 어긋난 field를 기록하지 않으므로 그 field가 ctime이라고
+단정하지 않는다. 새 원격 native probe는 실제 차이 field와 handle 재개방 값을 보관한다.
+
+제품은 원문을 한 번 읽고 첫 handle을 닫은 뒤 같은 경로를 다시 열어 `fstat`끼리
+identity·size·mtime·ctime을 대조한다. 같은 크기·mtime을 가진 다른 파일로 교체하는
+실제 사례도 거부하며, handle의 inode·size·mtime·ctime 변형 4건을 각각 거부한다.
+path/handle ctime 의미만 다른 안정적인 입력은 수용하는 대조가 있다. 입력 변경 검사를
+없애거나 Windows에서 예외를 무시하지 않는다. ABA와 저장소 전체 atomicity는 보장하지 않는다.
+
+최종 Python 소스는 Mac 전체 1,756개 통과·skip 0, 관련 101개와 Ruff·공백 검사 통과다.
+[버전별 실패 원본과 수정 영수증](../assessment/git-trust-implementation-2026-10-07/handle-consistency/verification.json)을
+보존한다. 6d33001의 로컬·원격 객체 수집은 input digest·정책 digest·전체 input capture가
+같고 정책 pin 무결성은 true였다. 그 자체 정책의 pass는 선언 문서 변경 충족이고 내용
+verification은 unverified다. [실제 대조](../assessment/git-trust-implementation-2026-10-07/remote-6d33001/object-comparison.json)에서
+이 구분을 유지한다. 최종 소스의 원격 성공은 별도 실행 결과로 확인한다.

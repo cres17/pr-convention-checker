@@ -101,14 +101,18 @@ jobs:
         env:
           TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
           DRIFT_GATE_EXPRESS_ORACLE_DIR: ${{ runner.temp }}/express-oracle
-        run: pytest drift_gate/tests/ -v --tb=short -o faulthandler_timeout=120 2>&1 | tee build/pytest.log
+        run: |
+          python docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/probe.py --out build/read-metadata.json
+          pytest drift_gate/tests/ -v --tb=short -o faulthandler_timeout=120 2>&1 | tee build/pytest.log
 
       - name: Preserve regression diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: regression-${{ matrix.os }}-${{ matrix.python-version }}
-          path: build/pytest.log
+          path: |
+            build/pytest.log
+            build/read-metadata.json
 
       - name: Verify frozen semantic evaluation axes
         run: |

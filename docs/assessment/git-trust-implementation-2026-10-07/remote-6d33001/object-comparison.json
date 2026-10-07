@@ -1,0 +1,21 @@
+{
+  "schema": "s2b-local-remote-fixed-object-comparison-v1",
+  "source_commit": "6d33001b1fafa8b6b40b6346ee6c30fbf498ce0b",
+  "base_commit": "211c533a1cdb9d3f9b26dfe45a339a373817f75b",
+  "ci_run_id": 37653098779,
+  "matching_fields": {
+    "input_sha256": true,
+    "policy_sha256": true,
+    "input_capture": true
+  },
+  "gate_result": "pass",
+  "content_verification": "unverified",
+  "policy_integrity_verified": true,
+  "organization_approval_verified": false,
+  "files": {
+    "self-check.json": "26a5d8b5e1adfaf4ef74ce9eab22eb83ac11e68db013954b83380632ae5d8046",
+    "object-self-check.json": "fa16b4db27c01a55ff032c38df63c7e9c15e4fed3879ab5e40c5e14f81b72187",
+    "local-object-self-check.json": "54fa3b6977996c815b48ae5d0b77b79fd8176703f1ba1a8d033c4af8c8654b62"
+  },
+  "meaning": "Same fixed objects and pin yield equal input capture across local Mac and remote Linux. pass satisfies declared path obligations; unverified content is not accuracy certification."
+}

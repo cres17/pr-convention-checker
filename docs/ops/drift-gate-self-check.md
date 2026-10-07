@@ -107,3 +107,14 @@ rename도 source 1개·문서 부재 1개를 공통 범위 검사로 확인한�
 15분으로 제한하고, 각 테스트가 120초 이상 걸리면 Python 스택을 기록한다. Bash의
 pipefail로 pytest 종료 코드를 유지하며, tee가 기록한 로그를 성공·실패 모두 별도
 artifact로 보관한다. timeout은 실패이며 부분 통과를 전체 통과로 보고하지 않는다.
+
+고정 Git 평가 harness의 입력·결과 JSON은 명시 UTF-8을 사용한다. 결과의 한글 진단도
+Windows 기본 cp1252에 맡기지 않고 UTF-8/LF로 보관한다. Windows Python 버전별로
+pytest와 그 뒤 네 축 평가의 종료 상태를 따로 확인한다. pytest 통과만으로 workflow가
+통과했다고 보고하지 않는다. 고정 suite의 기대값은 인코딩 수정으로 바꾸지 않는다.
+
+같은 pytest 단계에서 임시 고정 CRLF 파일의 path stat·첫 handle·재개방 handle metadata를
+기록해 `read-metadata.json`으로 보관한다. 새 bounded read는 같은 API의 identity·size·
+mtime·ctime을 비교하고 안정적인 파일을 받아들여야 한다. 기존 path/handle 혼합 비교가
+달라지는 필드는 원격 native 관찰로 확인한다. 이 probe는 입력 파일 내용을 한 번 읽는
+제품 계약을 바꾸지 않으며 사용자 저장소 대신 임시 fixture만 사용한다.
