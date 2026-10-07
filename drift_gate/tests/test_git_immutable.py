@@ -58,6 +58,43 @@ def test_exact_crlf_bytes_and_git_oid_survive_working_tree_changes(repo):
     assert inspect_snapshot(first).result == inspect_snapshot(again).result == 'fail'
 
 
+@pytest.mark.parametrize('location', ['working', 'index', 'info', 'global', 'local-config'])
+def test_diff_inputs_ignore_unpinned_attributes_and_configuration(repo, location):
+    root, _, _ = repo
+    expected = capture(repo)
+    if location in {'working', 'index'}:
+        (root / '.gitattributes').write_bytes(b'src/api.py binary\n')
+        if location == 'index':
+            git(root, 'add', '.gitattributes')
+            (root / '.gitattributes').unlink()  # Exercise Git's index fallback.
+    elif location == 'info':
+        (root / '.git/info/attributes').write_bytes(b'src/api.py binary\n')
+    elif location == 'global':
+        path = root / 'user-attributes'
+        path.write_bytes(b'src/api.py binary\n')
+        git(root, 'config', 'core.attributesFile', str(path))
+    else:
+        git(root, 'config', 'diff.noprefix', 'true')
+        git(root, 'config', 'diff.context', '100')
+        git(root, 'config', 'diff.algorithm', 'histogram')
+    index = (root / '.git/index').read_bytes()
+    config = (root / '.git/config').read_bytes()
+    actual = capture(repo)
+    assert actual.payload == expected.payload and actual.git_evidence == expected.git_evidence
+    assert (root / '.git/index').read_bytes() == index
+    assert (root / '.git/config').read_bytes() == config
+    assert inspect_snapshot(actual).verification == inspect_snapshot(expected).verification == 'verified'
+
+
+@pytest.mark.parametrize('key,value', [('GIT_DIR', '/not-the-selected-repository'),
+    ('GIT_ATTR_SOURCE', 'missing-tree'), ('GIT_DIFF_OPTS', '--unified=100')])
+def test_caller_git_environment_cannot_redirect_immutable_inputs(repo, monkeypatch, key, value):
+    expected = capture(repo)
+    monkeypatch.setenv(key, value)
+    actual = capture(repo)
+    assert actual.payload == expected.payload and actual.git_evidence == expected.git_evidence
+
+
 def test_replacement_refs_cannot_change_pinned_commit_or_blob(repo):
     root, base, head = repo
     expected = capture(repo)
@@ -134,7 +171,7 @@ def test_symlink_bytes_are_captured_without_following_target(repo):
     assert file.after_source is None
 
 
-@pytest.mark.parametrize('content', [b'\xff\x00', b'x' * 1_000_001])
+@pytest.mark.parametrize('content', [b'\xff\x00', b'x' * 1_000_001], ids=['binary', 'oversized'])
 def test_unsupported_or_oversized_text_is_never_reported_as_verified(repo, content):
     root, _, _ = repo
     (root / 'src/api.py').write_bytes(content); head = commit(root, 'unreadable')
@@ -220,10 +257,11 @@ def test_packaged_git_control_protocol_accepts_real_controls(package_controls):
 
 
 @pytest.mark.parametrize('damage', ['missing', 'wrong-pin', 'wrong-subject', 'claimed-approval',
-                                  'wrong-decision', 'wrong-raw-hash', 'wrong-blob-oid'])
+                                  'wrong-decision', 'wrong-raw-hash', 'wrong-blob-oid', 'old-protocol'])
 def test_packaged_git_control_protocol_rejects_false_success(package_controls, damage):
     data = deepcopy(package_controls)
     if damage == 'missing': data['checks'] = {}
+    elif damage == 'old-protocol': data['schema'] = 'packaged-git-controls-v1'
     elif damage == 'wrong-pin': data['policy_pin'] = '0' * 64
     elif damage == 'wrong-subject': data['subject']['base'] = 'a' * 40
     elif damage == 'claimed-approval':

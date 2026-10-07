@@ -1,0 +1,12 @@
+{
+  "before": {
+    "result": "fail",
+    "verification": "verified"
+  },
+  "after": {
+    "result": "fail",
+    "verification": "verified"
+  },
+  "snapshot_same": true,
+  "git_evidence_same": true
+}

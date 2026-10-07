@@ -60,6 +60,11 @@ def run_git_controls():
                 raise RuntimeError(f'Immutable package control accepted {name}')
         (root / 'src/api.py').write_bytes(source('/uncommitted').encode())
         (root / '.drift-gate.yml').write_bytes(b'rules: []\n')
+        (root / '.gitattributes').write_bytes(b'src/api.py binary\n')
+        git('add', '.gitattributes')
+        (root / '.gitattributes').unlink()
+        (root / '.git/info/attributes').write_bytes(b'src/api.py binary\n')
+        git('config', 'diff.noprefix', 'true')
         replay = inspect(stale)
         evidence = old_result['execution']['input_capture']['git_input']
         entries = evidence['artifacts']
@@ -68,11 +73,14 @@ def run_git_controls():
                   'current_document_accepted': new_result['result'] == 'pass',
                   'wrong_pin_rejected': 'SHA-256' in rejected['wrong-pin'],
                   'weakening_rejected': 'weakened' in rejected['weakened-policy'],
-                  'working_tree_ignored': replay['rule_decisions'] == old_result['rule_decisions'],
+                  'working_tree_ignored': (replay['rule_decisions'] == old_result['rule_decisions']
+                      and replay['verification'] == old_result['verification']
+                      and replay['execution']['input_capture'] == old_result['execution']['input_capture']),
                   'original_crlf_bytes_bound': after['raw_sha256'] == sha256(source('/new').encode()).hexdigest()}
         if not all(checks.values()):
             raise RuntimeError('Frozen Git object/policy controls failed')
-        return {'schema': 'packaged-git-controls-v1', 'checks': checks,
+        return {'schema': 'packaged-git-controls-v2', 'checks': checks,
+                'working_tree_mutations': ['source', 'policy', 'index-attributes', 'info-attributes', 'diff-config'],
                 'subject': {'base': base, 'stale': stale, 'current': current, 'weakened': weakened},
                 'policy_pin': pin, 'rejected': rejected,
                 'cases': {'stale': old_result, 'current': new_result, 'working-tree-edited': replay}}
@@ -81,7 +89,8 @@ def run_git_controls():
 def validate_git_controls(data):
     expected_checks = {'stale_document_rejected', 'current_document_accepted', 'wrong_pin_rejected',
                        'weakening_rejected', 'working_tree_ignored', 'original_crlf_bytes_bound'}
-    if (data.get('schema') != 'packaged-git-controls-v1' or set(data.get('checks', {})) != expected_checks
+    if (data.get('schema') != 'packaged-git-controls-v2' or set(data.get('checks', {})) != expected_checks
+        or data.get('working_tree_mutations') != ['source', 'policy', 'index-attributes', 'info-attributes', 'diff-config']
         or any(value is not True for value in data['checks'].values())):
         raise RuntimeError('Missing packaged Git object/policy controls')
     expected_pin = sha256(POLICY.encode()).hexdigest()
@@ -90,7 +99,8 @@ def validate_git_controls(data):
     for case, expected in [('stale', 'fail'), ('current', 'pass'), ('working-tree-edited', 'fail')]:
         result = data['cases'][case]
         git = result['execution']['input_capture']['git_input']
-        if (result['result'] != expected or git['policy_anchor']['sha256'] != expected_pin
+        if (result['result'] != expected or result['execution'].get('diff_mode') != 'isolated-raw-git'
+            or git['policy_anchor']['sha256'] != expected_pin
             or git['policy_anchor']['organization_approval_verified']
             or git['subject']['base_oid'] != data['subject']['base']
             or git['subject']['head_oid'] != data['subject']['current' if case == 'current' else 'stale']):
@@ -101,3 +111,7 @@ def validate_git_controls(data):
         if (entry is None or entry['raw_sha256'] != sha256(raw).hexdigest()
             or entry['object_id'] != object_oid('blob', raw, len(entry['object_id']))):
             raise RuntimeError('Packaged raw Git blob does not match frozen fixture')
+    original, edited = (data['cases'][key] for key in ('stale', 'working-tree-edited'))
+    if (edited['execution']['input_capture'] != original['execution']['input_capture']
+        or edited['verification'] != original['verification']):
+        raise RuntimeError('Packaged Git control accepted unpinned diff inputs')
