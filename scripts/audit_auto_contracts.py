@@ -122,7 +122,7 @@ def main():
     if args.out.exists():
         parser.error('output exists; previous evidence is immutable')
     try:
-        suite = validate_suite(json.loads(args.suite.read_text()))
+        suite = validate_suite(json.loads(args.suite.read_text(encoding='utf-8')))
     except (OSError, ValueError) as exc:
         parser.error(str(exc))
     rows = [evaluate_case(case) for case in suite['cases']]
@@ -134,7 +134,7 @@ def main():
               'missed_known_violations': [row['id'] for row in rows if row['expected']['decision'] == 'violated'
                                           and row['actual']['decision'] != 'violated'], 'cases': rows}
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    with args.out.open('x') as handle:
+    with args.out.open('x', encoding='utf-8', newline='\n') as handle:
         json.dump(result, handle, ensure_ascii=False, indent=2)
         handle.write('\n')
     print(json.dumps({key: result[key] for key in ('counts', 'false_verified', 'missed_known_violations')}))

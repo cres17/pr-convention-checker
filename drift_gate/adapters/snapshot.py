@@ -44,7 +44,13 @@ def read_bounded_text(path, *, max_bytes=1_000_000):
         after = os.fstat(stream.fileno())
     if len(content) > max_bytes:
         raise ValueError('input exceeds byte limit')
-    current = path.stat()
+    # Compare like APIs: on Windows Python versions, path stat's ctime can be
+    # creation time while fstat's ctime is metadata-change time (CPython #157671).
+    # Reopen only for identity/metadata; input bytes are still read exactly once.
+    if path.is_symlink():
+        raise ValueError('snapshot_unstable: input became a symlink during capture')
+    with os.fdopen(os.open(path, flags), 'rb') as current_stream:
+        current = os.fstat(current_stream.fileno())
     signature = lambda s: (s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns)
     if signature(before) != signature(after) or signature(after) != signature(current):
         raise ValueError('snapshot_unstable: input changed during capture')

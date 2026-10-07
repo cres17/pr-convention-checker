@@ -340,3 +340,9 @@ CLI의 immutable 저장소 탐색에도 같은 환경 격리를 적용한다. �
 정책·문서의 LF/CRLF는 raw bytes대로 보존하며, 플랫폼 기본 문자 인코딩이나 줄바꿈으로
 기대 해시를 바꾸지 않는다. 이 격리는 caller가 선택한 ref/hash의 무결성 계약이며,
 조직 승인이나 현재 엔진의 외부 인증을 추가로 주장하지 않는다.
+
+로컬 bounded read의 변경 감지는 열린 handle의 `fstat`끼리 비교한다. Windows에서
+path `stat`과 handle `fstat`의 ctime 의미가 다를 수 있어 두 API를 직접 비교하지 않는다.
+원문은 한 번 읽고, 첫 handle을 닫은 뒤 경로를 다시 열어 identity·size·mtime·ctime을
+확인한다. 관찰된 교체·크기·시간 변경과 symlink는 계속 거부한다. 같은 크기·mtime의
+다른 파일로 교체한 사례도 거부해야 한다. 전체 저장소 atomicity나 ABA 검출은 보장하지 않는다.
