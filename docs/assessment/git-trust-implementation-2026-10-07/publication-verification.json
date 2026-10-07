@@ -1,0 +1,18 @@
+{
+  "schema": "s2b-publication-verification-v1",
+  "checked_evidence_commit": "9a34f528d0a3849c3101e8f37ed4a8c71ca6c482",
+  "tested_source_commit": "2a78160b78b110532a69c3f5a073cc04329b8cdc",
+  "receipt_sha256": "194b1b02049047bd746b3d2a3ade0c41d33ece1a08f4e0ecf9f5fc318f3745ed",
+  "all_committed_evidence_blobs_match_original_raw_hashes": true,
+  "tested_source_anchor_matches_all_284_receipt_hashes": true,
+  "operating_sources_unchanged_in_publication": true,
+  "publication_document_changes": [
+    {
+      "path": "docs/ops/drift-gate-self-check.md",
+      "tested_hash": "f06ab8b799b28c159a7a5ee0fe822d14a2371e28d52b2a4f3b3825f453380b0c",
+      "publication_hash": "cb0f39ca67ba6abd34afde43ff3396434059de36581649fa67cf6799e7992390"
+    }
+  ],
+  "frozen_inputs_unchanged": true,
+  "new_gitattributes_scope": "final evidence directory only, preserves raw artifact bytes; raw immutable diff ignores attributes"
+}
