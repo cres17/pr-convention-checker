@@ -1,5 +1,56 @@
 # S2-b: 원본 Git 객체 수집과 명시 정책 pin 검증
 
+## 최종 확인 — 2026-10-08 KST
+
+검증한 기능 소스는 `2a78160b78b110532a69c3f5a073cc04329b8cdc`다. 아래 근거를
+추가하는 후속 커밋은 문서·증거만 바꾸며, [소스 영수증](../assessment/git-trust-implementation-2026-10-07/remote-final/source-receipt.json)의
+284개 소스 해시와 고정 입력 5개는 최종 로컬 검사 상태와 같다.
+
+| 확인 범위 | 결과 |
+| --- | --- |
+| 로컬 Mac 전체 Python | 1,756 통과, skip 0 |
+| React·TypeScript·UI 빌드·Ruff | React 126, 나머지 통과; UI 소스 해시 유지 |
+| 원격 push·PR CI | 각각 12개 job 성공; 3 OS × 3 Python의 9개 회귀 조합 포함 |
+| 원격 Desktop CI | Mac arm64·Intel·Windows 3개 job 성공 |
+| Desktop Python | Mac 각 1,128 통과; Windows 1,123 통과·5 skip |
+| 실제 앱·DMG·Windows 설치본 오프라인 JSON | 6/6 다운로드 후 현재 v2 계약으로 재검증 |
+| 다운로드 DMG에서 임시 설치한 Mac arm64 앱 | OS 통신 차단·새 challenge·빈 캐시로 3/3 실행 통과 |
+| 각 native 실행 | 실제 UI·QWebChannel, source 8개 문법 분석, Git·정책 대조 6/6 |
+| 같은 고정 Git 객체의 로컬/원격 비교 | input SHA-256·정책 SHA-256·전체 input capture 일치 |
+
+실행 링크: [push CI](https://github.com/cres17/pr-convention-checker/actions/runs/37654786178),
+[PR CI](https://github.com/cres17/pr-convention-checker/actions/runs/37654793870),
+[Desktop·설치 파일](https://github.com/cres17/pr-convention-checker/actions/runs/37654786181).
+
+원격 일반 CI는 Linux/Mac 각 1,707 통과·4 skip, Windows 각 1,702 통과·9 skip이다.
+일반 CI의 PySide 의존성 부재와 Windows에서 허용하지 않는 파일명, Mac 전용 테스트 등
+조건부 skip이며, 설치 job은 desktop 의존성을 설치해 별도로 검사한다. 전체 로컬 수치를
+모든 플랫폼에서 똑같이 실행한 수치로 쓰지 않는다. [9개 원본 요약](../assessment/git-trust-implementation-2026-10-07/remote-final/regression-summary.json),
+[설치본 JSON 재검증](../assessment/git-trust-implementation-2026-10-07/remote-final/native-evidence-recheck.json),
+[실제 다운로드 실행](../assessment/git-trust-implementation-2026-10-07/remote-final/downloaded-execution.json)을
+각각 보존했다. installer 원본 zip의 SHA-256도 GitHub artifact digest와 일치한다.
+
+Windows 3.12의 native probe에서 path stat과 fstat의 `st_ctime_ns` 불일치를 실제 확인했다.
+고정 입력에서 예전 혼합 API 비교는 거부, 수정한 handle 비교는 수용이다. 다른 8개
+조합에서는 이 fixture의 불일치가 없었다. 이 직접 관찰은 이전 실패 로그에 없던 field
+근거를 보완한다. 입력 교체·metadata 변경을 거부하는 회귀도 모든 조합에서 유지됐다.
+
+`6d33001`의 Intel DMG는 한 차례 Qt 경고와 종료 -11을 남겼다. 최신 `2a78160`은 첫
+attempt의 앱·DMG 모두 성공했으며 Mac arm64 다운로드 실행도 3회 성공했다. 이전 Qt
+종료 오류의 원인은 확인하지 못했고 Windows 수정이 그 오류를 해결했다고 주장하지
+않는다. [이전 실패 원본](../assessment/git-trust-implementation-2026-10-07/native-failure-6d33001/observation.json)을
+남기며 Intel의 반복 실행·teardown 진단은 후속 검증 과제다.
+
+정책 pin의 무결성은 인증했지만 조직 승인·현재 엔진의 인증은 아니다. 자체 정책 pass의
+내용 verification은 unverified인 상태로 유지한다. 설치 검사는 자동 offscreen native
+실행이며 사람의 실사용·물리 PC 설치·서명/공증을 대신하지 않는다. 이전 합성 입력이나
+경계 1/8의 정확도 향상도 주장하지 않는다.
+
+다음 단계는 원본 디스크 증거 bundle과 원자적 receipt·최신성·재시도 계약, 조직 정책
+승인과 엔진 인증이다. 코드 검토상 현재 수집 제한은 개별 object/patch와 tree entry에
+적용되며, 전체 수집 bytes·Git 호출 총량의 별도 상한은 추가할 필요가 있다. 그 총량의
+자원 고갈을 이번에 재현한 것은 아니다. 아래는 구현·반례·수정의 보존 기록이다.
+
 ## 구현 범위
 
 base, head, 정책 ref를 먼저 commit OID로 고정하고, 원본 blob과 방문한 tree bytes를
