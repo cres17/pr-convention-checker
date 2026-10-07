@@ -103,3 +103,22 @@ Git 대조 6/6을 통과했다. 이는 원격 installer 다운로드 검증과 �
 120초 per-test 스택 덤프, pipefail과 항상 보관하는 진단 로그를 워크플로에 추가했다.
 [조건 대조와 파이프 종료 코드 확인](../assessment/git-trust-implementation-2026-10-07/ci-diagnostic-controls.json)을
 보존했다. 새 원격 실행의 결과는 완료 후 별도 영수증에 기록한다.
+
+진단 설정을 포함한 `f712dfd`의 Mac arm64는 회귀 1,111개와 앱·DMG 오프라인
+검사를 통과했다. 새 DMG를 직접 다운로드해 임시 설치 위치에 복사하고 DMG를
+해제한 뒤, 새 challenge·빈 캐시·OS 통신 차단으로 실행해 통과했다. 문법 분석
+8개, Git 원본·정책 대조 6/6을 확인했다. [최신 다운로드 실행 영수증](../assessment/git-trust-implementation-2026-10-07/final-downloaded-arm64-execution.json)에
+소스 commit과 artifact·DMG·executable 해시를 연결한다.
+
+이 진단 commit의 자체 객체 검사는 새로 보관한 pytest 로그 1,207,220 bytes를
+1,000,000 bytes 수집 상한 위반으로 거부했다. 로그를 gzip으로 바꾸고 원본 bytes와
+SHA-256의 일치를 확인했다. 제품의 상한을 완화하지 않았다. 이전 큰 blob을 포함한
+비교도 여전히 거부되며 이 실패는 [거부 영수증](../assessment/git-trust-implementation-2026-10-07/self-check-input-limit-rejection.json)에
+보존한다. 압축본의 원본 해시·복원 검증은 `ci-diagnostic-controls.json`에 남겼다.
+
+일부 상태 조회가 종료 API와 어긋나 별도 조회 URL로 상태를 교차 확인했다.
+또 [GitHub 공식 상태](https://www.githubstatus.com/)에는 같은 날 15:06–15:16 UTC
+여러 서비스 영향과 15:32 UTC Actions 정상화가 공지됐다. 이 저장소의 정체 원인과
+직접 연결되는 로그는 확보하지 못했으므로 인과관계는 주장하지 않는다.
+[중간 원격 영수증](../assessment/git-trust-implementation-2026-10-07/remote-verification-checkpoint.json)은
+Windows·전체 CI를 명시적으로 pending으로 기록한다. 최종 성공으로 대체하지 않는다.
