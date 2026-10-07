@@ -102,3 +102,8 @@ native 검증기의 grammar 관찰은 source 8개와 configured 문서 부재 1�
 확인은 source 8개에 한정하고, 문서 부재는 input capture로 따로 검증한다. signature와
 rename도 source 1개·문서 부재 1개를 공통 범위 검사로 확인한다. 통과 boolean이나 총
 관찰 수를 언어 분석 수로 오인하지 않으며, 예상 밖 patch 관찰은 실패 처리한다.
+
+원격 회귀 정체를 성공으로 처리하지 않는다. 일반 pytest 단계는 10분, desktop 회귀는
+15분으로 제한하고, 각 테스트가 120초 이상 걸리면 Python 스택을 기록한다. Bash의
+pipefail로 pytest 종료 코드를 유지하며, tee가 기록한 로그를 성공·실패 모두 별도
+artifact로 보관한다. timeout은 실패이며 부분 통과를 전체 통과로 보고하지 않는다.

@@ -1,0 +1,21 @@
+{
+  "source_commit": "7bf680db2cf9e417cb424e10c2a7bb2866d60939",
+  "ci_run_id": 37640190602,
+  "local_and_remote_input_capture_equal": true,
+  "gate": "pass",
+  "verification": "unverified",
+  "git_manifest_sha256": "925975d6e05ee326912699861530a599466269ecd969deba8cbfb3f788f04c10",
+  "input_sha256": "0eca102a8adcae916eca4a18dd20d15b6600b2d94ad11b693b565d220eb13f5f",
+  "remote_report_sha256": "dd302b17bb0aae43e7d425b2746835c7816cfbf4f2ba077483135a03c8bf3ec8",
+  "artifact_count": 774,
+  "policy_anchor": {
+    "revision": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+    "path": ".drift-gate.self.yml",
+    "sha256": "3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb",
+    "integrity_verified": true,
+    "authority": "explicit-caller-pin",
+    "organization_approval_verified": false,
+    "evaluation_policy": "pinned-policy",
+    "candidate_weakening": "rejected"
+  }
+}
