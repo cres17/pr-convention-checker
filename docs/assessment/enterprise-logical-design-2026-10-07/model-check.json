@@ -1,0 +1,20 @@
+{
+  "schema": "enterprise-finite-model-v1",
+  "created_at": "2026-10-07T06:56:48.922299+00:00",
+  "counts": {
+    "production_binary_truth_table": 18,
+    "logical_laws": 216,
+    "conditional_table": 9,
+    "abstract_delta_concrete_pairs": 4096,
+    "no_delta_sufficiency_pairs": 8
+  },
+  "failures": [],
+  "passed": true,
+  "limits": [
+    "Finite model universe has three facts; delta bounds are proposed, not implemented in current analyzers.",
+    "Current combine decision checked for two operands only; evidence coverage is not proved by this script.",
+    "No parser soundness, scope completeness, source collection, temporal/liveness or TLA+ claim."
+  ],
+  "script_sha256": "fa88596c8ba14c860ab6de1ead622708150005797e5033f7f6c9e12fe454f2d5",
+  "production_combine_sha256": "e340ebedd0b4e10bed33232348a6a3b49f159a3bfcd35e86ff4cbcfd3194a126"
+}

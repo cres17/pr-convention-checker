@@ -1,0 +1,226 @@
+FFFFFFFFFFFF..FFFF.FFFF.FF.FFFFFFFFFF....FFF                             [100%]
+=================================== FAILURES ===================================
+_ test_mixed_python_contracts_never_disappear[plain-route-any-import os\nvalue = os.getenv("EXISTING")\n] _
+drift_gate/tests/test_enterprise_correctness.py:34: in test_mixed_python_contracts_never_disappear
+    assert result.result == 'warn'
+E   AssertionError: assert 'pass' == 'warn'
+E     
+E     - warn
+E     + pass
+_ test_mixed_python_contracts_never_disappear[plain-route-any-from os import getenv as read\nvalue = read("EXISTING")\n] _
+drift_gate/tests/test_enterprise_correctness.py:34: in test_mixed_python_contracts_never_disappear
+    assert result.result == 'warn'
+E   AssertionError: assert 'pass' == 'warn'
+E     
+E     - warn
+E     + pass
+_ test_mixed_python_contracts_never_disappear[plain-route-any-import os\nvalue = os.getenv(name)\n] _
+drift_gate/tests/test_enterprise_correctness.py:38: in test_mixed_python_contracts_never_disappear
+    reason = result.rule_decisions[0].unsatisfied_groups[0].content_reason
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'UnsatisfiedGroup' object has no attribute 'content_reason'
+_ test_mixed_python_contracts_never_disappear[plain-route-route-contract-change-import os\nvalue = os.getenv("EXISTING")\n] _
+drift_gate/tests/test_enterprise_correctness.py:34: in test_mixed_python_contracts_never_disappear
+    assert result.result == 'warn'
+E   AssertionError: assert 'pass' == 'warn'
+E     
+E     - warn
+E     + pass
+_ test_mixed_python_contracts_never_disappear[plain-route-route-contract-change-from os import getenv as read\nvalue = read("EXISTING")\n] _
+drift_gate/tests/test_enterprise_correctness.py:34: in test_mixed_python_contracts_never_disappear
+    assert result.result == 'warn'
+E   AssertionError: assert 'pass' == 'warn'
+E     
+E     - warn
+E     + pass
+_ test_mixed_python_contracts_never_disappear[plain-route-route-contract-change-import os\nvalue = os.getenv(name)\n] _
+drift_gate/tests/test_enterprise_correctness.py:38: in test_mixed_python_contracts_never_disappear
+    reason = result.rule_decisions[0].unsatisfied_groups[0].content_reason
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'UnsatisfiedGroup' object has no attribute 'content_reason'
+_ test_mixed_python_contracts_never_disappear[schema-any-import os\nvalue = os.getenv("EXISTING")\n] _
+drift_gate/tests/test_enterprise_correctness.py:38: in test_mixed_python_contracts_never_disappear
+    reason = result.rule_decisions[0].unsatisfied_groups[0].content_reason
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'UnsatisfiedGroup' object has no attribute 'content_reason'
+_ test_mixed_python_contracts_never_disappear[schema-any-from os import getenv as read\nvalue = read("EXISTING")\n] _
+drift_gate/tests/test_enterprise_correctness.py:38: in test_mixed_python_contracts_never_disappear
+    reason = result.rule_decisions[0].unsatisfied_groups[0].content_reason
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'UnsatisfiedGroup' object has no attribute 'content_reason'
+_ test_mixed_python_contracts_never_disappear[schema-any-import os\nvalue = os.getenv(name)\n] _
+drift_gate/tests/test_enterprise_correctness.py:38: in test_mixed_python_contracts_never_disappear
+    reason = result.rule_decisions[0].unsatisfied_groups[0].content_reason
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'UnsatisfiedGroup' object has no attribute 'content_reason'
+_ test_mixed_python_contracts_never_disappear[schema-route-contract-change-import os\nvalue = os.getenv("EXISTING")\n] _
+drift_gate/tests/test_enterprise_correctness.py:38: in test_mixed_python_contracts_never_disappear
+    reason = result.rule_decisions[0].unsatisfied_groups[0].content_reason
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'UnsatisfiedGroup' object has no attribute 'content_reason'
+_ test_mixed_python_contracts_never_disappear[schema-route-contract-change-from os import getenv as read\nvalue = read("EXISTING")\n] _
+drift_gate/tests/test_enterprise_correctness.py:38: in test_mixed_python_contracts_never_disappear
+    reason = result.rule_decisions[0].unsatisfied_groups[0].content_reason
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'UnsatisfiedGroup' object has no attribute 'content_reason'
+_ test_mixed_python_contracts_never_disappear[schema-route-contract-change-import os\nvalue = os.getenv(name)\n] _
+drift_gate/tests/test_enterprise_correctness.py:38: in test_mixed_python_contracts_never_disappear
+    reason = result.rule_decisions[0].unsatisfied_groups[0].content_reason
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'UnsatisfiedGroup' object has no attribute 'content_reason'
+_ test_type_only_express_import_semantics_survive_trivia[typescript-import /* note */ type express from 'express';] _
+drift_gate/tests/test_enterprise_correctness.py:63: in test_type_only_express_import_semantics_survive_trivia
+    with pytest.raises(UnsupportedContract, match='type-only'):
+E   Failed: DID NOT RAISE UnsupportedContract
+_ test_type_only_express_import_semantics_survive_trivia[typescript-import\ttype\texpress from 'express';] _
+drift_gate/tests/test_enterprise_correctness.py:63: in test_type_only_express_import_semantics_survive_trivia
+    with pytest.raises(UnsupportedContract, match='type-only'):
+E   Failed: DID NOT RAISE UnsupportedContract
+_ test_type_only_express_import_semantics_survive_trivia[typescript-import\ntype\nexpress from 'express';] _
+drift_gate/tests/test_enterprise_correctness.py:63: in test_type_only_express_import_semantics_survive_trivia
+    with pytest.raises(UnsupportedContract, match='type-only'):
+E   Failed: DID NOT RAISE UnsupportedContract
+_ test_type_only_express_import_semantics_survive_trivia[typescript-import // note\n type express from 'express';] _
+drift_gate/tests/test_enterprise_correctness.py:63: in test_type_only_express_import_semantics_survive_trivia
+    with pytest.raises(UnsupportedContract, match='type-only'):
+E   Failed: DID NOT RAISE UnsupportedContract
+_ test_type_only_express_import_semantics_survive_trivia[tsx-import /* note */ type express from 'express';] _
+drift_gate/tests/test_enterprise_correctness.py:63: in test_type_only_express_import_semantics_survive_trivia
+    with pytest.raises(UnsupportedContract, match='type-only'):
+E   Failed: DID NOT RAISE UnsupportedContract
+_ test_type_only_express_import_semantics_survive_trivia[tsx-import\ttype\texpress from 'express';] _
+drift_gate/tests/test_enterprise_correctness.py:63: in test_type_only_express_import_semantics_survive_trivia
+    with pytest.raises(UnsupportedContract, match='type-only'):
+E   Failed: DID NOT RAISE UnsupportedContract
+_ test_type_only_express_import_semantics_survive_trivia[tsx-import\ntype\nexpress from 'express';] _
+drift_gate/tests/test_enterprise_correctness.py:63: in test_type_only_express_import_semantics_survive_trivia
+    with pytest.raises(UnsupportedContract, match='type-only'):
+E   Failed: DID NOT RAISE UnsupportedContract
+_ test_type_only_express_import_semantics_survive_trivia[tsx-import // note\n type express from 'express';] _
+drift_gate/tests/test_enterprise_correctness.py:63: in test_type_only_express_import_semantics_survive_trivia
+    with pytest.raises(UnsupportedContract, match='type-only'):
+E   Failed: DID NOT RAISE UnsupportedContract
+______ test_express_const_tokens_have_same_registration_meaning[const\t] _______
+drift_gate/tests/test_enterprise_correctness.py:74: in test_express_const_tokens_have_same_registration_meaning
+    assert extract_express_routes(code) == {('GET', '/v1/catalog')}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+drift_gate/adapters/ast/express_routes.py:91: in extract_express_routes
+    raise UnsupportedContract('one directly declared Express app is required')
+E   drift_gate.core.evaluation.static_routers.UnsupportedContract: one directly declared Express app is required
+______ test_express_const_tokens_have_same_registration_meaning[const\n] _______
+drift_gate/tests/test_enterprise_correctness.py:74: in test_express_const_tokens_have_same_registration_meaning
+    assert extract_express_routes(code) == {('GET', '/v1/catalog')}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+drift_gate/adapters/ast/express_routes.py:91: in extract_express_routes
+    raise UnsupportedContract('one directly declared Express app is required')
+E   drift_gate.core.evaluation.static_routers.UnsupportedContract: one directly declared Express app is required
+______________ test_openapi_nonfinite_numeric_domain[root-1e999] _______________
+drift_gate/tests/test_enterprise_correctness.py:82: in test_openapi_nonfinite_numeric_domain
+    with pytest.raises(UnsupportedContract, match='unsupported_numeric_range'):
+E   Failed: DID NOT RAISE UnsupportedContract
+______________ test_openapi_nonfinite_numeric_domain[root--1e999] ______________
+drift_gate/tests/test_enterprise_correctness.py:82: in test_openapi_nonfinite_numeric_domain
+    with pytest.raises(UnsupportedContract, match='unsupported_numeric_range'):
+E   Failed: DID NOT RAISE UnsupportedContract
+_______________ test_openapi_nonfinite_numeric_domain[root-NaN] ________________
+drift_gate/tests/test_enterprise_correctness.py:82: in test_openapi_nonfinite_numeric_domain
+    with pytest.raises(UnsupportedContract, match='unsupported_numeric_range'):
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'unsupported_numeric_range'
+E     Actual message: 'invalid OpenAPI JSON'
+_____________ test_openapi_nonfinite_numeric_domain[root-Infinity] _____________
+drift_gate/tests/test_enterprise_correctness.py:82: in test_openapi_nonfinite_numeric_domain
+    with pytest.raises(UnsupportedContract, match='unsupported_numeric_range'):
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'unsupported_numeric_range'
+E     Actual message: 'invalid OpenAPI JSON'
+____________ test_openapi_nonfinite_numeric_domain[root--Infinity] _____________
+drift_gate/tests/test_enterprise_correctness.py:82: in test_openapi_nonfinite_numeric_domain
+    with pytest.raises(UnsupportedContract, match='unsupported_numeric_range'):
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'unsupported_numeric_range'
+E     Actual message: 'invalid OpenAPI JSON'
+___________ test_openapi_nonfinite_numeric_domain[nested-list-1e999] ___________
+drift_gate/tests/test_enterprise_correctness.py:82: in test_openapi_nonfinite_numeric_domain
+    with pytest.raises(UnsupportedContract, match='unsupported_numeric_range'):
+E   Failed: DID NOT RAISE UnsupportedContract
+__________ test_openapi_nonfinite_numeric_domain[nested-list--1e999] ___________
+drift_gate/tests/test_enterprise_correctness.py:82: in test_openapi_nonfinite_numeric_domain
+    with pytest.raises(UnsupportedContract, match='unsupported_numeric_range'):
+E   Failed: DID NOT RAISE UnsupportedContract
+____________ test_openapi_nonfinite_numeric_domain[nested-list-NaN] ____________
+drift_gate/tests/test_enterprise_correctness.py:82: in test_openapi_nonfinite_numeric_domain
+    with pytest.raises(UnsupportedContract, match='unsupported_numeric_range'):
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'unsupported_numeric_range'
+E     Actual message: 'invalid OpenAPI JSON'
+_________ test_openapi_nonfinite_numeric_domain[nested-list-Infinity] __________
+drift_gate/tests/test_enterprise_correctness.py:82: in test_openapi_nonfinite_numeric_domain
+    with pytest.raises(UnsupportedContract, match='unsupported_numeric_range'):
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'unsupported_numeric_range'
+E     Actual message: 'invalid OpenAPI JSON'
+_________ test_openapi_nonfinite_numeric_domain[nested-list--Infinity] _________
+drift_gate/tests/test_enterprise_correctness.py:82: in test_openapi_nonfinite_numeric_domain
+    with pytest.raises(UnsupportedContract, match='unsupported_numeric_range'):
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'unsupported_numeric_range'
+E     Actual message: 'invalid OpenAPI JSON'
+______ test_overflow_document_remains_unknown_through_adapter[api-routes] ______
+drift_gate/tests/test_enterprise_correctness.py:101: in test_overflow_document_remains_unknown_through_adapter
+    assert result.result == 'warn' and result.verification == 'unverified'
+E   AssertionError: assert ('pass' == 'warn'
+E     
+E     - warn
+E     + pass)
+______ test_overflow_document_remains_unknown_through_adapter[api-schema] ______
+drift_gate/tests/test_enterprise_correctness.py:101: in test_overflow_document_remains_unknown_through_adapter
+    assert result.result == 'warn' and result.verification == 'unverified'
+E   AssertionError: assert ('fail' == 'warn'
+E     
+E     - warn
+E     + fail)
+_____ test_overflow_document_remains_unknown_through_adapter[auto-strict] ______
+drift_gate/tests/test_enterprise_correctness.py:101: in test_overflow_document_remains_unknown_through_adapter
+    assert result.result == 'warn' and result.verification == 'unverified'
+E   AssertionError: assert ('fail' == 'warn'
+E     
+E     - warn
+E     + fail)
+=========================== short test summary info ============================
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[plain-route-any-import os\nvalue = os.getenv("EXISTING")\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[plain-route-any-from os import getenv as read\nvalue = read("EXISTING")\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[plain-route-any-import os\nvalue = os.getenv(name)\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[plain-route-route-contract-change-import os\nvalue = os.getenv("EXISTING")\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[plain-route-route-contract-change-from os import getenv as read\nvalue = read("EXISTING")\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[plain-route-route-contract-change-import os\nvalue = os.getenv(name)\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[schema-any-import os\nvalue = os.getenv("EXISTING")\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[schema-any-from os import getenv as read\nvalue = read("EXISTING")\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[schema-any-import os\nvalue = os.getenv(name)\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[schema-route-contract-change-import os\nvalue = os.getenv("EXISTING")\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[schema-route-contract-change-from os import getenv as read\nvalue = read("EXISTING")\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_mixed_python_contracts_never_disappear[schema-route-contract-change-import os\nvalue = os.getenv(name)\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[typescript-import /* note */ type express from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[typescript-import\ttype\texpress from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[typescript-import\ntype\nexpress from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[typescript-import // note\n type express from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[tsx-import /* note */ type express from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[tsx-import\ttype\texpress from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[tsx-import\ntype\nexpress from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[tsx-import // note\n type express from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_express_const_tokens_have_same_registration_meaning[const\t]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_express_const_tokens_have_same_registration_meaning[const\n]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_openapi_nonfinite_numeric_domain[root-1e999]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_openapi_nonfinite_numeric_domain[root--1e999]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_openapi_nonfinite_numeric_domain[root-NaN]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_openapi_nonfinite_numeric_domain[root-Infinity]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_openapi_nonfinite_numeric_domain[root--Infinity]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_openapi_nonfinite_numeric_domain[nested-list-1e999]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_openapi_nonfinite_numeric_domain[nested-list--1e999]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_openapi_nonfinite_numeric_domain[nested-list-NaN]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_openapi_nonfinite_numeric_domain[nested-list-Infinity]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_openapi_nonfinite_numeric_domain[nested-list--Infinity]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_overflow_document_remains_unknown_through_adapter[api-routes]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_overflow_document_remains_unknown_through_adapter[api-schema]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_overflow_document_remains_unknown_through_adapter[auto-strict]
+35 failed, 9 passed in 0.19s

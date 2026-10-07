@@ -1,0 +1,26 @@
+{
+  "workload": {
+    "modules": 24,
+    "rules": 8,
+    "repeats": 5
+  },
+  "input_sha256": "3f9f7ce8c7a57d1d8ac1a2b57d95586d5cd1dab3d9985746ac836f1f8d894bd6",
+  "seconds": [
+    0.12297074997331947,
+    0.172842874948401,
+    0.1603685839800164,
+    0.141207333013881,
+    0.12215741700492799
+  ],
+  "median_seconds": 0.141207333013881,
+  "ast_parses": [
+    1152,
+    1152,
+    1152,
+    1152,
+    1152
+  ],
+  "report_bytes": 17876,
+  "gate": "pass",
+  "verification": "verified"
+}

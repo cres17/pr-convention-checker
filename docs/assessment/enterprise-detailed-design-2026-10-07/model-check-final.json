@@ -1,0 +1,69 @@
+{
+  "schema": "enterprise-detailed-design-model-v1",
+  "created_at": "2026-10-07T07:45:11.291742+00:00",
+  "counts": {
+    "interval_states": 729,
+    "concrete_route_worlds": 4096,
+    "nested_circuit_assignments": 297,
+    "concrete_circuit_worlds": 704,
+    "proof_witness_completions": 692,
+    "scope_guard_cases": 6,
+    "publication_event_sequences": 46656,
+    "rejected_alternative_counterexamples": 4
+  },
+  "failures": [],
+  "passed": true,
+  "rejected_design_alternatives": {
+    "equal_lower_sets_prove_no_delta": {
+      "before_bounds": [
+        [],
+        [
+          "a"
+        ]
+      ],
+      "after_bounds": [
+        [],
+        [
+          "a"
+        ]
+      ],
+      "concrete_before": [],
+      "concrete_after": [
+        "a"
+      ],
+      "rejected": true
+    },
+    "drop_unknown_discovery_then_pass": {
+      "known_truth": "T",
+      "discovery_guard": "U",
+      "required_root": "U",
+      "rejected": true
+    },
+    "failed_conjunction_loses_known_violation": {
+      "known_truth": "F",
+      "unknown_sibling": "U",
+      "required_root": "F",
+      "rejected": true
+    },
+    "head_oid_alone_prevents_ABA": {
+      "captured": [
+        "A",
+        0
+      ],
+      "current": [
+        "A",
+        2
+      ],
+      "required_publication": "stale",
+      "rejected": true
+    }
+  },
+  "script_sha256": "4c6aef822839abb82806e3f72320aa14976e35b46fa62483ee322d15fd98f96d",
+  "limitations": [
+    "Reference design only; no production code is exercised.",
+    "Two-fact finite intervals, eleven circuits, six publication events to depth six.",
+    "Set bounds ignore correlations; unknown may be conservative.",
+    "Publication assumes atomic server CAS and trusted generation invalidation.",
+    "No parser soundness, real concurrency, liveness, OS, CI, installer or PR accuracy proof."
+  ]
+}

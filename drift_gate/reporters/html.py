@@ -8,6 +8,8 @@ from drift_gate.core.models.result import EvaluationResult, Violation
 
 class HtmlReporter:
     def render(self, result: EvaluationResult, *, policy_source: str = "") -> str:
+        from drift_gate.core.compat.legacy_result import diagnostic_lines
+        diagnostics = ''.join('<p>' + html.escape(line) + '</p>' for line in diagnostic_lines(result))
         violations = "\n".join(
             self._violation_card(violation) for violation in result.violations
         )
@@ -202,6 +204,7 @@ class HtmlReporter:
   </section>
 
   {walkthrough}
+  {diagnostics}
   {self._temporal_warnings(result)}
   {rule_table}
 
@@ -344,12 +347,14 @@ class HtmlReporter:
                 else html.escape(decision.rule_id)
             )
             matched = ", ".join(decision.matched_patterns) or "-"
+            reason = decision.reason + " | " + decision.decision + " / " + decision.verification
+            reason += " | " + "; ".join(g.evidence for g in decision.satisfied_groups + decision.unsatisfied_groups if g.verification in {"partial", "unverified"})
             rows.append(
                 "<tr>"
                 f"<td>{link}</td>"
                 f"<td><span class=\"rule-status {status_class}\">{html.escape(decision.status)}</span></td>"
                 f"<td>{html.escape(decision.severity)}</td>"
-                f"<td>{html.escape(decision.reason)}</td>"
+                f"<td>{html.escape(reason)}</td>"
                 f"<td>{html.escape(matched)}</td>"
                 "</tr>"
             )

@@ -11,6 +11,8 @@ import sys
 import tempfile
 import uuid
 
+from drift_gate.desktop.package_check_contract import validate_phases
+
 
 SOURCES = {
     "api.py": "def api(value: str) -> str:\n    return value\n",
@@ -80,7 +82,12 @@ def network_block(executable, directory):
         raise RuntimeError("Installed-app network blocking is supported on macOS and Windows")
 
 
-def validate(result):
+def validate(result, *, expected_identity=None):
+    if expected_identity is not None:
+        if result.get("verification") != expected_identity:
+            raise RuntimeError("Package result belongs to a different verification run or fixture")
+        if result.get("scan", {}).get("repository") != expected_identity["repository"]:
+            raise RuntimeError("Package scan belongs to a different fixture repository")
     if not result.get("frozen") or not result.get("bridge_ready") or not result.get("ui_text"):
         raise RuntimeError("The frozen app did not load its UI and QWebChannel")
     probes = result.get("network_probes", [])
@@ -94,17 +101,12 @@ def validate(result):
     actual = {n["path"]: n for n in notes}
     if len(notes) != len(expected) or set(actual) != expected or any(n["method"] != "grammar+heuristic" for n in notes):
         raise RuntimeError(f"Installed-app grammar analysis failed: {notes}")
-    checks = {c['case']: c['result'] for c in result.get('hardening_checks', [])}
-    if set(checks) != {'signature', 'rename'} or any(
-        r['result'] == 'pass' or not any(v['rule_id'] == 'offline-api-docs' for v in r['violations'])
-        for r in checks.values()
-    ):
-        raise RuntimeError('Installed app did not reject signature/rename drift through its actual bridge')
+    validate_phases(result)
 
 
 def verify(executable, output):
     executable = executable.resolve(strict=True)
-    output.mkdir(parents=True, exist_ok=True)
+    output.mkdir(parents=True, exist_ok=False)
     output = output.resolve()
     bundle = executable.parent.parent / "Frameworks" if sys.platform == "darwin" else executable.parent / "_internal"
     directory = bundle / "drift_gate" / "grammars"
@@ -117,9 +119,10 @@ def verify(executable, output):
     with tempfile.TemporaryDirectory(prefix="driftgate-offline-check-") as temporary:
         root = Path(temporary)
         fixture(root / "fixture")
+        identity = {"run_id": uuid.uuid4().hex, "repository": str((root / "fixture").resolve())}
         cache = root / "empty-parser-cache"
         cache.mkdir()
-        env = {**os.environ, "TREE_SITTER_LANGUAGE_PACK_CACHE_DIR": str(cache),
+        env = {**os.environ, "DRIFT_GATE_PACKAGE_CHECK_ID": identity["run_id"], "TREE_SITTER_LANGUAGE_PACK_CACHE_DIR": str(cache),
                "TREE_SITTER_LANGUAGE_PACK_LIBS_DIR": str(root / "absent-user-libraries"),
                "QT_QPA_PLATFORM": "offscreen", "QTWEBENGINE_CHROMIUM_FLAGS": "--no-sandbox --disable-gpu"}
         report = output / "result.json"
@@ -137,7 +140,9 @@ def verify(executable, output):
             if code != 0:
                 raise RuntimeError(f"Packaged app failed ({code}); see {output / 'app.log'}")
         result = json.loads(report.read_text(encoding="utf-8"))
-        validate(result)
+        validate(result, expected_identity=identity)
+        from drift_gate.desktop.package_git_check import validate_git_controls
+        validate_git_controls(result.get('git_object_checks', {}))
         cache_files = [str(p.relative_to(cache)) for p in cache.rglob("*") if p.is_file()]
         if any(Path(p).suffix in {".dll", ".dylib", ".so"} for p in cache_files):
             raise RuntimeError("The installed app populated its supposedly empty parser cache")

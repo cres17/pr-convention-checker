@@ -1,0 +1,69 @@
+F401 [*] `os` imported but unused
+ --> drift_gate/tests/test_git_immutable.py:7:8
+  |
+5 | from hashlib import sha256
+6 | import json
+7 | import os
+  |        ^^
+8 | from pathlib import Path
+9 | import subprocess
+  |
+help: Remove unused import: `os`
+  |
+6 | import json
+  - import os
+7 | from pathlib import Path
+  |
+
+F401 [*] `pathlib.Path` imported but unused
+ --> drift_gate/tests/test_git_immutable.py:8:21
+  |
+6 | import json
+7 | import os
+8 | from pathlib import Path
+  |                     ^^^^
+9 | import subprocess
+  |
+help: Remove unused import: `pathlib.Path`
+  |
+7 | import os
+  - from pathlib import Path
+8 | import subprocess
+  |
+
+F401 [*] `drift_gate.core.models.git_input.GitArtifact` imported but unused
+  --> drift_gate/tests/test_git_immutable.py:18:46
+   |
+16 | from drift_gate.adapters.cli.runner import run_cli
+17 | from drift_gate.core.models.evaluation_context import EvaluationContext
+18 | from drift_gate.core.models.git_input import GitArtifact, object_oid
+   |                                              ^^^^^^^^^^^
+19 | from drift_gate.core.models.input_manifest import ArtifactState
+20 | from drift_gate.desktop.package_git_check import POLICY, source, run_git_controls, validate_git_controls
+   |
+help: Remove unused import
+   |
+17 | from drift_gate.core.models.evaluation_context import EvaluationContext
+   - from drift_gate.core.models.git_input import GitArtifact, object_oid
+18 | from drift_gate.core.models.input_manifest import ArtifactState
+   |
+
+F401 [*] `drift_gate.core.models.git_input.object_oid` imported but unused
+  --> drift_gate/tests/test_git_immutable.py:18:59
+   |
+16 | from drift_gate.adapters.cli.runner import run_cli
+17 | from drift_gate.core.models.evaluation_context import EvaluationContext
+18 | from drift_gate.core.models.git_input import GitArtifact, object_oid
+   |                                                           ^^^^^^^^^^
+19 | from drift_gate.core.models.input_manifest import ArtifactState
+20 | from drift_gate.desktop.package_git_check import POLICY, source, run_git_controls, validate_git_controls
+   |
+help: Remove unused import
+   |
+17 | from drift_gate.core.models.evaluation_context import EvaluationContext
+   - from drift_gate.core.models.git_input import GitArtifact, object_oid
+18 | from drift_gate.core.models.input_manifest import ArtifactState
+   |
+
+Found 4 errors.
+[*] 4 fixable with the `--fix` option.

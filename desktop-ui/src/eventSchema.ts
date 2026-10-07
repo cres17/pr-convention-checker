@@ -56,8 +56,10 @@ const testLink = z.object({ patterns: strings, matched: nonnegative, passed: non
     skipped: nonnegative, failing: strings, no_match: z.boolean(), code_newer: z.boolean().optional() });
 const issue = z.object({ path: text, line: nonnegative, target: text, kind: z.enum(["link", "path", "document"]),
     confidence: z.enum(["high", "low"]).optional(), message: text });
-const group = z.object({ name: text, required: strings.optional(), evidence: text.optional() }).passthrough();
+const group = z.object({ name: text, required: strings.optional(), evidence: text.optional(),
+    decision: text.optional(), verification: text.optional(), content_mode: text.optional() }).passthrough();
 const decision = z.object({ rule_id: text, status: text, reason: text, severity: text.optional(), trigger_files: strings,
+    decision: text.optional(), verification: text.optional(),
     unsatisfied_groups: z.array(group), satisfied_groups: z.array(group) }).passthrough();
 const violation = z.object({ rule_id: text, severity: text, confidence: text, message: text, checklist: strings,
     missing_docs_explanation: text, changed_contract_summary: text, docs_update_draft: text, false_positive_note: text }).passthrough();

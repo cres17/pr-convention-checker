@@ -1,0 +1,1219 @@
+{
+  "schema": "enterprise-design-probes-v1",
+  "started_at": "2026-10-07T07:16:02.262201+00:00",
+  "head": "d262ec2faff3b98c917e3e99f7b6260cf0514ff3",
+  "state": "uncommitted worktree; previous receipt hash comparison identifies operating inputs",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "python": "3.11.15",
+  "prior_receipt_sha256": "2dbb25e843257c4f25397bffceec4ff38caebcbd2bd470eed182975988259d7a",
+  "prior_receipt_comparison": {
+    "source_hashes": {
+      "total": 115,
+      "mismatches": [
+        "drift_gate/adapters/ast/express_routes.py",
+        "drift_gate/adapters/inspection.py",
+        "drift_gate/core/engine.py",
+        "drift_gate/core/evaluation/evaluator.py",
+        "drift_gate/core/evaluation/openapi_document.py",
+        "drift_gate/core/evaluation/routes.py",
+        ".github/workflows/desktop-build.yml",
+        "scripts/audit_auto_contracts.py"
+      ]
+    },
+    "input_hashes": {
+      "total": 5,
+      "mismatches": []
+    },
+    "test_hashes": {
+      "total": 44,
+      "mismatches": [
+        "drift_gate/tests/test_engine.py"
+      ]
+    },
+    "evidence_hashes": {
+      "total": 38,
+      "mismatches": []
+    }
+  },
+  "mixed_contract_dispatch": [
+    {
+      "input": {
+        "id": "auto-strict-env-True",
+        "before": {
+          "src/api.py": "from fastapi import FastAPI\nimport os\nsetting = os.getenv(\"EXISTING_KEY\")\napp = FastAPI()\n@app.get(\"/old\")\ndef endpoint():\n    return {}\n",
+          "openapi.json": "{\"openapi\": \"3.1.0\", \"paths\": {\"/old\": {\"get\": {\"responses\": {}}}}}"
+        },
+        "after": {
+          "src/api.py": "from fastapi import FastAPI\nimport os\nsetting = os.getenv(\"EXISTING_KEY\")\napp = FastAPI()\n@app.get(\"/new\")\ndef endpoint():\n    return {}\n"
+        },
+        "policy": {
+          "rules": [
+            {
+              "id": "route-duty",
+              "severity": "blocker",
+              "when": {
+                "any_changed": [
+                  "src/**"
+                ]
+              },
+              "require": {
+                "groups": [
+                  {
+                    "name": "API",
+                    "all_changed": [
+                      "openapi.json"
+                    ],
+                    "content": "auto-strict"
+                  }
+                ]
+              }
+            }
+          ],
+          "gate": {
+            "on_unverified": "fail"
+          }
+        },
+        "facts_kind": "routes",
+        "expected": {
+          "facts": {
+            "added": [
+              "GET /new"
+            ],
+            "removed": [
+              "GET /old"
+            ]
+          }
+        }
+      },
+      "observed": {
+        "id": "auto-strict-env-True",
+        "expected": {
+          "facts": {
+            "added": [
+              "GET /new"
+            ],
+            "removed": [
+              "GET /old"
+            ]
+          }
+        },
+        "actual": {
+          "facts": {
+            "added": [
+              "GET /new"
+            ],
+            "removed": [
+              "GET /old"
+            ]
+          },
+          "decision": "undetermined",
+          "verification": "unverified",
+          "gate": "fail"
+        },
+        "checks": {
+          "facts": true
+        },
+        "report": {
+          "schema_version": 3,
+          "verification": "unverified",
+          "summary": {
+            "blocker": 0,
+            "major": 0,
+            "minor": 0,
+            "nit": 0,
+            "gate_decision": "fail",
+            "undetermined_rules": 1,
+            "unverified_rules": 1
+          },
+          "scan_metrics": {
+            "scanned_files": 2,
+            "skipped_ignored_files": 0,
+            "skipped_binary_files": 0,
+            "skipped_large_files": 0,
+            "evaluated_rules": 1,
+            "runtime_seconds": 0.0025796659756451845,
+            "analysis_notes": [
+              {
+                "path": "src/api.py",
+                "method": "heuristic",
+                "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+              },
+              {
+                "path": "openapi.json",
+                "method": "unavailable",
+                "reason": "Patch unavailable; intensity cannot exclude a contract change"
+              }
+            ]
+          },
+          "result": "fail",
+          "skip": false,
+          "skip_reason": "",
+          "no_policy": false,
+          "change_types": [
+            "other"
+          ],
+          "violations": [],
+          "rule_decisions": [
+            {
+              "rule_id": "route-duty",
+              "severity": "BLOCKER",
+              "status": "undetermined",
+              "decision": "undetermined",
+              "verification": "unverified",
+              "reason": "Required content or change threshold could not be verified",
+              "matched_patterns": [
+                "src/**"
+              ],
+              "trigger_files": [
+                "src/api.py"
+              ],
+              "satisfied_groups": [],
+              "unsatisfied_groups": [
+                {
+                  "name": "API",
+                  "required": [
+                    "openapi.json"
+                  ],
+                  "type": "all_changed",
+                  "evidence": "Mixed environment/API contracts require explicit content groups",
+                  "decision": "undetermined",
+                  "verification": "unverified",
+                  "content_mode": "auto-strict"
+                }
+              ]
+            }
+          ],
+          "skipped_rules": [],
+          "rejected_ignores": [],
+          "ignore_audit": [],
+          "temporal_warnings": [],
+          "gate": {
+            "fail_on_blocker": true,
+            "fail_on_major_count": 2,
+            "on_unverified": "fail"
+          },
+          "execution": {
+            "schema_version": 2,
+            "run_id": "593b7d275f2048ad8faa158aafaf7e99",
+            "started_at": "2026-10-07T07:16:00.609428+00:00",
+            "status": "success",
+            "policy_sha256": "2bcec077fbf1444846401668fdf0c6a00b9dc96262a4c52765b36352a4b74805",
+            "policy_digest_kind": "policy-object",
+            "warnings": [],
+            "evaluation_context": {
+              "evaluated_on": "2026-10-07",
+              "date_basis": "UTC"
+            },
+            "input_digest_version": 3,
+            "input_sha256": "a2fc57717ab835b42eaebf8a26747fdfde220c9412a085437b3d2a85b5d50c73"
+          }
+        },
+        "input_sha256": "a2fc57717ab835b42eaebf8a26747fdfde220c9412a085437b3d2a85b5d50c73"
+      }
+    },
+    {
+      "input": {
+        "id": "api-routes-env-True",
+        "before": {
+          "src/api.py": "from fastapi import FastAPI\nimport os\nsetting = os.getenv(\"EXISTING_KEY\")\napp = FastAPI()\n@app.get(\"/old\")\ndef endpoint():\n    return {}\n",
+          "openapi.json": "{\"openapi\": \"3.1.0\", \"paths\": {\"/old\": {\"get\": {\"responses\": {}}}}}"
+        },
+        "after": {
+          "src/api.py": "from fastapi import FastAPI\nimport os\nsetting = os.getenv(\"EXISTING_KEY\")\napp = FastAPI()\n@app.get(\"/new\")\ndef endpoint():\n    return {}\n"
+        },
+        "policy": {
+          "rules": [
+            {
+              "id": "route-duty",
+              "severity": "blocker",
+              "when": {
+                "any_changed": [
+                  "src/**"
+                ]
+              },
+              "require": {
+                "groups": [
+                  {
+                    "name": "API",
+                    "all_changed": [
+                      "openapi.json"
+                    ],
+                    "content": "api-routes"
+                  }
+                ]
+              }
+            }
+          ],
+          "gate": {
+            "on_unverified": "fail"
+          }
+        },
+        "facts_kind": "routes",
+        "expected": {
+          "facts": {
+            "added": [
+              "GET /new"
+            ],
+            "removed": [
+              "GET /old"
+            ]
+          }
+        }
+      },
+      "observed": {
+        "id": "api-routes-env-True",
+        "expected": {
+          "facts": {
+            "added": [
+              "GET /new"
+            ],
+            "removed": [
+              "GET /old"
+            ]
+          }
+        },
+        "actual": {
+          "facts": {
+            "added": [
+              "GET /new"
+            ],
+            "removed": [
+              "GET /old"
+            ]
+          },
+          "decision": "violated",
+          "verification": "verified",
+          "gate": "fail"
+        },
+        "checks": {
+          "facts": true
+        },
+        "report": {
+          "schema_version": 3,
+          "verification": "verified",
+          "summary": {
+            "blocker": 1,
+            "major": 0,
+            "minor": 0,
+            "nit": 0,
+            "gate_decision": "fail",
+            "undetermined_rules": 0,
+            "unverified_rules": 0
+          },
+          "scan_metrics": {
+            "scanned_files": 2,
+            "skipped_ignored_files": 0,
+            "skipped_binary_files": 0,
+            "skipped_large_files": 0,
+            "evaluated_rules": 1,
+            "runtime_seconds": 0.0007102499948814511,
+            "analysis_notes": [
+              {
+                "path": "src/api.py",
+                "method": "heuristic",
+                "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+              },
+              {
+                "path": "openapi.json",
+                "method": "unavailable",
+                "reason": "Patch unavailable; intensity cannot exclude a contract change"
+              }
+            ]
+          },
+          "result": "fail",
+          "skip": false,
+          "skip_reason": "",
+          "no_policy": false,
+          "change_types": [
+            "other"
+          ],
+          "violations": [
+            {
+              "rule_id": "route-duty",
+              "severity": "BLOCKER",
+              "confidence": "low",
+              "confidence_basis": "path-specificity; not a probability of correctness",
+              "change_types": [
+                "other"
+              ],
+              "change_type": "other",
+              "message": "",
+              "trigger_files": [
+                {
+                  "path": "src/api.py",
+                  "status": "modified",
+                  "previous_path": null,
+                  "patch": "diff --git a/src/api.py b/src/api.py\nindex 960bcaf..d7eaa7e 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -2,6 +2,6 @@ from fastapi import FastAPI\n import os\n setting = os.getenv(\"EXISTING_KEY\")\n app = FastAPI()\n-@app.get(\"/old\")\n+@app.get(\"/new\")\n def endpoint():\n     return {}\n",
+                  "semantic_signals": [
+                    "route-contract-change"
+                  ],
+                  "semantic_evidence": [
+                    "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+                    "Python route decorator changed"
+                  ],
+                  "analysis_method": "heuristic",
+                  "analysis_reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+                  "documented_env_keys": null,
+                  "document_input_state": ""
+                }
+              ],
+              "satisfied_groups": [],
+              "unsatisfied_groups": [
+                {
+                  "name": "API",
+                  "required": [
+                    "openapi.json"
+                  ],
+                  "type": "all_changed",
+                  "evidence": "Complete document route coverage; add GET /new; remove GET /old",
+                  "decision": "violated",
+                  "verification": "verified",
+                  "content_mode": "api-routes"
+                }
+              ],
+              "checklist": [
+                "API 업데이트"
+              ],
+              "ignored": false,
+              "change_intensity": "route-contract-change",
+              "change_intensities": [
+                "route-contract-change"
+              ],
+              "trigger_patterns": [
+                "src/**"
+              ],
+              "blast_radius": [
+                "OpenAPI/spec documentation",
+                "external API consumers",
+                "missing requirement group: API",
+                "release notes"
+              ],
+              "missing_docs_explanation": "",
+              "changed_contract_summary": "",
+              "docs_update_draft": "",
+              "false_positive_note": "",
+              "cross_file_relations": []
+            }
+          ],
+          "rule_decisions": [
+            {
+              "rule_id": "route-duty",
+              "severity": "BLOCKER",
+              "status": "fail",
+              "decision": "violated",
+              "verification": "verified",
+              "reason": "required groups are missing",
+              "matched_patterns": [
+                "src/**"
+              ],
+              "trigger_files": [
+                "src/api.py"
+              ],
+              "satisfied_groups": [],
+              "unsatisfied_groups": [
+                {
+                  "name": "API",
+                  "required": [
+                    "openapi.json"
+                  ],
+                  "type": "all_changed",
+                  "evidence": "Complete document route coverage; add GET /new; remove GET /old",
+                  "decision": "violated",
+                  "verification": "verified",
+                  "content_mode": "api-routes"
+                }
+              ]
+            }
+          ],
+          "skipped_rules": [],
+          "rejected_ignores": [],
+          "ignore_audit": [],
+          "temporal_warnings": [],
+          "gate": {
+            "fail_on_blocker": true,
+            "fail_on_major_count": 2,
+            "on_unverified": "fail"
+          },
+          "execution": {
+            "schema_version": 2,
+            "run_id": "557add5e98c1440db93940b9a51b9271",
+            "started_at": "2026-10-07T07:16:00.727396+00:00",
+            "status": "success",
+            "policy_sha256": "07c37ec3184b430dde7fac6da6a7c89f362a41a10b5963c8bd0ff7394cf4546c",
+            "policy_digest_kind": "policy-object",
+            "warnings": [],
+            "evaluation_context": {
+              "evaluated_on": "2026-10-07",
+              "date_basis": "UTC"
+            },
+            "input_digest_version": 3,
+            "input_sha256": "a2fc57717ab835b42eaebf8a26747fdfde220c9412a085437b3d2a85b5d50c73"
+          }
+        },
+        "input_sha256": "a2fc57717ab835b42eaebf8a26747fdfde220c9412a085437b3d2a85b5d50c73"
+      }
+    },
+    {
+      "input": {
+        "id": "auto-strict-env-False",
+        "before": {
+          "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\"/old\")\ndef endpoint():\n    return {}\n",
+          "openapi.json": "{\"openapi\": \"3.1.0\", \"paths\": {\"/old\": {\"get\": {\"responses\": {}}}}}"
+        },
+        "after": {
+          "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\"/new\")\ndef endpoint():\n    return {}\n"
+        },
+        "policy": {
+          "rules": [
+            {
+              "id": "route-duty",
+              "severity": "blocker",
+              "when": {
+                "any_changed": [
+                  "src/**"
+                ]
+              },
+              "require": {
+                "groups": [
+                  {
+                    "name": "API",
+                    "all_changed": [
+                      "openapi.json"
+                    ],
+                    "content": "auto-strict"
+                  }
+                ]
+              }
+            }
+          ],
+          "gate": {
+            "on_unverified": "fail"
+          }
+        },
+        "facts_kind": "routes",
+        "expected": {
+          "facts": {
+            "added": [
+              "GET /new"
+            ],
+            "removed": [
+              "GET /old"
+            ]
+          }
+        }
+      },
+      "observed": {
+        "id": "auto-strict-env-False",
+        "expected": {
+          "facts": {
+            "added": [
+              "GET /new"
+            ],
+            "removed": [
+              "GET /old"
+            ]
+          }
+        },
+        "actual": {
+          "facts": {
+            "added": [
+              "GET /new"
+            ],
+            "removed": [
+              "GET /old"
+            ]
+          },
+          "decision": "violated",
+          "verification": "verified",
+          "gate": "fail"
+        },
+        "checks": {
+          "facts": true
+        },
+        "report": {
+          "schema_version": 3,
+          "verification": "verified",
+          "summary": {
+            "blocker": 1,
+            "major": 0,
+            "minor": 0,
+            "nit": 0,
+            "gate_decision": "fail",
+            "undetermined_rules": 0,
+            "unverified_rules": 0
+          },
+          "scan_metrics": {
+            "scanned_files": 2,
+            "skipped_ignored_files": 0,
+            "skipped_binary_files": 0,
+            "skipped_large_files": 0,
+            "evaluated_rules": 1,
+            "runtime_seconds": 0.0006791250198148191,
+            "analysis_notes": [
+              {
+                "path": "src/api.py",
+                "method": "heuristic",
+                "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+              },
+              {
+                "path": "openapi.json",
+                "method": "unavailable",
+                "reason": "Patch unavailable; intensity cannot exclude a contract change"
+              }
+            ]
+          },
+          "result": "fail",
+          "skip": false,
+          "skip_reason": "",
+          "no_policy": false,
+          "change_types": [
+            "other"
+          ],
+          "violations": [
+            {
+              "rule_id": "route-duty",
+              "severity": "BLOCKER",
+              "confidence": "low",
+              "confidence_basis": "path-specificity; not a probability of correctness",
+              "change_types": [
+                "other"
+              ],
+              "change_type": "other",
+              "message": "",
+              "trigger_files": [
+                {
+                  "path": "src/api.py",
+                  "status": "modified",
+                  "previous_path": null,
+                  "patch": "diff --git a/src/api.py b/src/api.py\nindex 07f6a87..65c1fae 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -1,5 +1,5 @@\n from fastapi import FastAPI\n app = FastAPI()\n-@app.get(\"/old\")\n+@app.get(\"/new\")\n def endpoint():\n     return {}\n",
+                  "semantic_signals": [
+                    "route-contract-change"
+                  ],
+                  "semantic_evidence": [
+                    "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+                    "Python route decorator changed"
+                  ],
+                  "analysis_method": "heuristic",
+                  "analysis_reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+                  "documented_env_keys": null,
+                  "document_input_state": ""
+                }
+              ],
+              "satisfied_groups": [],
+              "unsatisfied_groups": [
+                {
+                  "name": "API",
+                  "required": [
+                    "openapi.json"
+                  ],
+                  "type": "all_changed",
+                  "evidence": "auto-strict selected api-routes; Complete document route coverage; add GET /new; remove GET /old",
+                  "decision": "violated",
+                  "verification": "verified",
+                  "content_mode": "auto-strict"
+                }
+              ],
+              "checklist": [
+                "API 업데이트"
+              ],
+              "ignored": false,
+              "change_intensity": "route-contract-change",
+              "change_intensities": [
+                "route-contract-change"
+              ],
+              "trigger_patterns": [
+                "src/**"
+              ],
+              "blast_radius": [
+                "OpenAPI/spec documentation",
+                "external API consumers",
+                "missing requirement group: API",
+                "release notes"
+              ],
+              "missing_docs_explanation": "",
+              "changed_contract_summary": "",
+              "docs_update_draft": "",
+              "false_positive_note": "",
+              "cross_file_relations": []
+            }
+          ],
+          "rule_decisions": [
+            {
+              "rule_id": "route-duty",
+              "severity": "BLOCKER",
+              "status": "fail",
+              "decision": "violated",
+              "verification": "verified",
+              "reason": "required groups are missing",
+              "matched_patterns": [
+                "src/**"
+              ],
+              "trigger_files": [
+                "src/api.py"
+              ],
+              "satisfied_groups": [],
+              "unsatisfied_groups": [
+                {
+                  "name": "API",
+                  "required": [
+                    "openapi.json"
+                  ],
+                  "type": "all_changed",
+                  "evidence": "auto-strict selected api-routes; Complete document route coverage; add GET /new; remove GET /old",
+                  "decision": "violated",
+                  "verification": "verified",
+                  "content_mode": "auto-strict"
+                }
+              ]
+            }
+          ],
+          "skipped_rules": [],
+          "rejected_ignores": [],
+          "ignore_audit": [],
+          "temporal_warnings": [],
+          "gate": {
+            "fail_on_blocker": true,
+            "fail_on_major_count": 2,
+            "on_unverified": "fail"
+          },
+          "execution": {
+            "schema_version": 2,
+            "run_id": "e71d74b3e48f484694c9648db14e18a0",
+            "started_at": "2026-10-07T07:16:00.849626+00:00",
+            "status": "success",
+            "policy_sha256": "2bcec077fbf1444846401668fdf0c6a00b9dc96262a4c52765b36352a4b74805",
+            "policy_digest_kind": "policy-object",
+            "warnings": [],
+            "evaluation_context": {
+              "evaluated_on": "2026-10-07",
+              "date_basis": "UTC"
+            },
+            "input_digest_version": 3,
+            "input_sha256": "4df1eade4430ac03bbc7832174cf6bd9f93a88a05d75a4242d2bc328b91e048d"
+          }
+        },
+        "input_sha256": "4df1eade4430ac03bbc7832174cf6bd9f93a88a05d75a4242d2bc328b91e048d"
+      }
+    }
+  ],
+  "express_type_imports": [
+    {
+      "source": "import type express from 'express';\nconst app = express();\napp.get('/catalog', (req, res) => res.end());\n",
+      "analyzer": {
+        "outcome": "unknown",
+        "reason": "type-only Express imports have no runtime binding"
+      },
+      "transpile_only_oracle": {
+        "version": "5.9.3",
+        "output": "const app = express();\napp.get('/catalog', (req, res) => res.end());\nexport {};\n",
+        "diagnostics": []
+      },
+      "gate_input": {
+        "id": "express-import-0",
+        "before": {
+          "src/api.ts": "import type express from 'express';\nconst app = express();\napp.get('/old', (req, res) => res.end());\n",
+          "openapi.json": "{\"openapi\": \"3.1.0\", \"paths\": {\"/old\": {\"get\": {\"responses\": {}}}}}"
+        },
+        "after": {
+          "src/api.ts": "import type express from 'express';\nconst app = express();\napp.get('/catalog', (req, res) => res.end());\n",
+          "openapi.json": "{\"openapi\": \"3.1.0\", \"paths\": {\"/catalog\": {\"get\": {\"responses\": {}}}}}"
+        },
+        "policy": {
+          "rules": [
+            {
+              "id": "route-duty",
+              "severity": "blocker",
+              "when": {
+                "any_changed": [
+                  "src/**"
+                ]
+              },
+              "require": {
+                "groups": [
+                  {
+                    "name": "API",
+                    "all_changed": [
+                      "openapi.json"
+                    ],
+                    "content": "api-routes"
+                  }
+                ]
+              }
+            }
+          ],
+          "gate": {
+            "on_unverified": "fail"
+          }
+        },
+        "facts_kind": "routes",
+        "expected": {}
+      },
+      "gate_observation": {
+        "id": "express-import-0",
+        "expected": {},
+        "actual": {
+          "facts": "unknown",
+          "decision": "undetermined",
+          "verification": "unverified",
+          "gate": "fail"
+        },
+        "checks": {},
+        "report": {
+          "schema_version": 3,
+          "verification": "unverified",
+          "summary": {
+            "blocker": 0,
+            "major": 0,
+            "minor": 0,
+            "nit": 0,
+            "gate_decision": "fail",
+            "undetermined_rules": 1,
+            "unverified_rules": 1
+          },
+          "scan_metrics": {
+            "scanned_files": 2,
+            "skipped_ignored_files": 0,
+            "skipped_binary_files": 0,
+            "skipped_large_files": 0,
+            "evaluated_rules": 1,
+            "runtime_seconds": 0.00032420799834653735,
+            "analysis_notes": [
+              {
+                "path": "openapi.json",
+                "method": "heuristic",
+                "reason": "No grammar-backed detector for this file type"
+              },
+              {
+                "path": "src/api.ts",
+                "method": "grammar+heuristic",
+                "reason": ""
+              }
+            ]
+          },
+          "result": "fail",
+          "skip": false,
+          "skip_reason": "",
+          "no_policy": false,
+          "change_types": [
+            "other"
+          ],
+          "violations": [],
+          "rule_decisions": [
+            {
+              "rule_id": "route-duty",
+              "severity": "BLOCKER",
+              "status": "undetermined",
+              "decision": "undetermined",
+              "verification": "unverified",
+              "reason": "Required content or change threshold could not be verified",
+              "matched_patterns": [
+                "src/**"
+              ],
+              "trigger_files": [
+                "src/api.ts"
+              ],
+              "satisfied_groups": [],
+              "unsatisfied_groups": [
+                {
+                  "name": "API",
+                  "required": [
+                    "openapi.json"
+                  ],
+                  "type": "all_changed",
+                  "evidence": "type-only Express imports have no runtime binding",
+                  "decision": "undetermined",
+                  "verification": "unverified",
+                  "content_mode": "api-routes"
+                }
+              ]
+            }
+          ],
+          "skipped_rules": [],
+          "rejected_ignores": [],
+          "ignore_audit": [],
+          "temporal_warnings": [],
+          "gate": {
+            "fail_on_blocker": true,
+            "fail_on_major_count": 2,
+            "on_unverified": "fail"
+          },
+          "execution": {
+            "schema_version": 2,
+            "run_id": "cee443f032d74b1c9a1e050505bb2003",
+            "started_at": "2026-10-07T07:16:01.296146+00:00",
+            "status": "success",
+            "policy_sha256": "07c37ec3184b430dde7fac6da6a7c89f362a41a10b5963c8bd0ff7394cf4546c",
+            "policy_digest_kind": "policy-object",
+            "warnings": [],
+            "evaluation_context": {
+              "evaluated_on": "2026-10-07",
+              "date_basis": "UTC"
+            },
+            "input_digest_version": 3,
+            "input_sha256": "b4967df4650884f0e26a648881d554702571de693efe608730c5c791ac276ca5"
+          }
+        },
+        "input_sha256": "b4967df4650884f0e26a648881d554702571de693efe608730c5c791ac276ca5"
+      }
+    },
+    {
+      "source": "import /* retained comment */ type express from 'express';\nconst app = express();\napp.get('/catalog', (req, res) => res.end());\n",
+      "analyzer": {
+        "outcome": "unknown",
+        "reason": "type-only Express imports have no runtime binding"
+      },
+      "transpile_only_oracle": {
+        "version": "5.9.3",
+        "output": "const app = express();\napp.get('/catalog', (req, res) => res.end());\nexport {};\n",
+        "diagnostics": []
+      },
+      "gate_input": {
+        "id": "express-import-1",
+        "before": {
+          "src/api.ts": "import /* retained comment */ type express from 'express';\nconst app = express();\napp.get('/old', (req, res) => res.end());\n",
+          "openapi.json": "{\"openapi\": \"3.1.0\", \"paths\": {\"/old\": {\"get\": {\"responses\": {}}}}}"
+        },
+        "after": {
+          "src/api.ts": "import /* retained comment */ type express from 'express';\nconst app = express();\napp.get('/catalog', (req, res) => res.end());\n",
+          "openapi.json": "{\"openapi\": \"3.1.0\", \"paths\": {\"/catalog\": {\"get\": {\"responses\": {}}}}}"
+        },
+        "policy": {
+          "rules": [
+            {
+              "id": "route-duty",
+              "severity": "blocker",
+              "when": {
+                "any_changed": [
+                  "src/**"
+                ]
+              },
+              "require": {
+                "groups": [
+                  {
+                    "name": "API",
+                    "all_changed": [
+                      "openapi.json"
+                    ],
+                    "content": "api-routes"
+                  }
+                ]
+              }
+            }
+          ],
+          "gate": {
+            "on_unverified": "fail"
+          }
+        },
+        "facts_kind": "routes",
+        "expected": {}
+      },
+      "gate_observation": {
+        "id": "express-import-1",
+        "expected": {},
+        "actual": {
+          "facts": "unknown",
+          "decision": "undetermined",
+          "verification": "unverified",
+          "gate": "fail"
+        },
+        "checks": {},
+        "report": {
+          "schema_version": 3,
+          "verification": "unverified",
+          "summary": {
+            "blocker": 0,
+            "major": 0,
+            "minor": 0,
+            "nit": 0,
+            "gate_decision": "fail",
+            "undetermined_rules": 1,
+            "unverified_rules": 1
+          },
+          "scan_metrics": {
+            "scanned_files": 2,
+            "skipped_ignored_files": 0,
+            "skipped_binary_files": 0,
+            "skipped_large_files": 0,
+            "evaluated_rules": 1,
+            "runtime_seconds": 0.00034745800076052547,
+            "analysis_notes": [
+              {
+                "path": "openapi.json",
+                "method": "heuristic",
+                "reason": "No grammar-backed detector for this file type"
+              },
+              {
+                "path": "src/api.ts",
+                "method": "grammar+heuristic",
+                "reason": ""
+              }
+            ]
+          },
+          "result": "fail",
+          "skip": false,
+          "skip_reason": "",
+          "no_policy": false,
+          "change_types": [
+            "other"
+          ],
+          "violations": [],
+          "rule_decisions": [
+            {
+              "rule_id": "route-duty",
+              "severity": "BLOCKER",
+              "status": "undetermined",
+              "decision": "undetermined",
+              "verification": "unverified",
+              "reason": "Required content or change threshold could not be verified",
+              "matched_patterns": [
+                "src/**"
+              ],
+              "trigger_files": [
+                "src/api.ts"
+              ],
+              "satisfied_groups": [],
+              "unsatisfied_groups": [
+                {
+                  "name": "API",
+                  "required": [
+                    "openapi.json"
+                  ],
+                  "type": "all_changed",
+                  "evidence": "type-only Express imports have no runtime binding",
+                  "decision": "undetermined",
+                  "verification": "unverified",
+                  "content_mode": "api-routes"
+                }
+              ]
+            }
+          ],
+          "skipped_rules": [],
+          "rejected_ignores": [],
+          "ignore_audit": [],
+          "temporal_warnings": [],
+          "gate": {
+            "fail_on_blocker": true,
+            "fail_on_major_count": 2,
+            "on_unverified": "fail"
+          },
+          "execution": {
+            "schema_version": 2,
+            "run_id": "eb3a873872e9420b9894705d323fdd77",
+            "started_at": "2026-10-07T07:16:01.751913+00:00",
+            "status": "success",
+            "policy_sha256": "07c37ec3184b430dde7fac6da6a7c89f362a41a10b5963c8bd0ff7394cf4546c",
+            "policy_digest_kind": "policy-object",
+            "warnings": [],
+            "evaluation_context": {
+              "evaluated_on": "2026-10-07",
+              "date_basis": "UTC"
+            },
+            "input_digest_version": 3,
+            "input_sha256": "64b3e10cdb904a9b7d972e512c1324e04ff6e2595480002428940aa8d078906e"
+          }
+        },
+        "input_sha256": "64b3e10cdb904a9b7d972e512c1324e04ff6e2595480002428940aa8d078906e"
+      }
+    },
+    {
+      "source": "import express from 'express';\nconst app = express();\napp.get('/catalog', (req, res) => res.end());\n",
+      "analyzer": {
+        "outcome": "accepted",
+        "routes": [
+          [
+            "GET",
+            "/catalog"
+          ]
+        ]
+      },
+      "transpile_only_oracle": {
+        "version": "5.9.3",
+        "output": "import express from 'express';\nconst app = express();\napp.get('/catalog', (req, res) => res.end());\n",
+        "diagnostics": []
+      },
+      "gate_input": {
+        "id": "express-import-2",
+        "before": {
+          "src/api.ts": "import express from 'express';\nconst app = express();\napp.get('/old', (req, res) => res.end());\n",
+          "openapi.json": "{\"openapi\": \"3.1.0\", \"paths\": {\"/old\": {\"get\": {\"responses\": {}}}}}"
+        },
+        "after": {
+          "src/api.ts": "import express from 'express';\nconst app = express();\napp.get('/catalog', (req, res) => res.end());\n",
+          "openapi.json": "{\"openapi\": \"3.1.0\", \"paths\": {\"/catalog\": {\"get\": {\"responses\": {}}}}}"
+        },
+        "policy": {
+          "rules": [
+            {
+              "id": "route-duty",
+              "severity": "blocker",
+              "when": {
+                "any_changed": [
+                  "src/**"
+                ]
+              },
+              "require": {
+                "groups": [
+                  {
+                    "name": "API",
+                    "all_changed": [
+                      "openapi.json"
+                    ],
+                    "content": "api-routes"
+                  }
+                ]
+              }
+            }
+          ],
+          "gate": {
+            "on_unverified": "fail"
+          }
+        },
+        "facts_kind": "routes",
+        "expected": {}
+      },
+      "gate_observation": {
+        "id": "express-import-2",
+        "expected": {},
+        "actual": {
+          "facts": {
+            "added": [
+              "GET /catalog"
+            ],
+            "removed": [
+              "GET /old"
+            ]
+          },
+          "decision": "satisfied",
+          "verification": "verified",
+          "gate": "pass"
+        },
+        "checks": {},
+        "report": {
+          "schema_version": 3,
+          "verification": "verified",
+          "summary": {
+            "blocker": 0,
+            "major": 0,
+            "minor": 0,
+            "nit": 0,
+            "gate_decision": "pass",
+            "undetermined_rules": 0,
+            "unverified_rules": 0
+          },
+          "scan_metrics": {
+            "scanned_files": 2,
+            "skipped_ignored_files": 0,
+            "skipped_binary_files": 0,
+            "skipped_large_files": 0,
+            "evaluated_rules": 1,
+            "runtime_seconds": 0.0003332500346004963,
+            "analysis_notes": [
+              {
+                "path": "openapi.json",
+                "method": "heuristic",
+                "reason": "No grammar-backed detector for this file type"
+              },
+              {
+                "path": "src/api.ts",
+                "method": "grammar+heuristic",
+                "reason": ""
+              }
+            ]
+          },
+          "result": "pass",
+          "skip": false,
+          "skip_reason": "",
+          "no_policy": false,
+          "change_types": [
+            "other"
+          ],
+          "violations": [],
+          "rule_decisions": [
+            {
+              "rule_id": "route-duty",
+              "severity": "BLOCKER",
+              "status": "pass",
+              "decision": "satisfied",
+              "verification": "verified",
+              "reason": "trigger matched and all required groups were satisfied",
+              "matched_patterns": [
+                "src/**"
+              ],
+              "trigger_files": [
+                "src/api.ts"
+              ],
+              "satisfied_groups": [
+                {
+                  "name": "API",
+                  "required": [
+                    "openapi.json"
+                  ],
+                  "type": "all_changed",
+                  "evidence": "Complete document route coverage; add GET /catalog; remove GET /old",
+                  "decision": "satisfied",
+                  "verification": "verified",
+                  "content_mode": "api-routes"
+                }
+              ],
+              "unsatisfied_groups": []
+            }
+          ],
+          "skipped_rules": [],
+          "rejected_ignores": [],
+          "ignore_audit": [],
+          "temporal_warnings": [],
+          "gate": {
+            "fail_on_blocker": true,
+            "fail_on_major_count": 2,
+            "on_unverified": "fail"
+          },
+          "execution": {
+            "schema_version": 2,
+            "run_id": "6343843ee602423484ab226e26cec7f4",
+            "started_at": "2026-10-07T07:16:02.235966+00:00",
+            "status": "success",
+            "policy_sha256": "07c37ec3184b430dde7fac6da6a7c89f362a41a10b5963c8bd0ff7394cf4546c",
+            "policy_digest_kind": "policy-object",
+            "warnings": [],
+            "evaluation_context": {
+              "evaluated_on": "2026-10-07",
+              "date_basis": "UTC"
+            },
+            "input_digest_version": 3,
+            "input_sha256": "7eb7de161c137edaab20c3527e9e7a6d222fb51788d2d9ce6241a7faed840a7a"
+          }
+        },
+        "input_sha256": "7eb7de161c137edaab20c3527e9e7a6d222fb51788d2d9ce6241a7faed840a7a"
+      }
+    }
+  ],
+  "json_numeric_domain": [
+    {
+      "input": "{\"openapi\":\"3.1.0\",\"paths\":{},\"x-number\":1}",
+      "observed": {
+        "outcome": "accepted",
+        "finite": true
+      }
+    },
+    {
+      "input": "{\"openapi\":\"3.1.0\",\"paths\":{},\"x-number\":NaN}",
+      "observed": {
+        "outcome": "unknown",
+        "reason": "unsupported_numeric_range: OpenAPI values must be finite"
+      }
+    },
+    {
+      "input": "{\"openapi\":\"3.1.0\",\"paths\":{},\"x-number\":1e999}",
+      "observed": {
+        "outcome": "unknown",
+        "reason": "unsupported_numeric_range: OpenAPI values must be finite"
+      }
+    }
+  ],
+  "limitations": [
+    "Three authored defect probes with controls, not a blind benchmark.",
+    "No full regression rerun, remote CI, native installer or OS matrix.",
+    "TypeScript transpileModule erasure observation is not a typecheck or HTTP execution."
+  ],
+  "reproducer_sha256": "86c58f4f1b21046cecf0ab65393b6663ea9eac089b9c84a11b6eacb18c293699"
+}

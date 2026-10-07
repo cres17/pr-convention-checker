@@ -1,0 +1,256 @@
+{
+  "recorded_at": "2026-10-07T07:24:35.838565+00:00",
+  "head": "d262ec2faff3b98c917e3e99f7b6260cf0514ff3",
+  "branch": "ver2",
+  "state": "uncommitted working tree; source hashes identify actual candidate",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "python": "3.11.15",
+  "runs": {
+    "python": {
+      "passed": 1301,
+      "skipped": 0,
+      "log": "python-final.log"
+    },
+    "new_regressions": 73,
+    "react": {
+      "passed": 125,
+      "log": "react.log"
+    },
+    "tsc": {
+      "exit": 0
+    },
+    "ruff_E9_F": {
+      "exit": 0
+    },
+    "fixed_fixtures": {
+      "passed": 21,
+      "total": 21
+    },
+    "semantic_suites": {
+      "python-git-v2-verified.json": {
+        "facts": {
+          "correct": 14,
+          "total": 14
+        },
+        "decision": {
+          "correct": 14,
+          "total": 14
+        },
+        "verification": {
+          "correct": 14,
+          "total": 14
+        },
+        "gate": {
+          "correct": 14,
+          "total": 14
+        }
+      },
+      "express-git-v1-verified.json": {
+        "facts": {
+          "correct": 8,
+          "total": 8
+        },
+        "decision": {
+          "correct": 8,
+          "total": 8
+        },
+        "verification": {
+          "correct": 8,
+          "total": 8
+        },
+        "gate": {
+          "correct": 8,
+          "total": 8
+        }
+      }
+    },
+    "self_gate": {
+      "result": "pass",
+      "verification": "unverified",
+      "files": 74,
+      "untracked_collected": 27,
+      "applicable_rules": 5
+    },
+    "original_counterexamples": {
+      "assertions_passed": 5,
+      "source": "probe-assertions.json"
+    }
+  },
+  "completed_plan_scope": [
+    "W01 safe mixed-scope abstention",
+    "W02 AST type-only/const tokens",
+    "W03 finite float domain",
+    "W04 explicit UTC evaluation date",
+    "W10 suite input contract (partial overall evaluation plan)"
+  ],
+  "unverified": [
+    "remote CI",
+    "new native installation artifact",
+    "Windows/Linux execution",
+    "human blind or real PR accuracy evaluation",
+    "remaining enterprise architecture work packages"
+  ],
+  "source_hashes": {
+    ".drift-gate.self.yml": "1905b6fb73e7bf9be9fcf3d1dbacea60edfeaf9944c577af16b936735c5cb0c9",
+    ".github/workflows/ci.yml": "aae9e9c1584d748e786457dfa1cfcf8f2038d791d935ea9b7cd3c4db0f078be8",
+    ".github/workflows/desktop-build.yml": "8bed5c2321cbd61ba5d901c5479bcc5488148524ecdc4e187578046428a21ad5",
+    "drift_gate/__init__.py": "a7f8753efa58ba2ae30cfe2ad7ceec9265d18415d27768e80a3e4abc7e9f495d",
+    "drift_gate/__main__.py": "aa1c42b733b0c3d8cc65f2760e09f648054cbbe292e1b092c120987e97ac8337",
+    "drift_gate/adapters/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/adapters/ast/__init__.py": "76c5350fb04593feafbc15173cce2f5d7a7fd67307bb8a6acdbf27631444da07",
+    "drift_gate/adapters/ast/analyzer.py": "3d3af6dc3383993c35caa871f7220099568c81033042477a5212caf9620ce664",
+    "drift_gate/adapters/ast/express_routes.py": "514f1c0ccf4427efdaa602704aa7080b21951d35f3146768a2e0ff2d68b51535",
+    "drift_gate/adapters/ast/go_adapter.py": "1e6db6e937b58ff1571af2610ee4dd13509cec36acd416e3f140c20270d82734",
+    "drift_gate/adapters/ast/interface.py": "a11661c971d07359a312e615e146a6e3c8995a8ae38363bae12ca99f7772c6a1",
+    "drift_gate/adapters/ast/java_kotlin_adapter.py": "f051095fd3e36102941fd3f290fb5285e5188a9bff703e002d228f49bc65745d",
+    "drift_gate/adapters/ast/python_adapter.py": "78e82a4ac982345f2e24f089701cbdc1083e3645cad53ced460ea8487c8b8bca",
+    "drift_gate/adapters/ast/ruby_adapter.py": "a1363b6702b2afa18f1aa0c67f79d92fd2aa0f412a7418b351fb4fd44176152c",
+    "drift_gate/adapters/ast/tree_sitter_python_adapter.py": "9ab4f29b9f578d39a32982891338ffba1759fc3797503867047d886767312f85",
+    "drift_gate/adapters/ast/tree_sitter_support.py": "f4a625de41ccff67fdb1c660029e5685bd7be754e18813d952f7f8adecdabd18",
+    "drift_gate/adapters/ast/tree_sitter_typescript_adapter.py": "e88a334fb39aca71dcc4d7e5b2fe6bfe3110b55c9406f8e9bfbc5bcafcea3d8f",
+    "drift_gate/adapters/ast/typescript_adapter.py": "a7cd36200c6c0bf17e6dceb681a5214e2ef751db37cdad088964b0ff4c3cee02",
+    "drift_gate/adapters/claude/__init__.py": "370df5ed190f4aa27cc8e2445876d7bba35a7729426efb85b309aed839dee38d",
+    "drift_gate/adapters/claude/enricher.py": "797547b3a3c07374c57ef1a13057c6fe0bb8347512f0635fe14bcaf195186fc6",
+    "drift_gate/adapters/cli/__init__.py": "5fe21007eedd1b3c6610cb4391cf75233c25241b4c89d8dd55b8372d11628d36",
+    "drift_gate/adapters/cli/runner.py": "5de50e6d2eb34ca952143e8f4e70e34afb49e8d3b7d81b36e730a73e1af7edc5",
+    "drift_gate/adapters/docs/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/adapters/docs/checklist.py": "47a9ec290c35cb02ed4e66f2349f9e95dcb07ac1f1ce06a17bd5bc28c451209f",
+    "drift_gate/adapters/docs/content.py": "36abeb8d7a94f240455453868de7bfe1617f4dc57dad2ef298dcb7d562007309",
+    "drift_gate/adapters/docs/readme_contract.py": "e53a8f9b737b781988d66383e3a029074b124214012a90dd0d29507aa441b066",
+    "drift_gate/adapters/docs/structured.py": "49c12057bad06d027b47da93dc6ba73a8ea7e52bb92fc4f106961913932719fa",
+    "drift_gate/adapters/eval/__init__.py": "9dff049ca647863663b64b531e8f81364879292ac7db5e2035e5a2209c0a998e",
+    "drift_gate/adapters/eval/runner.py": "2d486a03742682417729a60f7bdcef7842acfc240caf6922b820b97d0e9b6d6f",
+    "drift_gate/adapters/execution.py": "9b1df9b8a7228f57a960c2c16b6616ee7b86bc4493abfd19f41bcf0f0e276eaf",
+    "drift_gate/adapters/git/__init__.py": "01f78a7423a6ca53060ad7b73194baf7c5cf57033e831df12ef63bfc03f4104c",
+    "drift_gate/adapters/git/client.py": "433344284a2f127c111969146b1d63d578a35d912ce80fc786e2de97716000da",
+    "drift_gate/adapters/github/__init__.py": "0d88edb79daba977cd1637d6d2782fe105f5bc16157ffa4efe46db2b7a7c7536",
+    "drift_gate/adapters/github/approvals.py": "36f99cc46014bd54063836a320a5a4db7d15c5f707feccdfa97e45c89a40e8f5",
+    "drift_gate/adapters/github/client.py": "92ee9fbf67148769eb12fbb32cf30513142963ff4ffed24b90e8fae8fc3e2fa1",
+    "drift_gate/adapters/github/commenter.py": "ee0f8eb334b825bed8a5a288ff67c1188d5f05d47383717e1bd922357bf0a901",
+    "drift_gate/adapters/github_action/__init__.py": "ee6ed5ddd85d69bd45fca4cfb7721e689292701b1318c57b8ba937ca578e0969",
+    "drift_gate/adapters/github_action/runner.py": "d7a74407224b0ef66ef6d19db79d6bfc3a2336c935f9efd0ab54e51efb9426e1",
+    "drift_gate/adapters/grammar_resources.py": "e0caebe7a3e51f6d8d768808cf0713426062ff5e20bee8f95b4b5ecb2b592396",
+    "drift_gate/adapters/history/__init__.py": "e79bba126727e1a03aa1acd1317c25d7333329b3bad7177e874e0b08acdfff39",
+    "drift_gate/adapters/history/store.py": "ad1845f291cb1ef937322c7781d3baccf81392777219f8ad241a56ec065e3820",
+    "drift_gate/adapters/inspection.py": "5d79a4642c8fca7901ae18c0ff2e2887d977404f9b1bc9ed5b3f8d6301322299",
+    "drift_gate/adapters/mcp/__init__.py": "446b48bccc8178e10dc707bfec90fccd036118df9f2d91e2b4eaa060a3e61782",
+    "drift_gate/adapters/mcp/server.py": "59a218dbedf90e3cc3c38da0ee6af7196d896ca452be38c10115443124192041",
+    "drift_gate/adapters/mcp/tools.py": "011798f604963f7da6f7334c64936a463d7f18ca4f05d8e0c13c4f962bb25612",
+    "drift_gate/adapters/policy_loader.py": "e555967edfefa300ccf8cb9a25cf36f46f790100b3c6fec2d880589bc33ba6f8",
+    "drift_gate/adapters/report_naming.py": "b7ed7b32f5f77578ace702ad172a1980d35637e7bb926af172b651858eecb6fb",
+    "drift_gate/adapters/source_scope.py": "0ed71170f78366e286699efb28cbeed874029167f2643a0f30aba38fc083520d",
+    "drift_gate/core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/change_paths.py": "e7bdf5e1bb4857c4a24def310f9d48ad8678f13cb54124d7fc2771c48d67b4db",
+    "drift_gate/core/classification/__init__.py": "f56a2625fea85f1afa386d06f6ca97a599353eeac4ba638b6cb82e7d5da2c05f",
+    "drift_gate/core/classification/classifier.py": "448bdfed4e9c3f968f46ed19b5a0dda85402c382ff52230d3b663e76847012b9",
+    "drift_gate/core/classification/intensity.py": "2b963958870f8881a09b05eb1609b54acec95ea0cab446ace5ba8233b6a3b215",
+    "drift_gate/core/engine.py": "ae2f6db504550a7303c9dca28104e014f90c1ac05e52aefe5b489b22e795912f",
+    "drift_gate/core/evaluation/__init__.py": "4e57467e9cecbe1331c2fb4f27e09c00dc1de007fba0003afd7d64e52e8f439a",
+    "drift_gate/core/evaluation/analysis_session.py": "a1f24b129cb059dd42c575e9f07de6ec919d3d6f7482841e27de8c2510b58aea",
+    "drift_gate/core/evaluation/api_schema.py": "c4f354eeb2f15b6124275f5ede8c5a6bbb5a6e7deaa251b60f9f05ae60443c8d",
+    "drift_gate/core/evaluation/content_result.py": "e340ebedd0b4e10bed33232348a6a3b49f159a3bfcd35e86ff4cbcfd3194a126",
+    "drift_gate/core/evaluation/contracts.py": "fb4620a14f2f1f8dde3c99cad14ef06d757ba864223cf20022592c069966ff55",
+    "drift_gate/core/evaluation/environment.py": "3a9ae9decb3991ae19a8d379c9fac0aec416677a11dcc31d64949f71b59a5e01",
+    "drift_gate/core/evaluation/evaluator.py": "dc6b625e4e47f622f6bf6d8b68a038bbcd6a311efdc51d517b526cc5fe16a398",
+    "drift_gate/core/evaluation/openapi_document.py": "b07135b64ae86f336e9f748224619af8a76dde94a768dd28adb311759795d260",
+    "drift_gate/core/evaluation/routes.py": "4d1c1ea3490ea198a0b419b0c6c5b2d1ecafcececc2324e1b610c06cddf8cb9f",
+    "drift_gate/core/evaluation/static_routers.py": "0b3a7f359e26f38db42c382edc2b50c1a0f4ff9791a865857e0cb5bb1fa0dfb1",
+    "drift_gate/core/gating/__init__.py": "c3129cecba4acd315d1d27362e07c2e1ba16c23e175d0e01d0b5a66f3b5f6239",
+    "drift_gate/core/gating/gate.py": "073d1ca1844ee56c6578400474eefdc9c64f0f3cf0e31e50cf84f07836c207c2",
+    "drift_gate/core/gating/temporal.py": "1b0d020aa0782ae605ae8bd2280205bd18f45c582af6fdd6acc1849b2d7affac",
+    "drift_gate/core/models/__init__.py": "a76ddc7463ee49c7d757f21f322fa4a5c000fe1abfffcd14ea2c56dd17a420ae",
+    "drift_gate/core/models/changed_file.py": "33c5b7d5b6bbaa061ce5a32c7b45c5bcf8eed2a7b0855ddf39847b704bac4477",
+    "drift_gate/core/models/evaluation_context.py": "b54ba3f2537db960aedff2769241c4530735941c2845557dc479c681f09625b0",
+    "drift_gate/core/models/policy.py": "cb20bdb7149f70e1de7ead9ca3de7f9a506d866bb3d8056f5eb19b9a86d240d2",
+    "drift_gate/core/models/result.py": "e34da69663504b9be85b3244adf93d576d662e19c0c4d3b839e0e3c2aece0564",
+    "drift_gate/core/patch_lines.py": "c5faef0300bdb3a9bed754e0030c82ff6d520b1daa8542829451a31d252cdb5e",
+    "drift_gate/core/policy/__init__.py": "7e3e5a9c6d0b447024e44512a3f49db6db48886571c4cf39948ea4efa4d4bc86",
+    "drift_gate/core/policy/guard.py": "b5ed8babb971ec1a4c29a430b5ac7507a029f44390267881d868feffd57bb618",
+    "drift_gate/core/policy/loader.py": "d211bc2bb1a2e03dfa2d65ec003f39bc5a07bd138d1e71eccca8e95ad975bb3f",
+    "drift_gate/core/policy/schema.py": "12e9b1f05be2d3d0f61e1be8da4bbe845e33a367ccd889f8029fce6728125798",
+    "drift_gate/core/policy/validator.py": "a6162e2df22bdece57875fa4c535a48c270276f91c295af3567e4b89b7f73399",
+    "drift_gate/core/python_syntax.py": "c894c0b50c4f2bc70363bcc1d0836bed0442e68f01077c14cc08b09fcebec387",
+    "drift_gate/core/reasoning/__init__.py": "4775b311e7693210d62e5a5d5d41ef3affaa20c56489bc849a6dbfb4dd6a3656",
+    "drift_gate/core/reasoning/checklist.py": "2c93277350fa61d41aa4762e920ebb89eefb25df860875153da2c181f1c77e06",
+    "drift_gate/core/review/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/review/heuristics.py": "ad66bd13791a228460385d75b39a6e31ab149e476f6768e678c06a352065a756",
+    "drift_gate/core/route_syntax.py": "8a92f887ac303ab1e1eeb141816be93bf47b207cad99d7ba6844c79c22d440d3",
+    "drift_gate/core/self_audit/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/self_audit/matcher.py": "1ccfb0781dfcfa52faed7ef3a3d45239e79ac2e482d15ef68564fd6fc8c95ab4",
+    "drift_gate/desktop/__init__.py": "ac75161cac9ca4c9f7e2624bfc202df49f23036f4c9ae974d957f57609205397",
+    "drift_gate/desktop/app.py": "4954ac113369d919b34e7b0f67ee574006cc8955a43865329a6513c86e5d9fef",
+    "drift_gate/desktop/doc_links.py": "a9fcdaed92b4fbd9e16997f1aceca1cdce176de8edb8318437e839964062cb7a",
+    "drift_gate/desktop/json_store.py": "77f2415d34aafc1952b20af1ff3ee4181df83c2f2a34cdc440c0c52f7aef9fbc",
+    "drift_gate/desktop/package_check.py": "4cba63ca48fed9ddcbbc9a62880bf7a376dfc159bfc4b4eac08286ed43025968",
+    "drift_gate/desktop/package_check_contract.py": "c684a3779923eadf4b894647ed8d845799676ee289d2eeb986e1cb7b33fb8db0",
+    "drift_gate/desktop/policy_setup.py": "764c83e1aa0975289c0d4a5ee1220008861f8cccbac4876b01c12e00d8650868",
+    "drift_gate/desktop/progress_context.py": "55500814c6870d8595f9de2629ad74372618ebc63b17b11ccdd22a677b328103",
+    "drift_gate/desktop/progress_documents.py": "fd0819a2ccce45ab14c4e30b1cdffb39c4b8c73bab2cae3c84eb2e5191440402",
+    "drift_gate/desktop/progress_drafts.py": "fff3c4df7a776472a8af94983e513237b7695cbdac562db1b47ba17acf6d794e",
+    "drift_gate/desktop/progress_history.py": "98fabbc30ec0a3287c72daf91bf8434b8484dfee1541021797a2c09ecec7acf0",
+    "drift_gate/desktop/progress_limits.py": "2693ef1c87cb6966c7ff70dc6eb3aaf809cecfe0d63ea2a7622dca92bac0a9e2",
+    "drift_gate/desktop/progress_report.py": "879ed8aeed37e85beefe22ad18db454fcbf01fb72cc09f0710fe6e36cc22d34a",
+    "drift_gate/desktop/progress_scope.py": "f669717ff48d27a32362a676ae0de3489cae66acd526039b578af4b4b6fbd0cb",
+    "drift_gate/desktop/progress_service.py": "97f06b0e6c9746d0799791bf98b3b592ce99ae30e86b8e98409538f2c945eb30",
+    "drift_gate/desktop/resources.py": "1c092be0b1735f0a3fe273e0ac83463de812b7257dfcece43fee2857c31122ee",
+    "drift_gate/desktop/review_dialog.py": "70272a224b6d2123bd72802fe494cc3d26f1c8f5b2c90ff5cb784a30e98330cf",
+    "drift_gate/desktop/service.py": "9f0ccde23b335aabe5023539e9d35883f217da86f1b2b9acd20a4df555d26605",
+    "drift_gate/desktop/store_lock.py": "4658cd4e3f9fe20b10c335afab1711735a4291e4991b0834b25634d90958dba2",
+    "drift_gate/desktop/subscription_review.py": "71f288e286944636f53fbd4d82763afae735f281088a73273c69befb9a676083",
+    "drift_gate/desktop/verification_records.py": "5108619d4059f78845bb3c59158061abb5551261593d74a0ef8c2963cc52bd2f",
+    "drift_gate/desktop/web_app.py": "254a1dedcf530b11382b01c8ef9d8727f150aa60f6ac40130866d42d5f14b467",
+    "drift_gate/reporters/__init__.py": "6bf7ed9b4b50ba7125398e985500d15382d749751930bde20041485e4194010f",
+    "drift_gate/reporters/html.py": "e8ef5fca22de6632442ae690ee489f84e75b32a0856577002f2b095fd8fe5347",
+    "drift_gate/reporters/json_reporter.py": "bd258bdccd83532109a9c2842a888e0d4544035b6f45523e4cc966deefee4c5d",
+    "drift_gate/reporters/markdown.py": "8df28506b4bd3b0e4e8ea2147850f4c028dfb95768a8fda3858f39495e72575b",
+    "drift_gate/utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/utils/glob_matcher.py": "980c481cf582e2a0d3ad7a9c1fb504a11fd4d3d0913eec5111be27c27d587714",
+    "pyproject.toml": "61f80be468dd7e3d654d4493c04362c3c9dbfdd61cc5a21f3f4e71e5845dab93",
+    "scripts/audit_auto_contracts.py": "cf6f839ad28b051675ffaea8b98b0ae880c0d8798804e880c7757ed6bc5f492a",
+    "scripts/check_self.py": "8bd4c08e2c967ed3b8fa3dcbfd4ac134ad8102ffaeed22afef3a6634debd0ccf"
+  },
+  "regression_hashes": {
+    "drift_gate/tests/test_enterprise_correctness.py": "14cdd1760744f4dacf2f2d397f54240b2b7cbd2817aa41d4f1436d3bb6bfe70b",
+    "drift_gate/tests/test_engine.py": "0a686bef7b7d1186b1d5452e0646d7b88f1312f760a9f615557d71aa99ec9b1a"
+  },
+  "frozen_input_hashes": {
+    "docs/review/drift-gate-auto-panel-2026-10-07.md": "740fc4600134858b83147701455c0e069983713179ce13be3bad095b4c796946",
+    "docs/review/drift-gate-auto-update-2026-10-07.md": "5b3e9f8c2100464fd07e2396910ea90b526a5301b32fef2e015595a8715e58bc",
+    "docs/assessment/generalization-audit-v1.json": "f58351d3b2eb947cca35d7abaf8ec09cc2944988ebfda09e820755ed07b65178",
+    "drift_gate/tests/contracts/auto-contracts-v2.json": "b5c66c01a9f07c794563c1b99d07971527a8b258b937549a0d60dc296c98830d",
+    "drift_gate/tests/contracts/express-contracts-v1.json": "992cf555cdf16ecc30390a40e2c109a02aa184196d545d45f4489da8412a155f"
+  },
+  "frozen_inputs_unchanged": true,
+  "evidence_hashes": {
+    "docs/assessment/enterprise-update-2026-10-07/docs-check.json": "2899f74311e1de2251b2cefb33e4d390e20175a17106d7a9fb40e001a099ed3c",
+    "docs/assessment/enterprise-update-2026-10-07/express-git-v1-final.json": "78c49216d7484b6b2f23a28dd8fa9bc0fe284e68179d7a70caa997e94a34afc6",
+    "docs/assessment/enterprise-update-2026-10-07/express-git-v1-final.log": "9255872775c716feafdbae0d1990621092a9d544bae2af8352ff9ac9902b602a",
+    "docs/assessment/enterprise-update-2026-10-07/express-git-v1-verified.json": "8e7c79a45b3fa5c4a448c12aff7a4f95f34fa955d73136e30cabf561fe751aaa",
+    "docs/assessment/enterprise-update-2026-10-07/express-git-v1-verified.log": "9255872775c716feafdbae0d1990621092a9d544bae2af8352ff9ac9902b602a",
+    "docs/assessment/enterprise-update-2026-10-07/express-git-v1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/assessment/enterprise-update-2026-10-07/fixed-evaluation.json": "44f859b9035f54c6b0fc990400d2c42a20d77fd6e841482eb19a3254154fc980",
+    "docs/assessment/enterprise-update-2026-10-07/fixed-evaluation.log": "ec1c256b78276b0dfbdc04364e58ba91c9c60b645f2c11d895cf6e17cfda32cd",
+    "docs/assessment/enterprise-update-2026-10-07/probe-assertions.json": "0b40ab28727bc29842387a802578a9653a286d936ec40813a23fe8c41794d5fe",
+    "docs/assessment/enterprise-update-2026-10-07/probes-after.json": "426ee75349d2f753a6359f70d157b418ab9fdaa7482006f8c721b453b27890ca",
+    "docs/assessment/enterprise-update-2026-10-07/probes-after.log": "9137fe3e453c2436d98bb423054b82636452f447d9ed3acef73ec9ea9aa9c986",
+    "docs/assessment/enterprise-update-2026-10-07/python-final.log": "8e062cc95310811239176f6acb709f81ebe9824010c9802d9a7771e5d755379a",
+    "docs/assessment/enterprise-update-2026-10-07/python-full.log": "fbfc3da2d3e8aac4c4364beb4d3ac423fb1d7b1bf6cc2009c46cff2bdd014b5e",
+    "docs/assessment/enterprise-update-2026-10-07/python-git-v2-final.log": "0ba7ebb7516f1fbb2ecef6c91d094fd89a711c59633c3c36c80e839def387458",
+    "docs/assessment/enterprise-update-2026-10-07/python-git-v2-verified.json": "7b14dbca57a99ac66f58a8b7046d1066d7825d0d333e765673dd386b9373106a",
+    "docs/assessment/enterprise-update-2026-10-07/python-git-v2-verified.log": "6521298925578f5692d25a54c43d6711e430596d9ce2676874024836bc35105e",
+    "docs/assessment/enterprise-update-2026-10-07/python-git-v2.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/assessment/enterprise-update-2026-10-07/react.log": "cca3c888bc8565fa80234df27d39ac8d0222442a63eeb945ffb5b1fd94034275",
+    "docs/assessment/enterprise-update-2026-10-07/regression-exploratory-before.log": "00951a03e746bfb2469c13dc30ba4cad96d9cef8d7e4fb8d9f33a91aed789648",
+    "docs/assessment/enterprise-update-2026-10-07/ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "docs/assessment/enterprise-update-2026-10-07/self-check-inputs.json": "45eb1cfd83cf64476a91f8c073ef71d0debf1e3b74f165afb7533902f9709eb2",
+    "docs/assessment/enterprise-update-2026-10-07/self-check.json": "c1867fdc53f7d2d78131eaa6f7739366049a69c005cde8a76a01505bdd7e020b",
+    "docs/assessment/enterprise-update-2026-10-07/tsc.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "document_hashes": {
+    "docs/review/drift-gate-enterprise-update-2026-10-07.md": "797d6d7282346536d73fc0ccc7d922a98ebc0207d1ac3092d7ffa264dd6378fc",
+    "docs/contracts/gate-and-inputs.md": "e90600fb3ed965c607c3c6aeb7a85a843c5ec3821474a6ab6fd59c0754680c4c",
+    "docs/ops/drift-gate-self-check.md": "fea163eaff467a4c36d1e241f47ad6ac1e5d9ced3325c3501701d73f332b6f81"
+  },
+  "report_local_links_checked": 27,
+  "note": "Source/test receipts and authored controls; hash identity is not independent attestation or a general soundness proof."
+}

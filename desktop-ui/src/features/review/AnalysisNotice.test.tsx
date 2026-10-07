@@ -26,3 +26,23 @@ it("adds no warning when every file has grammar analysis or an old report has no
   page.rerender(<AnalysisNotice scan={{ ...scan, result: { ...scan.result, scan_metrics: undefined } }} />);
   expect(screen.queryByRole("status")).toBeNull();
 });
+it("keeps contract uncertainty visible even with complete grammar analysis", () => {
+  const scan: Scan = { ...fixture, result: { ...fixture.result, rule_decisions: [{
+    rule_id: "api-schema", status: "undetermined", reason: "missing snapshot",
+    decision: "undetermined", verification: "unverified", trigger_files: ["src/api.py"],
+    satisfied_groups: [], unsatisfied_groups: [{ name: "API", verification: "unverified", evidence: "complete before/after source is unavailable" }],
+  }], scan_metrics: { analysis_notes: [{ path: "src/api.py", method: "grammar+heuristic" }] } } };
+  render(<AnalysisNotice scan={scan} />);
+  expect(screen.getByRole("status").textContent).toContain("내용 검증이 끝나지 않은 규칙 1개");
+  expect(screen.getByText(/판단 보류/)).toBeTruthy();
+  expect(screen.getByText(/complete before\/after/)).toBeTruthy();
+});
+it("explains legacy path fallback on a passing report", () => {
+  const scan: Scan = { ...fixture, result: { ...fixture.result, result: "pass", rule_decisions: [{
+    rule_id: "legacy", status: "pass", reason: "paths", decision: "satisfied", verification: "unverified",
+    trigger_files: [], unsatisfied_groups: [], satisfied_groups: [{ name: "docs", verification: "unverified", evidence: "Legacy auto fallback" }],
+  }] } };
+  render(<AnalysisNotice scan={scan} />);
+  expect(screen.getByRole("status").textContent).toContain("파일 조건 충족 · 내용 미검증");
+  expect(screen.getByText(/자동 모드에서는 파일 변경/)).toBeTruthy();
+});

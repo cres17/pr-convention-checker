@@ -1,0 +1,10 @@
+{
+  "checks": {
+    "mixed_scope_blocks_without_false_verified": true,
+    "explicit_and_route_only_controls_keep_known_failure": true,
+    "type_only_imports_both_unknown": true,
+    "runtime_import_control_still_verified": true,
+    "finite_and_nonfinite_numeric_controls": true
+  },
+  "passed": true
+}

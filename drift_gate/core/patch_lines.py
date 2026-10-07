@@ -24,15 +24,23 @@ def changed_lines(file, *, code_only=False):
     sides = {'-': [], '+': []}
     starts = {'-': None, '+': None}
     single_hunk = True
+    in_hunk = False
     for line in file.patch.splitlines():
         hunk = re.match(r'^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@', line)
         if hunk:
+            in_hunk = True
             old, new = map(int, hunk.groups())
             if starts['-'] is not None:
                 single_hunk = False
             starts['-'], starts['+'] = old, new
             continue
-        if not line or line.startswith(('+++', '---', 'diff --git', 'index ', '\\')):
+        if line.startswith('diff --git '):
+            in_hunk = False
+            continue
+        # Inside a hunk, only the first character is diff syntax: +++call()
+        # adds the valid expression ++call(), rather than declaring a file.
+        if (not line or line.startswith(('index ', '\\'))
+            or (not in_hunk and line.startswith(('+++ ', '--- ')))):
             continue
         marker, text = line[0], line[1:]
         if marker not in ('+', '-', ' '):

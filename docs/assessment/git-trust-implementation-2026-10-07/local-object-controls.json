@@ -1,0 +1,1240 @@
+{
+  "schema": "packaged-git-controls-v1",
+  "checks": {
+    "stale_document_rejected": true,
+    "current_document_accepted": true,
+    "wrong_pin_rejected": true,
+    "weakening_rejected": true,
+    "working_tree_ignored": true,
+    "original_crlf_bytes_bound": true
+  },
+  "subject": {
+    "base": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+    "stale": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+    "current": "42ed07e7af9cf9727f85659647c4c6f8a63d85de",
+    "weakened": "959ef9450fd719a8165f2df9eb4257c65b8d584d"
+  },
+  "policy_pin": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+  "rejected": {
+    "wrong-pin": "Trusted policy SHA-256 does not match explicit caller pin",
+    "weakened-policy": "Candidate weakened pinned policy: pinned-api: lowered severity"
+  },
+  "cases": {
+    "stale": {
+      "schema_version": 3,
+      "verification": "verified",
+      "summary": {
+        "blocker": 1,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "fail",
+        "undetermined_rules": 0,
+        "unverified_rules": 0
+      },
+      "scan_metrics": {
+        "scanned_files": 2,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 1,
+        "runtime_seconds": 0.004313125042244792,
+        "analysis_notes": [
+          {
+            "path": "src/api.py",
+            "method": "heuristic",
+            "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+          },
+          {
+            "path": "docs/api.md",
+            "method": "unavailable",
+            "reason": "Patch unavailable; intensity cannot exclude a contract change"
+          }
+        ]
+      },
+      "result": "fail",
+      "skip": false,
+      "skip_reason": "",
+      "no_policy": false,
+      "change_types": [
+        "other"
+      ],
+      "violations": [
+        {
+          "rule_id": "pinned-api",
+          "severity": "BLOCKER",
+          "confidence": "low",
+          "confidence_basis": "path-specificity; not a probability of correctness",
+          "change_types": [
+            "other"
+          ],
+          "change_type": "other",
+          "message": "",
+          "trigger_files": [
+            {
+              "path": "src/api.py",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/api.py b/src/api.py\nindex 17c0111..a275b2e 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -1,4 +1,4 @@\n from fastapi import FastAPI\r\n app = FastAPI()\r\n-@app.get('/old')\r\n+@app.get('/new')\r\n def api(): return {}\r\n",
+              "semantic_signals": [
+                "route-contract-change"
+              ],
+              "semantic_evidence": [
+                "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+                "Python route decorator changed"
+              ],
+              "analysis_method": "heuristic",
+              "analysis_reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+              "documented_env_keys": null,
+              "document_input_state": ""
+            }
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "api-contract",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "any_changed",
+              "evidence": "Complete document route coverage; add GET /new; remove GET /old",
+              "decision": "violated",
+              "verification": "verified",
+              "content_mode": "api-routes"
+            }
+          ],
+          "checklist": [
+            "api-contract 업데이트"
+          ],
+          "ignored": false,
+          "change_intensity": "route-contract-change",
+          "change_intensities": [
+            "route-contract-change"
+          ],
+          "trigger_patterns": [
+            "src/**"
+          ],
+          "blast_radius": [
+            "OpenAPI/spec documentation",
+            "external API consumers",
+            "missing requirement group: api-contract",
+            "release notes"
+          ],
+          "missing_docs_explanation": "",
+          "changed_contract_summary": "",
+          "docs_update_draft": "",
+          "false_positive_note": "",
+          "cross_file_relations": []
+        }
+      ],
+      "rule_decisions": [
+        {
+          "rule_id": "pinned-api",
+          "severity": "BLOCKER",
+          "status": "fail",
+          "decision": "violated",
+          "verification": "verified",
+          "reason": "required groups are missing",
+          "matched_patterns": [
+            "src/**"
+          ],
+          "trigger_files": [
+            "src/api.py"
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "api-contract",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "any_changed",
+              "evidence": "Complete document route coverage; add GET /new; remove GET /old",
+              "decision": "violated",
+              "verification": "verified",
+              "content_mode": "api-routes"
+            }
+          ]
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": true,
+        "fail_on_major_count": 2,
+        "on_unverified": "fail"
+      },
+      "execution": {
+        "schema_version": 2,
+        "run_id": "0517b1fc5b244903bdb2aa55203d884e",
+        "started_at": "2026-10-07T14:10:55.624213+00:00",
+        "status": "success",
+        "comparison_mode": "commit",
+        "head": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+        "policy_revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+        "resolved_base": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+        "source": "immutable-git",
+        "policy_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+        "policy_digest_kind": "source",
+        "warnings": [],
+        "evaluation_context": {
+          "evaluated_on": "2026-10-07",
+          "date_basis": "UTC"
+        },
+        "input_digest_version": 3,
+        "input_sha256": "3a632764a05f5228e1444e3615d65247b92335928426b21032a8fbc13a380248",
+        "input_capture": {
+          "schema": "input-manifest-v1",
+          "digest_protocol": "python-json-observation-v1",
+          "input_sha256": "9a9981c63fe722651ac78d19a4e6b8cf36c47dae50bf9ae2df4dbbd838c37006",
+          "collection_mode": "captured-adapter-input",
+          "atomicity": "per-artifact-observation",
+          "original_bytes_certified": false,
+          "revision_certified": false,
+          "policy_authority": "unverified-caller-input",
+          "selection_complete": false,
+          "artifacts": [
+            {
+              "path": "@policy",
+              "role": "policy-semantics",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "f018a7b52ca03ed41b333bb1c97ca8d0afc1316547be6aa05cf3a2dc3c05be51",
+              "observed_text_bytes": 586,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "@policy",
+              "role": "policy-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+              "observed_text_bytes": 209,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "docs/api.md",
+              "role": "after-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "c52d10107668ed9360f4374f7278022e213aaa50f9c87fbfaee5b088cf0a9ba5",
+              "observed_text_bytes": 9,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "docs/api.md",
+              "role": "before-source",
+              "state": "not-collected",
+              "reason": "not_collected",
+              "observed_text_sha256": null,
+              "observed_text_bytes": null,
+              "encoding": null
+            },
+            {
+              "path": "docs/api.md",
+              "role": "document-json",
+              "state": "not-collected",
+              "reason": "not_collected",
+              "observed_text_sha256": null,
+              "observed_text_bytes": null,
+              "encoding": null
+            },
+            {
+              "path": "docs/api.md",
+              "role": "patch",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "observed_text_bytes": 0,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "src/api.py",
+              "role": "after-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+              "observed_text_bytes": 86,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "src/api.py",
+              "role": "before-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+              "observed_text_bytes": 86,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "src/api.py",
+              "role": "document-json",
+              "state": "not-collected",
+              "reason": "not_collected",
+              "observed_text_sha256": null,
+              "observed_text_bytes": null,
+              "encoding": null
+            },
+            {
+              "path": "src/api.py",
+              "role": "patch",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "13ab32725e7fa4d113deec9114c3dc9fc8af50fe1849d7398e4d84c757618b6f",
+              "observed_text_bytes": 226,
+              "encoding": "utf-8-observed-text"
+            }
+          ],
+          "manifest_sha256": "684f36d2dba32ebb3c0944dcee105928d78fe7f6af790daa7f8d53514930f3f5",
+          "retention": "process-memory-only",
+          "replay_scope": "captured-inputs-current-engine",
+          "git_input": {
+            "schema": "git-input-evidence-v1",
+            "subject": {
+              "base_oid": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+              "head_oid": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+              "base_tree": "d20180020ec778dfa2bb367ae74b77b20a4dcee0",
+              "head_tree": "4c8656d63b7bff0a9f50d4b30d9b9611707ee50e",
+              "comparison_mode": "commit",
+              "collection_mode": "immutable-git",
+              "working_tree_ignored": true,
+              "unsaved_buffers_included": false,
+              "untracked_included": false
+            },
+            "catalog_sha256": "c4531b87b2bc9e55390264986d0cbe08e244c11d52c9ad5a8bdfe01676b4ab8a",
+            "policy_anchor": {
+              "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+              "path": ".drift-gate.yml",
+              "sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+              "integrity_verified": true,
+              "authority": "explicit-caller-pin",
+              "organization_approval_verified": false,
+              "evaluation_policy": "pinned-policy",
+              "candidate_weakening": "rejected"
+            },
+            "checker_authority": "current-engine-not-attested",
+            "selection_scope": "changed-paths-and-configured-document-observations",
+            "artifacts": [
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": ".drift-gate.yml",
+                "object_id": "044b6e2c4221980f91796d88840e7342da7639c3",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+                "raw_bytes": 209
+              },
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": "@tree/4c8656d63b7bff0a9f50d4b30d9b9611707ee50e",
+                "object_id": "4c8656d63b7bff0a9f50d4b30d9b9611707ee50e",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "be92d867fd2854c7758a59c1f1cd8a6f170d42a9c1398b4f0faaa83e095b6e6f",
+                "raw_bytes": 104
+              },
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": "@tree/a2fc20203788b35b14ee49af2f1bb597c2a2921b",
+                "object_id": "a2fc20203788b35b14ee49af2f1bb597c2a2921b",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "3803899b320dd6d925b4d5dfa60e94f4a6f188a281ba561397897cb0327a9de6",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": "@tree/acde2787828cbb68139a69835fa0d747eadb47aa",
+                "object_id": "acde2787828cbb68139a69835fa0d747eadb47aa",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "2b3007928e0997c545900b545aee54bf9d89d17d13c28ff35fc91affec81bb09",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": "docs/api.md",
+                "object_id": "b4e8586b8939a6818c43c170fa57659c3140e2c2",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "c52d10107668ed9360f4374f7278022e213aaa50f9c87fbfaee5b088cf0a9ba5",
+                "raw_bytes": 9
+              },
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": "src/api.py",
+                "object_id": "a275b2e85d50e7f7dc9a5200f27471bfd5b76e02",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+                "raw_bytes": 86
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": ".drift-gate.yml",
+                "object_id": "044b6e2c4221980f91796d88840e7342da7639c3",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+                "raw_bytes": 209
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "@tree/acde2787828cbb68139a69835fa0d747eadb47aa",
+                "object_id": "acde2787828cbb68139a69835fa0d747eadb47aa",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "2b3007928e0997c545900b545aee54bf9d89d17d13c28ff35fc91affec81bb09",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "@tree/d20180020ec778dfa2bb367ae74b77b20a4dcee0",
+                "object_id": "d20180020ec778dfa2bb367ae74b77b20a4dcee0",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "8d1bc5a636834d4e4e1e942509a286787486e8e1da9f82d8bd15baea5eb71fb7",
+                "raw_bytes": 104
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "@tree/f37e15226704e387aeb93e8601110fa8dd371823",
+                "object_id": "f37e15226704e387aeb93e8601110fa8dd371823",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "2a123c02f3ec96a555ea566e00190bd84f2ab574fa50b8a1e31a1164dc7fa493",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "src/api.py",
+                "object_id": "17c0111f805ff502e74ca2f1509dc1af1a11f7c3",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+                "raw_bytes": 86
+              }
+            ],
+            "manifest_sha256": "a8af4fca624581a4a22978bc4c907f83e5a2bf20bbb847865b674e1a4a7636ab"
+          }
+        }
+      }
+    },
+    "current": {
+      "schema_version": 3,
+      "verification": "verified",
+      "summary": {
+        "blocker": 0,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "pass",
+        "undetermined_rules": 0,
+        "unverified_rules": 0
+      },
+      "scan_metrics": {
+        "scanned_files": 2,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 1,
+        "runtime_seconds": 0.00042887497693300247,
+        "analysis_notes": [
+          {
+            "path": "docs/api.md",
+            "method": "heuristic",
+            "reason": "No grammar-backed detector for this file type"
+          },
+          {
+            "path": "src/api.py",
+            "method": "heuristic",
+            "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+          }
+        ]
+      },
+      "result": "pass",
+      "skip": false,
+      "skip_reason": "",
+      "no_policy": false,
+      "change_types": [
+        "other"
+      ],
+      "violations": [],
+      "rule_decisions": [
+        {
+          "rule_id": "pinned-api",
+          "severity": "BLOCKER",
+          "status": "pass",
+          "decision": "satisfied",
+          "verification": "verified",
+          "reason": "trigger matched and all required groups were satisfied",
+          "matched_patterns": [
+            "src/**"
+          ],
+          "trigger_files": [
+            "src/api.py"
+          ],
+          "satisfied_groups": [
+            {
+              "name": "api-contract",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "any_changed",
+              "evidence": "Complete document route coverage; add GET /new; remove GET /old",
+              "decision": "satisfied",
+              "verification": "verified",
+              "content_mode": "api-routes"
+            }
+          ],
+          "unsatisfied_groups": []
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": true,
+        "fail_on_major_count": 2,
+        "on_unverified": "fail"
+      },
+      "execution": {
+        "schema_version": 2,
+        "run_id": "9abd4d4b49a24535b7d7b3242f3fbe3a",
+        "started_at": "2026-10-07T14:10:55.760278+00:00",
+        "status": "success",
+        "comparison_mode": "commit",
+        "head": "42ed07e7af9cf9727f85659647c4c6f8a63d85de",
+        "policy_revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+        "resolved_base": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+        "source": "immutable-git",
+        "policy_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+        "policy_digest_kind": "source",
+        "warnings": [],
+        "evaluation_context": {
+          "evaluated_on": "2026-10-07",
+          "date_basis": "UTC"
+        },
+        "input_digest_version": 3,
+        "input_sha256": "6a2a70c66cad1fe32cb948fa5da2f9c261100677cbea76c7fd11c3b4aa69e2a1",
+        "input_capture": {
+          "schema": "input-manifest-v1",
+          "digest_protocol": "python-json-observation-v1",
+          "input_sha256": "b7b25a704dccd2f0ea947187e41b5938500aca45411b6ee575a59fd68f09f433",
+          "collection_mode": "captured-adapter-input",
+          "atomicity": "per-artifact-observation",
+          "original_bytes_certified": false,
+          "revision_certified": false,
+          "policy_authority": "unverified-caller-input",
+          "selection_complete": false,
+          "artifacts": [
+            {
+              "path": "@policy",
+              "role": "policy-semantics",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "f018a7b52ca03ed41b333bb1c97ca8d0afc1316547be6aa05cf3a2dc3c05be51",
+              "observed_text_bytes": 586,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "@policy",
+              "role": "policy-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+              "observed_text_bytes": 209,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "docs/api.md",
+              "role": "after-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "83c4aeb618a106fee780172a0aa30170a983da7782f162f376093d08f243d441",
+              "observed_text_bytes": 9,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "docs/api.md",
+              "role": "before-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "c52d10107668ed9360f4374f7278022e213aaa50f9c87fbfaee5b088cf0a9ba5",
+              "observed_text_bytes": 9,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "docs/api.md",
+              "role": "document-json",
+              "state": "not-collected",
+              "reason": "not_collected",
+              "observed_text_sha256": null,
+              "observed_text_bytes": null,
+              "encoding": null
+            },
+            {
+              "path": "docs/api.md",
+              "role": "patch",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "c9afb73f01c03fb5d66a6e806abc5a90e89b3a1fe1c0bc966caa07b40f1ba130",
+              "observed_text_bytes": 137,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "src/api.py",
+              "role": "after-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+              "observed_text_bytes": 86,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "src/api.py",
+              "role": "before-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+              "observed_text_bytes": 86,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "src/api.py",
+              "role": "document-json",
+              "state": "not-collected",
+              "reason": "not_collected",
+              "observed_text_sha256": null,
+              "observed_text_bytes": null,
+              "encoding": null
+            },
+            {
+              "path": "src/api.py",
+              "role": "patch",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "13ab32725e7fa4d113deec9114c3dc9fc8af50fe1849d7398e4d84c757618b6f",
+              "observed_text_bytes": 226,
+              "encoding": "utf-8-observed-text"
+            }
+          ],
+          "manifest_sha256": "00759756031ebf5583a7fc0da99c9991bc5241c18a84ecf6581816ad91a1ccad",
+          "retention": "process-memory-only",
+          "replay_scope": "captured-inputs-current-engine",
+          "git_input": {
+            "schema": "git-input-evidence-v1",
+            "subject": {
+              "base_oid": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+              "head_oid": "42ed07e7af9cf9727f85659647c4c6f8a63d85de",
+              "base_tree": "d20180020ec778dfa2bb367ae74b77b20a4dcee0",
+              "head_tree": "a16c24cb31fd5b9515a1e954a93ef1a29a726230",
+              "comparison_mode": "commit",
+              "collection_mode": "immutable-git",
+              "working_tree_ignored": true,
+              "unsaved_buffers_included": false,
+              "untracked_included": false
+            },
+            "catalog_sha256": "011ce31977ab874cd8f42240a43e1d20855a06f6e2993b0675c37cd26777e243",
+            "policy_anchor": {
+              "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+              "path": ".drift-gate.yml",
+              "sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+              "integrity_verified": true,
+              "authority": "explicit-caller-pin",
+              "organization_approval_verified": false,
+              "evaluation_policy": "pinned-policy",
+              "candidate_weakening": "rejected"
+            },
+            "checker_authority": "current-engine-not-attested",
+            "selection_scope": "changed-paths-and-configured-document-observations",
+            "artifacts": [
+              {
+                "revision": "42ed07e7af9cf9727f85659647c4c6f8a63d85de",
+                "path": ".drift-gate.yml",
+                "object_id": "044b6e2c4221980f91796d88840e7342da7639c3",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+                "raw_bytes": 209
+              },
+              {
+                "revision": "42ed07e7af9cf9727f85659647c4c6f8a63d85de",
+                "path": "@tree/a16c24cb31fd5b9515a1e954a93ef1a29a726230",
+                "object_id": "a16c24cb31fd5b9515a1e954a93ef1a29a726230",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "9d92b2c9c840a1a8ef2f40815a87bedc31d6d984d59d1702fc1e630440d26c42",
+                "raw_bytes": 104
+              },
+              {
+                "revision": "42ed07e7af9cf9727f85659647c4c6f8a63d85de",
+                "path": "@tree/a2fc20203788b35b14ee49af2f1bb597c2a2921b",
+                "object_id": "a2fc20203788b35b14ee49af2f1bb597c2a2921b",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "3803899b320dd6d925b4d5dfa60e94f4a6f188a281ba561397897cb0327a9de6",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "42ed07e7af9cf9727f85659647c4c6f8a63d85de",
+                "path": "@tree/fe2a09bc42691b0ebf0de99e0a311bcb904c62d7",
+                "object_id": "fe2a09bc42691b0ebf0de99e0a311bcb904c62d7",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "aafe4f92e86dfa48aa3b3d0d55f6f9f35eeb4db2c1228f0cde57b29436725cca",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "42ed07e7af9cf9727f85659647c4c6f8a63d85de",
+                "path": "docs/api.md",
+                "object_id": "684a15c20a0218a501089eeb3480df3644ed4e22",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "83c4aeb618a106fee780172a0aa30170a983da7782f162f376093d08f243d441",
+                "raw_bytes": 9
+              },
+              {
+                "revision": "42ed07e7af9cf9727f85659647c4c6f8a63d85de",
+                "path": "src/api.py",
+                "object_id": "a275b2e85d50e7f7dc9a5200f27471bfd5b76e02",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+                "raw_bytes": 86
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": ".drift-gate.yml",
+                "object_id": "044b6e2c4221980f91796d88840e7342da7639c3",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+                "raw_bytes": 209
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "@tree/acde2787828cbb68139a69835fa0d747eadb47aa",
+                "object_id": "acde2787828cbb68139a69835fa0d747eadb47aa",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "2b3007928e0997c545900b545aee54bf9d89d17d13c28ff35fc91affec81bb09",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "@tree/d20180020ec778dfa2bb367ae74b77b20a4dcee0",
+                "object_id": "d20180020ec778dfa2bb367ae74b77b20a4dcee0",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "8d1bc5a636834d4e4e1e942509a286787486e8e1da9f82d8bd15baea5eb71fb7",
+                "raw_bytes": 104
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "@tree/f37e15226704e387aeb93e8601110fa8dd371823",
+                "object_id": "f37e15226704e387aeb93e8601110fa8dd371823",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "2a123c02f3ec96a555ea566e00190bd84f2ab574fa50b8a1e31a1164dc7fa493",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "docs/api.md",
+                "object_id": "b4e8586b8939a6818c43c170fa57659c3140e2c2",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "c52d10107668ed9360f4374f7278022e213aaa50f9c87fbfaee5b088cf0a9ba5",
+                "raw_bytes": 9
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "src/api.py",
+                "object_id": "17c0111f805ff502e74ca2f1509dc1af1a11f7c3",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+                "raw_bytes": 86
+              }
+            ],
+            "manifest_sha256": "21a5e5e1ab1182c7b944e0a2ad6d495d6fe709228a051827d8d04b6e773243b6"
+          }
+        }
+      }
+    },
+    "working-tree-edited": {
+      "schema_version": 3,
+      "verification": "verified",
+      "summary": {
+        "blocker": 1,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "fail",
+        "undetermined_rules": 0,
+        "unverified_rules": 0
+      },
+      "scan_metrics": {
+        "scanned_files": 2,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 1,
+        "runtime_seconds": 0.00045950000640004873,
+        "analysis_notes": [
+          {
+            "path": "src/api.py",
+            "method": "heuristic",
+            "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+          },
+          {
+            "path": "docs/api.md",
+            "method": "unavailable",
+            "reason": "Patch unavailable; intensity cannot exclude a contract change"
+          }
+        ]
+      },
+      "result": "fail",
+      "skip": false,
+      "skip_reason": "",
+      "no_policy": false,
+      "change_types": [
+        "other"
+      ],
+      "violations": [
+        {
+          "rule_id": "pinned-api",
+          "severity": "BLOCKER",
+          "confidence": "low",
+          "confidence_basis": "path-specificity; not a probability of correctness",
+          "change_types": [
+            "other"
+          ],
+          "change_type": "other",
+          "message": "",
+          "trigger_files": [
+            {
+              "path": "src/api.py",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/api.py b/src/api.py\nindex 17c0111..a275b2e 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -1,4 +1,4 @@\n from fastapi import FastAPI\r\n app = FastAPI()\r\n-@app.get('/old')\r\n+@app.get('/new')\r\n def api(): return {}\r\n",
+              "semantic_signals": [
+                "route-contract-change"
+              ],
+              "semantic_evidence": [
+                "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+                "Python route decorator changed"
+              ],
+              "analysis_method": "heuristic",
+              "analysis_reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+              "documented_env_keys": null,
+              "document_input_state": ""
+            }
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "api-contract",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "any_changed",
+              "evidence": "Complete document route coverage; add GET /new; remove GET /old",
+              "decision": "violated",
+              "verification": "verified",
+              "content_mode": "api-routes"
+            }
+          ],
+          "checklist": [
+            "api-contract 업데이트"
+          ],
+          "ignored": false,
+          "change_intensity": "route-contract-change",
+          "change_intensities": [
+            "route-contract-change"
+          ],
+          "trigger_patterns": [
+            "src/**"
+          ],
+          "blast_radius": [
+            "OpenAPI/spec documentation",
+            "external API consumers",
+            "missing requirement group: api-contract",
+            "release notes"
+          ],
+          "missing_docs_explanation": "",
+          "changed_contract_summary": "",
+          "docs_update_draft": "",
+          "false_positive_note": "",
+          "cross_file_relations": []
+        }
+      ],
+      "rule_decisions": [
+        {
+          "rule_id": "pinned-api",
+          "severity": "BLOCKER",
+          "status": "fail",
+          "decision": "violated",
+          "verification": "verified",
+          "reason": "required groups are missing",
+          "matched_patterns": [
+            "src/**"
+          ],
+          "trigger_files": [
+            "src/api.py"
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "api-contract",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "any_changed",
+              "evidence": "Complete document route coverage; add GET /new; remove GET /old",
+              "decision": "violated",
+              "verification": "verified",
+              "content_mode": "api-routes"
+            }
+          ]
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": true,
+        "fail_on_major_count": 2,
+        "on_unverified": "fail"
+      },
+      "execution": {
+        "schema_version": 2,
+        "run_id": "152c524c7e524c3e95e6a0cc68172c80",
+        "started_at": "2026-10-07T14:10:56.064163+00:00",
+        "status": "success",
+        "comparison_mode": "commit",
+        "head": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+        "policy_revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+        "resolved_base": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+        "source": "immutable-git",
+        "policy_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+        "policy_digest_kind": "source",
+        "warnings": [],
+        "evaluation_context": {
+          "evaluated_on": "2026-10-07",
+          "date_basis": "UTC"
+        },
+        "input_digest_version": 3,
+        "input_sha256": "3a632764a05f5228e1444e3615d65247b92335928426b21032a8fbc13a380248",
+        "input_capture": {
+          "schema": "input-manifest-v1",
+          "digest_protocol": "python-json-observation-v1",
+          "input_sha256": "9a9981c63fe722651ac78d19a4e6b8cf36c47dae50bf9ae2df4dbbd838c37006",
+          "collection_mode": "captured-adapter-input",
+          "atomicity": "per-artifact-observation",
+          "original_bytes_certified": false,
+          "revision_certified": false,
+          "policy_authority": "unverified-caller-input",
+          "selection_complete": false,
+          "artifacts": [
+            {
+              "path": "@policy",
+              "role": "policy-semantics",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "f018a7b52ca03ed41b333bb1c97ca8d0afc1316547be6aa05cf3a2dc3c05be51",
+              "observed_text_bytes": 586,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "@policy",
+              "role": "policy-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+              "observed_text_bytes": 209,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "docs/api.md",
+              "role": "after-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "c52d10107668ed9360f4374f7278022e213aaa50f9c87fbfaee5b088cf0a9ba5",
+              "observed_text_bytes": 9,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "docs/api.md",
+              "role": "before-source",
+              "state": "not-collected",
+              "reason": "not_collected",
+              "observed_text_sha256": null,
+              "observed_text_bytes": null,
+              "encoding": null
+            },
+            {
+              "path": "docs/api.md",
+              "role": "document-json",
+              "state": "not-collected",
+              "reason": "not_collected",
+              "observed_text_sha256": null,
+              "observed_text_bytes": null,
+              "encoding": null
+            },
+            {
+              "path": "docs/api.md",
+              "role": "patch",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "observed_text_bytes": 0,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "src/api.py",
+              "role": "after-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+              "observed_text_bytes": 86,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "src/api.py",
+              "role": "before-source",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+              "observed_text_bytes": 86,
+              "encoding": "utf-8-observed-text"
+            },
+            {
+              "path": "src/api.py",
+              "role": "document-json",
+              "state": "not-collected",
+              "reason": "not_collected",
+              "observed_text_sha256": null,
+              "observed_text_bytes": null,
+              "encoding": null
+            },
+            {
+              "path": "src/api.py",
+              "role": "patch",
+              "state": "present",
+              "reason": "",
+              "observed_text_sha256": "13ab32725e7fa4d113deec9114c3dc9fc8af50fe1849d7398e4d84c757618b6f",
+              "observed_text_bytes": 226,
+              "encoding": "utf-8-observed-text"
+            }
+          ],
+          "manifest_sha256": "684f36d2dba32ebb3c0944dcee105928d78fe7f6af790daa7f8d53514930f3f5",
+          "retention": "process-memory-only",
+          "replay_scope": "captured-inputs-current-engine",
+          "git_input": {
+            "schema": "git-input-evidence-v1",
+            "subject": {
+              "base_oid": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+              "head_oid": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+              "base_tree": "d20180020ec778dfa2bb367ae74b77b20a4dcee0",
+              "head_tree": "4c8656d63b7bff0a9f50d4b30d9b9611707ee50e",
+              "comparison_mode": "commit",
+              "collection_mode": "immutable-git",
+              "working_tree_ignored": true,
+              "unsaved_buffers_included": false,
+              "untracked_included": false
+            },
+            "catalog_sha256": "c4531b87b2bc9e55390264986d0cbe08e244c11d52c9ad5a8bdfe01676b4ab8a",
+            "policy_anchor": {
+              "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+              "path": ".drift-gate.yml",
+              "sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+              "integrity_verified": true,
+              "authority": "explicit-caller-pin",
+              "organization_approval_verified": false,
+              "evaluation_policy": "pinned-policy",
+              "candidate_weakening": "rejected"
+            },
+            "checker_authority": "current-engine-not-attested",
+            "selection_scope": "changed-paths-and-configured-document-observations",
+            "artifacts": [
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": ".drift-gate.yml",
+                "object_id": "044b6e2c4221980f91796d88840e7342da7639c3",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+                "raw_bytes": 209
+              },
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": "@tree/4c8656d63b7bff0a9f50d4b30d9b9611707ee50e",
+                "object_id": "4c8656d63b7bff0a9f50d4b30d9b9611707ee50e",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "be92d867fd2854c7758a59c1f1cd8a6f170d42a9c1398b4f0faaa83e095b6e6f",
+                "raw_bytes": 104
+              },
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": "@tree/a2fc20203788b35b14ee49af2f1bb597c2a2921b",
+                "object_id": "a2fc20203788b35b14ee49af2f1bb597c2a2921b",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "3803899b320dd6d925b4d5dfa60e94f4a6f188a281ba561397897cb0327a9de6",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": "@tree/acde2787828cbb68139a69835fa0d747eadb47aa",
+                "object_id": "acde2787828cbb68139a69835fa0d747eadb47aa",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "2b3007928e0997c545900b545aee54bf9d89d17d13c28ff35fc91affec81bb09",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": "docs/api.md",
+                "object_id": "b4e8586b8939a6818c43c170fa57659c3140e2c2",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "c52d10107668ed9360f4374f7278022e213aaa50f9c87fbfaee5b088cf0a9ba5",
+                "raw_bytes": 9
+              },
+              {
+                "revision": "78b612d339d6e1e9cff70769ddbae9322cbe0fa4",
+                "path": "src/api.py",
+                "object_id": "a275b2e85d50e7f7dc9a5200f27471bfd5b76e02",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+                "raw_bytes": 86
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": ".drift-gate.yml",
+                "object_id": "044b6e2c4221980f91796d88840e7342da7639c3",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "fa262db82a0983d719602756bcf0c6d1ac77345f86b1a15df69f7765ec239db7",
+                "raw_bytes": 209
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "@tree/acde2787828cbb68139a69835fa0d747eadb47aa",
+                "object_id": "acde2787828cbb68139a69835fa0d747eadb47aa",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "2b3007928e0997c545900b545aee54bf9d89d17d13c28ff35fc91affec81bb09",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "@tree/d20180020ec778dfa2bb367ae74b77b20a4dcee0",
+                "object_id": "d20180020ec778dfa2bb367ae74b77b20a4dcee0",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "8d1bc5a636834d4e4e1e942509a286787486e8e1da9f82d8bd15baea5eb71fb7",
+                "raw_bytes": 104
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "@tree/f37e15226704e387aeb93e8601110fa8dd371823",
+                "object_id": "f37e15226704e387aeb93e8601110fa8dd371823",
+                "kind": "tree",
+                "mode": "040000",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "2a123c02f3ec96a555ea566e00190bd84f2ab574fa50b8a1e31a1164dc7fa493",
+                "raw_bytes": 34
+              },
+              {
+                "revision": "7a46b02f5b71febf48a646c8359177e8feaadbbd",
+                "path": "src/api.py",
+                "object_id": "17c0111f805ff502e74ca2f1509dc1af1a11f7c3",
+                "kind": "blob",
+                "mode": "100644",
+                "state": "present",
+                "reason": "",
+                "raw_sha256": "fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+                "raw_bytes": 86
+              }
+            ],
+            "manifest_sha256": "a8af4fca624581a4a22978bc4c907f83e5a2bf20bbb847865b674e1a4a7636ab"
+          }
+        }
+      }
+    }
+  }
+}

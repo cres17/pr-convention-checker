@@ -1,0 +1,261 @@
+........................................................................ [  6%]
+........................................................................ [ 12%]
+.......................................................F................ [ 18%]
+........................................................................ [ 24%]
+........................................................................ [ 30%]
+........................................................................ [ 36%]
+........................................................................ [ 42%]
+........................................................................ [ 48%]
+........................................................................ [ 54%]
+........................................................................ [ 60%]
+..................................................F..................... [ 66%]
+........................................................................ [ 72%]
+........................................................................ [ 78%]
+........................................................................ [ 85%]
+........................................................................ [ 91%]
+........................................................................ [ 97%]
+.................................                                        [100%]
+=================================== FAILURES ===================================
+_ test_cli_reads_unchanged_sample_from_working_tree[PAYMENT_TIMEOUT=example\n-pass] _
+
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-152/test_cli_reads_unchanged_sampl0')
+sample = 'PAYMENT_TIMEOUT=example\n', expected = 'pass'
+
+    @pytest.mark.parametrize("sample,expected", [("PAYMENT_TIMEOUT=example\n", "pass"), ("OTHER=example\n", "fail")])
+    def test_cli_reads_unchanged_sample_from_working_tree(tmp_path, sample, expected):
+        (tmp_path / "src/config").mkdir(parents=True)
+        (tmp_path / "src/config/pay.py").write_text("timeout = 30\n")
+        (tmp_path / ".env.example").write_text(sample)
+        (tmp_path / ".drift-gate.yml").write_text(json.dumps(ENV_SUITE["policy"]))
+        for args in (["init", "-q"], ["add", "."], ["-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-qm", "fixture"]):
+            subprocess.run(["git", *args], cwd=tmp_path, check=True, capture_output=True)
+        (tmp_path / "src/config/pay.py").write_text("timeout = os.getenv('PAYMENT_TIMEOUT')\n")
+        # The CLI writes UTF-8 bytes, regardless of the host's default encoding.
+        result = subprocess.run([sys.executable, str(ROOT / "main.py"), "check", "--base", "HEAD", "--json"],
+                                cwd=tmp_path, capture_output=True, text=True, encoding="utf-8")
+        report = json.loads(result.stdout)
+>       assert report["result"] == expected
+E       AssertionError: assert 'fail' == 'pass'
+E         
+E         - pass
+E         + fail
+
+drift_gate/tests/test_development_regressions.py:300: AssertionError
+______________________________ test_mcp_check_pr _______________________________
+
+self = <urllib.request.HTTPSHandler object at 0x144dd3c10>
+http_class = <class 'http.client.HTTPSConnection'>
+req = <urllib.request.Request object at 0x144dd2490>
+http_conn_args = {'context': None, 'check_hostname': None}
+
+    def do_open(self, http_class, req, **http_conn_args):
+        """Return an HTTPResponse object for the request, using http_class.
+    
+        http_class must implement the HTTPConnection API from http.client.
+        """
+        host = req.host
+        if not host:
+            raise URLError('no host given')
+    
+        # will parse host:port
+        h = http_class(host, timeout=req.timeout, **http_conn_args)
+        h.set_debuglevel(self._debuglevel)
+    
+        headers = dict(req.unredirected_hdrs)
+        headers.update({k: v for k, v in req.headers.items()
+                        if k not in headers})
+    
+        # TODO(jhylton): Should this be redesigned to handle
+        # persistent connections?
+    
+        # We want to make an HTTP/1.1 request, but the addinfourl
+        # class isn't prepared to deal with a persistent connection.
+        # It will try to read all remaining data from the socket,
+        # which will block while the server waits for the next request.
+        # So make sure the connection gets closed after the (only)
+        # request.
+        headers["Connection"] = "close"
+        headers = {name.title(): val for name, val in headers.items()}
+    
+        if req._tunnel_host:
+            tunnel_headers = {}
+            proxy_auth_hdr = "Proxy-Authorization"
+            if proxy_auth_hdr in headers:
+                tunnel_headers[proxy_auth_hdr] = headers[proxy_auth_hdr]
+                # Proxy-Authorization should not be sent to origin
+                # server.
+                del headers[proxy_auth_hdr]
+            h.set_tunnel(req._tunnel_host, headers=tunnel_headers)
+    
+        try:
+            try:
+>               h.request(req.get_method(), req.selector, req.data, headers,
+                          encode_chunked=req.has_header('Transfer-encoding'))
+
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/urllib/request.py:1348: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py:1323: in request
+    self._send_request(method, url, body, headers, encode_chunked)
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py:1369: in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py:1318: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py:1078: in _send_output
+    self.send(msg)
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py:1016: in send
+    self.connect()
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py:1488: in connect
+    super().connect()
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py:982: in connect
+    self.sock = self._create_connection(
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py:839: in create_connection
+    for res in getaddrinfo(host, port, 0, SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+host = 'api.github.com', port = 443, family = 0
+type = <SocketKind.SOCK_STREAM: 1>, proto = 0, flags = 0
+
+    def getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
+        """Resolve host and port into list of address info entries.
+    
+        Translate the host/port argument into a sequence of 5-tuples that contain
+        all the necessary arguments for creating a socket connected to that service.
+        host is a domain name, a string representation of an IPv4/v6 address or
+        None. port is a string service name such as 'http', a numeric port number or
+        None. By passing None as the value of host and port, you can pass NULL to
+        the underlying C API.
+    
+        The family, type and proto arguments can be optionally specified in order to
+        narrow the list of addresses returned. Passing zero as a value for each of
+        these arguments selects the full range of results.
+        """
+        # We override this function since we want to translate the numeric family
+        # and socket type values to enum constants.
+        addrlist = []
+>       for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py:974: gaierror
+
+During handling of the above exception, another exception occurred:
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x143e13f90>
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-152/test_mcp_check_pr0')
+
+    def test_mcp_check_pr(monkeypatch, tmp_path):
+        from drift_gate.adapters.github.client import GitHubAdapter
+        from drift_gate.core.models.changed_file import ChangedFile
+    
+        policy = tmp_path / ".drift-gate.yml"
+        policy.write_text(
+            """
+    rules:
+      - id: api-contract-sync
+        when:
+          any_changed: ["src/routes/**"]
+        require:
+          groups:
+            - name: docs
+              any_changed: ["docs/**"]
+        severity: blocker
+    """,
+            encoding="utf-8",
+        )
+    
+        def fake_files_and_body(self, pr_number):
+            return [ChangedFile(path="src/routes/users.ts", status="modified")], ""
+    
+        monkeypatch.setattr(GitHubAdapter, "get_pr_files_and_body", fake_files_and_body)
+    
+>       report = drift_gate_check_pr(
+            1,
+            repo="owner/repo",
+            token="token",
+            policy_path=str(policy),
+        )
+
+drift_gate/tests/test_mcp_tools.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/mcp/tools.py:62: in drift_gate_check_pr
+    changed_files = github.attach_env_documents(pr_number, changed_files, policy)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+drift_gate/adapters/github/client.py:125: in attach_env_documents
+    head = self._get(f"{self._base}/repos/{self._repo}/pulls/{pr_number}")["head"]["sha"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+drift_gate/adapters/github/client.py:173: in _get
+    with urllib.request.urlopen(req) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/urllib/request.py:216: in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/urllib/request.py:519: in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/urllib/request.py:536: in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/urllib/request.py:496: in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/urllib/request.py:1391: in https_open
+    return self.do_open(http.client.HTTPSConnection, req,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <urllib.request.HTTPSHandler object at 0x144dd3c10>
+http_class = <class 'http.client.HTTPSConnection'>
+req = <urllib.request.Request object at 0x144dd2490>
+http_conn_args = {'context': None, 'check_hostname': None}
+
+    def do_open(self, http_class, req, **http_conn_args):
+        """Return an HTTPResponse object for the request, using http_class.
+    
+        http_class must implement the HTTPConnection API from http.client.
+        """
+        host = req.host
+        if not host:
+            raise URLError('no host given')
+    
+        # will parse host:port
+        h = http_class(host, timeout=req.timeout, **http_conn_args)
+        h.set_debuglevel(self._debuglevel)
+    
+        headers = dict(req.unredirected_hdrs)
+        headers.update({k: v for k, v in req.headers.items()
+                        if k not in headers})
+    
+        # TODO(jhylton): Should this be redesigned to handle
+        # persistent connections?
+    
+        # We want to make an HTTP/1.1 request, but the addinfourl
+        # class isn't prepared to deal with a persistent connection.
+        # It will try to read all remaining data from the socket,
+        # which will block while the server waits for the next request.
+        # So make sure the connection gets closed after the (only)
+        # request.
+        headers["Connection"] = "close"
+        headers = {name.title(): val for name, val in headers.items()}
+    
+        if req._tunnel_host:
+            tunnel_headers = {}
+            proxy_auth_hdr = "Proxy-Authorization"
+            if proxy_auth_hdr in headers:
+                tunnel_headers[proxy_auth_hdr] = headers[proxy_auth_hdr]
+                # Proxy-Authorization should not be sent to origin
+                # server.
+                del headers[proxy_auth_hdr]
+            h.set_tunnel(req._tunnel_host, headers=tunnel_headers)
+    
+        try:
+            try:
+                h.request(req.get_method(), req.selector, req.data, headers,
+                          encode_chunked=req.has_header('Transfer-encoding'))
+            except OSError as err: # timeout error
+>               raise URLError(err)
+E               urllib.error.URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/urllib/request.py:1351: URLError
+=========================== short test summary info ============================
+FAILED drift_gate/tests/test_development_regressions.py::test_cli_reads_unchanged_sample_from_working_tree[PAYMENT_TIMEOUT=example\n-pass]
+FAILED drift_gate/tests/test_mcp_tools.py::test_mcp_check_pr - urllib.error.U...
+2 failed, 1183 passed in 30.53s

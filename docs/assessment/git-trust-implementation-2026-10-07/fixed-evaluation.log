@@ -1,0 +1,41 @@
+# Drift Gate Benchmark
+
+## Summary
+
+| Engine | Cases | Passed | Precision | Recall | F1 | FP | FN | Files/sec |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Path-only baseline | 22 | 19 | 0.824 | 1.000 | 0.903 | 3 | 0 | 18532.0 |
+| Patch-aware candidate | 22 | 22 | 1.000 | 1.000 | 1.000 | 0 | 0 | 26579.3 |
+
+## Improvement
+
+- False positive reduction: 3
+- False negative reduction: 0
+- F1 delta: +0.097
+
+## Case Details
+
+| Case | Category | Risk | Baseline | Candidate | Baseline FP | Candidate FP |
+|---|---|---|---:|---:|---|---|
+| oss_pr_docs_only.json | docs | low | PASS | PASS | - | - |
+| oss_pr_fastapi_route_add.json | api | high | PASS | PASS | - | - |
+| oss_pr_prisma_migration.json | db | high | PASS | PASS | - | - |
+| pr_api_change.json | api | medium | PASS | PASS | - | - |
+| pr_auth_policy_no_security_docs.json | auth | high | PASS | PASS | - | - |
+| pr_comment_only_api_no_doc.json | api | medium | FAIL | PASS | api-contract-sync | - |
+| pr_db_change.json | db | medium | PASS | PASS | - | - |
+| pr_db_column_no_runbook.json | db | high | PASS | PASS | - | - |
+| pr_docs_only.json | api | medium | PASS | PASS | - | - |
+| pr_empty.json | api | medium | PASS | PASS | - | - |
+| pr_env_key_no_example.json | env | high | PASS | PASS | - | - |
+| pr_file_delete.json | api | medium | PASS | PASS | - | - |
+| pr_file_rename.json | auth | medium | PASS | PASS | - | - |
+| pr_ignore_paths.json | api | medium | PASS | PASS | - | - |
+| pr_impl_only_api_no_doc.json | api | medium | FAIL | PASS | api-contract-sync | - |
+| pr_large_100_files.json | api | medium | PASS | PASS | - | - |
+| pr_reject_ignore_blocker.json | db | medium | PASS | PASS | - | - |
+| pr_route_added_no_openapi.json | api | high | PASS | PASS | - | - |
+| pr_tests_only_api_no_doc.json | api | medium | PASS | PASS | - | - |
+| pr_workflow_secret_no_ops_docs.json | ci | high | PASS | PASS | - | - |
+| fastapi_route_schema_change.json | api | high | PASS | PASS | - | - |
+| semantic_fp_comment_only.json | api | low | FAIL | PASS | api-contract-sync | - |

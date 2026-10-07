@@ -3,6 +3,7 @@ Core engine 통합 테스트 — fixtures 기반.
 외부 I/O 없음.
 """
 import json
+from datetime import date
 from pathlib import Path
 import tempfile
 import os
@@ -11,6 +12,7 @@ import pytest
 from drift_gate.core.engine import run
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.policy import Policy
+from drift_gate.core.models.evaluation_context import EvaluationContext
 from drift_gate.core.models.result import DriftIgnoreDirective
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -259,7 +261,8 @@ class TestDriftIgnorePolicy:
                 expires="2000-01-01",
             )
         ]
-        result = run(changed_files=files, drift_ignores=ignores, policy=policy)
+        result = run(changed_files=files, drift_ignores=ignores, policy=policy,
+                     context=EvaluationContext(date(2026, 10, 7)))
 
         assert len(result.violations) == 1
         assert len(result.rejected_ignores) == 1
@@ -275,7 +278,8 @@ class TestDriftIgnorePolicy:
                 expires="2999-01-01",
             )
         ]
-        result = run(changed_files=files, drift_ignores=ignores, policy=policy)
+        result = run(changed_files=files, drift_ignores=ignores, policy=policy,
+                     context=EvaluationContext(date(2026, 10, 7)))
 
         assert result.violations == []
         assert len(result.skipped_rules) == 1

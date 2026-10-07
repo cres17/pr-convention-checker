@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import os
+import re
 from pathlib import Path
 import socket
 import sys
@@ -11,6 +13,7 @@ from PySide6.QtCore import QObject, QSettings, QTimer
 
 from drift_gate.adapters.grammar_resources import bundled_grammar_directory
 from drift_gate.desktop.resources import WEB_ROOT
+from drift_gate.desktop.package_check_contract import validate_phase, validate_phases
 
 
 def prepare_check(directory):
@@ -34,6 +37,11 @@ class PackageCheck(QObject):
         super().__init__(window)
         self.app, self.window = app, window
         self.repository, self.output = repository, Path(output)
+        challenge = os.environ.get("DRIFT_GATE_PACKAGE_CHECK_ID", "")
+        if not re.fullmatch(r"[0-9a-f]{32}", challenge):
+            raise RuntimeError("Package verification requires a fresh runner challenge")
+        self.identity = {"run_id": challenge, "repository": str(Path(repository).resolve())}
+        self.seen_run_ids = set()
         self.scan = None
         self.started = False
         self.finished = False
@@ -74,11 +82,16 @@ class PackageCheck(QObject):
         if self.window.bridge.scan_thread or self.window.bridge.progress_pool.activeThreadCount():
             QTimer.singleShot(100, self.finish)
             return
-        if self.phase != 'grammar':
+        try:
+            if self.last_scan.get('repository') != self.identity['repository']:
+                raise RuntimeError('Scan belongs to a different fixture repository')
             result = self.last_scan['result']
-            if result['result'] == 'pass' or not any(v['rule_id'] == 'offline-api-docs' for v in result['violations']):
-                self.fail(f'Installed app incorrectly passed {self.phase}')
-                return
+            run_id = validate_phase(self.phase, result, self.seen_run_ids)
+        except (RuntimeError, KeyError, TypeError) as exc:
+            self.fail(str(exc))
+            return
+        self.seen_run_ids.add(run_id)
+        if self.phase != 'grammar':
             self.hardening.append({'case': self.phase, 'result': result})
         if self.phase in ('grammar', 'signature'):
             try:
@@ -115,7 +128,20 @@ class PackageCheck(QObject):
         result = {"frozen": bool(getattr(sys, "frozen", False)), "ui": str(WEB_ROOT),
                   "ui_text": text, "bridge_ready": self.started, "network_probes": self.network,
                   "grammar_directory": str(bundled_grammar_directory()), "scan": self.scan}
+        result['verification'] = self.identity
         result['hardening_checks'] = self.hardening
+        try:
+            from drift_gate.desktop.package_git_check import run_git_controls, validate_git_controls
+            result['git_object_checks'] = run_git_controls()
+            validate_git_controls(result['git_object_checks'])
+        except Exception as exc:
+            self.fail(f'Packaged Git object controls failed: {exc}')
+            return
+        try:
+            validate_phases(result)
+        except RuntimeError as exc:
+            self.fail(str(exc))
+            return
         self.output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
         self.window.grab().save(str(self.output.with_suffix(".png")))
         self.finished = True

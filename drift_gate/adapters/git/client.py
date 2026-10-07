@@ -84,21 +84,29 @@ class GitAdapter:
             commit = _git(['merge-base', commit, 'HEAD'], self.repo_root).decode('ascii').strip()
         elif comparison_mode != 'commit':
             raise GitInputError('Unknown comparison mode')
-        self.provenance = {'requested_base': base, 'resolved_base': commit,
-            'comparison_mode': comparison_mode,
-            'head': _git(['rev-parse', 'HEAD'], self.repo_root).decode('ascii').strip(),
-            'dirty': bool(_git(['status', '--porcelain'], self.repo_root)),
-            'untracked_skipped': _git(['ls-files', '--others', '--exclude-standard', '-z'], self.repo_root).decode('utf-8', errors='replace').strip('\0').split('\0')}
-        if self.provenance['untracked_skipped'] == ['']:
-            self.provenance['untracked_skipped'] = []
-        output = _git(["diff", "--no-ext-diff", "--no-textconv", "--name-status", "-z", "--find-renames", commit, "--"], self.repo_root)
         snapshot_args = ['diff', '--no-ext-diff', '--no-textconv', '--find-renames', commit, '--']
+        # Bracket the file list, individual patches, source reads and provenance.
+        # This detects observed changes, not a transaction against arbitrary
+        # edits followed by restoration between the two snapshots.
         snapshot = _git(snapshot_args, self.repo_root)
+        state = _working_state(self.repo_root)
+        output = _git(["diff", "--no-ext-diff", "--no-textconv", "--name-status", "-z", "--find-renames", commit, "--"], self.repo_root)
         files = [_with_patch(file, commit, self.repo_root) for file in _parse_name_status(output)]
-        if _git(snapshot_args, self.repo_root) != snapshot:
+        final_state = _working_state(self.repo_root)
+        if _git(snapshot_args, self.repo_root) != snapshot or state != final_state:
             raise GitInputError('Repository changed during collection; rerun the inspection')
-        self.provenance['snapshot_sha256'] = hashlib.sha256(snapshot).hexdigest()
+        self.provenance = {'requested_base': base, 'resolved_base': commit,
+            'comparison_mode': comparison_mode, 'head': state[0].decode('ascii').strip(),
+            'dirty': bool(state[1]),
+            'untracked_skipped': state[2].decode('utf-8', errors='replace').strip('\0').split('\0') if state[2] else [],
+            'snapshot_sha256': hashlib.sha256(snapshot).hexdigest()}
         return files
+
+
+def _working_state(cwd):
+    return (_git(['rev-parse', 'HEAD'], cwd),
+            _git(['status', '--porcelain'], cwd),
+            _git(['ls-files', '--others', '--exclude-standard', '-z'], cwd))
 
 
 def repository_root(cwd=None):
@@ -148,7 +156,7 @@ def _with_patch(file: ChangedFile, diff_base: str, cwd: Path | None = None) -> C
         if len(patch.encode('utf-8')) > _max_patch_bytes():
             patch = "[large file skipped]"
     before = after = None
-    if file.path.endswith('.py') and not patch.startswith('['):
+    if file.path.endswith(('.py', '.js', '.jsx', '.ts', '.tsx')) and not patch.startswith('['):
         old_path = file.previous_path or file.path
         if file.status != 'added':
             size = _git(['cat-file', '-s', f'{diff_base}:{old_path}'], cwd)

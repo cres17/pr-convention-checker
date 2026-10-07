@@ -1,0 +1,771 @@
+{
+  "cases": [
+    {
+      "id": "R1-relative-framework-import",
+      "expected": {
+        "gate": "warn",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "violations": 0
+      },
+      "actual": {
+        "gate": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "violations": 0
+      },
+      "matched": false,
+      "result": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": []
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "response-contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "any_changed",
+                "evidence": "OpenAPI response schema comparison; changed response contracts: GET /orders",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "api-schema"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        }
+      }
+    },
+    {
+      "id": "R1-relative-model-import",
+      "expected": {
+        "gate": "warn",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "violations": 0
+      },
+      "actual": {
+        "gate": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "violations": 0
+      },
+      "matched": false,
+      "result": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": []
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "response-contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "any_changed",
+                "evidence": "OpenAPI response schema comparison; changed response contracts: GET /orders",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "api-schema"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        }
+      }
+    },
+    {
+      "id": "R1-conditional-primitive-shadow",
+      "expected": {
+        "gate": "warn",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "violations": 0
+      },
+      "actual": {
+        "gate": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "violations": 0
+      },
+      "matched": false,
+      "result": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": []
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "response-contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "any_changed",
+                "evidence": "OpenAPI response schema comparison; changed response contracts: GET /orders",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "api-schema"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        }
+      }
+    },
+    {
+      "id": "R1-unresolved-decorator",
+      "expected": {
+        "gate": "warn",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "violations": 0
+      },
+      "actual": {
+        "gate": "pass",
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "violations": 0
+      },
+      "matched": false,
+      "result": {
+        "schema_version": 3,
+        "verification": "not-applicable",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": []
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "response-contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "not-applicable",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "any_changed",
+                "evidence": "No response contract delta in the supported static subset",
+                "decision": "satisfied",
+                "verification": "not-applicable",
+                "content_mode": "api-schema"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        }
+      }
+    },
+    {
+      "id": "R2-deleted-route-ref",
+      "expected": {
+        "gate": "warn",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "violations": 0
+      },
+      "actual": {
+        "gate": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "violations": 0
+      },
+      "matched": false,
+      "result": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": []
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "response-contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "any_changed",
+                "evidence": "OpenAPI response schema comparison; changed response contracts: GET /orders",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "api-schema"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        }
+      }
+    },
+    {
+      "id": "R2-null-operation",
+      "expected": {
+        "gate": "warn",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "violations": 0
+      },
+      "actual": {
+        "gate": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "violations": 0
+      },
+      "matched": false,
+      "result": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": []
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "response-contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "any_changed",
+                "evidence": "OpenAPI response schema comparison; changed response contracts: GET /orders",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "api-schema"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        }
+      }
+    },
+    {
+      "id": "R3-known-and-unknown-contracts",
+      "expected": {
+        "gate": "fail",
+        "decision": "violated",
+        "verification": "partial",
+        "violations": 1
+      },
+      "actual": {
+        "gate": "warn",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "violations": 0
+      },
+      "matched": false,
+      "result": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": []
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "response-contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "any_changed",
+                "evidence": "OpenAPI must describe a plain response object; changed response contracts: GET /billing, GET /orders",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "api-schema"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        }
+      }
+    },
+    {
+      "id": "control-matching",
+      "expected": {
+        "gate": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "violations": 0
+      },
+      "actual": {
+        "gate": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "violations": 0
+      },
+      "matched": true,
+      "result": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": []
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "response-contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "any_changed",
+                "evidence": "OpenAPI response schema comparison; changed response contracts: GET /orders",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "api-schema"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        }
+      }
+    },
+    {
+      "id": "control-deleted-absent",
+      "expected": {
+        "gate": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "violations": 0
+      },
+      "actual": {
+        "gate": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "violations": 0
+      },
+      "matched": true,
+      "result": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": []
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "response-contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "any_changed",
+                "evidence": "OpenAPI response schema comparison; changed response contracts: GET /orders",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "api-schema"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        }
+      }
+    }
+  ],
+  "matched": 2,
+  "total": 9
+}

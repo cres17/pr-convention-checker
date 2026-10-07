@@ -1,0 +1,598 @@
+[
+  {
+    "case": "cross-file-required-optional-group-weakening",
+    "trusted": {
+      "rules": [
+        {
+          "id": "contract",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "all_changed": [
+                  "docs/api.md"
+                ],
+                "required": false
+              }
+            ],
+            "cross_file": [
+              {
+                "name": "api-sync",
+                "when_any_changed": [
+                  "src/**"
+                ],
+                "require_groups": [
+                  "API"
+                ]
+              }
+            ]
+          },
+          "severity": "blocker"
+        }
+      ]
+    },
+    "candidate": {
+      "rules": [
+        {
+          "id": "contract",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "all_changed": [
+                  "src/**"
+                ],
+                "required": false
+              }
+            ],
+            "cross_file": [
+              {
+                "name": "api-sync",
+                "when_any_changed": [
+                  "src/**"
+                ],
+                "require_groups": [
+                  "API"
+                ]
+              }
+            ]
+          },
+          "severity": "blocker"
+        }
+      ]
+    },
+    "guard_reasons": [],
+    "trusted_result": {
+      "summary": {
+        "blocker": 1,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "fail"
+      },
+      "scan_metrics": {
+        "scanned_files": 1,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 1,
+        "runtime_seconds": 0.0,
+        "analysis_notes": []
+      },
+      "result": "fail",
+      "skip": false,
+      "skip_reason": "",
+      "no_policy": false,
+      "change_types": [
+        "other"
+      ],
+      "violations": [
+        {
+          "rule_id": "contract",
+          "severity": "BLOCKER",
+          "confidence": "low",
+          "change_types": [
+            "other"
+          ],
+          "change_type": "other",
+          "message": "",
+          "trigger_files": [
+            {
+              "path": "src/api.py",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "@@ -1 +1 @@\n-a=1\n+a=2\n",
+              "semantic_signals": [],
+              "semantic_evidence": [],
+              "analysis_method": "not-analyzed",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            }
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "api-sync: API",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ],
+          "checklist": [
+            "api-sync: API \uc5c5\ub370\uc774\ud2b8"
+          ],
+          "ignored": false,
+          "change_intensity": "impl-only",
+          "change_intensities": [
+            "impl-only"
+          ],
+          "trigger_patterns": [
+            "src/**"
+          ],
+          "blast_radius": [
+            "missing requirement group: api-sync: API"
+          ],
+          "missing_docs_explanation": "",
+          "changed_contract_summary": "",
+          "docs_update_draft": "",
+          "false_positive_note": "",
+          "cross_file_relations": [
+            "api-sync"
+          ]
+        }
+      ],
+      "rule_decisions": [
+        {
+          "rule_id": "contract",
+          "severity": "BLOCKER",
+          "status": "fail",
+          "reason": "required groups are missing",
+          "matched_patterns": [
+            "src/**"
+          ],
+          "trigger_files": [
+            "src/api.py"
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "api-sync: API",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ]
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": true,
+        "fail_on_major_count": 2
+      }
+    },
+    "candidate_result": {
+      "summary": {
+        "blocker": 0,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "pass"
+      },
+      "scan_metrics": {
+        "scanned_files": 1,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 1,
+        "runtime_seconds": 0.0,
+        "analysis_notes": []
+      },
+      "result": "pass",
+      "skip": false,
+      "skip_reason": "",
+      "no_policy": false,
+      "change_types": [
+        "other"
+      ],
+      "violations": [],
+      "rule_decisions": [
+        {
+          "rule_id": "contract",
+          "severity": "BLOCKER",
+          "status": "pass",
+          "reason": "trigger matched and all required groups were satisfied",
+          "matched_patterns": [
+            "src/**"
+          ],
+          "trigger_files": [
+            "src/api.py"
+          ],
+          "satisfied_groups": [
+            {
+              "name": "api-sync: API",
+              "required": [
+                "src/**"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ],
+          "unsatisfied_groups": []
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": true,
+        "fail_on_major_count": 2
+      }
+    }
+  },
+  {
+    "case": "severity-promotion-disables-major-failure",
+    "trusted": {
+      "rules": [
+        {
+          "id": "contract",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "all_changed": [
+                  "docs/api.md"
+                ],
+                "required": true
+              }
+            ],
+            "cross_file": [
+              {
+                "name": "api-sync",
+                "when_any_changed": [
+                  "src/**"
+                ],
+                "require_groups": [
+                  "API"
+                ]
+              }
+            ]
+          },
+          "severity": "major"
+        }
+      ],
+      "gate": {
+        "fail_on_blocker": false,
+        "fail_on_major_count": 1
+      }
+    },
+    "candidate": {
+      "rules": [
+        {
+          "id": "contract",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "all_changed": [
+                  "docs/api.md"
+                ],
+                "required": true
+              }
+            ],
+            "cross_file": [
+              {
+                "name": "api-sync",
+                "when_any_changed": [
+                  "src/**"
+                ],
+                "require_groups": [
+                  "API"
+                ]
+              }
+            ]
+          },
+          "severity": "blocker"
+        }
+      ],
+      "gate": {
+        "fail_on_blocker": false,
+        "fail_on_major_count": 1
+      }
+    },
+    "guard_reasons": [],
+    "trusted_result": {
+      "summary": {
+        "blocker": 0,
+        "major": 1,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "fail"
+      },
+      "scan_metrics": {
+        "scanned_files": 1,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 1,
+        "runtime_seconds": 0.0,
+        "analysis_notes": []
+      },
+      "result": "fail",
+      "skip": false,
+      "skip_reason": "",
+      "no_policy": false,
+      "change_types": [
+        "other"
+      ],
+      "violations": [
+        {
+          "rule_id": "contract",
+          "severity": "MAJOR",
+          "confidence": "low",
+          "change_types": [
+            "other"
+          ],
+          "change_type": "other",
+          "message": "",
+          "trigger_files": [
+            {
+              "path": "src/api.py",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "@@ -1 +1 @@\n-a=1\n+a=2\n",
+              "semantic_signals": [],
+              "semantic_evidence": [],
+              "analysis_method": "not-analyzed",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            }
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "API",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            },
+            {
+              "name": "api-sync: API",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ],
+          "checklist": [
+            "API \uc5c5\ub370\uc774\ud2b8",
+            "api-sync: API \uc5c5\ub370\uc774\ud2b8"
+          ],
+          "ignored": false,
+          "change_intensity": "impl-only",
+          "change_intensities": [
+            "impl-only"
+          ],
+          "trigger_patterns": [
+            "src/**"
+          ],
+          "blast_radius": [
+            "missing requirement group: API",
+            "missing requirement group: api-sync: API"
+          ],
+          "missing_docs_explanation": "",
+          "changed_contract_summary": "",
+          "docs_update_draft": "",
+          "false_positive_note": "",
+          "cross_file_relations": [
+            "api-sync"
+          ]
+        }
+      ],
+      "rule_decisions": [
+        {
+          "rule_id": "contract",
+          "severity": "MAJOR",
+          "status": "fail",
+          "reason": "required groups are missing",
+          "matched_patterns": [
+            "src/**"
+          ],
+          "trigger_files": [
+            "src/api.py"
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "API",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            },
+            {
+              "name": "api-sync: API",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ]
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": false,
+        "fail_on_major_count": 1
+      }
+    },
+    "candidate_result": {
+      "summary": {
+        "blocker": 1,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "pass"
+      },
+      "scan_metrics": {
+        "scanned_files": 1,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 1,
+        "runtime_seconds": 0.0,
+        "analysis_notes": []
+      },
+      "result": "pass",
+      "skip": false,
+      "skip_reason": "",
+      "no_policy": false,
+      "change_types": [
+        "other"
+      ],
+      "violations": [
+        {
+          "rule_id": "contract",
+          "severity": "BLOCKER",
+          "confidence": "low",
+          "change_types": [
+            "other"
+          ],
+          "change_type": "other",
+          "message": "",
+          "trigger_files": [
+            {
+              "path": "src/api.py",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "@@ -1 +1 @@\n-a=1\n+a=2\n",
+              "semantic_signals": [],
+              "semantic_evidence": [],
+              "analysis_method": "not-analyzed",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            }
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "API",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            },
+            {
+              "name": "api-sync: API",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ],
+          "checklist": [
+            "API \uc5c5\ub370\uc774\ud2b8",
+            "api-sync: API \uc5c5\ub370\uc774\ud2b8"
+          ],
+          "ignored": false,
+          "change_intensity": "impl-only",
+          "change_intensities": [
+            "impl-only"
+          ],
+          "trigger_patterns": [
+            "src/**"
+          ],
+          "blast_radius": [
+            "missing requirement group: API",
+            "missing requirement group: api-sync: API"
+          ],
+          "missing_docs_explanation": "",
+          "changed_contract_summary": "",
+          "docs_update_draft": "",
+          "false_positive_note": "",
+          "cross_file_relations": [
+            "api-sync"
+          ]
+        }
+      ],
+      "rule_decisions": [
+        {
+          "rule_id": "contract",
+          "severity": "BLOCKER",
+          "status": "fail",
+          "reason": "required groups are missing",
+          "matched_patterns": [
+            "src/**"
+          ],
+          "trigger_files": [
+            "src/api.py"
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "API",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            },
+            {
+              "name": "api-sync: API",
+              "required": [
+                "docs/api.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ]
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": false,
+        "fail_on_major_count": 1
+      }
+    }
+  }
+]

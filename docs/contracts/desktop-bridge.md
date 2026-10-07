@@ -1,5 +1,19 @@
 # 데스크톱 편집·이벤트 계약
 
+## S1-e 서비스 결과 확장
+
+`scan_repository(..., contract_proofs=True)`는 CLI/MCP와 같은 `contract_diagnostics`를
+반환한다. 기본 false이며 현재 Qt 화면에 새 설정 스위치를 추가하지 않는다. scanned
+이벤트는 확장 필드를 보존하고 HTML/JSON 내보내기는 공통 projection을 사용한다.
+브라우저가 받은 context를 원본 검증으로 신뢰하거나 새 gate를 계산하는 기능은 없다.
+proof 실패는 서비스 예외로 끝나며 성공 scan으로 반환하지 않는다.
+
+## 논리 검사 결과 표시
+
+schema3의 그룹·규칙 decision/verification/content_mode를 선택 필드로 읽어 이전 보고서도 표시한다. 판단 보류는 조치할 항목 필터에 포함한다. 내용 미검증 안내는 문법 분석 성공 여부와 독립적으로 표시하며 auto의 파일 조건 통과를 내용 검증 완료로 표시하지 않는다. 위반과 판단 보류가 함께 있으면 상세 요약에서 각각의 수를 구분한다. confidence는 확률이 아닌 경로 매칭 구체성으로 표시한다.
+
+교차 조건 그룹에는 relation/source_files가 선택 필드로 추가된다. 상위 trigger_files와 별개로 실제 내용 검사 범위를 기록한다. auto-strict도 동일한 decision/verification 표시 계약을 사용하며 새 mode 문자열을 전체 검증 성공으로 간주하지 않는다.
+
 Qt 작업은 요청 식별값과 요청 완료 여부를 전달한다. 기준에서 파생한 현황·이력·테스트·링크 결과에는 baseline 버전·식별값과 검사 식별값을 붙인다. 화면은 다른 저장소/오래된 요청/다른 기준의 결과로 현재 편집을 덮어쓰지 않는다.
 
 문서 재추출은 기존 근거를 보존하며 새 후보를 합친다. 출처 내용이 바뀌면 재확인이 필요하다. 문서 연결 해제는 출처와 근거를 남기고 해당 문서만의 기능을 현재 집계에서 제외한다.
@@ -13,3 +27,14 @@ Python 이벤트와 TypeScript 입력 schema의 공통 사례는 `drift_gate/tes
 ## 2026-10-06 검사 입력과 설치본 검증
 
 데스크톱 검사도 정책 원문을 한 번 읽으며 규칙이 비어 있으면 오류를 표시한다. 실행 ID·정책 digest·비교 SHA·분석 상태가 내보내는 결과에 포함된다. UI의 정책 판정은 계속 core 결과를 따른다. 설치본 검증은 QWebChannel을 통해 첫8언어 검사 후 유효 varargs/kwargs 추가, src→docs rename을 별도 검사한다. 두 반례가 PASS이면 설치본 검증이 실패한다. 이 검사는 자동 실제 브리지 실행이며 사람의 실사용 평가나 모든 화면 조작을 대신하지 않는다.
+
+## 설치본 검사 단계 식별
+
+설치본 검증기는 매 실행 새로운 결과 폴더와 challenge를 사용한다. 앱은 challenge와 fixture 저장소를 응답에 포함하며 외부 검증기는 예상 값과 대조한다. grammar·signature·rename 단계는 순서와 서로 다른 실행 ID를 확인하고, 실제 추가 인자 diff와 `src/api.py → docs/api.py` 변경 상태를 확인한다. 이전 실행 또는 다른 단계 결과를 재사용하면 실패해야 한다. 이 식별은 협조하는 앱의 회귀 오류를 검출하는 계약이며 악의적인 바이너리의 자체 보고를 인증하는 보안 서명은 아니다.
+## S2-b 설치본 검증 경계
+
+진단 설치본 검사는 실제 UI·QWebChannel·오프라인 문법 분석 뒤에 동일 바이너리에서
+원본 Git 객체·CRLF 보존·명시 정책 pin·약화 거부·working tree 무시를 대조한다.
+외부 `packaging/verify_package.py`는 새 `git_object_checks` 프로토콜과 고정 fixture
+해시·subject·판정을 다시 검사한다. 이 검사는 일반 화면의 새 Git 모드 설정을 의미하지 않는다.
+진단 실행은 사용자 파일 대신 별도 임시 Git 저장소를 쓴다.

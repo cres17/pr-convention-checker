@@ -1,0 +1,593 @@
+{
+  "schema": "pre-proof-review-probes-v1",
+  "scope": "Authored deterministic counterexamples against current internal APIs; not production incidence estimates",
+  "findings": {
+    "R1_stale_plan": {
+      "input": {
+        "old_sources": [
+          {
+            "path": "src/api.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "",
+            "semantic_signals": [],
+            "semantic_evidence": [],
+            "analysis_method": "not-analyzed",
+            "analysis_reason": "",
+            "documented_env_keys": null,
+            "document_input_state": "",
+            "before_source": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/old')\ndef endpoint(): return {}\n",
+            "after_source": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/old')\ndef endpoint(): return {}\n",
+            "document_json": null,
+            "document_error": "",
+            "before_routes": null,
+            "after_routes": null,
+            "route_analysis_error": ""
+          }
+        ],
+        "new_sources": [
+          {
+            "path": "src/api.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "",
+            "semantic_signals": [],
+            "semantic_evidence": [],
+            "analysis_method": "not-analyzed",
+            "analysis_reason": "",
+            "documented_env_keys": null,
+            "document_input_state": "",
+            "before_source": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/old')\ndef endpoint(): return {}\n",
+            "after_source": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/new')\ndef endpoint(): return {}\n",
+            "document_json": null,
+            "document_error": "",
+            "before_routes": null,
+            "after_routes": null,
+            "route_analysis_error": ""
+          }
+        ]
+      },
+      "reused_plan": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+        "rule_id": "review",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "T",
+        "complete_within_selection": true,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "api",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "env",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "F",
+            "requirement": "U",
+            "truth": "T",
+            "not_applicable": true,
+            "requirement_complete": false,
+            "binding_id": "api",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "F",
+            "requirement": "U",
+            "truth": "T",
+            "not_applicable": true,
+            "requirement_complete": false,
+            "binding_id": "env",
+            "reason_codes": []
+          }
+        ],
+        "open_guards": []
+      },
+      "fresh_plan_control": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+        "rule_id": "review",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "F",
+        "complete_within_selection": true,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "api",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "env",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "T",
+            "requirement": "F",
+            "truth": "F",
+            "not_applicable": false,
+            "requirement_complete": true,
+            "binding_id": "api",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "F",
+            "requirement": "U",
+            "truth": "T",
+            "not_applicable": true,
+            "requirement_complete": false,
+            "binding_id": "env",
+            "reason_codes": []
+          }
+        ],
+        "open_guards": []
+      },
+      "reproduced": true
+    },
+    "R2_deleted_env_document": {
+      "input": {
+        "sources": [
+          {
+            "path": "src/api.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "",
+            "semantic_signals": [],
+            "semantic_evidence": [],
+            "analysis_method": "not-analyzed",
+            "analysis_reason": "",
+            "documented_env_keys": null,
+            "document_input_state": "",
+            "before_source": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('OLD')\n@app.get('/old')\ndef endpoint(): return {}\n",
+            "after_source": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('NEW')\n@app.get('/old')\ndef endpoint(): return {}\n",
+            "document_json": null,
+            "document_error": "",
+            "before_routes": null,
+            "after_routes": null,
+            "route_analysis_error": ""
+          }
+        ],
+        "document": {
+          "path": ".env.example",
+          "status": "deleted",
+          "previous_path": null,
+          "patch": "",
+          "semantic_signals": [],
+          "semantic_evidence": [],
+          "analysis_method": "not-analyzed",
+          "analysis_reason": "",
+          "documented_env_keys": [
+            "NEW"
+          ],
+          "document_input_state": "",
+          "before_source": null,
+          "after_source": null,
+          "document_json": null,
+          "document_error": "",
+          "before_routes": null,
+          "after_routes": null,
+          "route_analysis_error": ""
+        }
+      },
+      "retained_keys": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+        "rule_id": "review",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "T",
+        "complete_within_selection": true,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "api",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "env",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "F",
+            "requirement": "U",
+            "truth": "T",
+            "not_applicable": true,
+            "requirement_complete": false,
+            "binding_id": "api",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "T",
+            "requirement": "T",
+            "truth": "T",
+            "not_applicable": false,
+            "requirement_complete": true,
+            "binding_id": "env",
+            "reason_codes": []
+          }
+        ],
+        "open_guards": []
+      },
+      "explicit_missing_control": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+        "rule_id": "review",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "F",
+        "complete_within_selection": true,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "api",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "env",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "F",
+            "requirement": "U",
+            "truth": "T",
+            "not_applicable": true,
+            "requirement_complete": false,
+            "binding_id": "api",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "T",
+            "requirement": "F",
+            "truth": "F",
+            "not_applicable": false,
+            "requirement_complete": true,
+            "binding_id": "env",
+            "reason_codes": []
+          }
+        ],
+        "open_guards": []
+      },
+      "normal_document_adapter_control": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+        "rule_id": "review",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "F",
+        "complete_within_selection": true,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "api",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "env",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "F",
+            "requirement": "U",
+            "truth": "T",
+            "not_applicable": true,
+            "requirement_complete": false,
+            "binding_id": "api",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "T",
+            "requirement": "F",
+            "truth": "F",
+            "not_applicable": false,
+            "requirement_complete": true,
+            "binding_id": "env",
+            "reason_codes": []
+          }
+        ],
+        "open_guards": []
+      },
+      "reproduced": true
+    },
+    "R3_scope_serialization": {
+      "route_only_discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-route"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": true,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "state": "closed",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          }
+        ],
+        "legacy_modes": [],
+        "legacy_python_error": ""
+      },
+      "env_only_discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "env-key"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": true,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "state": "closed",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          }
+        ],
+        "legacy_modes": [],
+        "legacy_python_error": ""
+      },
+      "route_only_result": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "df2e717709230e7cf3572914f0152d7ebca48e8e6972fa6b13024cc33f45d26e",
+        "rule_id": "review",
+        "group_id": "scope",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "T",
+        "complete_within_selection": true,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [],
+        "obligations": [],
+        "open_guards": []
+      },
+      "env_only_result": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "df2e717709230e7cf3572914f0152d7ebca48e8e6972fa6b13024cc33f45d26e",
+        "rule_id": "review",
+        "group_id": "scope",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "T",
+        "complete_within_selection": true,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [],
+        "obligations": [],
+        "open_guards": []
+      },
+      "reproduced": true
+    }
+  }
+}

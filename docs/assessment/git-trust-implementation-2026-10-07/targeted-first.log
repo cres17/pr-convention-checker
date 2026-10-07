@@ -1,0 +1,56 @@
+........................................................................ [ 60%]
+..............................................F                          [100%]
+=================================== FAILURES ===================================
+______ test_package_runner_requires_matching_challenge_and_fixture[True] _______
+
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-200/test_package_runner_requires_m1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1092bd550>
+fresh = True
+
+    @pytest.mark.parametrize("fresh", [False, True])
+    def test_package_runner_requires_matching_challenge_and_fixture(tmp_path, monkeypatch, fresh):
+        from contextlib import contextmanager
+        module = verifier()
+        monkeypatch.setattr(module.sys, "platform", "darwin")
+        executable = tmp_path / "Noop.app/Contents/MacOS/Noop"
+        executable.parent.mkdir(parents=True)
+        executable.touch()
+        grammars = executable.parent.parent / "Frameworks/drift_gate/grammars"
+        grammars.mkdir(parents=True)
+        (grammars / "manifest.json").write_text('{"libraries": []}')
+        @contextmanager
+        def isolation(*args):
+            yield [], "test-only simulated isolation"
+        monkeypatch.setattr(module, "network_block", isolation)
+        monkeypatch.setattr(module, "fixture", lambda directory: directory.mkdir())
+        class OldResultProcess:
+            def __init__(self, args, **kwargs):
+                report = valid_result(module)
+                if fresh:
+                    report["verification"] = {"run_id": kwargs["env"]["DRIFT_GATE_PACKAGE_CHECK_ID"],
+                                              "repository": str(Path(args[-2]).resolve())}
+                    report["scan"]["repository"] = report["verification"]["repository"]
+                Path(args[-1]).write_text(json.dumps(report))
+            def wait(self, timeout=None):
+                return 0
+        monkeypatch.setattr(module.subprocess, "Popen", OldResultProcess)
+        if fresh:
+>           module.verify(executable, tmp_path / "fresh-output")
+
+drift_gate/tests/test_packaging.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+packaging/verify_package.py:145: in verify
+    validate_git_controls(result.get('git_object_checks', {}))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {}
+
+    def validate_git_controls(data):
+        if data.get('schema') != 'packaged-git-controls-v1' or len(data.get('checks', {})) != 6 or not all(data['checks'].values()):
+>           raise RuntimeError('Missing packaged Git object/policy controls')
+E           RuntimeError: Missing packaged Git object/policy controls
+
+drift_gate/desktop/package_git_check.py:82: RuntimeError
+=========================== short test summary info ============================
+FAILED drift_gate/tests/test_packaging.py::test_package_runner_requires_matching_challenge_and_fixture[True]
+1 failed, 118 passed in 4.95s

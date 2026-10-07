@@ -1,0 +1,20 @@
+{
+  "receipt": {
+    "files": 82,
+    "mismatches": [],
+    "dmg_matches": true
+  },
+  "unrelated_hardening_result": {
+    "accepted": true,
+    "description": "Both signature and rename replaced by initial eight-file scan"
+  },
+  "stale_report": {
+    "accepted": true,
+    "same_run_id": true,
+    "exe": "/Users/moon/Documents/pr-convention-checker/build/multi-review-confirmation/evidence/empty-app.app/Contents/MacOS/DriftGate"
+  },
+  "fresh_empty_control": {
+    "accepted": false,
+    "error": "[Errno 2] No such file or directory: '/Users/moon/Documents/pr-convention-checker/build/multi-review-confirmation/evidence/fresh-empty-control/result.json'"
+  }
+}

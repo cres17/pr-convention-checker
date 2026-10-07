@@ -1,0 +1,47 @@
+# Drift Gate Eval
+
+- Cases: 21
+- Passed: 21
+- Failed: 0
+- Precision: 1.000
+- Recall: 1.000
+- F1: 1.000
+- False positives: 0
+- False negatives: 0
+- Runtime: 0.006s
+- Files/sec: 19606.7
+
+## Category Metrics
+
+| Category | Cases | Passed | Precision | Recall | F1 | FP | FN | Files/sec |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| api | 12 | 12 | 1.000 | 1.000 | 1.000 | 0 | 0 | 24677.6 |
+| auth | 2 | 2 | 1.000 | 1.000 | 1.000 | 0 | 0 | 6433.5 |
+| ci | 1 | 1 | 1.000 | 1.000 | 1.000 | 0 | 0 | 7623.9 |
+| db | 4 | 4 | 1.000 | 1.000 | 1.000 | 0 | 0 | 5730.2 |
+| docs | 1 | 1 | 1.000 | 1.000 | 1.000 | 0 | 0 | 14457.9 |
+| env | 1 | 1 | 1.000 | 1.000 | 1.000 | 0 | 0 | 5921.5 |
+
+| Case | Result | Expected | Actual | FP | FN |
+|---|---:|---|---|---|---|
+| oss_pr_docs_only.json | PASS | - | - | - | - |
+| oss_pr_fastapi_route_add.json | PASS | api-contract-sync | api-contract-sync | - | - |
+| oss_pr_prisma_migration.json | PASS | db-migration-runbook | db-migration-runbook | - | - |
+| pr_api_change.json | PASS | api-contract-sync | api-contract-sync | - | - |
+| pr_auth_policy_no_security_docs.json | PASS | auth-security-sync | auth-security-sync | - | - |
+| pr_comment_only_api_no_doc.json | PASS | - | - | - | - |
+| pr_db_change.json | PASS | schema-migration-proof | schema-migration-proof | - | - |
+| pr_db_column_no_runbook.json | PASS | db-schema-sync | db-schema-sync | - | - |
+| pr_docs_only.json | PASS | - | - | - | - |
+| pr_empty.json | PASS | - | - | - | - |
+| pr_env_key_no_example.json | PASS | env-config-sync | env-config-sync | - | - |
+| pr_file_delete.json | PASS | api-contract-sync | api-contract-sync | - | - |
+| pr_file_rename.json | PASS | auth-refactor-doc | auth-refactor-doc | - | - |
+| pr_ignore_paths.json | PASS | - | - | - | - |
+| pr_impl_only_api_no_doc.json | PASS | - | - | - | - |
+| pr_large_100_files.json | PASS | api-contract-sync | api-contract-sync | - | - |
+| pr_reject_ignore_blocker.json | PASS | db-schema-sync | db-schema-sync | - | - |
+| pr_route_added_no_openapi.json | PASS | api-contract-sync | api-contract-sync | - | - |
+| pr_tests_only_api_no_doc.json | PASS | - | - | - | - |
+| pr_workflow_secret_no_ops_docs.json | PASS | workflow-secret-sync | workflow-secret-sync | - | - |
+| semantic_fp_comment_only.json | PASS | - | - | - | - |

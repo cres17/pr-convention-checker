@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-07",
+  "base_commit": "d262ec2faff3b98c917e3e99f7b6260cf0514ff3",
+  "candidate": "uncommitted working tree",
+  "commit_pushed": false,
+  "results": {
+    "python_passed": 953,
+    "new_regression_tests": 41,
+    "react_passed": 122,
+    "tsc": "pass",
+    "ui_build": "pass",
+    "ruff_E9_F": "pass",
+    "self_gate": "pass",
+    "fixed_cases": "21/21 FP0 FN0",
+    "generalization_supported": "24/24",
+    "generalization_boundary": "1/8",
+    "local_mac_package": "pass",
+    "remote_ci_for_this_candidate": "not run",
+    "windows_intel_for_this_candidate": "not run"
+  },
+  "package_identity": {
+    "run_id": "07f95e48afd14131b75715c1625d6664",
+    "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-offline-check-4zhqkjre/fixture"
+  },
+  "source_files": {
+    ".drift-gate.self.yml": "1905b6fb73e7bf9be9fcf3d1dbacea60edfeaf9944c577af16b936735c5cb0c9",
+    ".github/workflows/desktop-build.yml": "8186f3aafba9e6759e972f2af615bc5079c567b7be223477f7d6ac3ecbf5ec06",
+    "drift_gate/adapters/cli/runner.py": "b4ebe75357ae9be2ad9b171dec5d55275d2fd72948c306431dc2c4b908431ee9",
+    "drift_gate/adapters/git/client.py": "126311cb8ee90bc05eb1f2752944b94bbcb35bfb2563fa0e19f78260373c2ec6",
+    "drift_gate/adapters/github_action/runner.py": "8019e88b41856496919053c34fc508d0d6fe28f7b9604497f58fa024b555d00e",
+    "drift_gate/adapters/mcp/tools.py": "692b790fffa63741c0a420ccd33db6a97352f1dacd897adc7b7e3981f5ab3884",
+    "drift_gate/adapters/policy_loader.py": "e555967edfefa300ccf8cb9a25cf36f46f790100b3c6fec2d880589bc33ba6f8",
+    "drift_gate/core/patch_lines.py": "c5faef0300bdb3a9bed754e0030c82ff6d520b1daa8542829451a31d252cdb5e",
+    "drift_gate/core/policy/guard.py": "97e5ced8212099286914bdaa3a7d8d24e7f240fd10c4182b79e45c1856e29676",
+    "drift_gate/desktop/package_check.py": "4cba63ca48fed9ddcbbc9a62880bf7a376dfc159bfc4b4eac08286ed43025968",
+    "drift_gate/desktop/package_check_contract.py": "c684a3779923eadf4b894647ed8d845799676ee289d2eeb986e1cb7b33fb8db0",
+    "drift_gate/desktop/service.py": "95a450b7fb4e1c3e5e4da7216c46836325609fada0495672d5f3f3b779229ca9",
+    "drift_gate/tests/test_desktop_web.py": "765c1888cc4f7e70072ba8b95d12f4566e1fb4df0ff7991b6d7326f807c33d74",
+    "drift_gate/tests/test_multi_review_adapters.py": "5bec4ed10b45cce469543c8e63801e91c93a09cd06abd69d2b4400d1a44aa5f7",
+    "drift_gate/tests/test_multi_review_cli.py": "ac1d2ff789d0b5aa4bab2390ec7e22ef7ce7c7b511ac41f8b3bfccf42ad838bd",
+    "drift_gate/tests/test_multi_review_core.py": "c2b477d8d57aa13a7d5e316d640d08fe8e382cc18b4e471e443c4bac76df1384",
+    "drift_gate/tests/test_packaging.py": "513cc3cdf44977bd7f33d1946a9e3b5819ebe8f9fbfd454e82671263e7ec9bad",
+    "packaging/verify_package.py": "1f6b10b00551719df26d5c0df6288dbc85793d0bf3f19a92639639841bf803eb",
+    "scripts/check_self.py": "8bd4c08e2c967ed3b8fa3dcbfd4ac134ad8102ffaeed22afef3a6634debd0ccf"
+  },
+  "evidence_files": {
+    "fixed-evaluation.json": "f50309333b16ffeb7b9511983d56d022d09f18839e7d320dc357666b1c5101b0",
+    "generalization-audit.json": "9d296398ac2ac674c22489ba788bd9eaf6211abd1fd7281e0af223310e08a995",
+    "package-result.json": "33f6f343158abcf7457cb5256a55a188731da9d3ac786bc8a2b955be935ec5ba",
+    "package-verification.log": "35cac6f6c8e7fc7139e9357d1b9d308fbc57c4c8838cf463201dfbf8b335dba7",
+    "python-full.log": "8669c629a511e19fdb913fc81d5144d1d21c68de574814a262af51c9036536f3",
+    "react.log": "902fb5d97f26cf8f235a406332daf6bdfe46b3b92a974c099e683b5c43d6513b",
+    "ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "self-check-inputs.json": "975311a808ccea0e6dc178f264ad391e90e88356761e3e3d5373d5cb722ba1bf",
+    "self-check.json": "0eedd142d4cc08c5f38ba9ed933bab63129bfc0b8b6c21375571501d1805ac0d",
+    "tsc.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ui-build.log": "56e684126ec5c016f4cfb2834984601477bc2c19a566280855853d14745fb99e"
+  },
+  "local_executable_sha256": "b4502db34f5253bc13881c86f248478c856cff90456cf8e28a11da2e9610f270",
+  "excluded_user_deletions": [
+    "docs/conversation-summary-2026-10-01.md",
+    "docs/handoff-2026-10-01.md"
+  ]
+}

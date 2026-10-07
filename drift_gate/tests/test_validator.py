@@ -351,24 +351,34 @@ class TestEdgeCases:
 
 class TestGitAdapter:
 
-    def test_local_git_adapter_preserves_patch(self, monkeypatch):
+    def test_local_git_adapter_preserves_patch(self, monkeypatch, tmp_path):
         """로컬 CLI 모드도 GitHub PR API처럼 ChangedFile.patch를 채운다."""
         from drift_gate.adapters.git.client import GitAdapter
 
         calls = []
+        target = tmp_path / 'src/routes/users.ts'
+        target.parent.mkdir(parents=True)
+        target.write_text('new\n')
 
         def fake_git(args, cwd):
             calls.append(args)
+            if '--show-toplevel' in args:
+                return str(tmp_path).encode() + b'\n'
             if "rev-parse" in args:
                 return b"abc123\n"
             if "--name-status" in args:
                 return b"M\0src/routes/users.ts\0"
+            if args[0] == 'cat-file':
+                return b'4\n'
+            if args[0] == 'show':
+                return b'old\n'
             return b"diff --git a/src/routes/users.ts b/src/routes/users.ts\n@@ -1 +1 @@\n-old\n+new\n"
 
         monkeypatch.setattr("drift_gate.adapters.git.client._git", fake_git)
-        files = GitAdapter().get_changed_files("main")
+        files = GitAdapter(tmp_path).get_changed_files("main")
         assert len(files) == 1 and files[0].path == "src/routes/users.ts"
         assert files[0].patch.startswith("diff --git")
+        assert files[0].before_source == 'old\n' and files[0].after_source == 'new\n'
         assert any("abc123" in call and "-z" in call for call in calls)
         assert any(call[-2:] == ["--", "src/routes/users.ts"] for call in calls)
 
@@ -920,8 +930,13 @@ class TestChangeIntensity:
             policy=self._policy(min_change_intensity="route-contract-change"),
         )
 
-        assert len(result.violations) == 1
-        assert result.violations[0].change_intensity == "route-contract-change"
+        from drift_gate.core.classification.intensity import classify_file_intensity
+        assert classify_file_intensity(files[0]) == "route-contract-change"
+        assert result.result == "fail"
+        # A signal preserves intensity classification, but cannot replace the
+        # missing source evidence needed to prove a conditional violation.
+        assert not result.violations
+        assert result.rule_decisions[0].decision == "undetermined"
 
 
 # ─── Claude enricher fallback ─────────────────────────────────────────────────

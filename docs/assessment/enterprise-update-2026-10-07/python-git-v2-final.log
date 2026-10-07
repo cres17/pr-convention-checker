@@ -1,0 +1,2 @@
+usage: audit_auto_contracts.py [-h] [--suite SUITE] --out OUT
+audit_auto_contracts.py: error: unsupported expected outcome

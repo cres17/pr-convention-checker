@@ -34,7 +34,6 @@ from drift_gate.adapters.eval.runner import (
     EvalEngineComparison,
     write_case_reports,
 )
-from drift_gate.adapters.ast.analyzer import enrich_semantic_signals
 from drift_gate.adapters.git.client import GitAdapter, GitInputError
 from drift_gate.adapters.github.client import GitHubAdapter, parse_drift_ignores
 from drift_gate.adapters.history.store import (
@@ -46,16 +45,21 @@ from drift_gate.adapters.history.store import (
     render_history_markdown,
 )
 from drift_gate.adapters.claude.enricher import ClaudeEnricher
-from drift_gate.core.engine import run
+from drift_gate.adapters.inspection import inspect as run
 from drift_gate.core.gating.temporal import apply_temporal_gate
 from drift_gate.core.policy.loader import PolicyLoadError
-from drift_gate.adapters.policy_loader import load_policy, read_policy
+from drift_gate.core.evaluation.result_guard import ResultValidationError
+from drift_gate.adapters.policy_loader import load_policy, read_policy, require_check_policy
 from drift_gate.core.policy.validator import validate
 from drift_gate.reporters.json_reporter import JsonReporter
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.reporters.markdown import MarkdownReporter
 from drift_gate.utils.glob_matcher import match_glob
-from drift_gate.adapters.execution import identity, digest, atomic_text, atomic_json
+from drift_gate.adapters.execution import identity, atomic_text, atomic_json
+
+
+class CLIInputError(ValueError):
+    """Invalid CLI input handled by the command boundary."""
 
 
 POLICY_TEMPLATE = """# Drift Gate policy
@@ -335,18 +339,21 @@ def run_cli(argv=None):
     args = parser.parse_args(argv)
 
     inspections = {"check": _run_check, "report": _run_check,
-                   "review": _run_review, "self-audit": _run_self_audit}
+                   "review": _run_review, "self-audit": _run_self_audit,
+                   "history": _run_history}
     if args.command in inspections:
         args.execution = identity()
         try:
             inspections[args.command](args)
-        except (GitInputError, PolicyLoadError, OSError, UnicodeError) as exc:
-            error = {'execution': {**args.execution, 'status': 'input_error'},
-                     'error': {'code': 'input_error', 'message': str(exc)}}
+        except (CLIInputError, GitInputError, PolicyLoadError, OSError, UnicodeError, ResultValidationError) as exc:
+            code = 'result_validation_error' if isinstance(exc, ResultValidationError) else 'input_error'
+            error = {'execution': {**args.execution, 'status': code},
+                     'error': {'code': code, 'message': str(exc)}}
             for output in (getattr(args, 'out_json', None), getattr(args, 'out', None)):
                 if output:
                     atomic_json(output, error)
-            for output in (getattr(args, 'out_html', None), getattr(args, 'out_md', None)):
+            for output in (getattr(args, 'out_html', None), getattr(args, 'out_md', None),
+                           getattr(args, 'html', None)):
                 if output:
                     import html
                     atomic_text(output, '<pre>' + html.escape(json.dumps(error, ensure_ascii=False)) + '</pre>')
@@ -367,9 +374,6 @@ def run_cli(argv=None):
         return
     if args.command == "doctor":
         _run_doctor(args)
-        return
-    if args.command == "history":
-        _run_history(args)
         return
     if args.command == "explain":
         _run_explain(args)
@@ -615,6 +619,10 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _add_check_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument('--head', help='Immutable Git target ref; requires a separate policy ref and SHA-256 pin')
+    parser.add_argument('--trusted-policy-ref', help='Caller-selected trusted Git policy revision')
+    parser.add_argument('--trusted-policy-sha256', help='Expected raw SHA-256 of the selected trusted policy')
+    parser.add_argument('--contract-proofs', action='store_true', help='Include validated shadow proofs; policy gate is unchanged')
     parser.add_argument("--policy", default=None, help="Policy file path (explicit paths use the calling directory)")
     parser.add_argument('--comparison-mode', choices=['commit', 'merge-base'], default='commit')
     parser.add_argument("--pr", type=int, help="GitHub PR number")
@@ -724,30 +732,38 @@ def _run_check(args) -> None:
     if bool(args.pr) != bool(args.repo):
         raise GitInputError('Specify both --pr and --repo for remote PR inspection')
     root = Path.cwd() if args.pr else repository_root()
-    args.policy = str(Path(args.policy).resolve() if args.policy is not None else root / '.drift-gate.yml')
-    args.policy_source, args.loaded_policy = read_policy(args.policy)
-    if not args.loaded_policy.rules:
-        raise PolicyLoadError('check requires at least one configured rule; use init/doctor to configure a policy')
-    args.local_root = root
-    changed_files, drift_ignores = _collect_inputs(args)
-
     start = time.perf_counter()
-    policy_for_run = args.loaded_policy
-    if policy_for_run and not (args.pr and args.repo):
-        from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
-        changed_files = attach_env_documents(changed_files, policy_for_run, local_document_reader(root))
-    result = run(
-        changed_files=changed_files,
-        drift_ignores=drift_ignores,
-        policy=policy_for_run,
-    )
+    if args.head:
+        if args.pr or not args.trusted_policy_ref or not args.trusted_policy_sha256:
+            raise GitInputError('Immutable --head requires --trusted-policy-ref and --trusted-policy-sha256; PR API mode is separate')
+        from drift_gate.adapters.git.immutable import collect_git_snapshot
+        from drift_gate.adapters.inspection import inspect_snapshot
+        snapshot = collect_git_snapshot(root=root, base=args.base, head=args.head,
+            trusted_policy_ref=args.trusted_policy_ref, trusted_policy_sha256=args.trusted_policy_sha256,
+            policy_path=args.policy or '.drift-gate.yml', comparison_mode=args.comparison_mode,
+            contract_proofs=args.contract_proofs)
+        captured = snapshot.materialize()
+        args.policy_source, policy_for_run = captured['policy_source'], captured['policy']
+        changed_files = captured['changed_files']
+        result = inspect_snapshot(snapshot, execution=args.execution)
+    else:
+        if args.trusted_policy_ref or args.trusted_policy_sha256:
+            raise GitInputError('Trusted policy options require immutable --head mode')
+        args.policy = str(Path(args.policy).resolve() if args.policy is not None else root / '.drift-gate.yml')
+        args.policy_source, args.loaded_policy = read_policy(args.policy)
+        require_check_policy(args.loaded_policy)
+        args.local_root = root
+        changed_files, drift_ignores = _collect_inputs(args)
+        policy_for_run = args.loaded_policy
+        if policy_for_run and not (args.pr and args.repo):
+            from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+            changed_files = attach_env_documents(changed_files, policy_for_run, local_document_reader(root))
+        result = run(changed_files=changed_files, drift_ignores=drift_ignores, policy=policy_for_run,
+            execution=args.execution, policy_source=args.policy_source, policy_path=args.policy,
+            provenance=getattr(args, 'input_provenance', {}), contract_proofs=args.contract_proofs)
     runtime_seconds = time.perf_counter() - start
     result.scan_metrics.runtime_seconds = runtime_seconds
     policy = policy_for_run
-    result.execution = {**args.execution, 'status': 'success',
-        **getattr(args, 'input_provenance', {}), 'policy_path': args.policy,
-        'policy_sha256': digest(args.policy_source), 'warnings': policy.load_warnings,
-        'input_sha256': digest(json.dumps([f.to_dict() for f in changed_files], sort_keys=True))}
     if args.temporal_gate:
         threshold = (
             args.temporal_threshold
@@ -755,7 +771,7 @@ def _run_check(args) -> None:
         )
         records = load_records(
             args.history_path,
-            days=_parse_days(args.temporal_window),
+            days=_parse_days(args.temporal_window, option="--temporal-window"),
         )
         result = apply_temporal_gate(
             result,
@@ -1497,15 +1513,14 @@ def _load_policy_optional(path: str):
         return None
 
 
-def _parse_days(value: str) -> int:
+def _parse_days(value: str, *, option: str = "--last") -> int:
     normalized = value.strip().lower()
     if normalized.endswith("d"):
         normalized = normalized[:-1]
     try:
         days = int(normalized)
-    except ValueError:
-        print(f"ERROR: invalid --last value: {value}", file=sys.stderr)
-        sys.exit(2)
+    except ValueError as exc:
+        raise CLIInputError(f"invalid {option} value: {value}") from exc
     return max(days, 1)
 
 
@@ -1522,12 +1537,13 @@ def _collect_inputs(args) -> tuple[list, list]:
         if policy:
             directives = verify_ignores(github, args.pr, directives, policy, changed_files)
             changed_files = github.attach_env_documents(args.pr, changed_files, policy)
-        return enrich_semantic_signals(changed_files), directives
+        args.input_provenance = {"source": "github-pr", "repository": args.repo, "pr_number": args.pr}
+        return changed_files, directives
 
     git = GitAdapter(args.local_root)
     files = git.get_changed_files(args.base, comparison_mode=args.comparison_mode)
-    args.input_provenance = git.provenance
-    return enrich_semantic_signals(files), []
+    args.input_provenance = {"source": "local-git", **git.provenance}
+    return files, []
 
 
 def _git_ok(args: list[str]) -> bool:

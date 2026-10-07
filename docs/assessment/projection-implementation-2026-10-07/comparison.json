@@ -1,0 +1,56 @@
+{
+  "python-git": {
+    "cases": 14,
+    "unchanged_expected_actual_and_input_hashes": true,
+    "counts": {
+      "facts": {
+        "correct": 14,
+        "total": 14
+      },
+      "decision": {
+        "correct": 14,
+        "total": 14
+      },
+      "verification": {
+        "correct": 14,
+        "total": 14
+      },
+      "gate": {
+        "correct": 14,
+        "total": 14
+      }
+    }
+  },
+  "express-git": {
+    "cases": 8,
+    "unchanged_expected_actual_and_input_hashes": true,
+    "counts": {
+      "facts": {
+        "correct": 8,
+        "total": 8
+      },
+      "decision": {
+        "correct": 8,
+        "total": 8
+      },
+      "verification": {
+        "correct": 8,
+        "total": 8
+      },
+      "gate": {
+        "correct": 8,
+        "total": 8
+      }
+    }
+  },
+  "fixed": {
+    "passed": 21,
+    "total": 21,
+    "unchanged_decisions_and_reports_excluding_execution_timing": true
+  },
+  "entrypoints": {
+    "matched": 8,
+    "total": 8,
+    "github_transport": "simulated"
+  }
+}

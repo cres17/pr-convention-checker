@@ -1,0 +1,75 @@
+........................................................................ [  5%]
+........................................................................ [ 11%]
+........................................................................ [ 17%]
+........................................................................ [ 23%]
+........................................................................ [ 29%]
+........................................................................ [ 35%]
+........................................................................ [ 41%]
+........................................................................ [ 47%]
+........................................................................ [ 52%]
+........................................................................ [ 58%]
+........................................................................ [ 64%]
+........................................................................ [ 70%]
+........................................................................ [ 76%]
+........................................................................ [ 82%]
+........................................................................ [ 88%]
+........................................................................ [ 94%]
+...............................F.......................................  [100%]
+=================================== FAILURES ===================================
+____________ TestGitAdapter.test_local_git_adapter_preserves_patch _____________
+
+self = <drift_gate.tests.test_validator.TestGitAdapter object at 0x117fcb5d0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x307532150>
+
+    def test_local_git_adapter_preserves_patch(self, monkeypatch):
+        """로컬 CLI 모드도 GitHub PR API처럼 ChangedFile.patch를 채운다."""
+        from drift_gate.adapters.git.client import GitAdapter
+    
+        calls = []
+    
+        def fake_git(args, cwd):
+            calls.append(args)
+            if "rev-parse" in args:
+                return b"abc123\n"
+            if "--name-status" in args:
+                return b"M\0src/routes/users.ts\0"
+            return b"diff --git a/src/routes/users.ts b/src/routes/users.ts\n@@ -1 +1 @@\n-old\n+new\n"
+    
+        monkeypatch.setattr("drift_gate.adapters.git.client._git", fake_git)
+>       files = GitAdapter().get_changed_files("main")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_validator.py:369: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/git/client.py:94: in get_changed_files
+    files = [_with_patch(file, commit, self.repo_root) for file in _parse_name_status(output)]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+drift_gate/adapters/git/client.py:94: in <listcomp>
+    files = [_with_patch(file, commit, self.repo_root) for file in _parse_name_status(output)]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+file = ChangedFile(path='src/routes/users.ts', status='modified', previous_path=None, patch='', semantic_signals=[], semantic...ed', analysis_reason='', documented_env_keys=None, document_input_state='', document_error='', route_analysis_error='')
+diff_base = 'abc123', cwd = PosixPath('abc123')
+
+    def _with_patch(file: ChangedFile, diff_base: str, cwd: Path | None = None) -> ChangedFile:
+        if _is_binary_path(file.path):
+            patch = "[binary file skipped]"
+        else:
+            paths = [file.previous_path, file.path] if file.previous_path else [file.path]
+            patch = _git(["diff", "--no-ext-diff", "--no-textconv", "--find-renames", diff_base, "--", *paths], cwd).decode('utf-8', errors='replace')
+            if len(patch.encode('utf-8')) > _max_patch_bytes():
+                patch = "[large file skipped]"
+        before = after = None
+        if file.path.endswith(('.py', '.js', '.jsx', '.ts', '.tsx')) and not patch.startswith('['):
+            old_path = file.previous_path or file.path
+            if file.status != 'added':
+                size = _git(['cat-file', '-s', f'{diff_base}:{old_path}'], cwd)
+>               if int(size) <= 1_000_000:
+                   ^^^^^^^^^
+E               ValueError: invalid literal for int() with base 10: b'diff --git a/src/routes/users.ts b/src/routes/users.ts\n@@ -1 +1 @@\n-old\n+new\n'
+
+drift_gate/adapters/git/client.py:163: ValueError
+=========================== short test summary info ============================
+FAILED drift_gate/tests/test_validator.py::TestGitAdapter::test_local_git_adapter_preserves_patch
+1 failed, 1222 passed in 34.65s

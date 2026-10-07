@@ -1,0 +1,429 @@
+...................FFFF.F.........                                       [100%]
+=================================== FAILURES ===================================
+_______ test_cli_mcp_desktop_action_html_use_one_projection[True-stale] ________
+
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1076c8c50>
+capsys = <_pytest.capture.CaptureFixture object at 0x1076c9fd0>, kind = 'stale'
+enabled = True
+
+    @pytest.mark.parametrize('kind',['stale','correct','unsupported','inactive'])
+    @pytest.mark.parametrize('enabled',[False,True])
+    def test_cli_mcp_desktop_action_html_use_one_projection(tmp_path,monkeypatch,capsys,kind,enabled):
+        repository(tmp_path,kind); monkeypatch.chdir(tmp_path)
+        with pytest.raises(SystemExit):
+            run_cli(['check','--base','HEAD','--json']+(['--contract-proofs'] if enabled else []))
+        cli=json.loads(capsys.readouterr().out)
+        mcp=tools.drift_gate_check_local(mode='full',contract_proofs=enabled)
+        scan=scan_repository(tmp_path,contract_proofs=enabled); desktop=scan.result.to_dict()
+        compact=tools.drift_gate_check_local(mode='compact',token_budget=100000,contract_proofs=enabled)
+        class Remote:
+            def __init__(self,**kwargs): pass
+            def get_pr_files_and_body(self,number): return deepcopy(GitAdapter(tmp_path).get_changed_files('HEAD')),''
+            def attach_env_documents(self,number,files,policy): return attach_env_documents(files,policy,local_document_reader(tmp_path))
+        monkeypatch.setattr(action,'GitHubAdapter',Remote)
+        monkeypatch.setattr('drift_gate.adapters.github.approvals.verify_ignores',lambda *args: [])
+        env={'GITHUB_TOKEN':'fixture','REPO':'fixture/repo','PR_NUMBER':'1','GITHUB_WORKSPACE':str(tmp_path),
+             'RUNNER_TEMP':str(tmp_path),'POST_COMMENT':'false','ANTHROPIC_API_KEY':'','GITHUB_EVENT_PATH':'',
+             'GITHUB_OUTPUT':'','GITHUB_STEP_SUMMARY':'','CONTRACT_PROOFS':str(enabled).lower()}
+        for key,value in env.items(): monkeypatch.setenv(key,value)
+        action.main()
+        github=json.loads((tmp_path/'drift_gate_report.json').read_text())
+        for payload in (mcp,desktop,github,compact):
+            assert payload['result']==cli['result'] and payload['verification']==cli['verification']
+            assert payload['summary']==cli['summary']
+        for payload in (cli,mcp,desktop,github):
+>           assert payload.get('contract_diagnostics')==cli.get('contract_diagnostics')
+E           AssertionError: assert {'schema': 'c...': False, ...} == {'schema': 'c...': False, ...}
+E             
+E             Omitting 11 identical items, use -vv to show
+E             Differing items:
+E             {'entries': [{'projection': {'schema': 'contract-legacy-projection-v1', 'context_ref': 'c302047914589d63c541e0e6735f0b...07ce343a8e42503b4962e980f83c2fab73d56ce8caf9a08b', 'rule_id': 'legacy-selector-shadow', 'group_id': 'contract', ...}}]} != {'entries': [{'projection': {'schema': 'contract-legacy-projection-v1', 'context_ref': 'c302047914589d63c541e0e6735f0b...07ce343a8e42503b4962e980f83c2fab73d56ce8caf9a08b', 'rule_id': 'legacy-selector-shadow', 'group_id': 'contract', ...}}]}
+E             Use -v to get more diff
+
+/Users/moon/Documents/pr-convention-checker/drift_gate/tests/test_contract_projection.py:129: AssertionError
+----------------------------- Captured stdout call -----------------------------
+<!-- drift-gate-v1 -->
+## Drift Gate Report
+
+**No policy:** `False`
+**Schema version:** `3`
+**Skip reason:** `none`
+
+Contract proof diagnostics (shadow): legacy policy gate is unchanged.
+
+Retained 1/1 records; complete policy coverage: false.
+
+contract: U / undetermined / unverified; decision proven: false; scope complete: false
+
+**Execution:** `833a7751b2dc4cbfb9fec94b4f0a4dfc`
+
+**Result:** `FAIL`
+
+| Signal | Value |
+|---|---:|
+| Change types | `other` |
+| Scanned files | 2 |
+| Skipped ignored files | 0 |
+| Skipped binary files | 0 |
+| Skipped large files | 0 |
+| Evaluated rules | 1 |
+| Runtime | 0.002s |
+| BLOCKER | 0 |
+| MAJOR | 0 |
+| MINOR | 0 |
+| NIT | 0 |
+| Temporal warnings | 0 |
+
+**Verification:** `unverified`
+
+### Verification limits
+
+A gate PASS is not proof that contract content was verified. Legacy auto may check paths only.
+- `api`: undetermined / unverified
+  - Mixed environment/API contracts require explicit content groups
+
+**Analysis methods:** `heuristic`, `unavailable`
+Fallback and unavailable-input reasons are recorded in the JSON analysis_notes.
+
+**No verified violation recorded; some contract content remains unverified.**
+<details>
+<summary>Rule summary</summary>
+
+- Gate decision: `FAIL`
+- Violations: 0
+- Skipped rules: 0
+- Rejected ignores: 0
+- Temporal warnings: 0
+
+</details>
+----------------------------- Captured stderr call -----------------------------
+[drift-gate] 변경 파일 수집 중 (PR #1)...
+[drift-gate] 변경 파일: 1개 | drift-ignore: 0개
+[drift-gate] 정책 평가 중 (/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht4/.drift-gate.yml)...
+[drift-gate] 리포트 저장: /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht4/drift_gate_report.md | /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht4/drift_gate_report.json | /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht4/drift_gate_report.html
+[drift-gate] 결과: FAIL | BLOCKER=0 MAJOR=0 MINOR=0 NIT=0
+______ test_cli_mcp_desktop_action_html_use_one_projection[True-correct] _______
+
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107787fd0>
+capsys = <_pytest.capture.CaptureFixture object at 0x107785a90>
+kind = 'correct', enabled = True
+
+    @pytest.mark.parametrize('kind',['stale','correct','unsupported','inactive'])
+    @pytest.mark.parametrize('enabled',[False,True])
+    def test_cli_mcp_desktop_action_html_use_one_projection(tmp_path,monkeypatch,capsys,kind,enabled):
+        repository(tmp_path,kind); monkeypatch.chdir(tmp_path)
+        with pytest.raises(SystemExit):
+            run_cli(['check','--base','HEAD','--json']+(['--contract-proofs'] if enabled else []))
+        cli=json.loads(capsys.readouterr().out)
+        mcp=tools.drift_gate_check_local(mode='full',contract_proofs=enabled)
+        scan=scan_repository(tmp_path,contract_proofs=enabled); desktop=scan.result.to_dict()
+        compact=tools.drift_gate_check_local(mode='compact',token_budget=100000,contract_proofs=enabled)
+        class Remote:
+            def __init__(self,**kwargs): pass
+            def get_pr_files_and_body(self,number): return deepcopy(GitAdapter(tmp_path).get_changed_files('HEAD')),''
+            def attach_env_documents(self,number,files,policy): return attach_env_documents(files,policy,local_document_reader(tmp_path))
+        monkeypatch.setattr(action,'GitHubAdapter',Remote)
+        monkeypatch.setattr('drift_gate.adapters.github.approvals.verify_ignores',lambda *args: [])
+        env={'GITHUB_TOKEN':'fixture','REPO':'fixture/repo','PR_NUMBER':'1','GITHUB_WORKSPACE':str(tmp_path),
+             'RUNNER_TEMP':str(tmp_path),'POST_COMMENT':'false','ANTHROPIC_API_KEY':'','GITHUB_EVENT_PATH':'',
+             'GITHUB_OUTPUT':'','GITHUB_STEP_SUMMARY':'','CONTRACT_PROOFS':str(enabled).lower()}
+        for key,value in env.items(): monkeypatch.setenv(key,value)
+        action.main()
+        github=json.loads((tmp_path/'drift_gate_report.json').read_text())
+        for payload in (mcp,desktop,github,compact):
+            assert payload['result']==cli['result'] and payload['verification']==cli['verification']
+            assert payload['summary']==cli['summary']
+        for payload in (cli,mcp,desktop,github):
+>           assert payload.get('contract_diagnostics')==cli.get('contract_diagnostics')
+E           AssertionError: assert {'schema': 'c...': False, ...} == {'schema': 'c...': False, ...}
+E             
+E             Omitting 11 identical items, use -vv to show
+E             Differing items:
+E             {'entries': [{'projection': {'schema': 'contract-legacy-projection-v1', 'context_ref': 'd83d38f8ccbc8525d810411e7ef079...07ce343a8e42503b4962e980f83c2fab73d56ce8caf9a08b', 'rule_id': 'legacy-selector-shadow', 'group_id': 'contract', ...}}]} != {'entries': [{'projection': {'schema': 'contract-legacy-projection-v1', 'context_ref': 'd83d38f8ccbc8525d810411e7ef079...07ce343a8e42503b4962e980f83c2fab73d56ce8caf9a08b', 'rule_id': 'legacy-selector-shadow', 'group_id': 'contract', ...}}]}
+E             Use -v to get more diff
+
+/Users/moon/Documents/pr-convention-checker/drift_gate/tests/test_contract_projection.py:129: AssertionError
+----------------------------- Captured stdout call -----------------------------
+<!-- drift-gate-v1 -->
+## Drift Gate Report
+
+**No policy:** `False`
+**Schema version:** `3`
+**Skip reason:** `none`
+
+Contract proof diagnostics (shadow): legacy policy gate is unchanged.
+
+Retained 1/1 records; complete policy coverage: false.
+
+contract: U / undetermined / unverified; decision proven: false; scope complete: false
+
+**Execution:** `572ba1d517f949c884a6f53c7f12b691`
+
+**Result:** `FAIL`
+
+| Signal | Value |
+|---|---:|
+| Change types | `other` |
+| Scanned files | 2 |
+| Skipped ignored files | 0 |
+| Skipped binary files | 0 |
+| Skipped large files | 0 |
+| Evaluated rules | 1 |
+| Runtime | 0.002s |
+| BLOCKER | 0 |
+| MAJOR | 0 |
+| MINOR | 0 |
+| NIT | 0 |
+| Temporal warnings | 0 |
+
+**Verification:** `unverified`
+
+### Verification limits
+
+A gate PASS is not proof that contract content was verified. Legacy auto may check paths only.
+- `api`: undetermined / unverified
+  - Mixed environment/API contracts require explicit content groups
+
+**Analysis methods:** `heuristic`
+Fallback and unavailable-input reasons are recorded in the JSON analysis_notes.
+
+**No verified violation recorded; some contract content remains unverified.**
+<details>
+<summary>Rule summary</summary>
+
+- Gate decision: `FAIL`
+- Violations: 0
+- Skipped rules: 0
+- Rejected ignores: 0
+- Temporal warnings: 0
+
+</details>
+----------------------------- Captured stderr call -----------------------------
+[drift-gate] 변경 파일 수집 중 (PR #1)...
+[drift-gate] 변경 파일: 2개 | drift-ignore: 0개
+[drift-gate] 정책 평가 중 (/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht5/.drift-gate.yml)...
+[drift-gate] 리포트 저장: /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht5/drift_gate_report.md | /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht5/drift_gate_report.json | /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht5/drift_gate_report.html
+[drift-gate] 결과: FAIL | BLOCKER=0 MAJOR=0 MINOR=0 NIT=0
+____ test_cli_mcp_desktop_action_html_use_one_projection[True-unsupported] _____
+
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1077dcb10>
+capsys = <_pytest.capture.CaptureFixture object at 0x1077dfd90>
+kind = 'unsupported', enabled = True
+
+    @pytest.mark.parametrize('kind',['stale','correct','unsupported','inactive'])
+    @pytest.mark.parametrize('enabled',[False,True])
+    def test_cli_mcp_desktop_action_html_use_one_projection(tmp_path,monkeypatch,capsys,kind,enabled):
+        repository(tmp_path,kind); monkeypatch.chdir(tmp_path)
+        with pytest.raises(SystemExit):
+            run_cli(['check','--base','HEAD','--json']+(['--contract-proofs'] if enabled else []))
+        cli=json.loads(capsys.readouterr().out)
+        mcp=tools.drift_gate_check_local(mode='full',contract_proofs=enabled)
+        scan=scan_repository(tmp_path,contract_proofs=enabled); desktop=scan.result.to_dict()
+        compact=tools.drift_gate_check_local(mode='compact',token_budget=100000,contract_proofs=enabled)
+        class Remote:
+            def __init__(self,**kwargs): pass
+            def get_pr_files_and_body(self,number): return deepcopy(GitAdapter(tmp_path).get_changed_files('HEAD')),''
+            def attach_env_documents(self,number,files,policy): return attach_env_documents(files,policy,local_document_reader(tmp_path))
+        monkeypatch.setattr(action,'GitHubAdapter',Remote)
+        monkeypatch.setattr('drift_gate.adapters.github.approvals.verify_ignores',lambda *args: [])
+        env={'GITHUB_TOKEN':'fixture','REPO':'fixture/repo','PR_NUMBER':'1','GITHUB_WORKSPACE':str(tmp_path),
+             'RUNNER_TEMP':str(tmp_path),'POST_COMMENT':'false','ANTHROPIC_API_KEY':'','GITHUB_EVENT_PATH':'',
+             'GITHUB_OUTPUT':'','GITHUB_STEP_SUMMARY':'','CONTRACT_PROOFS':str(enabled).lower()}
+        for key,value in env.items(): monkeypatch.setenv(key,value)
+        action.main()
+        github=json.loads((tmp_path/'drift_gate_report.json').read_text())
+        for payload in (mcp,desktop,github,compact):
+            assert payload['result']==cli['result'] and payload['verification']==cli['verification']
+            assert payload['summary']==cli['summary']
+        for payload in (cli,mcp,desktop,github):
+>           assert payload.get('contract_diagnostics')==cli.get('contract_diagnostics')
+E           AssertionError: assert {'schema': 'c...': False, ...} == {'schema': 'c...': False, ...}
+E             
+E             Omitting 11 identical items, use -vv to show
+E             Differing items:
+E             {'entries': [{'projection': {'schema': 'contract-legacy-projection-v1', 'context_ref': 'dd3479d2834370585519a62de15457...07ce343a8e42503b4962e980f83c2fab73d56ce8caf9a08b', 'rule_id': 'legacy-selector-shadow', 'group_id': 'contract', ...}}]} != {'entries': [{'projection': {'schema': 'contract-legacy-projection-v1', 'context_ref': 'dd3479d2834370585519a62de15457...07ce343a8e42503b4962e980f83c2fab73d56ce8caf9a08b', 'rule_id': 'legacy-selector-shadow', 'group_id': 'contract', ...}}]}
+E             Use -v to get more diff
+
+/Users/moon/Documents/pr-convention-checker/drift_gate/tests/test_contract_projection.py:129: AssertionError
+----------------------------- Captured stdout call -----------------------------
+<!-- drift-gate-v1 -->
+## Drift Gate Report
+
+**No policy:** `False`
+**Schema version:** `3`
+**Skip reason:** `none`
+
+Contract proof diagnostics (shadow): legacy policy gate is unchanged.
+
+Retained 1/1 records; complete policy coverage: false.
+
+contract: U / undetermined / unverified; decision proven: false; scope complete: false
+
+**Execution:** `ab6dcd5f351748b6bd0d9cac1832bd70`
+
+**Result:** `FAIL`
+
+| Signal | Value |
+|---|---:|
+| Change types | `other` |
+| Scanned files | 2 |
+| Skipped ignored files | 0 |
+| Skipped binary files | 0 |
+| Skipped large files | 0 |
+| Evaluated rules | 1 |
+| Runtime | 0.002s |
+| BLOCKER | 0 |
+| MAJOR | 0 |
+| MINOR | 0 |
+| NIT | 0 |
+| Temporal warnings | 0 |
+
+**Verification:** `unverified`
+
+### Verification limits
+
+A gate PASS is not proof that contract content was verified. Legacy auto may check paths only.
+- `api`: undetermined / unverified
+  - Mixed environment/API contracts require explicit content groups
+
+**Analysis methods:** `heuristic`, `unavailable`
+Fallback and unavailable-input reasons are recorded in the JSON analysis_notes.
+
+**No verified violation recorded; some contract content remains unverified.**
+<details>
+<summary>Rule summary</summary>
+
+- Gate decision: `FAIL`
+- Violations: 0
+- Skipped rules: 0
+- Rejected ignores: 0
+- Temporal warnings: 0
+
+</details>
+----------------------------- Captured stderr call -----------------------------
+[drift-gate] 변경 파일 수집 중 (PR #1)...
+[drift-gate] 변경 파일: 1개 | drift-ignore: 0개
+[drift-gate] 정책 평가 중 (/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht6/.drift-gate.yml)...
+[drift-gate] 리포트 저장: /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht6/drift_gate_report.md | /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht6/drift_gate_report.json | /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht6/drift_gate_report.html
+[drift-gate] 결과: FAIL | BLOCKER=0 MAJOR=0 MINOR=0 NIT=0
+______ test_cli_mcp_desktop_action_html_use_one_projection[True-inactive] ______
+
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10781ff10>
+capsys = <_pytest.capture.CaptureFixture object at 0x10781d190>
+kind = 'inactive', enabled = True
+
+    @pytest.mark.parametrize('kind',['stale','correct','unsupported','inactive'])
+    @pytest.mark.parametrize('enabled',[False,True])
+    def test_cli_mcp_desktop_action_html_use_one_projection(tmp_path,monkeypatch,capsys,kind,enabled):
+        repository(tmp_path,kind); monkeypatch.chdir(tmp_path)
+        with pytest.raises(SystemExit):
+            run_cli(['check','--base','HEAD','--json']+(['--contract-proofs'] if enabled else []))
+        cli=json.loads(capsys.readouterr().out)
+        mcp=tools.drift_gate_check_local(mode='full',contract_proofs=enabled)
+        scan=scan_repository(tmp_path,contract_proofs=enabled); desktop=scan.result.to_dict()
+        compact=tools.drift_gate_check_local(mode='compact',token_budget=100000,contract_proofs=enabled)
+        class Remote:
+            def __init__(self,**kwargs): pass
+            def get_pr_files_and_body(self,number): return deepcopy(GitAdapter(tmp_path).get_changed_files('HEAD')),''
+            def attach_env_documents(self,number,files,policy): return attach_env_documents(files,policy,local_document_reader(tmp_path))
+        monkeypatch.setattr(action,'GitHubAdapter',Remote)
+        monkeypatch.setattr('drift_gate.adapters.github.approvals.verify_ignores',lambda *args: [])
+        env={'GITHUB_TOKEN':'fixture','REPO':'fixture/repo','PR_NUMBER':'1','GITHUB_WORKSPACE':str(tmp_path),
+             'RUNNER_TEMP':str(tmp_path),'POST_COMMENT':'false','ANTHROPIC_API_KEY':'','GITHUB_EVENT_PATH':'',
+             'GITHUB_OUTPUT':'','GITHUB_STEP_SUMMARY':'','CONTRACT_PROOFS':str(enabled).lower()}
+        for key,value in env.items(): monkeypatch.setenv(key,value)
+        action.main()
+        github=json.loads((tmp_path/'drift_gate_report.json').read_text())
+        for payload in (mcp,desktop,github,compact):
+            assert payload['result']==cli['result'] and payload['verification']==cli['verification']
+            assert payload['summary']==cli['summary']
+        for payload in (cli,mcp,desktop,github):
+>           assert payload.get('contract_diagnostics')==cli.get('contract_diagnostics')
+E           AssertionError: assert {'schema': 'c...': False, ...} == {'schema': 'c...': False, ...}
+E             
+E             Omitting 11 identical items, use -vv to show
+E             Differing items:
+E             {'entries': [{'projection': {'schema': 'contract-legacy-projection-v1', 'context_ref': '18484046367040f2c4b7eaf06f786f...07ce343a8e42503b4962e980f83c2fab73d56ce8caf9a08b', 'rule_id': 'legacy-selector-shadow', 'group_id': 'contract', ...}}]} != {'entries': [{'projection': {'schema': 'contract-legacy-projection-v1', 'context_ref': '18484046367040f2c4b7eaf06f786f...07ce343a8e42503b4962e980f83c2fab73d56ce8caf9a08b', 'rule_id': 'legacy-selector-shadow', 'group_id': 'contract', ...}}]}
+E             Use -v to get more diff
+
+/Users/moon/Documents/pr-convention-checker/drift_gate/tests/test_contract_projection.py:129: AssertionError
+----------------------------- Captured stdout call -----------------------------
+<!-- drift-gate-v1 -->
+## Drift Gate Report
+
+**No policy:** `False`
+**Schema version:** `3`
+**Skip reason:** `none`
+
+Contract proof diagnostics (shadow): legacy policy gate is unchanged.
+
+Retained 1/1 records; complete policy coverage: false.
+
+contract: T / not-applicable / not-applicable; decision proven: true; scope complete: true
+
+**Execution:** `181e7581794148cc8942dd0e3f173c2d`
+
+**Result:** `FAIL`
+
+| Signal | Value |
+|---|---:|
+| Change types | `other` |
+| Scanned files | 2 |
+| Skipped ignored files | 0 |
+| Skipped binary files | 0 |
+| Skipped large files | 0 |
+| Evaluated rules | 1 |
+| Runtime | 0.002s |
+| BLOCKER | 0 |
+| MAJOR | 0 |
+| MINOR | 0 |
+| NIT | 0 |
+| Temporal warnings | 0 |
+
+**Verification:** `unverified`
+
+### Verification limits
+
+A gate PASS is not proof that contract content was verified. Legacy auto may check paths only.
+- `api`: undetermined / unverified
+  - Mixed environment/API contracts require explicit content groups
+
+**Analysis methods:** `grammar+heuristic`, `unavailable`
+Fallback and unavailable-input reasons are recorded in the JSON analysis_notes.
+
+**No verified violation recorded; some contract content remains unverified.**
+<details>
+<summary>Rule summary</summary>
+
+- Gate decision: `FAIL`
+- Violations: 0
+- Skipped rules: 0
+- Rejected ignores: 0
+- Temporal warnings: 0
+
+</details>
+----------------------------- Captured stderr call -----------------------------
+[drift-gate] 변경 파일 수집 중 (PR #1)...
+[drift-gate] 변경 파일: 1개 | drift-ignore: 0개
+[drift-gate] 정책 평가 중 (/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht7/.drift-gate.yml)...
+[drift-gate] 리포트 저장: /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht7/drift_gate_report.md | /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht7/drift_gate_report.json | /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-186/test_cli_mcp_desktop_action_ht7/drift_gate_report.html
+[drift-gate] 결과: FAIL | BLOCKER=0 MAJOR=0 MINOR=0 NIT=0
+_____ test_reporters_and_json_projection_terminate_on_invalid_diagnostics ______
+
+    def test_reporters_and_json_projection_terminate_on_invalid_diagnostics():
+>       result=EvaluationResult(); result.contract_diagnostics={}
+               ^^^^^^^^^^^^^^^^^^
+E       TypeError: EvaluationResult.__init__() missing 5 required positional arguments: 'change_types', 'violations', 'skipped_rules', 'rejected_ignores', and 'gate'
+
+drift_gate/tests/test_contract_projection.py:160: TypeError
+=========================== short test summary info ============================
+FAILED drift_gate/tests/test_contract_projection.py::test_cli_mcp_desktop_action_html_use_one_projection[True-stale]
+FAILED drift_gate/tests/test_contract_projection.py::test_cli_mcp_desktop_action_html_use_one_projection[True-correct]
+FAILED drift_gate/tests/test_contract_projection.py::test_cli_mcp_desktop_action_html_use_one_projection[True-unsupported]
+FAILED drift_gate/tests/test_contract_projection.py::test_cli_mcp_desktop_action_html_use_one_projection[True-inactive]
+FAILED drift_gate/tests/test_contract_projection.py::test_reporters_and_json_projection_terminate_on_invalid_diagnostics
+5 failed, 29 passed in 3.78s

@@ -113,15 +113,42 @@ class GitHubAdapter:
         if before["head"]["sha"] != after["head"]["sha"] or before["base"]["sha"] != after["base"]["sha"]:
             raise RuntimeError("PR changed while collecting files; retry against a stable revision")
         self._snapshot_head = after["head"]["sha"]
+        self._snapshot_base = after["base"]["sha"]
         return files, after.get("body") or ""
 
     def attach_env_documents(self, pr_number, files, policy):
         from drift_gate.adapters.docs.content import attach_env_documents
-        if not any(group.content == "env-keys" for rule in policy.rules for group in rule.require.groups):
+        from drift_gate.utils.glob_matcher import matches_any
+        groups = [group for rule in policy.rules for group in rule.require.groups]
+        explicit = any(group.content in {'env-keys', 'api-schema', 'api-routes', 'auto-strict'} for group in groups)
+        structured_legacy = any(group.content == 'auto' and any(
+            file.path.lower().endswith(('.json', '.yaml', '.yml'))
+            and matches_any(file.path, group.any_changed or group.all_changed) for file in files) for group in groups)
+        if not (explicit or structured_legacy):
             return files
         head = getattr(self, "_snapshot_head", None)
         if not head:
             head = self._get(f"{self._base}/repos/{self._repo}/pulls/{pr_number}")["head"]["sha"]
+        if any(group.content in {"api-schema", "env-keys", "auto-strict", "api-routes"} for rule in policy.rules for group in rule.require.groups):
+            from dataclasses import replace
+            base = getattr(self, "_snapshot_base", None)
+            if base:
+                try:
+                    comparison = self._get(f"{self._base}/repos/{self._repo}/compare/{quote(base, safe='')}...{quote(head, safe='')}")
+                    base = comparison["merge_base_commit"]["sha"]
+                except (OSError, ValueError, RuntimeError, KeyError, TypeError):
+                    base = None
+            snapshots = []
+            for file in files:
+                if file.path.endswith(('.py', '.js', '.jsx', '.ts', '.tsx')):
+                    try:
+                        before = self.get_file_text(file.previous_path or file.path, base) if base and file.status != "added" else None
+                        after = self.get_file_text(file.path, head) if file.status != "deleted" else None
+                    except (OSError, ValueError, RuntimeError):
+                        before = after = None
+                    file = replace(file, before_source=before, after_source=after)
+                snapshots.append(file)
+            files = snapshots
         return attach_env_documents(files, policy, lambda path: self.get_file_text(path, head))
 
     # ── Internal ──────────────────────────────────────────────────────────

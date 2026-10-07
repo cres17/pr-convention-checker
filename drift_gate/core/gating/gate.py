@@ -28,5 +28,12 @@ def decide_gate(result: EvaluationResult) -> str:
     else:
         decision = "pass"
 
+    if any(g.decision == "undetermined" or g.verification == "partial"
+           for d in result.rule_decisions for g in d.unsatisfied_groups + d.satisfied_groups):
+        if gate.on_unverified == "fail":
+            decision = "fail"
+        elif decision == "pass":
+            decision = "warn"
+
     result.result = decision
     return decision

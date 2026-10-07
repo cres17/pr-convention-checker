@@ -1,0 +1,151 @@
+{
+  "schema": "detailed-design-verification-v1",
+  "recorded_at": "2026-10-07T07:46:46.306391+00:00",
+  "head": "d262ec2faff3b98c917e3e99f7b6260cf0514ff3",
+  "branch": "ver2",
+  "state": "uncommitted-working-tree",
+  "preserved_previous_receipt_entries": {
+    "source_hashes": {
+      "checked": 117,
+      "mismatches": []
+    },
+    "regression_hashes": {
+      "checked": 2,
+      "mismatches": []
+    },
+    "frozen_input_hashes": {
+      "checked": 5,
+      "mismatches": []
+    },
+    "evidence_hashes": {
+      "checked": 23,
+      "mismatches": []
+    },
+    "document_hashes": {
+      "checked": 3,
+      "mismatches": []
+    }
+  },
+  "local_links": [
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "drift-gate-enterprise-logical-design-2026-10-07.md",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../review/drift-gate-enterprise-update-2026-10-07.md",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../../drift_gate/core/evaluation/content_result.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../../drift_gate/core/evaluation/routes.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../../drift_gate/core/evaluation/environment.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../../drift_gate/core/evaluation/evaluator.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../../drift_gate/core/models/changed_file.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../../drift_gate/adapters/inspection.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../../drift_gate/core/evaluation/analysis_session.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../../drift_gate/core/models/result.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../../drift_gate/adapters/execution.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../assessment/enterprise-detailed-design-2026-10-07/check_design.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "drift-gate-enterprise-logical-design-2026-10-07.md",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../review/drift-gate-enterprise-update-2026-10-07.md",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../assessment/enterprise-detailed-design-2026-10-07/model-check-final.json",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../assessment/enterprise-detailed-design-2026-10-07/check_design.py",
+      "exists": true
+    },
+    {
+      "document": "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "target": "../assessment/enterprise-detailed-design-2026-10-07/verification.json",
+      "exists": true
+    },
+    {
+      "document": "docs/assessment/enterprise-detailed-design-2026-10-07/README.md",
+      "target": "../../architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "exists": true
+    }
+  ],
+  "final_model_counts": {
+    "interval_states": 729,
+    "concrete_route_worlds": 4096,
+    "nested_circuit_assignments": 297,
+    "concrete_circuit_worlds": 704,
+    "proof_witness_completions": 692,
+    "scope_guard_cases": 6,
+    "publication_event_sequences": 46656,
+    "rejected_alternative_counterexamples": 4
+  },
+  "model_hash_matches": true,
+  "existing_evidence_overwrite_rejected": true,
+  "artifact_hashes": {
+    "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md": "2e953393909891a689f15d0bc1d0626f33ff0546c2344f66f5420e1ead57af0f",
+    "docs/assessment/enterprise-detailed-design-2026-10-07/README.md": "b267632021dc4a1600daac4c97131a6cfc1ed8e178ef25416eafc553554a6f4f",
+    "docs/assessment/enterprise-detailed-design-2026-10-07/check_design.py": "4c6aef822839abb82806e3f72320aa14976e35b46fa62483ee322d15fd98f96d",
+    "docs/assessment/enterprise-detailed-design-2026-10-07/validate_artifacts.py": "5f53a649dce730453d92cd0abaef772d3da29d778dbc8f40fd212552cdba5289",
+    "docs/assessment/enterprise-detailed-design-2026-10-07/model-check.json": "266e2b4d0ced376acfd8d8d4ab32a31df090785b30d4b529017c337f6f129a2f",
+    "docs/assessment/enterprise-detailed-design-2026-10-07/model-check-final.json": "b2d9bd3b1e67f54e7e0667c62ac352b0cf988a109cec23468860aeb60312ee1f",
+    "docs/assessment/enterprise-update-2026-10-07/verification.json": "ad1dcfe1dc8a43c6baaee76703823e8332acb11a2a92d67a2cbc45b0628d2dad"
+  },
+  "failures": [],
+  "passed": true,
+  "scope": "Design document, reference model and evidence preservation only.",
+  "unverified": [
+    "Production full test suite not rerun in this design turn.",
+    "No production parser/scope soundness or real concurrent publisher verification.",
+    "No latest remote CI, installed artifact, OS matrix or independent human holdout."
+  ],
+  "git_mutations": "No commit or push in this design turn."
+}

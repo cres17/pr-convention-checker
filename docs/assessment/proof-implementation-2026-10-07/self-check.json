@@ -1,0 +1,1138 @@
+{
+  "schema_version": 3,
+  "verification": "unverified",
+  "summary": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 0,
+    "nit": 0,
+    "gate_decision": "pass",
+    "undetermined_rules": 0,
+    "unverified_rules": 5
+  },
+  "scan_metrics": {
+    "scanned_files": 90,
+    "skipped_ignored_files": 25,
+    "skipped_binary_files": 0,
+    "skipped_large_files": 1,
+    "evaluated_rules": 5,
+    "runtime_seconds": 0.2923093330464326,
+    "analysis_notes": [
+      {
+        "path": ".drift-gate.self.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": ".github/workflows/ci.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": ".github/workflows/desktop-build.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "desktop-ui/src/App.test.tsx",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "desktop-ui/src/App.tsx",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "desktop-ui/src/bridge.ts",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "desktop-ui/src/eventSchema.ts",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "desktop-ui/src/features/review/AnalysisNotice.test.tsx",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "desktop-ui/src/features/review/AnalysisNotice.tsx",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "desktop-ui/src/features/review/violations.ts",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "desktop-ui/src/presentation.tsx",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "docs/contracts/desktop-bridge.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/contracts/gate-and-inputs.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/contracts/mcp-transport.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/conversation-summary-2026-10-01.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/handoff-2026-10-01.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/ops/drift-gate-self-check.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "drift_gate/adapters/cli/runner.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/adapters/docs/content.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/adapters/git/client.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/github/client.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/github_action/runner.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/mcp/tools.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/adapters/policy_loader.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/engine.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/evaluation/contracts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/evaluator.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/gating/gate.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/models/changed_file.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/models/policy.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/models/result.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/patch_lines.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/policy/guard.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/policy/schema.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/policy/validator.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/desktop/package_check.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/desktop/service.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/reporters/html.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/reporters/markdown.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_desktop_web.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_development_regressions.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_engine.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_packaging.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/tests/test_validator.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "packaging/verify_package.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "pyproject.toml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "scripts/check_self.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/ast/express_routes.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/docs/structured.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/inspection.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/__init__.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/delta.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/discovery.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/input_identity.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/planner.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/profiles.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/analysis_session.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/api_schema.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/content_result.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/contract_proof.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/environment.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/obligations.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/openapi_document.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/propositions.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/result_guard.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/routes.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/static_routers.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/models/evaluation_context.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/models/facts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/models/proof.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/desktop/package_check_contract.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/contracts/auto-contracts-v2.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "drift_gate/tests/contracts/express-contracts-v1.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "drift_gate/tests/contracts/logical-rereview.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "drift_gate/tests/test_auto_development.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_contract_followup.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_enterprise_correctness.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_express_contracts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_fastapi_oracle.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_logical_contracts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_logical_entrypoints.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_logical_rereview.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_multi_review_adapters.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_multi_review_cli.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_multi_review_core.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_obligation_planner.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_profile_discovery.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_proof_evaluation.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_typed_facts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "scripts/audit_auto_contracts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      }
+    ]
+  },
+  "result": "pass",
+  "skip": false,
+  "skip_reason": "",
+  "no_policy": false,
+  "change_types": [
+    "auth-permission",
+    "cli-public-interface",
+    "other",
+    "workflow-ci"
+  ],
+  "violations": [],
+  "rule_decisions": [
+    {
+      "rule_id": "self-engine-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "decision": "satisfied",
+      "verification": "unverified",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "drift_gate/adapters/*.py",
+        "drift_gate/adapters/ast/**",
+        "drift_gate/adapters/docs/**",
+        "drift_gate/core/**",
+        "drift_gate/reporters/**"
+      ],
+      "trigger_files": [
+        "drift_gate/adapters/docs/content.py",
+        "drift_gate/adapters/policy_loader.py",
+        "drift_gate/core/engine.py",
+        "drift_gate/core/evaluation/contracts.py",
+        "drift_gate/core/evaluation/evaluator.py",
+        "drift_gate/core/gating/gate.py",
+        "drift_gate/core/models/changed_file.py",
+        "drift_gate/core/models/policy.py",
+        "drift_gate/core/models/result.py",
+        "drift_gate/core/patch_lines.py",
+        "drift_gate/core/policy/guard.py",
+        "drift_gate/core/policy/schema.py",
+        "drift_gate/core/policy/validator.py",
+        "drift_gate/reporters/html.py",
+        "drift_gate/reporters/markdown.py",
+        "drift_gate/adapters/ast/express_routes.py",
+        "drift_gate/adapters/docs/structured.py",
+        "drift_gate/adapters/inspection.py",
+        "drift_gate/core/contracts/__init__.py",
+        "drift_gate/core/contracts/delta.py",
+        "drift_gate/core/contracts/discovery.py",
+        "drift_gate/core/contracts/input_identity.py",
+        "drift_gate/core/contracts/planner.py",
+        "drift_gate/core/contracts/profiles.py",
+        "drift_gate/core/evaluation/analysis_session.py",
+        "drift_gate/core/evaluation/api_schema.py",
+        "drift_gate/core/evaluation/content_result.py",
+        "drift_gate/core/evaluation/contract_proof.py",
+        "drift_gate/core/evaluation/environment.py",
+        "drift_gate/core/evaluation/obligations.py",
+        "drift_gate/core/evaluation/openapi_document.py",
+        "drift_gate/core/evaluation/propositions.py",
+        "drift_gate/core/evaluation/result_guard.py",
+        "drift_gate/core/evaluation/routes.py",
+        "drift_gate/core/evaluation/static_routers.py",
+        "drift_gate/core/models/evaluation_context.py",
+        "drift_gate/core/models/facts.py",
+        "drift_gate/core/models/proof.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Gate and analysis contract",
+          "required": [
+            "docs/contracts/gate-and-inputs.md"
+          ],
+          "type": "all_changed",
+          "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+          "decision": "satisfied",
+          "verification": "unverified",
+          "content_mode": "auto"
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-cli-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "decision": "satisfied",
+      "verification": "unverified",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "drift_gate/adapters/cli/**",
+        "drift_gate/adapters/git/**",
+        "drift_gate/adapters/github/**",
+        "drift_gate/adapters/github_action/**",
+        "pyproject.toml"
+      ],
+      "trigger_files": [
+        "drift_gate/adapters/cli/runner.py",
+        "drift_gate/adapters/git/client.py",
+        "drift_gate/adapters/github/client.py",
+        "drift_gate/adapters/github_action/runner.py",
+        "pyproject.toml"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Input and CLI contract",
+          "required": [
+            "docs/contracts/gate-and-inputs.md"
+          ],
+          "type": "all_changed",
+          "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+          "decision": "satisfied",
+          "verification": "unverified",
+          "content_mode": "auto"
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-mcp-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "decision": "satisfied",
+      "verification": "unverified",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "drift_gate/adapters/mcp/**"
+      ],
+      "trigger_files": [
+        "drift_gate/adapters/mcp/tools.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "MCP transport contract",
+          "required": [
+            "docs/contracts/mcp-transport.md"
+          ],
+          "type": "all_changed",
+          "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+          "decision": "satisfied",
+          "verification": "unverified",
+          "content_mode": "auto"
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-progress-contract",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "decision": "not-applicable",
+      "verification": "not-applicable",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-ui-bridge-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "decision": "satisfied",
+      "verification": "unverified",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "desktop-ui/src/**",
+        "drift_gate/desktop/package_check.py",
+        "drift_gate/desktop/package_check_contract.py",
+        "drift_gate/desktop/service.py"
+      ],
+      "trigger_files": [
+        "desktop-ui/src/App.tsx",
+        "desktop-ui/src/bridge.ts",
+        "desktop-ui/src/eventSchema.ts",
+        "desktop-ui/src/features/review/AnalysisNotice.tsx",
+        "desktop-ui/src/features/review/violations.ts",
+        "desktop-ui/src/presentation.tsx",
+        "drift_gate/desktop/package_check.py",
+        "drift_gate/desktop/service.py",
+        "drift_gate/desktop/package_check_contract.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Desktop event and editing contract",
+          "required": [
+            "docs/contracts/desktop-bridge.md"
+          ],
+          "type": "all_changed",
+          "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+          "decision": "satisfied",
+          "verification": "unverified",
+          "content_mode": "auto"
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-package-operations",
+      "severity": "MAJOR",
+      "status": "pass",
+      "decision": "satisfied",
+      "verification": "unverified",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        ".drift-gate.self.yml",
+        ".github/workflows/**",
+        "packaging/**",
+        "scripts/check_self.py"
+      ],
+      "trigger_files": [
+        ".drift-gate.self.yml",
+        ".github/workflows/ci.yml",
+        ".github/workflows/desktop-build.yml",
+        "packaging/verify_package.py",
+        "scripts/check_self.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Self-check and package operations",
+          "required": [
+            "docs/ops/drift-gate-self-check.md"
+          ],
+          "type": "all_changed",
+          "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+          "decision": "satisfied",
+          "verification": "unverified",
+          "content_mode": "auto"
+        }
+      ],
+      "unsatisfied_groups": []
+    }
+  ],
+  "skipped_rules": [],
+  "rejected_ignores": [],
+  "ignore_audit": [],
+  "temporal_warnings": [],
+  "gate": {
+    "fail_on_blocker": true,
+    "fail_on_major_count": 1,
+    "on_unverified": "fail"
+  },
+  "execution": {
+    "schema_version": 2,
+    "run_id": "f944218fca474b6db1be2ea2f038401c",
+    "started_at": "2026-10-07T11:57:48.127903+00:00",
+    "status": "success",
+    "requested_base": "HEAD",
+    "resolved_base": "d262ec2faff3b98c917e3e99f7b6260cf0514ff3",
+    "comparison_mode": "commit",
+    "head": "d262ec2faff3b98c917e3e99f7b6260cf0514ff3",
+    "dirty": true,
+    "untracked_skipped": [
+      "docs/architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "docs/architecture/drift-gate-enterprise-logical-design-2026-10-07.md",
+      "docs/assessment/auto-panel-2026-10-07/README.md",
+      "docs/assessment/auto-panel-2026-10-07/counterfactual-result.json",
+      "docs/assessment/auto-panel-2026-10-07/counterfactual.py",
+      "docs/assessment/auto-panel-2026-10-07/generalization.json",
+      "docs/assessment/auto-panel-2026-10-07/relation-result.json",
+      "docs/assessment/auto-panel-2026-10-07/reproduce_relation.py",
+      "docs/assessment/auto-panel-2026-10-07/verification.json",
+      "docs/assessment/auto-update-2026-10-07/README.md",
+      "docs/assessment/auto-update-2026-10-07/adapter-focused.log",
+      "docs/assessment/auto-update-2026-10-07/docs-check.json",
+      "docs/assessment/auto-update-2026-10-07/evaluation-v2-final.json",
+      "docs/assessment/auto-update-2026-10-07/evaluation-v2-first.json",
+      "docs/assessment/auto-update-2026-10-07/evaluation-v2-verified.json",
+      "docs/assessment/auto-update-2026-10-07/express-v1-final.json",
+      "docs/assessment/auto-update-2026-10-07/express-v1-first.json",
+      "docs/assessment/auto-update-2026-10-07/express-v1-verified.json",
+      "docs/assessment/auto-update-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/auto-update-2026-10-07/focused-verified.log",
+      "docs/assessment/auto-update-2026-10-07/focused.log",
+      "docs/assessment/auto-update-2026-10-07/generalization-v1-final.json",
+      "docs/assessment/auto-update-2026-10-07/generalization-v1-verified.json",
+      "docs/assessment/auto-update-2026-10-07/generalization-v1.json",
+      "docs/assessment/auto-update-2026-10-07/python-complete.log",
+      "docs/assessment/auto-update-2026-10-07/python-final-verified.log",
+      "docs/assessment/auto-update-2026-10-07/python-final.log",
+      "docs/assessment/auto-update-2026-10-07/python-full.log",
+      "docs/assessment/auto-update-2026-10-07/python-verified.log",
+      "docs/assessment/auto-update-2026-10-07/react.log",
+      "docs/assessment/auto-update-2026-10-07/relation-after.json",
+      "docs/assessment/auto-update-2026-10-07/ruff-complete.log",
+      "docs/assessment/auto-update-2026-10-07/ruff-final-verified.log",
+      "docs/assessment/auto-update-2026-10-07/ruff-final.log",
+      "docs/assessment/auto-update-2026-10-07/ruff-verified.log",
+      "docs/assessment/auto-update-2026-10-07/ruff.log",
+      "docs/assessment/auto-update-2026-10-07/self-check-complete-inputs.json",
+      "docs/assessment/auto-update-2026-10-07/self-check-complete.json",
+      "docs/assessment/auto-update-2026-10-07/self-check-complete.log",
+      "docs/assessment/auto-update-2026-10-07/self-check-final-inputs.json",
+      "docs/assessment/auto-update-2026-10-07/self-check-final.json",
+      "docs/assessment/auto-update-2026-10-07/self-check-final.log",
+      "docs/assessment/auto-update-2026-10-07/self-check-inputs.json",
+      "docs/assessment/auto-update-2026-10-07/self-check.json",
+      "docs/assessment/auto-update-2026-10-07/self-check.log",
+      "docs/assessment/auto-update-2026-10-07/tsc.log",
+      "docs/assessment/auto-update-2026-10-07/verification-final.json",
+      "docs/assessment/auto-update-2026-10-07/verification.json",
+      "docs/assessment/enterprise-detailed-design-2026-10-07/README.md",
+      "docs/assessment/enterprise-detailed-design-2026-10-07/check_design.py",
+      "docs/assessment/enterprise-detailed-design-2026-10-07/model-check-final.json",
+      "docs/assessment/enterprise-detailed-design-2026-10-07/model-check.json",
+      "docs/assessment/enterprise-detailed-design-2026-10-07/validate_artifacts.py",
+      "docs/assessment/enterprise-detailed-design-2026-10-07/verification.json",
+      "docs/assessment/enterprise-logical-design-2026-10-07/README.md",
+      "docs/assessment/enterprise-logical-design-2026-10-07/check_model.py",
+      "docs/assessment/enterprise-logical-design-2026-10-07/model-check.json",
+      "docs/assessment/enterprise-logical-design-2026-10-07/reproduce.py",
+      "docs/assessment/enterprise-logical-design-2026-10-07/results-final.json",
+      "docs/assessment/enterprise-logical-design-2026-10-07/results.json",
+      "docs/assessment/enterprise-logical-design-2026-10-07/validation.json",
+      "docs/assessment/enterprise-update-2026-10-07/docs-check.json",
+      "docs/assessment/enterprise-update-2026-10-07/express-git-v1-final.json",
+      "docs/assessment/enterprise-update-2026-10-07/express-git-v1-final.log",
+      "docs/assessment/enterprise-update-2026-10-07/express-git-v1-verified.json",
+      "docs/assessment/enterprise-update-2026-10-07/express-git-v1-verified.log",
+      "docs/assessment/enterprise-update-2026-10-07/express-git-v1.log",
+      "docs/assessment/enterprise-update-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/enterprise-update-2026-10-07/fixed-evaluation.log",
+      "docs/assessment/enterprise-update-2026-10-07/probe-assertions.json",
+      "docs/assessment/enterprise-update-2026-10-07/probes-after.json",
+      "docs/assessment/enterprise-update-2026-10-07/probes-after.log",
+      "docs/assessment/enterprise-update-2026-10-07/python-final.log",
+      "docs/assessment/enterprise-update-2026-10-07/python-full.log",
+      "docs/assessment/enterprise-update-2026-10-07/python-git-v2-final.log",
+      "docs/assessment/enterprise-update-2026-10-07/python-git-v2-verified.json",
+      "docs/assessment/enterprise-update-2026-10-07/python-git-v2-verified.log",
+      "docs/assessment/enterprise-update-2026-10-07/python-git-v2.log",
+      "docs/assessment/enterprise-update-2026-10-07/react.log",
+      "docs/assessment/enterprise-update-2026-10-07/regression-exploratory-before.log",
+      "docs/assessment/enterprise-update-2026-10-07/ruff.log",
+      "docs/assessment/enterprise-update-2026-10-07/self-check-inputs.json",
+      "docs/assessment/enterprise-update-2026-10-07/self-check.json",
+      "docs/assessment/enterprise-update-2026-10-07/tsc.log",
+      "docs/assessment/enterprise-update-2026-10-07/verification.json",
+      "docs/assessment/logical-contracts-2026-10-07/README.md",
+      "docs/assessment/logical-contracts-2026-10-07/cases.json",
+      "docs/assessment/logical-contracts-2026-10-07/docs-check.json",
+      "docs/assessment/logical-contracts-2026-10-07/final-reproduction.json",
+      "docs/assessment/logical-contracts-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/logical-contracts-2026-10-07/generalization-audit.json",
+      "docs/assessment/logical-contracts-2026-10-07/python-full.log",
+      "docs/assessment/logical-contracts-2026-10-07/react.log",
+      "docs/assessment/logical-contracts-2026-10-07/reproduce.py",
+      "docs/assessment/logical-contracts-2026-10-07/results.json",
+      "docs/assessment/logical-contracts-2026-10-07/ruff.log",
+      "docs/assessment/logical-contracts-2026-10-07/self-check-inputs.json",
+      "docs/assessment/logical-contracts-2026-10-07/self-check.json",
+      "docs/assessment/logical-contracts-2026-10-07/self-check.log",
+      "docs/assessment/logical-contracts-2026-10-07/tsc.log",
+      "docs/assessment/logical-contracts-2026-10-07/ui-build.log",
+      "docs/assessment/logical-contracts-2026-10-07/unknown-contract.html",
+      "docs/assessment/logical-contracts-2026-10-07/verification.json",
+      "docs/assessment/logical-followup-2026-10-07/README.md",
+      "docs/assessment/logical-followup-2026-10-07/after-seed1.json",
+      "docs/assessment/logical-followup-2026-10-07/after-seed2.json",
+      "docs/assessment/logical-followup-2026-10-07/after-seed3.json",
+      "docs/assessment/logical-followup-2026-10-07/after-seed4.json",
+      "docs/assessment/logical-followup-2026-10-07/after-seed5.json",
+      "docs/assessment/logical-followup-2026-10-07/after-seed6.json",
+      "docs/assessment/logical-followup-2026-10-07/after-seed7.json",
+      "docs/assessment/logical-followup-2026-10-07/after-seed8.json",
+      "docs/assessment/logical-followup-2026-10-07/benchmark-after.json",
+      "docs/assessment/logical-followup-2026-10-07/benchmark-before.json",
+      "docs/assessment/logical-followup-2026-10-07/benchmark-final.json",
+      "docs/assessment/logical-followup-2026-10-07/benchmark.py",
+      "docs/assessment/logical-followup-2026-10-07/capacity-results.json",
+      "docs/assessment/logical-followup-2026-10-07/capacity_benchmark.py",
+      "docs/assessment/logical-followup-2026-10-07/docs-check.json",
+      "docs/assessment/logical-followup-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/logical-followup-2026-10-07/focused-final.log",
+      "docs/assessment/logical-followup-2026-10-07/generalization-audit.json",
+      "docs/assessment/logical-followup-2026-10-07/metamorphic-results.json",
+      "docs/assessment/logical-followup-2026-10-07/oracle-results.json",
+      "docs/assessment/logical-followup-2026-10-07/oracle.py",
+      "docs/assessment/logical-followup-2026-10-07/python-full.log",
+      "docs/assessment/logical-followup-2026-10-07/ruff.log",
+      "docs/assessment/logical-followup-2026-10-07/self-check-inputs.json",
+      "docs/assessment/logical-followup-2026-10-07/self-check.json",
+      "docs/assessment/logical-followup-2026-10-07/self-check.log",
+      "docs/assessment/logical-followup-2026-10-07/verification.json",
+      "docs/assessment/logical-rereview-2026-10-07/README.md",
+      "docs/assessment/logical-rereview-2026-10-07/after-seed1.json",
+      "docs/assessment/logical-rereview-2026-10-07/after-seed2.json",
+      "docs/assessment/logical-rereview-2026-10-07/after-seed3.json",
+      "docs/assessment/logical-rereview-2026-10-07/after-seed4.json",
+      "docs/assessment/logical-rereview-2026-10-07/after-seed5.json",
+      "docs/assessment/logical-rereview-2026-10-07/after-seed6.json",
+      "docs/assessment/logical-rereview-2026-10-07/after-seed7.json",
+      "docs/assessment/logical-rereview-2026-10-07/after-seed8.json",
+      "docs/assessment/logical-rereview-2026-10-07/before-seed1.json",
+      "docs/assessment/logical-rereview-2026-10-07/before-seed2.json",
+      "docs/assessment/logical-rereview-2026-10-07/before-seed3.json",
+      "docs/assessment/logical-rereview-2026-10-07/before-seed4.json",
+      "docs/assessment/logical-rereview-2026-10-07/before-seed5.json",
+      "docs/assessment/logical-rereview-2026-10-07/before-seed6.json",
+      "docs/assessment/logical-rereview-2026-10-07/before-seed7.json",
+      "docs/assessment/logical-rereview-2026-10-07/before-seed8.json",
+      "docs/assessment/logical-rereview-2026-10-07/before-source-hashes.json",
+      "docs/assessment/logical-rereview-2026-10-07/cases.json",
+      "docs/assessment/logical-rereview-2026-10-07/docs-check.json",
+      "docs/assessment/logical-rereview-2026-10-07/final-cases.json",
+      "docs/assessment/logical-rereview-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/logical-rereview-2026-10-07/generalization-audit.json",
+      "docs/assessment/logical-rereview-2026-10-07/metamorphic-results.json",
+      "docs/assessment/logical-rereview-2026-10-07/metamorphic.py",
+      "docs/assessment/logical-rereview-2026-10-07/python-full.log",
+      "docs/assessment/logical-rereview-2026-10-07/react.log",
+      "docs/assessment/logical-rereview-2026-10-07/reproduce.py",
+      "docs/assessment/logical-rereview-2026-10-07/ruff.log",
+      "docs/assessment/logical-rereview-2026-10-07/self-check-inputs.json",
+      "docs/assessment/logical-rereview-2026-10-07/self-check.json",
+      "docs/assessment/logical-rereview-2026-10-07/self-check.log",
+      "docs/assessment/logical-rereview-2026-10-07/threshold-before.json",
+      "docs/assessment/logical-rereview-2026-10-07/threshold-case.json",
+      "docs/assessment/logical-rereview-2026-10-07/tsc.log",
+      "docs/assessment/logical-rereview-2026-10-07/verification.json",
+      "docs/assessment/multi-review-2026-10-06/adapters-results.json",
+      "docs/assessment/multi-review-2026-10-06/adapters_probe.py",
+      "docs/assessment/multi-review-2026-10-06/analysis/reproduce.py",
+      "docs/assessment/multi-review-2026-10-06/analysis/results.json",
+      "docs/assessment/multi-review-2026-10-06/evidence/fresh-download-results.json",
+      "docs/assessment/multi-review-2026-10-06/evidence/fresh-installed-result.json",
+      "docs/assessment/multi-review-2026-10-06/evidence/recheck_download.py",
+      "docs/assessment/multi-review-2026-10-06/evidence/reproduce.py",
+      "docs/assessment/multi-review-2026-10-06/evidence/results.json",
+      "docs/assessment/multi-review-2026-10-06/evidence/saved-phase-results.json",
+      "docs/assessment/multi-review-2026-10-06/evidence/validate_saved_phases.py",
+      "docs/assessment/multi-review-2026-10-06/manifest.json",
+      "docs/assessment/multi-review-2026-10-06/policy/cli-result.json",
+      "docs/assessment/multi-review-2026-10-06/policy/probe.py",
+      "docs/assessment/multi-review-2026-10-06/policy/probe_cli.py",
+      "docs/assessment/multi-review-2026-10-06/policy/results.json",
+      "docs/assessment/multi-review-2026-10-06/policy/temporal-result.html",
+      "docs/assessment/multi-review-2026-10-06/policy/temporal-result.json",
+      "docs/assessment/multi-review-2026-10-06/remote-status.json",
+      "docs/assessment/multi-review-2026-10-06/targeted-tests.log",
+      "docs/assessment/multi-review-fixes-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/multi-review-fixes-2026-10-07/generalization-audit.json",
+      "docs/assessment/multi-review-fixes-2026-10-07/package-result.json",
+      "docs/assessment/multi-review-fixes-2026-10-07/package-verification.log",
+      "docs/assessment/multi-review-fixes-2026-10-07/python-full.log",
+      "docs/assessment/multi-review-fixes-2026-10-07/react.log",
+      "docs/assessment/multi-review-fixes-2026-10-07/ruff.log",
+      "docs/assessment/multi-review-fixes-2026-10-07/self-check-inputs.json",
+      "docs/assessment/multi-review-fixes-2026-10-07/self-check.json",
+      "docs/assessment/multi-review-fixes-2026-10-07/tsc.log",
+      "docs/assessment/multi-review-fixes-2026-10-07/ui-build.log",
+      "docs/assessment/multi-review-fixes-2026-10-07/verification.json",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/before.json",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/compatibility-first.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/express-git.json",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/express-git.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/fixed-evaluation.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/planner-first.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/planner-git-examples-final.json",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/planner-git-examples-final.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/planner-git-examples.json",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/planner-git-examples.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/probe_planner.py",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/python-full.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/python-git.json",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/python-git.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/ruff-final.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/ruff.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/self-check-inputs.json",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/self-check.json",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/targeted-complete.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/targeted-final.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/targeted-first.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/targeted-verified.log",
+      "docs/assessment/obligation-planner-implementation-2026-10-07/verification.json",
+      "docs/assessment/pre-proof-review-2026-10-07/before.json",
+      "docs/assessment/pre-proof-review-2026-10-07/comparison.json",
+      "docs/assessment/pre-proof-review-2026-10-07/diff-check.log",
+      "docs/assessment/pre-proof-review-2026-10-07/express-git.json",
+      "docs/assessment/pre-proof-review-2026-10-07/express-git.log",
+      "docs/assessment/pre-proof-review-2026-10-07/findings.json",
+      "docs/assessment/pre-proof-review-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/pre-proof-review-2026-10-07/fixed-evaluation.log",
+      "docs/assessment/pre-proof-review-2026-10-07/planner-git-examples.json",
+      "docs/assessment/pre-proof-review-2026-10-07/planner-git-examples.log",
+      "docs/assessment/pre-proof-review-2026-10-07/python-full.log",
+      "docs/assessment/pre-proof-review-2026-10-07/python-git.json",
+      "docs/assessment/pre-proof-review-2026-10-07/python-git.log",
+      "docs/assessment/pre-proof-review-2026-10-07/react.log",
+      "docs/assessment/pre-proof-review-2026-10-07/reproduce.log",
+      "docs/assessment/pre-proof-review-2026-10-07/reproduce.py",
+      "docs/assessment/pre-proof-review-2026-10-07/ruff.log",
+      "docs/assessment/pre-proof-review-2026-10-07/self-check-inputs.json",
+      "docs/assessment/pre-proof-review-2026-10-07/self-check.json",
+      "docs/assessment/pre-proof-review-2026-10-07/ui-build.log",
+      "docs/assessment/pre-proof-review-2026-10-07/verification.json",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/before.json",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/discovery-examples.json",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/express-git.json",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/express-git.log",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/fixed-evaluation.log",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/probe_discovery.py",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/python-full.log",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/python-git.json",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/python-git.log",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/ruff.log",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/self-check-inputs.json",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/self-check.json",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/targeted-final.log",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/targeted-first.log",
+      "docs/assessment/profile-discovery-implementation-2026-10-07/verification.json",
+      "docs/assessment/proof-implementation-2026-10-07/before.json",
+      "docs/assessment/proof-implementation-2026-10-07/comparison.json",
+      "docs/assessment/proof-implementation-2026-10-07/express-git.json",
+      "docs/assessment/proof-implementation-2026-10-07/express-git.log",
+      "docs/assessment/proof-implementation-2026-10-07/fix-controls.json",
+      "docs/assessment/proof-implementation-2026-10-07/fix-controls.log",
+      "docs/assessment/proof-implementation-2026-10-07/fixed-evaluation-first.log",
+      "docs/assessment/proof-implementation-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/proof-implementation-2026-10-07/fixed-evaluation.log",
+      "docs/assessment/proof-implementation-2026-10-07/fixed-evaluation.md",
+      "docs/assessment/proof-implementation-2026-10-07/planner-git.json",
+      "docs/assessment/proof-implementation-2026-10-07/planner-git.log",
+      "docs/assessment/proof-implementation-2026-10-07/probe_fixes.py",
+      "docs/assessment/proof-implementation-2026-10-07/probe_proof.py",
+      "docs/assessment/proof-implementation-2026-10-07/proof-git.json",
+      "docs/assessment/proof-implementation-2026-10-07/proof-git.log",
+      "docs/assessment/proof-implementation-2026-10-07/python-full.log",
+      "docs/assessment/proof-implementation-2026-10-07/python-git.json",
+      "docs/assessment/proof-implementation-2026-10-07/python-git.log",
+      "docs/assessment/proof-implementation-2026-10-07/react.log",
+      "docs/assessment/proof-implementation-2026-10-07/ruff-first.log",
+      "docs/assessment/proof-implementation-2026-10-07/ruff.log",
+      "docs/assessment/proof-implementation-2026-10-07/targeted-first.log",
+      "docs/assessment/proof-implementation-2026-10-07/targeted.log",
+      "docs/assessment/typed-facts-implementation-2026-10-07/before.json",
+      "docs/assessment/typed-facts-implementation-2026-10-07/express-git.json",
+      "docs/assessment/typed-facts-implementation-2026-10-07/express-git.log",
+      "docs/assessment/typed-facts-implementation-2026-10-07/fixed-evaluation.json",
+      "docs/assessment/typed-facts-implementation-2026-10-07/fixed-evaluation.log",
+      "docs/assessment/typed-facts-implementation-2026-10-07/python-final.log",
+      "docs/assessment/typed-facts-implementation-2026-10-07/python-full.log",
+      "docs/assessment/typed-facts-implementation-2026-10-07/python-git.json",
+      "docs/assessment/typed-facts-implementation-2026-10-07/python-git.log",
+      "docs/assessment/typed-facts-implementation-2026-10-07/ruff.log",
+      "docs/assessment/typed-facts-implementation-2026-10-07/self-check-inputs.json",
+      "docs/assessment/typed-facts-implementation-2026-10-07/self-check.json",
+      "docs/assessment/typed-facts-implementation-2026-10-07/targeted-first.log",
+      "docs/assessment/typed-facts-implementation-2026-10-07/verification.json",
+      "docs/review/drift-gate-auto-panel-2026-10-07.md",
+      "docs/review/drift-gate-auto-update-2026-10-07.md",
+      "docs/review/drift-gate-enterprise-update-2026-10-07.md",
+      "docs/review/drift-gate-logical-development-2026-10-07.md",
+      "docs/review/drift-gate-logical-followup-2026-10-07.md",
+      "docs/review/drift-gate-logical-rereview-2026-10-07.md",
+      "docs/review/drift-gate-logical-update-2026-10-07.md",
+      "docs/review/drift-gate-multi-review-2026-10-06.md",
+      "docs/review/drift-gate-multi-review-fixes-2026-10-07.md",
+      "docs/review/drift-gate-obligation-planner-implementation-2026-10-07.md",
+      "docs/review/drift-gate-pre-proof-review-2026-10-07.md",
+      "docs/review/drift-gate-profile-discovery-implementation-2026-10-07.md",
+      "docs/review/drift-gate-typed-facts-implementation-2026-10-07.md",
+      "drift_gate/adapters/ast/express_routes.py",
+      "drift_gate/adapters/docs/structured.py",
+      "drift_gate/adapters/inspection.py",
+      "drift_gate/core/contracts/__init__.py",
+      "drift_gate/core/contracts/delta.py",
+      "drift_gate/core/contracts/discovery.py",
+      "drift_gate/core/contracts/input_identity.py",
+      "drift_gate/core/contracts/planner.py",
+      "drift_gate/core/contracts/profiles.py",
+      "drift_gate/core/evaluation/analysis_session.py",
+      "drift_gate/core/evaluation/api_schema.py",
+      "drift_gate/core/evaluation/content_result.py",
+      "drift_gate/core/evaluation/contract_proof.py",
+      "drift_gate/core/evaluation/environment.py",
+      "drift_gate/core/evaluation/obligations.py",
+      "drift_gate/core/evaluation/openapi_document.py",
+      "drift_gate/core/evaluation/propositions.py",
+      "drift_gate/core/evaluation/result_guard.py",
+      "drift_gate/core/evaluation/routes.py",
+      "drift_gate/core/evaluation/static_routers.py",
+      "drift_gate/core/models/evaluation_context.py",
+      "drift_gate/core/models/facts.py",
+      "drift_gate/core/models/proof.py",
+      "drift_gate/desktop/package_check_contract.py",
+      "drift_gate/tests/contracts/auto-contracts-v2.json",
+      "drift_gate/tests/contracts/express-contracts-v1.json",
+      "drift_gate/tests/contracts/logical-rereview.json",
+      "drift_gate/tests/test_auto_development.py",
+      "drift_gate/tests/test_contract_followup.py",
+      "drift_gate/tests/test_enterprise_correctness.py",
+      "drift_gate/tests/test_express_contracts.py",
+      "drift_gate/tests/test_fastapi_oracle.py",
+      "drift_gate/tests/test_logical_contracts.py",
+      "drift_gate/tests/test_logical_entrypoints.py",
+      "drift_gate/tests/test_logical_rereview.py",
+      "drift_gate/tests/test_multi_review_adapters.py",
+      "drift_gate/tests/test_multi_review_cli.py",
+      "drift_gate/tests/test_multi_review_core.py",
+      "drift_gate/tests/test_obligation_planner.py",
+      "drift_gate/tests/test_profile_discovery.py",
+      "drift_gate/tests/test_proof_evaluation.py",
+      "drift_gate/tests/test_typed_facts.py",
+      "scripts/audit_auto_contracts.py"
+    ],
+    "snapshot_sha256": "1d935af132fad4485f122fc48a2df976a1e119cb4c51995288bbb67af1ee0ace",
+    "explicit_untracked_added": [
+      "drift_gate/adapters/ast/express_routes.py",
+      "drift_gate/adapters/docs/structured.py",
+      "drift_gate/adapters/inspection.py",
+      "drift_gate/core/contracts/__init__.py",
+      "drift_gate/core/contracts/delta.py",
+      "drift_gate/core/contracts/discovery.py",
+      "drift_gate/core/contracts/input_identity.py",
+      "drift_gate/core/contracts/planner.py",
+      "drift_gate/core/contracts/profiles.py",
+      "drift_gate/core/evaluation/analysis_session.py",
+      "drift_gate/core/evaluation/api_schema.py",
+      "drift_gate/core/evaluation/content_result.py",
+      "drift_gate/core/evaluation/contract_proof.py",
+      "drift_gate/core/evaluation/environment.py",
+      "drift_gate/core/evaluation/obligations.py",
+      "drift_gate/core/evaluation/openapi_document.py",
+      "drift_gate/core/evaluation/propositions.py",
+      "drift_gate/core/evaluation/result_guard.py",
+      "drift_gate/core/evaluation/routes.py",
+      "drift_gate/core/evaluation/static_routers.py",
+      "drift_gate/core/models/evaluation_context.py",
+      "drift_gate/core/models/facts.py",
+      "drift_gate/core/models/proof.py",
+      "drift_gate/desktop/package_check_contract.py",
+      "drift_gate/tests/contracts/auto-contracts-v2.json",
+      "drift_gate/tests/contracts/express-contracts-v1.json",
+      "drift_gate/tests/contracts/logical-rereview.json",
+      "drift_gate/tests/test_auto_development.py",
+      "drift_gate/tests/test_contract_followup.py",
+      "drift_gate/tests/test_enterprise_correctness.py",
+      "drift_gate/tests/test_express_contracts.py",
+      "drift_gate/tests/test_fastapi_oracle.py",
+      "drift_gate/tests/test_logical_contracts.py",
+      "drift_gate/tests/test_logical_entrypoints.py",
+      "drift_gate/tests/test_logical_rereview.py",
+      "drift_gate/tests/test_multi_review_adapters.py",
+      "drift_gate/tests/test_multi_review_cli.py",
+      "drift_gate/tests/test_multi_review_core.py",
+      "drift_gate/tests/test_obligation_planner.py",
+      "drift_gate/tests/test_profile_discovery.py",
+      "drift_gate/tests/test_proof_evaluation.py",
+      "drift_gate/tests/test_typed_facts.py",
+      "scripts/audit_auto_contracts.py"
+    ],
+    "policy_sha256": "1905b6fb73e7bf9be9fcf3d1dbacea60edfeaf9944c577af16b936735c5cb0c9",
+    "policy_digest_kind": "source",
+    "warnings": [],
+    "evaluation_context": {
+      "evaluated_on": "2026-10-07",
+      "date_basis": "UTC"
+    },
+    "input_digest_version": 3,
+    "input_sha256": "662b35777d37380487d895f152d076b166fb37ca8b6212fb8ca4f564c8a59fc8",
+    "policy_path": "/Users/moon/Documents/pr-convention-checker/.drift-gate.self.yml",
+    "untracked_skipped_count": 354
+  }
+}

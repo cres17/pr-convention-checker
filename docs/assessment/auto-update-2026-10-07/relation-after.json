@@ -1,0 +1,367 @@
+{
+  "policy": {
+    "rules": [
+      {
+        "id": "conditional-schema",
+        "severity": "blocker",
+        "when": {
+          "any_changed": [
+            "src/config.py"
+          ]
+        },
+        "require": {
+          "groups": [
+            {
+              "name": "API",
+              "required": false,
+              "all_changed": [
+                "openapi.json"
+              ],
+              "content": "api-schema"
+            }
+          ],
+          "cross_file": [
+            {
+              "name": "API changed",
+              "when_any_changed": [
+                "src/api.py"
+              ],
+              "require_groups": [
+                "API"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "path": "src/config.py",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "-x = 1\n+x = 2\n",
+      "semantic_signals": [],
+      "semantic_evidence": [],
+      "analysis_method": "not-analyzed",
+      "analysis_reason": "",
+      "documented_env_keys": null,
+      "document_input_state": "",
+      "before_source": "x = 1\n",
+      "after_source": "x = 2\n"
+    },
+    {
+      "path": "src/api.py",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "-from fastapi import FastAPI\n-from pydantic import BaseModel\n-app = FastAPI()\n-class Order(BaseModel):\n-    id: int\n-    label: str\n-@app.get('/orders', response_model=Order)\n-def orders():\n-    return {}\n-\n+from fastapi import FastAPI\n+from pydantic import BaseModel\n+app = FastAPI()\n+class Order(BaseModel):\n+    id: int\n+@app.get('/orders', response_model=Order)\n+def orders():\n+    return {}\n+",
+      "semantic_signals": [],
+      "semantic_evidence": [],
+      "analysis_method": "not-analyzed",
+      "analysis_reason": "",
+      "documented_env_keys": null,
+      "document_input_state": "",
+      "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n    label: str\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n",
+      "after_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n"
+    },
+    {
+      "path": "openapi.json",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "+contract updated\n",
+      "semantic_signals": [],
+      "semantic_evidence": [],
+      "analysis_method": "not-analyzed",
+      "analysis_reason": "",
+      "documented_env_keys": null,
+      "document_input_state": "",
+      "before_source": null,
+      "after_source": "{\"openapi\": \"3.1.0\", \"paths\": {\"/orders\": {\"get\": {\"responses\": {\"200\": {\"content\": {\"application/json\": {\"schema\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}, \"label\": {\"type\": \"string\"}}, \"required\": [\"id\", \"label\"]}}}}}}}}}"
+    }
+  ],
+  "relation_result": {
+    "schema_version": 3,
+    "verification": "verified",
+    "summary": {
+      "blocker": 1,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "fail",
+      "undetermined_rules": 0,
+      "unverified_rules": 0
+    },
+    "scan_metrics": {
+      "scanned_files": 3,
+      "skipped_ignored_files": 0,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 1,
+      "runtime_seconds": 0.0,
+      "analysis_notes": []
+    },
+    "result": "fail",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "env-config",
+      "other"
+    ],
+    "violations": [
+      {
+        "rule_id": "conditional-schema",
+        "severity": "BLOCKER",
+        "confidence": "high",
+        "confidence_basis": "path-specificity; not a probability of correctness",
+        "change_types": [
+          "env-config"
+        ],
+        "change_type": "env-config",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": "src/config.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "-x = 1\n+x = 2\n",
+            "semantic_signals": [],
+            "semantic_evidence": [],
+            "analysis_method": "not-analyzed",
+            "analysis_reason": "",
+            "documented_env_keys": null,
+            "document_input_state": ""
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "API changed: API",
+            "required": [
+              "openapi.json"
+            ],
+            "type": "all_changed",
+            "evidence": "GET /orders: response schema differs; changed response contracts: GET /orders",
+            "decision": "violated",
+            "verification": "verified",
+            "content_mode": "api-schema",
+            "source_files": [
+              "src/api.py"
+            ],
+            "relation": "API changed"
+          }
+        ],
+        "checklist": [
+          "API changed: API \uc5c5\ub370\uc774\ud2b8"
+        ],
+        "ignored": false,
+        "change_intensity": "impl-only",
+        "change_intensities": [
+          "impl-only"
+        ],
+        "trigger_patterns": [
+          "src/config.py"
+        ],
+        "blast_radius": [
+          ".env.example consumers",
+          "deployment configuration",
+          "missing requirement group: API changed: API",
+          "runtime operators"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": [
+          "API changed"
+        ]
+      }
+    ],
+    "rule_decisions": [
+      {
+        "rule_id": "conditional-schema",
+        "severity": "BLOCKER",
+        "status": "fail",
+        "decision": "violated",
+        "verification": "verified",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "src/config.py"
+        ],
+        "trigger_files": [
+          "src/config.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "API changed: API",
+            "required": [
+              "openapi.json"
+            ],
+            "type": "all_changed",
+            "evidence": "GET /orders: response schema differs; changed response contracts: GET /orders",
+            "decision": "violated",
+            "verification": "verified",
+            "content_mode": "api-schema",
+            "source_files": [
+              "src/api.py"
+            ],
+            "relation": "API changed"
+          }
+        ]
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 2,
+      "on_unverified": "fail"
+    }
+  },
+  "direct_trigger_control": {
+    "schema_version": 3,
+    "verification": "verified",
+    "summary": {
+      "blocker": 1,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "fail",
+      "undetermined_rules": 0,
+      "unverified_rules": 0
+    },
+    "scan_metrics": {
+      "scanned_files": 3,
+      "skipped_ignored_files": 0,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 1,
+      "runtime_seconds": 0.0,
+      "analysis_notes": []
+    },
+    "result": "fail",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "env-config",
+      "other"
+    ],
+    "violations": [
+      {
+        "rule_id": "conditional-schema",
+        "severity": "BLOCKER",
+        "confidence": "low",
+        "confidence_basis": "path-specificity; not a probability of correctness",
+        "change_types": [
+          "other"
+        ],
+        "change_type": "other",
+        "message": "",
+        "trigger_files": [
+          {
+            "path": "src/api.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "-from fastapi import FastAPI\n-from pydantic import BaseModel\n-app = FastAPI()\n-class Order(BaseModel):\n-    id: int\n-    label: str\n-@app.get('/orders', response_model=Order)\n-def orders():\n-    return {}\n-\n+from fastapi import FastAPI\n+from pydantic import BaseModel\n+app = FastAPI()\n+class Order(BaseModel):\n+    id: int\n+@app.get('/orders', response_model=Order)\n+def orders():\n+    return {}\n+",
+            "semantic_signals": [],
+            "semantic_evidence": [],
+            "analysis_method": "not-analyzed",
+            "analysis_reason": "",
+            "documented_env_keys": null,
+            "document_input_state": ""
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "API changed: API",
+            "required": [
+              "openapi.json"
+            ],
+            "type": "all_changed",
+            "evidence": "GET /orders: response schema differs; changed response contracts: GET /orders",
+            "decision": "violated",
+            "verification": "verified",
+            "content_mode": "api-schema",
+            "source_files": [
+              "src/api.py"
+            ],
+            "relation": "API changed"
+          }
+        ],
+        "checklist": [
+          "API changed: API \uc5c5\ub370\uc774\ud2b8"
+        ],
+        "ignored": false,
+        "change_intensity": "route-contract-change",
+        "change_intensities": [
+          "route-contract-change"
+        ],
+        "trigger_patterns": [
+          "src/api.py"
+        ],
+        "blast_radius": [
+          "OpenAPI/spec documentation",
+          "external API consumers",
+          "missing requirement group: API changed: API",
+          "release notes"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": [
+          "API changed"
+        ]
+      }
+    ],
+    "rule_decisions": [
+      {
+        "rule_id": "conditional-schema",
+        "severity": "BLOCKER",
+        "status": "fail",
+        "decision": "violated",
+        "verification": "verified",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "src/api.py"
+        ],
+        "trigger_files": [
+          "src/api.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "API changed: API",
+            "required": [
+              "openapi.json"
+            ],
+            "type": "all_changed",
+            "evidence": "GET /orders: response schema differs; changed response contracts: GET /orders",
+            "decision": "violated",
+            "verification": "verified",
+            "content_mode": "api-schema",
+            "source_files": [
+              "src/api.py"
+            ],
+            "relation": "API changed"
+          }
+        ]
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 2,
+      "on_unverified": "fail"
+    }
+  },
+  "expected_relation": "violated: API response field removed while OpenAPI retains label"
+}

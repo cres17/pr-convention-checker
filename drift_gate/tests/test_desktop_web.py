@@ -38,6 +38,7 @@ def test_package_check_can_receive_native_qt_events(tmp_path, monkeypatch):
     window = QObject()
     window.bridge = DesktopBridge(window)
     monkeypatch.setattr(package_check, 'network_probe', lambda: [])
+    monkeypatch.setenv('DRIFT_GATE_PACKAGE_CHECK_ID', 'a' * 32)
     check = package_check.PackageCheck(_app, window, str(tmp_path), str(tmp_path / 'result.json'))
     # Constructing its child timer sends QObject events, not bridge JSON events.
     assert check.timeout.isActive()

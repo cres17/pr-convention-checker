@@ -9,7 +9,7 @@ sys.path.insert(0, str(ROOT))
 
 from drift_gate.adapters.ast.analyzer import enrich_semantic_signals
 from drift_gate.adapters.git.client import GitAdapter, GitInputError
-from drift_gate.adapters.policy_loader import read_policy
+from drift_gate.adapters.policy_loader import read_policy, require_check_policy
 from drift_gate.core.engine import run
 from drift_gate.core.policy.loader import PolicyLoadError
 from drift_gate.core.change_paths import change_paths, is_ignored, triggers
@@ -19,8 +19,7 @@ from drift_gate.adapters.source_scope import product_path
 
 def inspect_repository(root: Path, base: str, trusted_policy_ref=None) -> dict:
     source, policy = read_policy(root / '.drift-gate.self.yml')
-    if not policy.rules:
-        raise PolicyLoadError('Self-check requires a nonempty policy')
+    require_check_policy(policy)
     if trusted_policy_ref:
         from drift_gate.adapters.git.client import _git
         from drift_gate.core.policy.loader import load_policy_from_text

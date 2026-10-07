@@ -18,6 +18,7 @@ ALLOWED_ROOT = None  # fixed when the server starts; requests cannot widen it
 
 
 TOOL_MAP = {
+    "drift_gate_check_git": tools.drift_gate_check_git,
     "drift_gate_check_local": tools.drift_gate_check_local,
     "drift_gate_check_pr": tools.drift_gate_check_pr,
     "drift_gate_get_evidence": tools.drift_gate_get_evidence,
@@ -30,6 +31,7 @@ TOOL_MAP = {
 
 
 TOOL_DESCRIPTIONS = {
+    "drift_gate_check_git": "Evaluate immutable Git objects using an explicit pinned policy; ignores working-tree edits.",
     "drift_gate_check_local": "Evaluate the current repository diff against .drift-gate.yml.",
     "drift_gate_check_pr": "Evaluate a GitHub pull request against .drift-gate.yml.",
     "drift_gate_get_evidence": "Fetch bounded diff evidence for one Drift Gate rule.",
@@ -124,6 +126,10 @@ def _call_tool(name: str, arguments: dict):
         if annotation in (str, int, bool) and type(value) is not annotation:
             raise TypeError(f'{key} must be {annotation.__name__}')
         if ALLOWED_ROOT is not None and key in ('path', 'policy_path', 'repo_root'):
+            if name == 'drift_gate_check_git' and key == 'policy_path':
+                from drift_gate.core.models.input_manifest import relative_path
+                relative_path(value)
+                continue
             target = Path(value).expanduser().resolve()
             if not target.is_relative_to(ALLOWED_ROOT):
                 raise ValueError(f'{key} is outside the server repository')

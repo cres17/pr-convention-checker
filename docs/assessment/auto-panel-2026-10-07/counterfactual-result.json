@@ -1,0 +1,776 @@
+{
+  "experiment": "policy-only counterfactual; no product or frozen suite changes",
+  "always_fail_matches": 6,
+  "modified_policy_matches": 7,
+  "verified_correct_matches": 1,
+  "total": 8,
+  "rows": [
+    {
+      "id": "B01-multiline-route",
+      "expected_gate": "fail",
+      "actual": "fail",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "gate_matched": true,
+      "result": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": [
+            {
+              "path": "src/routes/catalog.py",
+              "method": "heuristic",
+              "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+            },
+            {
+              "path": "docs/api/catalog.md",
+              "method": "heuristic",
+              "reason": "No grammar-backed detector for this file type"
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed",
+                "evidence": "No supported literal HTTP route delta; manual contract verification required",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "api-routes"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "fail"
+        }
+      }
+    },
+    {
+      "id": "B02-markdown-table",
+      "expected_gate": "pass",
+      "actual": "pass",
+      "decision": "satisfied",
+      "verification": "verified",
+      "gate_matched": true,
+      "result": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": [
+            {
+              "path": "src/routes/catalog.py",
+              "method": "heuristic",
+              "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+            },
+            {
+              "path": "docs/api/catalog.md",
+              "method": "heuristic",
+              "reason": "No grammar-backed detector for this file type"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed",
+                "evidence": "API documentation must reflect: add GET /products; remove GET /catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "api-routes"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "fail"
+        }
+      }
+    },
+    {
+      "id": "B03-openapi-yaml",
+      "expected_gate": "pass",
+      "actual": "fail",
+      "decision": "violated",
+      "verification": "verified",
+      "gate_matched": false,
+      "result": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": [
+            {
+              "path": "src/routes/catalog.py",
+              "method": "heuristic",
+              "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+            },
+            {
+              "path": "openapi/api.yaml",
+              "method": "heuristic",
+              "reason": "No grammar-backed detector for this file type"
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "confidence": "high",
+            "confidence_basis": "path-specificity; not a probability of correctness",
+            "change_types": [
+              "api-surface"
+            ],
+            "change_type": "api-surface",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/routes/catalog.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "-@app.get('/catalog')\n+@app.get('/products')\n",
+                "semantic_signals": [
+                  "route-contract-change"
+                ],
+                "semantic_evidence": [
+                  "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+                  "Python route decorator changed"
+                ],
+                "analysis_method": "heuristic",
+                "analysis_reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+                "documented_env_keys": null,
+                "document_input_state": ""
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed",
+                "evidence": "API documentation must reflect: add GET /products; remove GET /catalog",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "api-routes"
+              }
+            ],
+            "checklist": [
+              "API docs \uc5c5\ub370\uc774\ud2b8"
+            ],
+            "ignored": false,
+            "change_intensity": "route-contract-change",
+            "change_intensities": [
+              "route-contract-change"
+            ],
+            "trigger_patterns": [
+              "src/routes/**"
+            ],
+            "blast_radius": [
+              "OpenAPI/spec documentation",
+              "external API consumers",
+              "missing requirement group: API docs",
+              "release notes"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "decision": "violated",
+            "verification": "verified",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed",
+                "evidence": "API documentation must reflect: add GET /products; remove GET /catalog",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "api-routes"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "fail"
+        }
+      }
+    },
+    {
+      "id": "B04-router-prefix",
+      "expected_gate": "fail",
+      "actual": "fail",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "gate_matched": true,
+      "result": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": [
+            {
+              "path": "src/routes/catalog.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api/catalog.md",
+              "method": "heuristic",
+              "reason": "No grammar-backed detector for this file type"
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed",
+                "evidence": "No supported literal HTTP route delta; manual contract verification required",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "api-routes"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "fail"
+        }
+      }
+    },
+    {
+      "id": "B05-dynamic-environment-key",
+      "expected_gate": "fail",
+      "actual": "fail",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "gate_matched": true,
+      "result": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": [
+            {
+              "path": "src/config/payment.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/config/**"
+            ],
+            "trigger_files": [
+              "src/config/payment.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "No static new environment keys could be established from this change",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "env-keys"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "fail"
+        }
+      }
+    },
+    {
+      "id": "B06-aliased-environment-getter",
+      "expected_gate": "fail",
+      "actual": "fail",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "gate_matched": true,
+      "result": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": [
+            {
+              "path": "src/config/payment.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/config/**"
+            ],
+            "trigger_files": [
+              "src/config/payment.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "No static new environment keys could be established from this change",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "env-keys"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "fail"
+        }
+      }
+    },
+    {
+      "id": "B07-response-schema",
+      "expected_gate": "fail",
+      "actual": "fail",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "gate_matched": true,
+      "result": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": [
+            {
+              "path": "src/routes/catalog.py",
+              "method": "heuristic",
+              "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+            },
+            {
+              "path": "docs/api/catalog.md",
+              "method": "heuristic",
+              "reason": "No grammar-backed detector for this file type"
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed",
+                "evidence": "No supported literal HTTP route delta; manual contract verification required",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "api-routes"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "fail"
+        }
+      }
+    },
+    {
+      "id": "B08-chained-router",
+      "expected_gate": "fail",
+      "actual": "fail",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "gate_matched": true,
+      "result": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": [
+            {
+              "path": "src/routes/catalog.ts",
+              "method": "grammar+heuristic",
+              "reason": ""
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.ts"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed",
+                "evidence": "No supported literal HTTP route delta; manual contract verification required",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "api-routes"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "fail"
+        }
+      }
+    }
+  ]
+}

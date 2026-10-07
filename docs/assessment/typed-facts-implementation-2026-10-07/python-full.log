@@ -1,0 +1,505 @@
+........................................................................ [  5%]
+........................................................................ [ 10%]
+........................................................................ [ 15%]
+........................................................................ [ 21%]
+........................................................................ [ 26%]
+........................................................................ [ 31%]
+..............................................FFFF...................... [ 37%]
+........................................................................ [ 42%]
+........................................................................ [ 47%]
+.............F.......................................................... [ 53%]
+........................................................................ [ 58%]
+........................................................................ [ 63%]
+........................................................................ [ 69%]
+........................................................................ [ 74%]
+........................................................................ [ 79%]
+........................................................................ [ 85%]
+........................................................................ [ 90%]
+........................................................................ [ 95%]
+...........................................................              [100%]
+=================================== FAILURES ===================================
+_________ test_real_express_http_agrees_with_static_chained_paths[get] _________
+
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_0')
+method = 'get'
+
+    @pytest.mark.parametrize('method', ['get', 'post', 'put', 'delete'])
+    def test_real_express_http_agrees_with_static_chained_paths(tmp_path, method):
+        oracle = os.environ.get('DRIFT_GATE_EXPRESS_ORACLE_DIR')
+        if not oracle or not shutil.which('node'):
+            pytest.skip('set DRIFT_GATE_EXPRESS_ORACLE_DIR to a fixed Express 4.21.2 installation')
+        package = Path(oracle) / 'node_modules/express/package.json'
+        assert json.loads(package.read_text())['version'] == '4.21.2'
+        # Only these authored strings enter the runtime oracle. User code is never
+        # imported or run. Dynamic import uses an explicitly pinned test dependency.
+        source = fixture(method=method)
+        module = source.replace("import express from 'express';", f"import express from {json.dumps(str(package.parent / 'index.js'))};")
+        script = tmp_path / 'oracle.mjs'
+        script.write_text(module + f"""
+    const server = app.listen(0, '127.0.0.1');
+    await new Promise(resolve => server.on('listening', resolve));
+    try {{
+      const base = `http://127.0.0.1:${{server.address().port}}`;
+      const statuses = [];
+      for (const path of ['/v1/catalog', '/catalog', '/v2/catalog']) {{
+        const response = await fetch(base + path, {{method: '{method.upper()}'}});
+        statuses.push(response.status);
+      }}
+      console.log(JSON.stringify(statuses));
+    }} finally {{ await new Promise(resolve => server.close(resolve)); }}
+    """)
+>       result = subprocess.run(['node', str(script)], check=True, capture_output=True, text=True, timeout=15)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_express_contracts.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = True, timeout = 15, check = True
+popenargs = (['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_0/oracle.mjs'],)
+kwargs = {'text': True, 'stdout': -1, 'stderr': -1}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout is given, and the process takes too long, a TimeoutExpired
+        exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_0/oracle.mjs']' returned non-zero exit status 1.
+
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py:571: CalledProcessError
+________ test_real_express_http_agrees_with_static_chained_paths[post] _________
+
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_1')
+method = 'post'
+
+    @pytest.mark.parametrize('method', ['get', 'post', 'put', 'delete'])
+    def test_real_express_http_agrees_with_static_chained_paths(tmp_path, method):
+        oracle = os.environ.get('DRIFT_GATE_EXPRESS_ORACLE_DIR')
+        if not oracle or not shutil.which('node'):
+            pytest.skip('set DRIFT_GATE_EXPRESS_ORACLE_DIR to a fixed Express 4.21.2 installation')
+        package = Path(oracle) / 'node_modules/express/package.json'
+        assert json.loads(package.read_text())['version'] == '4.21.2'
+        # Only these authored strings enter the runtime oracle. User code is never
+        # imported or run. Dynamic import uses an explicitly pinned test dependency.
+        source = fixture(method=method)
+        module = source.replace("import express from 'express';", f"import express from {json.dumps(str(package.parent / 'index.js'))};")
+        script = tmp_path / 'oracle.mjs'
+        script.write_text(module + f"""
+    const server = app.listen(0, '127.0.0.1');
+    await new Promise(resolve => server.on('listening', resolve));
+    try {{
+      const base = `http://127.0.0.1:${{server.address().port}}`;
+      const statuses = [];
+      for (const path of ['/v1/catalog', '/catalog', '/v2/catalog']) {{
+        const response = await fetch(base + path, {{method: '{method.upper()}'}});
+        statuses.push(response.status);
+      }}
+      console.log(JSON.stringify(statuses));
+    }} finally {{ await new Promise(resolve => server.close(resolve)); }}
+    """)
+>       result = subprocess.run(['node', str(script)], check=True, capture_output=True, text=True, timeout=15)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_express_contracts.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = True, timeout = 15, check = True
+popenargs = (['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_1/oracle.mjs'],)
+kwargs = {'text': True, 'stdout': -1, 'stderr': -1}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout is given, and the process takes too long, a TimeoutExpired
+        exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_1/oracle.mjs']' returned non-zero exit status 1.
+
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py:571: CalledProcessError
+_________ test_real_express_http_agrees_with_static_chained_paths[put] _________
+
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_2')
+method = 'put'
+
+    @pytest.mark.parametrize('method', ['get', 'post', 'put', 'delete'])
+    def test_real_express_http_agrees_with_static_chained_paths(tmp_path, method):
+        oracle = os.environ.get('DRIFT_GATE_EXPRESS_ORACLE_DIR')
+        if not oracle or not shutil.which('node'):
+            pytest.skip('set DRIFT_GATE_EXPRESS_ORACLE_DIR to a fixed Express 4.21.2 installation')
+        package = Path(oracle) / 'node_modules/express/package.json'
+        assert json.loads(package.read_text())['version'] == '4.21.2'
+        # Only these authored strings enter the runtime oracle. User code is never
+        # imported or run. Dynamic import uses an explicitly pinned test dependency.
+        source = fixture(method=method)
+        module = source.replace("import express from 'express';", f"import express from {json.dumps(str(package.parent / 'index.js'))};")
+        script = tmp_path / 'oracle.mjs'
+        script.write_text(module + f"""
+    const server = app.listen(0, '127.0.0.1');
+    await new Promise(resolve => server.on('listening', resolve));
+    try {{
+      const base = `http://127.0.0.1:${{server.address().port}}`;
+      const statuses = [];
+      for (const path of ['/v1/catalog', '/catalog', '/v2/catalog']) {{
+        const response = await fetch(base + path, {{method: '{method.upper()}'}});
+        statuses.push(response.status);
+      }}
+      console.log(JSON.stringify(statuses));
+    }} finally {{ await new Promise(resolve => server.close(resolve)); }}
+    """)
+>       result = subprocess.run(['node', str(script)], check=True, capture_output=True, text=True, timeout=15)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_express_contracts.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = True, timeout = 15, check = True
+popenargs = (['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_2/oracle.mjs'],)
+kwargs = {'text': True, 'stdout': -1, 'stderr': -1}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout is given, and the process takes too long, a TimeoutExpired
+        exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_2/oracle.mjs']' returned non-zero exit status 1.
+
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py:571: CalledProcessError
+_______ test_real_express_http_agrees_with_static_chained_paths[delete] ________
+
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_3')
+method = 'delete'
+
+    @pytest.mark.parametrize('method', ['get', 'post', 'put', 'delete'])
+    def test_real_express_http_agrees_with_static_chained_paths(tmp_path, method):
+        oracle = os.environ.get('DRIFT_GATE_EXPRESS_ORACLE_DIR')
+        if not oracle or not shutil.which('node'):
+            pytest.skip('set DRIFT_GATE_EXPRESS_ORACLE_DIR to a fixed Express 4.21.2 installation')
+        package = Path(oracle) / 'node_modules/express/package.json'
+        assert json.loads(package.read_text())['version'] == '4.21.2'
+        # Only these authored strings enter the runtime oracle. User code is never
+        # imported or run. Dynamic import uses an explicitly pinned test dependency.
+        source = fixture(method=method)
+        module = source.replace("import express from 'express';", f"import express from {json.dumps(str(package.parent / 'index.js'))};")
+        script = tmp_path / 'oracle.mjs'
+        script.write_text(module + f"""
+    const server = app.listen(0, '127.0.0.1');
+    await new Promise(resolve => server.on('listening', resolve));
+    try {{
+      const base = `http://127.0.0.1:${{server.address().port}}`;
+      const statuses = [];
+      for (const path of ['/v1/catalog', '/catalog', '/v2/catalog']) {{
+        const response = await fetch(base + path, {{method: '{method.upper()}'}});
+        statuses.push(response.status);
+      }}
+      console.log(JSON.stringify(statuses));
+    }} finally {{ await new Promise(resolve => server.close(resolve)); }}
+    """)
+>       result = subprocess.run(['node', str(script)], check=True, capture_output=True, text=True, timeout=15)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_express_contracts.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = True, timeout = 15, check = True
+popenargs = (['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_3/oracle.mjs'],)
+kwargs = {'text': True, 'stdout': -1, 'stderr': -1}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout is given, and the process takes too long, a TimeoutExpired
+        exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_real_express_http_agrees_3/oracle.mjs']' returned non-zero exit status 1.
+
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py:571: CalledProcessError
+__________ TestTemporalGateE2E.test_e2e_cli_check_with_temporal_gate ___________
+
+self = <drift_gate.tests.test_history.TestTemporalGateE2E object at 0x121e39290>
+tmp_path = PosixPath('/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-171/test_e2e_cli_check_with_tempor0')
+capsys = <_pytest.capture.CaptureFixture object at 0x13daad9d0>
+
+    def test_e2e_cli_check_with_temporal_gate(self, tmp_path, capsys):
+        """CLI check --temporal-gate reads history and upgrades warn."""
+    
+        history_path = tmp_path / "history.jsonl"
+        policy_path = tmp_path / ".drift-gate.yml"
+        policy_path.write_text(
+            "rules:\n  - id: history-check\n    when: {any_changed: [src/**]}\n    require: {groups: [{name: docs, any_changed: [docs/**]}]}\n    severity: minor\ngate:\n  fail_on_blocker: true\n  fail_on_major_count: 2\n",
+            encoding="utf-8",
+        )
+    
+        for _ in range(3):
+            append_result(_violating_result(), history_path)
+    
+        with pytest.raises(SystemExit) as exc:
+            run_cli([
+                "check",
+                "--policy", str(policy_path),
+                "--base", "HEAD",
+                "--temporal-gate",
+                "--temporal-threshold", "3",
+                "--history-path", str(history_path),
+            ])
+    
+        # result is pass or warn — exit code 0 either way when no blocker
+>       assert exc.value.code in (0, 1)
+E       assert 2 in (0, 1)
+E        +  where 2 = SystemExit(2).code
+E        +    where SystemExit(2) = <ExceptionInfo SystemExit(2) tblen=2>.value
+
+drift_gate/tests/test_history.py:299: AssertionError
+----------------------------- Captured stderr call -----------------------------
+Repository changed during collection; rerun the inspection
+=========================== short test summary info ============================
+FAILED drift_gate/tests/test_express_contracts.py::test_real_express_http_agrees_with_static_chained_paths[get]
+FAILED drift_gate/tests/test_express_contracts.py::test_real_express_http_agrees_with_static_chained_paths[post]
+FAILED drift_gate/tests/test_express_contracts.py::test_real_express_http_agrees_with_static_chained_paths[put]
+FAILED drift_gate/tests/test_express_contracts.py::test_real_express_http_agrees_with_static_chained_paths[delete]
+FAILED drift_gate/tests/test_history.py::TestTemporalGateE2E::test_e2e_cli_check_with_temporal_gate
+5 failed, 1350 passed in 32.62s
