@@ -1,0 +1,30 @@
+{
+  "schema": "remote-verification-checkpoint-v1",
+  "recorded_at": "2026-10-07T15:40:54.989988+00:00",
+  "product_commit": "7bf680db2cf9e417cb424e10c2a7bb2866d60939",
+  "latest_installer_commit": "f712dfdde0c719e2d7ef43b93b0c365100d93b07",
+  "latest_installer_run": 37643814312,
+  "local_downloaded_installer_passed": true,
+  "git_controls": {
+    "passed": 6,
+    "total": 6
+  },
+  "grammar_analyses": 8,
+  "native_protocol_files": {
+    "remote-native/7bf680d/Offline-check-macOS-arm64/offline-dmg/result.json": "b6bd14618aa04a196950caf684139fd8ef68341ed700ec2ee6fc437b34d654e3",
+    "remote-native/7bf680d/Offline-check-macOS-arm64/offline-package/result.json": "fb260e53960286cfcff82e1594d13a92a7b6430e1f826d0da3d9f855e3b599d6",
+    "remote-native/7bf680d/Offline-check-macOS-intel/offline-dmg/result.json": "61bc6391d847fe13353d2c112c8658c5aef153031c09e553cfbdc48ff6f36262",
+    "remote-native/7bf680d/Offline-check-macOS-intel/offline-package/result.json": "53f80ae2934e6f98358a4d104d3985cf524bc077fcb091e4f304904e1ae7ed44",
+    "remote-native/f712dfd/Offline-check-macOS-arm64/offline-dmg/result.json": "bd0ca1d3bc170bf8920bfd3f0cf3ffb2bdb83faa7b37d8c186398a9559d9656e",
+    "remote-native/f712dfd/Offline-check-macOS-arm64/offline-package/result.json": "5771b144f6bc2e34526c5b5fc331ce9987ba8d3ea5e9bdf8dfb94c4ad57f8a43"
+  },
+  "remote_ci": "pending; one actual self-check input-limit rejection preserved",
+  "windows_installer": "pending",
+  "official_service_incident": {
+    "source": "https://www.githubstatus.com/",
+    "date": "2026-10-07",
+    "widespread_impact_reported_utc": "15:06-15:16",
+    "actions_operational_reported_utc": "15:32",
+    "causal_connection_to_this_run": "not established"
+  }
+}
