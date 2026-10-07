@@ -1,0 +1,11 @@
+{
+  "source_commit": "92f9ae7020217425e0fc199ea833da16202310d2",
+  "ci_run_id": 37636470263,
+  "local_and_remote_input_capture_equal": true,
+  "gate": "pass",
+  "verification": "unverified",
+  "artifact_count": 1742,
+  "git_evidence_manifest_sha256": "d51b13920f301bee89327c85bd53ba28168a140244fb023aa8b6edd35e59d6f8",
+  "local_raw_report_sha256": "cebbea943468179c9ab46ab2f285e3904947bc77caece05724736e8c006a2392",
+  "remote_raw_report_sha256": "b2615ae79481caf017cbfcfc29b87d977ad799e8436d260abffa64b12b7b30dd"
+}

@@ -19,7 +19,17 @@ def validate_phase(case, result, seen_run_ids):
         raise RuntimeError(f"Installed app did not reject {case} drift")
     if case in {"signature", "rename"}:
         files = violations[0].get("trigger_files", [])
-        if len(files) != 1 or result.get("scan_metrics", {}).get("scanned_files") != 1:
+        artifacts = execution.get('input_capture', {}).get('artifacts', [])
+        patches = {a['path']: a for a in artifacts if a.get('role') == 'patch'}
+        missing_document = [a for a in artifacts if a.get('path') == 'docs/api.md'
+                            and a.get('role') == 'after-source' and a.get('state') == 'absent']
+        expected_path = 'src/api.py' if case == 'signature' else 'docs/api.py'
+        # One changed source plus the configured, unchanged missing document.
+        # scanned_files counts observations, not only changed paths.
+        if (len(files) != 1 or result.get("scan_metrics", {}).get("scanned_files") != 2
+            or set(patches) != {expected_path, 'docs/api.md'}
+            or patches['docs/api.md'].get('observed_text_bytes') != 0
+            or len(missing_document) != 1):
             raise RuntimeError(f"Unexpected changed files for package {case} fixture")
         changed = files[0]
         patch = changed.get("patch", "")

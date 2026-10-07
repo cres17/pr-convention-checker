@@ -38,3 +38,9 @@ Python 이벤트와 TypeScript 입력 schema의 공통 사례는 `drift_gate/tes
 외부 `packaging/verify_package.py`는 새 `git_object_checks` 프로토콜과 고정 fixture
 해시·subject·판정을 다시 검사한다. 이 검사는 일반 화면의 새 Git 모드 설정을 의미하지 않는다.
 진단 실행은 사용자 파일 대신 별도 임시 Git 저장소를 쓴다.
+
+`scanned_files`는 변경 파일뿐 아니라 설정된 문서의 부재 관찰도 포함한다.
+signature·rename 대조는 변경 source 1개와 `docs/api.md` 부재 관찰 1개를 확인한다.
+공개 input capture의 patch 경로 집합과 빈 문서 patch·명시 absent를 함께 검사하고,
+다른 관찰이 끼면 거부한다. 실패 응답은 단계와 마지막 fixture scan을 남겨 설치본
+실패를 재현할 수 있게 한다. 성공 조건이나 예상 drift 판정을 완화하지 않는다.
