@@ -122,3 +122,37 @@ SHA-256의 일치를 확인했다. 제품의 상한을 완화하지 않았다. �
 직접 연결되는 로그는 확보하지 못했으므로 인과관계는 주장하지 않는다.
 [중간 원격 영수증](../assessment/git-trust-implementation-2026-10-07/remote-verification-checkpoint.json)은
 Windows·전체 CI를 명시적으로 pending으로 기록한다. 최종 성공으로 대체하지 않는다.
+
+## 추가 반례와 격리 수정 (2026-10-08 KST)
+
+같은 base/head를 검사하면서 working tree의 `.gitattributes`만 바꾸자 판정은 fail로
+유지됐지만 verification은 verified에서 unverified로 바뀌고 snapshot도 달라졌다.
+원본 Git evidence는 같았다. Git은 commit 사이의 diff에서도 작업 폴더, index fallback,
+`info/attributes`, 전역 속성을 참조한다([공식 문서](https://git-scm.com/docs/gitattributes)).
+초기 구현의 `working_tree_ignored` 주장에는 이 예외가 있었다.
+
+수정은 source object directory만 읽는 별도 임시 bare Git 저장소에서 diff를 만드는
+것이다. 임시 저장소는 빈 template과 고정 locale로 만들고 caller Git 환경, global·system
+config를 배제한다. 원래 저장소의 index·config·objects는 쓰지 않는다. 이 모드에서는
+커밋된 `.gitattributes`도 raw object 비교에 적용하지 않는다. 일반 로컬 검사 경로에는
+이 변경을 적용하지 않는다. working/index/info/global 속성과 local diff config 5개,
+caller Git 환경 3개의 회귀를 추가했다. snapshot·Git evidence·verification이 모두
+같고 source index·config bytes가 바뀌지 않는지 검사한다.
+
+설치본의 Git 진단 계약도 `packaged-git-controls-v2`로 강화했다. 기존 6개 대조 중
+working-tree 대조에 index/info 속성과 diff config 변형을 넣고, 입력 capture와
+verification의 일치를 함께 검사한다. 과거 v1 JSON은 새 계약의 증거로 인정하지
+않으며, 거부하는 회귀를 추가했다. 과거 다운로드 설치본 결과는 당시 계약의 근거로
+보존한다. 새 소스 설치본의 결과를 대신하지 않는다.
+
+별도 Linux amd64 컨테이너에서 초기 테스트는 1,689 통과·4 skip·1 error였다.
+1 MB 입력을 pytest 사례 이름으로 자동 노출해 `PYTEST_CURRENT_TEST` 환경변수가
+커졌고, Git 생성이 `Argument list too long`으로 실패했다. 입력은 1,000,001 bytes로
+유지하고 사례 이름만 `binary`·`oversized`로 고쳤다. 같은 Linux 환경의 격리 prototype은
+1,698 통과·4 skip으로 끝났다. 이 Linux 실행은 GitHub runner가 아니며, 진단 schema v2,
+빈 template·locale 고정 전 소스임을 별도 source hash로 기록한다. 최종 현재 소스는
+Mac 전체 1,748개 통과·skip 0, Ruff·공백 검사 통과다. [반례·수정·소스 영수증](../assessment/git-trust-implementation-2026-10-07/attribute-isolation/verification.json)을
+보존했다. Linux 첫 오류의 raw log는 원본 SHA-256을 유지한 gzip으로 보관한다.
+
+이 오류는 실제 재현한 회귀 테스트 결함이다. 원격 정체 전부의 원인이라고 단정하지
+않는다. 최종 소스의 새 원격 회귀와 v2 설치본 검증 결과는 아래에 별도로 기록한다.

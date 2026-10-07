@@ -1,8 +1,11 @@
 """Collect exact immutable Git objects without working-tree or replacement refs."""
 from datetime import datetime, timezone
+from contextlib import contextmanager
 from hashlib import sha256
+import os
 from pathlib import Path
 import subprocess
+from tempfile import TemporaryDirectory
 
 from drift_gate.adapters.docs.content import attach_env_documents
 from drift_gate.adapters.git.client import GitInputError, _parse_name_status
@@ -21,12 +24,41 @@ MAX_TREE_ENTRIES = 20_000
 MAX_PATCH_BYTES = 256_000
 
 
-def _git(root, args):
+def _git_environment():
+    # Git's caller environment can redirect repositories, attribute sources and
+    # config. None of those are inputs to an immutable-object collection.
+    return {**{key: value for key, value in os.environ.items() if not key.startswith('GIT_')},
+            'GIT_CONFIG_GLOBAL': os.devnull, 'GIT_CONFIG_SYSTEM': os.devnull,
+            'GIT_CONFIG_NOSYSTEM': '1', 'GIT_ATTR_NOSYSTEM': '1',
+            'GIT_TERMINAL_PROMPT': '0', 'GIT_NO_LAZY_FETCH': '1', 'LC_ALL': 'C'}
+
+
+def _git(root, args, *, env=None):
     try:
         return subprocess.check_output(['git', '--no-replace-objects', '--literal-pathspecs', *args],
-            cwd=root, stderr=subprocess.PIPE, timeout=30)
+            cwd=root, env=_git_environment() if env is None else env,
+            stderr=subprocess.PIPE, timeout=30)
     except (OSError, subprocess.SubprocessError) as exc:
         raise GitInputError('Could not read immutable Git objects') from exc
+
+
+@contextmanager
+def _raw_diff(root, object_format):
+    """Read objects through a private bare repository with no caller attributes.
+
+    Even a commit-to-commit diff consults working/index/info attributes. Sharing
+    only the object directory avoids those inputs and local diff-driver config.
+    The source repository's index, config and object store are never written.
+    """
+    objects = Path(_git(root, ['rev-parse', '--git-path', 'objects']).decode('utf-8').strip())
+    if not objects.is_absolute():
+        objects = Path(root) / objects
+    with TemporaryDirectory(prefix='driftgate-raw-diff-') as directory:
+        env = _git_environment()
+        _git(directory, ['init', '--bare', '--template=', '--object-format=' + object_format], env=env)
+        env['GIT_OBJECT_DIRECTORY'] = str(objects.resolve())
+        yield lambda arguments: _git(directory,
+            ['diff', '--no-ext-diff', '--no-textconv', '--find-renames', *arguments], env=env)
 
 
 def _resolve(root, ref):
@@ -138,27 +170,26 @@ def collect_git_snapshot(*, root, base, head, trusted_policy_ref, trusted_policy
     reasons = weakening_reasons(trusted, candidate)
     if reasons:
         raise GitInputError('Candidate weakened pinned policy: ' + '; '.join(reasons))
-    changed = _parse_name_status(_git(reader.root, ['diff', '--no-ext-diff', '--no-textconv',
-        '--name-status', '-z', '--find-renames', base_oid, head_oid, '--']))
     files = []
-    for file in changed:
-        old_path = file.previous_path or file.path
-        before = reader.read(base_oid, old_path)
-        after = reader.read(head_oid, file.path)
-        paths = [old_path, file.path] if old_path != file.path else [file.path]
-        patch_bytes = _git(reader.root, ['diff', '--no-ext-diff', '--no-textconv', '--find-renames',
-                                       base_oid, head_oid, '--', *paths])
-        patch = patch_bytes.decode('utf-8', errors='strict') if len(patch_bytes) <= MAX_PATCH_BYTES else '[large file skipped]'
-        binary_diff = any(line.startswith(b'Binary files ') and line.endswith(b' differ')
-                          for line in patch_bytes.splitlines())
-        if binary_diff or any(item.mode not in {'', '100644', '100755'} for item in (before, after)):
-            patch = '[binary file skipped]'
-            before_text = after_text = None
-        else:
-            before_text = reader.text(base_oid, old_path)
-            after_text = reader.text(head_oid, file.path)
-        files.append(ChangedFile(file.path, file.status, previous_path=file.previous_path,
-            patch=patch, before_source=before_text, after_source=after_text))
+    with _raw_diff(reader.root, 'sha1' if len(head_oid) == 40 else 'sha256') as diff:
+        changed = _parse_name_status(diff(['--name-status', '-z', base_oid, head_oid, '--']))
+        for file in changed:
+            old_path = file.previous_path or file.path
+            before = reader.read(base_oid, old_path)
+            after = reader.read(head_oid, file.path)
+            paths = [old_path, file.path] if old_path != file.path else [file.path]
+            patch_bytes = diff([base_oid, head_oid, '--', *paths])
+            patch = patch_bytes.decode('utf-8', errors='strict') if len(patch_bytes) <= MAX_PATCH_BYTES else '[large file skipped]'
+            binary_diff = any(line.startswith(b'Binary files ') and line.endswith(b' differ')
+                              for line in patch_bytes.splitlines())
+            if binary_diff or any(item.mode not in {'', '100644', '100755'} for item in (before, after)):
+                patch = '[binary file skipped]'
+                before_text = after_text = None
+            else:
+                before_text = reader.text(base_oid, old_path)
+                after_text = reader.text(head_oid, file.path)
+            files.append(ChangedFile(file.path, file.status, previous_path=file.previous_path,
+                patch=patch, before_source=before_text, after_source=after_text))
     files = attach_env_documents(files, trusted, lambda path: reader.text(head_oid, path))
     # Document-only unchanged observations need a before record for replay binding.
     for file in files:
@@ -171,5 +202,6 @@ def collect_git_snapshot(*, root, base, head, trusted_policy_ref, trusted_policy
     return capture_inspection(changed_files=files, policy=trusted, policy_source=trusted_source,
         context=context or EvaluationContext(datetime.now(timezone.utc).date()),
         provenance={'source': 'immutable-git', 'head': head_oid, 'resolved_base': base_oid,
-                    'comparison_mode': comparison_mode, 'policy_revision': trusted_oid},
+                    'comparison_mode': comparison_mode, 'policy_revision': trusted_oid,
+                    'diff_mode': 'isolated-raw-git'},
         contract_proofs=contract_proofs, git_evidence=evidence)

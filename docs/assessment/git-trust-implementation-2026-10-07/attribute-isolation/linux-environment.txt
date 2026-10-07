@@ -1,0 +1,4 @@
+Python 3.11.17
+v18.20.4
+git version 2.39.5
+7bf680db2cf9e417cb424e10c2a7bb2866d60939
