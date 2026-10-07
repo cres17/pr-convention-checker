@@ -1,0 +1,133 @@
+{
+  "schema": "native-evidence-recheck-v1",
+  "kind": "downloaded JSON protocol validation, not installer execution",
+  "passed": 6,
+  "cases": [
+    {
+      "path": "Offline-check-Windows/offline-installer/result.json",
+      "sha256": "4494a3d28a4f47ab0769ccf51ecdf27160e920a92f3e78b16e90210e93abd67e",
+      "bytes": 106806,
+      "frozen": true,
+      "bridge_ready": true,
+      "network_isolation": "Windows Defender Firewall program outbound block",
+      "grammar_analyses": 8,
+      "git_object_checks": {
+        "stale_document_rejected": true,
+        "current_document_accepted": true,
+        "wrong_pin_rejected": true,
+        "weakening_rejected": true,
+        "working_tree_ignored": true,
+        "original_crlf_bytes_bound": true
+      },
+      "verification_identity": {
+        "run_id": "2a0285121cd74982bc46633d6e48d331",
+        "repository": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\driftgate-offline-check-qo1isw0f\\fixture"
+      }
+    },
+    {
+      "path": "Offline-check-Windows/offline-package/result.json",
+      "sha256": "55327b7794252547942f3d0f5a5b31de113f432f0b7cc04723e32996f13e859e",
+      "bytes": 106870,
+      "frozen": true,
+      "bridge_ready": true,
+      "network_isolation": "Windows Defender Firewall program outbound block",
+      "grammar_analyses": 8,
+      "git_object_checks": {
+        "stale_document_rejected": true,
+        "current_document_accepted": true,
+        "wrong_pin_rejected": true,
+        "weakening_rejected": true,
+        "working_tree_ignored": true,
+        "original_crlf_bytes_bound": true
+      },
+      "verification_identity": {
+        "run_id": "702dbfd1093649559dd4e385f7d2ce13",
+        "repository": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\driftgate-offline-check-2iqu5q3g\\fixture"
+      }
+    },
+    {
+      "path": "Offline-check-macOS-arm64/offline-dmg/result.json",
+      "sha256": "74309328e777f8e77d8f85611f571f9a39d4618328e89166ee6eafd685e558a7",
+      "bytes": 104175,
+      "frozen": true,
+      "bridge_ready": true,
+      "network_isolation": "macOS sandbox-exec outbound deny",
+      "grammar_analyses": 8,
+      "git_object_checks": {
+        "stale_document_rejected": true,
+        "current_document_accepted": true,
+        "wrong_pin_rejected": true,
+        "weakening_rejected": true,
+        "working_tree_ignored": true,
+        "original_crlf_bytes_bound": true
+      },
+      "verification_identity": {
+        "run_id": "8dc5fe3b4d654dfc80236b42e3d8db98",
+        "repository": "/private/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/driftgate-offline-check-q67rthlu/fixture"
+      }
+    },
+    {
+      "path": "Offline-check-macOS-arm64/offline-package/result.json",
+      "sha256": "fa1335a9c5a4792d9f5935785f8fae329788ae44239104a91c93e4db78f3bee9",
+      "bytes": 104223,
+      "frozen": true,
+      "bridge_ready": true,
+      "network_isolation": "macOS sandbox-exec outbound deny",
+      "grammar_analyses": 8,
+      "git_object_checks": {
+        "stale_document_rejected": true,
+        "current_document_accepted": true,
+        "wrong_pin_rejected": true,
+        "weakening_rejected": true,
+        "working_tree_ignored": true,
+        "original_crlf_bytes_bound": true
+      },
+      "verification_identity": {
+        "run_id": "691d444825454b45a9cadc1c6a109d99",
+        "repository": "/private/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/driftgate-offline-check-2q3rk0tp/fixture"
+      }
+    },
+    {
+      "path": "Offline-check-macOS-intel/offline-dmg/result.json",
+      "sha256": "f20af35a4da8b9f1d5784d3a55d435df73d6db9dd330907a27c226507903004c",
+      "bytes": 104172,
+      "frozen": true,
+      "bridge_ready": true,
+      "network_isolation": "macOS sandbox-exec outbound deny",
+      "grammar_analyses": 8,
+      "git_object_checks": {
+        "stale_document_rejected": true,
+        "current_document_accepted": true,
+        "wrong_pin_rejected": true,
+        "weakening_rejected": true,
+        "working_tree_ignored": true,
+        "original_crlf_bytes_bound": true
+      },
+      "verification_identity": {
+        "run_id": "0d4826dded5d494c87d69216113c3496",
+        "repository": "/private/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/driftgate-offline-check-_6hlzbpq/fixture"
+      }
+    },
+    {
+      "path": "Offline-check-macOS-intel/offline-package/result.json",
+      "sha256": "4b4a37103b1e55c4eacdd79a4ce29e5bb60d95b9af20eaf0a2e0add0e7298e26",
+      "bytes": 104223,
+      "frozen": true,
+      "bridge_ready": true,
+      "network_isolation": "macOS sandbox-exec outbound deny",
+      "grammar_analyses": 8,
+      "git_object_checks": {
+        "stale_document_rejected": true,
+        "current_document_accepted": true,
+        "wrong_pin_rejected": true,
+        "weakening_rejected": true,
+        "working_tree_ignored": true,
+        "original_crlf_bytes_bound": true
+      },
+      "verification_identity": {
+        "run_id": "a9a3adec31c84697bf7937822043a5e1",
+        "repository": "/private/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/driftgate-offline-check-0231ctgs/fixture"
+      }
+    }
+  ]
+}

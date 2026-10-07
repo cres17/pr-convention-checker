@@ -1,0 +1,16 @@
+{
+  "schema": "native-failure-observation-v1",
+  "source_commit": "6d33001b1fafa8b6b40b6346ee6c30fbf498ce0b",
+  "run_id": 37653098799,
+  "platform": "macOS-intel",
+  "desktop_regression_passed": 1122,
+  "packaged_app_check": "pass",
+  "mounted_dmg_check": "failed",
+  "exit_code": -11,
+  "result_json_present": false,
+  "app_log": "QObject: shared QObject was deleted directly. The program is malformed and may crash.",
+  "job_log_raw_sha256": "38e1b8d7cb99926997dd9a5a2e189d55d8bb8ab5822e08df05f26fb1d82b6198",
+  "job_log_raw_bytes": 7467,
+  "root_cause": "unconfirmed; no failing phase/result JSON available",
+  "status": "preserved observation; not claimed fixed by Windows metadata changes"
+}

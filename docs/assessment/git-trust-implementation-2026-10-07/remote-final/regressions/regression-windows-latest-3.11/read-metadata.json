@@ -1,0 +1,37 @@
+{
+  "schema": "native-read-metadata-v1",
+  "platform": "win32",
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "first_handle": {
+    "st_dev": 742408122,
+    "st_ino": 1125899907859870,
+    "st_size": 8,
+    "st_mtime_ns": 1791391688592960800,
+    "st_ctime_ns": 1791391687592960800
+  },
+  "after_read_handle": {
+    "st_dev": 742408122,
+    "st_ino": 1125899907859870,
+    "st_size": 8,
+    "st_mtime_ns": 1791391688592960800,
+    "st_ctime_ns": 1791391687592960800
+  },
+  "path_stat": {
+    "st_dev": 742408122,
+    "st_ino": 1125899907859870,
+    "st_size": 8,
+    "st_mtime_ns": 1791391688592960800,
+    "st_ctime_ns": 1791391687592960800
+  },
+  "reopened_handle": {
+    "st_dev": 742408122,
+    "st_ino": 1125899907859870,
+    "st_size": 8,
+    "st_mtime_ns": 1791391688592960800,
+    "st_ctime_ns": 1791391687592960800
+  },
+  "heterogeneous_api_mismatches": [],
+  "old_guard_would_accept": true,
+  "like_api_guard_accepts": true,
+  "bounded_read_preserves_fixture": true
+}

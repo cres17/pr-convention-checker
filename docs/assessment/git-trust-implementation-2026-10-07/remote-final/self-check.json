@@ -1,0 +1,337 @@
+{
+  "requested_base": "6d33001b1fafa8b6b40b6346ee6c30fbf498ce0b",
+  "inputs": {
+    "requested_base": "6d33001b1fafa8b6b40b6346ee6c30fbf498ce0b",
+    "resolved_base": "6d33001b1fafa8b6b40b6346ee6c30fbf498ce0b",
+    "comparison_mode": "commit",
+    "head": "2a78160b78b110532a69c3f5a073cc04329b8cdc",
+    "dirty": false,
+    "untracked_skipped": [],
+    "snapshot_sha256": "13e45054c985398bea89e384131daa465653da54aacde6f847497ae88d9de80a"
+  },
+  "policy_sha256": "3b21d87ef6f284f5b0ce8697c4467084a2d15659c12d33b6555b3a4e581f9abe",
+  "trusted_policy_ref": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+  "warnings": [],
+  "evaluation": {
+    "schema_version": 3,
+    "verification": "unverified",
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass",
+      "undetermined_rules": 0,
+      "unverified_rules": 2
+    },
+    "scan_metrics": {
+      "scanned_files": 26,
+      "skipped_ignored_files": 2,
+      "skipped_binary_files": 4,
+      "skipped_large_files": 2,
+      "evaluated_rules": 2,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/express-git.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/express-git.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/failed-jobs.log.gz",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/failures.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/local-read-metadata.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/probe.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/python-full.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/python-git.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/python-git.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/targeted.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/verification.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/windows-310-pytest.log.gz",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/windows-311-pytest.log.gz",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/windows-312-pytest.log.gz",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/remote-6d33001/local-object-self-check.json",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/remote-6d33001/object-comparison.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/remote-6d33001/object-self-check.json",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        },
+        {
+          "path": "docs/assessment/git-trust-implementation-2026-10-07/remote-6d33001/self-check.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/ops/drift-gate-self-check.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/drift-gate-git-trust-implementation-2026-10-07.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/adapters/snapshot.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_auto_development.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_input_snapshot.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "scripts/audit_auto_contracts.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        }
+      ]
+    },
+    "result": "pass",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "other",
+      "workflow-ci"
+    ],
+    "violations": [],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/*.py"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/snapshot.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          ".github/workflows/**"
+        ],
+        "trigger_files": [
+          ".github/workflows/ci.yml"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Self-check and package operations",
+            "required": [
+              "docs/ops/drift-gate-self-check.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1,
+      "on_unverified": "fail"
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {
+      ".github/workflows/ci.yml": [
+        "self-package-operations"
+      ],
+      "drift_gate/adapters/snapshot.py": [
+        "self-engine-contract"
+      ]
+    },
+    "unmatched": [
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/express-git.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/express-git.log",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/failed-jobs.log.gz",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/failures.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/local-read-metadata.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/probe.py",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/python-full.log",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/python-git.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/python-git.log",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/targeted.log",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/verification.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/windows-310-pytest.log.gz",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/windows-311-pytest.log.gz",
+      "docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/windows-312-pytest.log.gz",
+      "docs/assessment/git-trust-implementation-2026-10-07/remote-6d33001/local-object-self-check.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/remote-6d33001/object-comparison.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/remote-6d33001/object-self-check.json",
+      "docs/assessment/git-trust-implementation-2026-10-07/remote-6d33001/self-check.json",
+      "docs/contracts/gate-and-inputs.md",
+      "docs/ops/drift-gate-self-check.md",
+      "docs/review/drift-gate-git-trust-implementation-2026-10-07.md",
+      "scripts/audit_auto_contracts.py"
+    ],
+    "ignored": [
+      "drift_gate/tests/test_auto_development.py",
+      "drift_gate/tests/test_input_snapshot.py"
+    ]
+  },
+  "execution": {
+    "schema_version": 2,
+    "run_id": "bdef71c4e92a44e9901bcfa7b6c128e4",
+    "started_at": "2026-10-07T16:48:11.213389+00:00",
+    "status": "success"
+  }
+}

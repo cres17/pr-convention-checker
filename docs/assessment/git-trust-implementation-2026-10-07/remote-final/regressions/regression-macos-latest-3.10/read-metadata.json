@@ -1,0 +1,37 @@
+{
+  "schema": "native-read-metadata-v1",
+  "platform": "darwin",
+  "python": "3.10.11 (v3.10.11:7d4cc5aa85, Apr  4 2023, 19:05:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "first_handle": {
+    "st_dev": 16777229,
+    "st_ino": 2967680,
+    "st_size": 8,
+    "st_mtime_ns": 1791391708653987039,
+    "st_ctime_ns": 1791391707654045526
+  },
+  "after_read_handle": {
+    "st_dev": 16777229,
+    "st_ino": 2967680,
+    "st_size": 8,
+    "st_mtime_ns": 1791391708653987039,
+    "st_ctime_ns": 1791391707654045526
+  },
+  "path_stat": {
+    "st_dev": 16777229,
+    "st_ino": 2967680,
+    "st_size": 8,
+    "st_mtime_ns": 1791391708653987039,
+    "st_ctime_ns": 1791391707654045526
+  },
+  "reopened_handle": {
+    "st_dev": 16777229,
+    "st_ino": 2967680,
+    "st_size": 8,
+    "st_mtime_ns": 1791391708653987039,
+    "st_ctime_ns": 1791391707654045526
+  },
+  "heterogeneous_api_mismatches": [],
+  "old_guard_would_accept": true,
+  "like_api_guard_accepts": true,
+  "bounded_read_preserves_fixture": true
+}
