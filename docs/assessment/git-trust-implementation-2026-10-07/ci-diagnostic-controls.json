@@ -14,5 +14,10 @@
     "mirror is not Linux or Windows execution",
     "remote CI/Windows regression still running at this receipt time",
     "missing GitHub log blob is not proof of infrastructure root cause"
-  ]
+  ],
+  "mirror_log_file": "ci-mirror-tests.log.gz",
+  "mirror_log_encoding": "gzip; original bytes preserved",
+  "mirror_log_original_bytes": 1207220,
+  "mirror_log_archive_sha256": "0c33e381e04ba91d3c55db85b26b6f74942cce5907f3174824c7c7291c2f290a",
+  "mirror_log_archive_bytes": 29004
 }
