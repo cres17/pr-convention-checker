@@ -1,0 +1,67 @@
+{
+  "id": "R4-field-only-real-diff",
+  "policy": {
+    "rules": [
+      {
+        "id": "response-contract",
+        "severity": "blocker",
+        "when": {
+          "any_changed": [
+            "src/**"
+          ],
+          "min_change_intensity": "route-contract-change"
+        },
+        "require": {
+          "groups": [
+            {
+              "name": "API",
+              "any_changed": [
+                "openapi.json"
+              ],
+              "content": "api-schema"
+            }
+          ]
+        }
+      }
+    ],
+    "gate": {
+      "on_unverified": "warn"
+    }
+  },
+  "files": [
+    {
+      "path": "src/api.py",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "--- a/src/api.py\n+++ b/src/api.py\n@@ -3,7 +3,6 @@\n app = FastAPI()\n class Order(BaseModel):\n     id: int\n-    label: str\n @app.get('/orders', response_model=Order)\n def orders():\n     return {}\n",
+      "semantic_signals": [],
+      "semantic_evidence": [],
+      "analysis_method": "not-analyzed",
+      "analysis_reason": "",
+      "documented_env_keys": null,
+      "document_input_state": "",
+      "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n    label: str\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n",
+      "after_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n"
+    },
+    {
+      "path": "openapi.json",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "+contract updated\n",
+      "semantic_signals": [],
+      "semantic_evidence": [],
+      "analysis_method": "not-analyzed",
+      "analysis_reason": "",
+      "documented_env_keys": null,
+      "document_input_state": "",
+      "before_source": null,
+      "after_source": "{\"openapi\":\"3.1.0\",\"paths\":{}}"
+    }
+  ],
+  "expected": {
+    "gate": "fail",
+    "decision": "violated",
+    "verification": "verified",
+    "violations": 1
+  }
+}

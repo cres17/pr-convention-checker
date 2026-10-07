@@ -1,0 +1,29 @@
+........................................................................ [ 22%]
+..................................................................F..... [ 44%]
+........................................................................ [ 66%]
+........................................................................ [ 88%]
+.....................................                                    [100%]
+=================================== FAILURES ===================================
+___________ test_strict_auto_consumes_discovery_compatibility_hints ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1094bab10>
+
+    def test_strict_auto_consumes_discovery_compatibility_hints(monkeypatch):
+        import drift_gate.core.contracts.discovery as module
+        original = module.discover_contracts
+        seen = []
+    
+        def capture(files, **kwargs):
+            result = original(files, **kwargs)
+            seen.append(result)
+            return result
+    
+        monkeypatch.setattr(module, 'discover_contracts', capture)
+        result = run([changed(), document()], policy=policy(mode='auto-strict'))
+>       assert seen and any(ContractFamily.API_RESPONSE == item.family for item in seen[0].candidates)
+E       assert ([])
+
+drift_gate/tests/test_profile_discovery.py:279: AssertionError
+=========================== short test summary info ============================
+FAILED drift_gate/tests/test_profile_discovery.py::test_strict_auto_consumes_discovery_compatibility_hints
+1 failed, 324 passed in 0.50s

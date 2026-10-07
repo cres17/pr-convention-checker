@@ -6,6 +6,7 @@ export const statusLabels: Record<string, string> = {
     unmatched: "대상 아님",
     "rejected-ignore": "예외 거절",
     uncertain: "판단 유보",
+    undetermined: "판단 보류",
 };
 export function Badge({ value }: {
     value: string;

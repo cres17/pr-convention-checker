@@ -16,6 +16,14 @@ it("validates scans and preserves engine result fields", () => {
   const event = decodeDesktopEvent(JSON.stringify({ type: "scanned", scan: fixture }));
   expect(event).toEqual({ type: "scanned", scan: fixture });
 });
+it("preserves opt-in proof diagnostics through the native scan event", () => {
+  const diagnostics = { schema: "contract-diagnostics-v1", role: "legacy-selector-shadow",
+    complete_policy_coverage: false, gate_action_applied: false, records_seen: 1,
+    retained_count: 0, omitted_record_count: 1, trace_truncated: true, entries: [] };
+  const scan = { ...fixture, result: { ...fixture.result, contract_diagnostics: diagnostics } };
+  expect(decodeDesktopEvent(JSON.stringify({ type: "scanned", scan })))
+    .toEqual({ type: "scanned", scan });
+});
 it("rejects malformed JSON and unknown event names", () => {
   expect(decodeDesktopEvent("{").type).toBe("error");
   expect(decodeDesktopEvent('{"type":"unknown"}').type).toBe("error");

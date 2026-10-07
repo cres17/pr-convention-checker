@@ -1,0 +1,31 @@
+{
+  "workload": {
+    "modules": 32,
+    "fields_per_module": 80,
+    "rules": 8,
+    "repeats": 3
+  },
+  "input_sha256": "f72b0eb2ea323415eccb6ea9ec3eafd8686fdc09665fc26faf0d4864a41cc2cc",
+  "openapi_bytes": 114037,
+  "measurements_by_cache_entries": {
+    "0": {
+      "seconds": [
+        1.2770025830250233,
+        1.2575530000030994,
+        1.2684610409778543
+      ],
+      "median_seconds": 1.2684610409778543,
+      "report_bytes": 22420
+    },
+    "128": {
+      "seconds": [
+        0.4869592909817584,
+        0.5135452920221724,
+        0.5604470410034992
+      ],
+      "median_seconds": 0.5135452920221724,
+      "report_bytes": 22420
+    }
+  },
+  "full_reports_identical": true
+}

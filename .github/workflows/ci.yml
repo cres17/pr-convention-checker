@@ -37,12 +37,24 @@ jobs:
           SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
           TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
         run: python scripts/check_self.py --base "$SELF_CHECK_BASE" --trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b --out build/self-check.json
+      - name: Check immutable objects with a pinned policy
+        env:
+          SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: >
+          python -m drift_gate check --base "$SELF_CHECK_BASE" --head "$GITHUB_SHA"
+          --policy .drift-gate.self.yml
+          --trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b
+          --trusted-policy-sha256 3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb
+          --json --out-json build/object-self-check.json > build/object-self-check-stdout.json
       - name: Preserve policy coverage and gate evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: drift-gate-self-check
-          path: build/self-check.json
+          path: |
+            build/self-check.json
+            build/object-self-check.json
 
   test:
     runs-on: ${{ matrix.os }}
@@ -64,7 +76,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          pip install -e ".[dev]" zstandard==0.25.0
+          pip install -e ".[dev,oracle]" zstandard==0.25.0
 
       - name: Restore grammar downloads
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
@@ -77,10 +89,22 @@ jobs:
           TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
         run: python packaging/prepare_parsers.py
 
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Install fixed Express HTTP oracle
+        run: npm install --prefix "${{ runner.temp }}/express-oracle" --no-audit --no-fund express@4.21.2
+
       - name: Run pytest
         env:
           TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+          DRIFT_GATE_EXPRESS_ORACLE_DIR: ${{ runner.temp }}/express-oracle
         run: pytest drift_gate/tests/ -v --tb=short
+
+      - name: Verify frozen semantic evaluation axes
+        run: |
+          python scripts/audit_auto_contracts.py --out build/auto-contracts-v2.json
+          python scripts/audit_auto_contracts.py --suite drift_gate/tests/contracts/express-contracts-v1.json --out build/express-contracts-v1.json
 
   lint:
     runs-on: ubuntu-latest

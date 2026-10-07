@@ -1,0 +1,23 @@
+{
+  "validated_at": "2026-10-07T06:58:24.786568+00:00",
+  "checks": {
+    "local_links": 38,
+    "links_and_markdown_errors": [],
+    "reproducer_matches_receipt": true,
+    "model_matches_receipt": true,
+    "production_combine_matches_model": true,
+    "model_passed": true,
+    "prior_evidence_entries_match": true
+  },
+  "files_sha256": {
+    "docs/architecture/drift-gate-enterprise-logical-design-2026-10-07.md": "90a26b3d64d038ec4e89c6ce8de792c912eb0f3e42174e4416aecc8fc278d31a",
+    "docs/assessment/enterprise-logical-design-2026-10-07/README.md": "8e7512c85b50b556ad8358f1bdca1c28f43b8de68dc956837ff7c7a6e6314908",
+    "docs/assessment/enterprise-logical-design-2026-10-07/check_model.py": "fa88596c8ba14c860ab6de1ead622708150005797e5033f7f6c9e12fe454f2d5",
+    "docs/assessment/enterprise-logical-design-2026-10-07/model-check.json": "9d8fef01e4b93180807859bbd1c9c62d07b2b0a4999603678f5003cd389952da",
+    "docs/assessment/enterprise-logical-design-2026-10-07/reproduce.py": "86c58f4f1b21046cecf0ab65393b6663ea9eac089b9c84a11b6eacb18c293699",
+    "docs/assessment/enterprise-logical-design-2026-10-07/results-final.json": "5a694d5b57a31176ca655fdc4218a1de7e896a4c88734f455a0ac71d725e2931",
+    "docs/assessment/enterprise-logical-design-2026-10-07/results.json": "0bd69091e07570f1c34dddc492f5da74a6e2bb853f3a722fcf8d14cb723be8b7"
+  },
+  "scope": "Document links, formatting, script receipts, bounded logical model. Not a product-wide correctness certification.",
+  "lint": "ruff E9,F passed for the two new probe scripts; git diff --check passed for tracked changes"
+}

@@ -1,12 +1,14 @@
 import type { DesktopEvent } from "./events";
 import { decodeDesktopEvent } from "./eventSchema";
 
-export type Group = { name: string; required?: string[]; evidence?: string };
+export type Group = { name: string; required?: string[]; evidence?: string; decision?: string; verification?: string; content_mode?: string };
 export type Decision = {
   rule_id: string;
   status: string;
   reason: string;
   severity?: string;
+  decision?: string;
+  verification?: string;
   trigger_files: string[];
   unsatisfied_groups: Group[];
   satisfied_groups: Group[];

@@ -157,13 +157,23 @@ def test_broken_bundle_fails_before_any_download(bundled, monkeypatch, damage):
 
 
 def valid_result(module):
+    def phase(number, changed):
+        return {"result": "warn", "execution": {"run_id": f"{number:032x}", "status": "success"},
+                "scan_metrics": {"scanned_files": 1},
+                "violations": [{"rule_id": "offline-api-docs", "trigger_files": [changed]}]}
+    signature = phase(2, {"path": "src/api.py", "status": "modified", "previous_path": None,
+                          "patch": "@@ -1,4 +1,6 @@\n def api(a,\n+        *extra,\n         b=1,\n+        **options,\n ):\n     return a\n"})
+    rename = phase(3, {"path": "docs/api.py", "status": "renamed", "previous_path": "src/api.py",
+                       "patch": "diff --git a/src/api.py b/docs/api.py\nsimilarity index 100%\nrename from src/api.py\nrename to docs/api.py\n"})
     return {"frozen": True, "bridge_ready": True, "ui_text": "검사 완료",
+            "verification": {"run_id": "a" * 32, "repository": "/fixture"},
             "network_probes": [{"error": "blocked"}, {"error": "blocked"}],
-            "hardening_checks": [{'case': case, 'result': {'result': 'warn', 'violations': [{'rule_id': 'offline-api-docs'}]}}
-                                 for case in ['signature', 'rename']],
-            "scan": {"result": {"result": "warn", "violations": [{"rule_id": "offline-api-docs"}],
-                                "scan_metrics": {"analysis_notes": [
-                {"path": "src/" + name, "method": "grammar+heuristic"} for name in module.SOURCES]}}}}
+            "hardening_checks": [{"case": "signature", "result": signature}, {"case": "rename", "result": rename}],
+            "scan": {"repository": "/fixture", "result": {"result": "warn",
+                     "execution": {"run_id": "1" * 32, "status": "success"},
+                     "violations": [{"rule_id": "offline-api-docs"}],
+                     "scan_metrics": {"analysis_notes": [
+                         {"path": "src/" + name, "method": "grammar+heuristic"} for name in module.SOURCES]}}}}
 
 
 @pytest.mark.parametrize("damage", ["not-frozen", "no-ui", "no-bridge", "network", "fallback", "missing-file", "gate", "no-violation"])
@@ -251,3 +261,92 @@ def test_mac_framework_cleanup_never_discards_real_resources(tmp_path, monkeypat
     with pytest.raises(OSError):
         module.protect_webengine_versions(tmp_path)
     assert target.read_bytes() == b'keep'
+
+
+@pytest.mark.parametrize("damage", ["old-challenge", "wrong-repository", "reused-initial", "reused-id",
+                                     "duplicate-phase", "reordered-phase", "wrong-rename", "wrong-signature",
+                                     "extra-change", "missing-id", "failed-execution"])
+def test_package_check_binds_each_phase_to_fresh_expected_input(damage):
+    import copy
+    module = verifier()
+    result = valid_result(module)
+    expected = dict(result["verification"])
+    checks = result["hardening_checks"]
+    if damage == "old-challenge":
+        result["verification"]["run_id"] = "b" * 32
+    elif damage == "wrong-repository":
+        result["scan"]["repository"] = "/other"
+    elif damage == "reused-initial":
+        checks[0]["result"] = copy.deepcopy(result["scan"]["result"])
+    elif damage == "reused-id":
+        checks[1]["result"]["execution"] = dict(checks[0]["result"]["execution"])
+    elif damage == "duplicate-phase":
+        checks.append(copy.deepcopy(checks[0]))
+    elif damage == "reordered-phase":
+        checks.reverse()
+    elif damage == "wrong-rename":
+        checks[1]["result"]["violations"][0]["trigger_files"][0]["previous_path"] = "other.py"
+    elif damage == "wrong-signature":
+        checks[0]["result"]["violations"][0]["trigger_files"][0]["patch"] = "@@ -1 +1 @@\n-x = 1\n+x = 2\n"
+    elif damage == "extra-change":
+        checks[0]["result"]["violations"][0]["trigger_files"][0]["patch"] += "+extra = 2\n"
+    elif damage == "missing-id":
+        checks[0]["result"].pop("execution")
+    else:
+        checks[0]["result"]["execution"]["status"] = "input_error"
+    with pytest.raises(RuntimeError):
+        module.validate(result, expected_identity=expected)
+
+
+def test_package_verifier_preserves_old_output_without_launching(tmp_path, monkeypatch):
+    module = verifier()
+    executable = tmp_path / "noop"
+    executable.write_text("exit 0")
+    output = tmp_path / "evidence"
+    output.mkdir()
+    report = output / "result.json"
+    report.write_text(json.dumps(valid_result(module)))
+    before = report.read_bytes()
+    monkeypatch.setattr(module.subprocess, "Popen", lambda *a, **k: pytest.fail("Old evidence must be rejected before launch"))
+    with pytest.raises(FileExistsError):
+        module.verify(executable, output)
+    assert report.read_bytes() == before
+
+
+@pytest.mark.parametrize("fresh", [False, True])
+def test_package_runner_requires_matching_challenge_and_fixture(tmp_path, monkeypatch, fresh):
+    from contextlib import contextmanager
+    module = verifier()
+    from drift_gate.desktop.package_git_check import run_git_controls
+    git_controls = run_git_controls() if fresh else None
+    monkeypatch.setattr(module.sys, "platform", "darwin")
+    executable = tmp_path / "Noop.app/Contents/MacOS/Noop"
+    executable.parent.mkdir(parents=True)
+    executable.touch()
+    grammars = executable.parent.parent / "Frameworks/drift_gate/grammars"
+    grammars.mkdir(parents=True)
+    (grammars / "manifest.json").write_text('{"libraries": []}')
+    @contextmanager
+    def isolation(*args):
+        yield [], "test-only simulated isolation"
+    monkeypatch.setattr(module, "network_block", isolation)
+    monkeypatch.setattr(module, "fixture", lambda directory: directory.mkdir())
+    class OldResultProcess:
+        def __init__(self, args, **kwargs):
+            report = valid_result(module)
+            if git_controls is not None:
+                report['git_object_checks'] = git_controls
+            if fresh:
+                report["verification"] = {"run_id": kwargs["env"]["DRIFT_GATE_PACKAGE_CHECK_ID"],
+                                          "repository": str(Path(args[-2]).resolve())}
+                report["scan"]["repository"] = report["verification"]["repository"]
+            Path(args[-1]).write_text(json.dumps(report))
+        def wait(self, timeout=None):
+            return 0
+    monkeypatch.setattr(module.subprocess, "Popen", OldResultProcess)
+    if fresh:
+        module.verify(executable, tmp_path / "fresh-output")
+        assert json.loads((tmp_path / "fresh-output/result.json").read_text())["fresh_cache_files"] == []
+    else:
+        with pytest.raises(RuntimeError, match="different verification run"):
+            module.verify(executable, tmp_path / "fresh-output")

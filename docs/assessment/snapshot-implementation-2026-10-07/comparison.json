@@ -1,0 +1,67 @@
+{
+  "python-git": {
+    "cases": 14,
+    "suite_inputs_and_four_axes_unchanged": true,
+    "counts": {
+      "facts": {
+        "correct": 14,
+        "total": 14
+      },
+      "decision": {
+        "correct": 14,
+        "total": 14
+      },
+      "verification": {
+        "correct": 14,
+        "total": 14
+      },
+      "gate": {
+        "correct": 14,
+        "total": 14
+      }
+    },
+    "execution_input_hash_changed_cases": [
+      "alias-preexisting-document",
+      "missing-getter-import"
+    ],
+    "hash_change_reason": "Previously key-only env samples now also bind observed document text"
+  },
+  "express-git": {
+    "cases": 8,
+    "suite_inputs_and_four_axes_unchanged": true,
+    "counts": {
+      "facts": {
+        "correct": 8,
+        "total": 8
+      },
+      "decision": {
+        "correct": 8,
+        "total": 8
+      },
+      "verification": {
+        "correct": 8,
+        "total": 8
+      },
+      "gate": {
+        "correct": 8,
+        "total": 8
+      }
+    },
+    "execution_input_hash_changed_cases": [],
+    "hash_change_reason": null
+  },
+  "fixed": {
+    "passed": 21,
+    "total": 21,
+    "decisions_and_reports_unchanged_excluding_execution_timing": true
+  },
+  "entrypoints": {
+    "matched": 8,
+    "total": 8,
+    "github_transport": "simulated"
+  },
+  "local_capture_replay_controls": {
+    "passed": 8,
+    "total": 8
+  }
+}

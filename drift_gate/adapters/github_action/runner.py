@@ -7,17 +7,19 @@ import os
 import sys
 from pathlib import Path
 
-from drift_gate.core.engine import run
+from drift_gate.adapters.inspection import inspect as run
 from drift_gate.adapters.github.client import GitHubAdapter, parse_drift_ignores
 from drift_gate.adapters.github.commenter import PrCommenter
 from drift_gate.adapters.claude.enricher import ClaudeEnricher
-from drift_gate.adapters.ast.analyzer import enrich_semantic_signals
 from drift_gate.adapters.history.store import append_result
 from drift_gate.reporters.markdown import MarkdownReporter
 from drift_gate.reporters.html import HtmlReporter
 
 
 def main() -> None:
+    contract_proofs = os.environ.get('CONTRACT_PROOFS','false').strip().lower()
+    if contract_proofs not in {'true','false'}:
+        raise ValueError('CONTRACT_PROOFS must be true or false')
     token         = _require_env("GITHUB_TOKEN")
     repo          = _require_env("REPO")
     pr_number     = int(_require_env("PR_NUMBER"))
@@ -37,7 +39,6 @@ def main() -> None:
     _log(f"변경 파일 수집 중 (PR #{pr_number})...")
     gh = GitHubAdapter(token=token, repo=repo)
     changed_files, pr_body = gh.get_pr_files_and_body(pr_number)
-    changed_files = enrich_semantic_signals(changed_files)
     drift_ignores = parse_drift_ignores(pr_body)
     _log(f"변경 파일: {len(changed_files)}개 | drift-ignore: {len(drift_ignores)}개")
     if is_fork_pr:
@@ -47,8 +48,9 @@ def main() -> None:
 
     _log(f"정책 평가 중 ({policy_path})...")
     try:
-        from drift_gate.adapters.policy_loader import load_policy as _load_policy
-        _policy_obj = _load_policy(policy_path)
+        from drift_gate.adapters.policy_loader import read_policy, require_check_policy
+        policy_source, _policy_obj = read_policy(policy_path)
+        require_check_policy(_policy_obj)
         from drift_gate.adapters.github.approvals import verify_ignores
         drift_ignores = verify_ignores(gh, pr_number, drift_ignores, _policy_obj, changed_files)
         changed_files = gh.attach_env_documents(pr_number, changed_files, _policy_obj)
@@ -58,6 +60,9 @@ def main() -> None:
             changed_files=changed_files,
             drift_ignores=drift_ignores,
             policy=_policy_obj,
+            policy_source=policy_source, policy_path=policy_path,
+            provenance={"source": "github-pr", "repository": repo, "pr_number": pr_number},
+            contract_proofs=contract_proofs == 'true',
         )
     except Exception as exc:
         _write_github_output({"result": "fail", "policy_error": str(exc)})
@@ -83,7 +88,7 @@ def main() -> None:
     md       = md_base + artifact_footer
     html_report = HtmlReporter().render(
         result,
-        policy_source=policy_path.read_text(encoding="utf-8") if policy_path.exists() else "",
+        policy_source=policy_source,
     )
     md_path.write_text(md, encoding="utf-8")
     html_path.write_text(html_report, encoding="utf-8")

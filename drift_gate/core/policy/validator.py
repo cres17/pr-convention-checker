@@ -61,7 +61,18 @@ def validate(policy: Policy) -> ValidationResult:
                 f"rule '{rule_id}': require.groups가 없습니다."
             )
         group_names = {group.name for group in rule.require.groups}
+        seen_groups = set()
+        for group in rule.require.groups:
+            if not group.name.strip() or group.name in seen_groups:
+                result.errors.append(f"rule '{rule_id}': group name must be nonempty and unique: '{group.name}'")
+            seen_groups.add(group.name)
+            if bool(group.any_changed) == bool(group.all_changed):
+                result.errors.append(f"rule '{rule_id}' / group '{group.name}': specify exactly one nonempty any_changed or all_changed")
+        seen_relations = set()
         for relation in rule.require.cross_file:
+            if relation.name in seen_relations:
+                result.errors.append(f"rule '{rule_id}': duplicate cross_file name '{relation.name}'")
+            seen_relations.add(relation.name)
             if not relation.name:
                 result.errors.append(
                     f"rule '{rule_id}': require.cross_file 항목의 name이 비어 있습니다."
@@ -114,13 +125,13 @@ def validate(policy: Policy) -> ValidationResult:
 
         # 6. require.groups 경로가 ignore_paths에 포함 → 충족 불가
         for group in rule.require.groups:
-            if group.content not in {"auto", "paths", "api-routes", "env-keys"}:
+            if group.content not in {"auto", "auto-strict", "paths", "api-routes", "env-keys", "api-schema"}:
                 result.errors.append(f"rule '{rule_id}': unknown group content mode '{group.content}'")
-            if group.content == "env-keys" and any(
+            if group.content in {"env-keys", "api-schema", "auto-strict"} and any(
                 any(c in p for c in "*?[]") or p.startswith("/") or ".." in p.split("/")
                 for p in (group.any_changed or group.all_changed)
             ):
-                result.errors.append(f"rule '{rule_id}': env-keys requires explicit relative document paths")
+                result.errors.append(f"rule '{rule_id}': {group.content} requires explicit relative document paths")
             required = group.any_changed or group.all_changed
             blocked = [
                 p for p in required
@@ -134,6 +145,8 @@ def validate(policy: Policy) -> ValidationResult:
                     f"ignore_paths에서 해당 경로를 제거하세요."
                 )
 
+    if policy.gate.on_unverified not in {"warn", "fail"}:
+        result.errors.append("gate.on_unverified must be warn or fail")
     return result
 
 

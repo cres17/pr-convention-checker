@@ -14,9 +14,17 @@ class ChangedFile:
     analysis_reason: str = ""
     # Only key names are retained from document content, never values.
     documented_env_keys: Optional[List[str]] = None
+    document_input_state: str = ""  # available | missing | unavailable (adapter evidence)
     # Bounded adapter snapshots; never serialized into reports or history.
     before_source: Optional[str] = field(default=None, repr=False)
     after_source: Optional[str] = field(default=None, repr=False)
+    # Adapter-normalized YAML; original text remains in after_source so the
+    # execution receipt binds both the raw input and its normalized meaning.
+    document_json: Optional[str] = field(default=None, repr=False)
+    document_error: str = ""
+    before_routes: Optional[List[tuple[str, str]]] = field(default=None, repr=False)
+    after_routes: Optional[List[tuple[str, str]]] = field(default=None, repr=False)
+    route_analysis_error: str = ""
 
     def to_dict(self) -> dict:
         return {
@@ -29,6 +37,9 @@ class ChangedFile:
             "analysis_method": self.analysis_method,
             "analysis_reason": self.analysis_reason,
             "documented_env_keys": self.documented_env_keys,
+            "document_input_state": self.document_input_state,
+            **({"document_error": self.document_error} if self.document_error else {}),
+            **({"route_analysis_error": self.route_analysis_error} if self.route_analysis_error else {}),
         }
 
     @classmethod
@@ -41,4 +52,5 @@ class ChangedFile:
             semantic_signals=d.get("semantic_signals", []),
             semantic_evidence=d.get("semantic_evidence", []),
             documented_env_keys=d.get("documented_env_keys"),
+            document_input_state=d.get("document_input_state", ""),
         )

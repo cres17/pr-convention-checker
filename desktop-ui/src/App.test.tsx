@@ -202,6 +202,20 @@ it("shows how to fix a violation and opens the required document", async () => {
   expect(api.startScan).toHaveBeenCalledWith("/sample/project", "HEAD");
 });
 
+it("keeps unknown contracts in the action filter without inventing a violation", () => {
+  const value = structuredClone(fixture) as Scan;
+  value.result.violations = [];
+  value.result.rule_decisions = [{ rule_id: "unknown-contract", status: "undetermined", reason: "source unavailable",
+    decision: "undetermined", verification: "unverified", trigger_files: ["src/api.py"], satisfied_groups: [],
+    unsatisfied_groups: [{ name: "response schema", decision: "undetermined", verification: "unverified", evidence: "source unavailable" }],
+  }];
+  render(<App initialScan={value} />);
+  fireEvent.click(screen.getByRole("button", { name: "조치 필요" }));
+  expect(screen.getAllByText("판단 보류").length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/내용을 확인하지 못해 판단을 보류했습니다/).length).toBeGreaterThan(0);
+  expect(screen.queryByText(/반영되지 않은 문서 조건/)).toBeNull();
+});
+
 it("marks every invalid item after a failed save and jumps to the first one", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "프로젝트 현황" }));

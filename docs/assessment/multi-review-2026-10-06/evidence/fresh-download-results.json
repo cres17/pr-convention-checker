@@ -1,0 +1,13 @@
+{
+  "fresh_output_required": true,
+  "phase_ids": [
+    "fe2b2823fac54e198ab20a04431f0358",
+    "504c9b3a29264e7db20b422b0e331e0e",
+    "4cb0f0a185504b4983a171ee2f706f89"
+  ],
+  "three_distinct_runs": true,
+  "different_from_previous": true,
+  "signature_diff_checked": true,
+  "rename_endpoints_checked": true,
+  "receipt": "/Users/moon/Documents/pr-convention-checker/build/multi-review-confirmation/fresh-downloaded/downloaded-validation.json"
+}

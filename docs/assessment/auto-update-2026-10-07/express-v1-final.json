@@ -1,0 +1,1089 @@
+{
+  "protocol": {
+    "version": 1,
+    "input": "real Git snapshots; authored nonblind Express cases frozen before first run",
+    "axes": [
+      "facts",
+      "decision",
+      "verification",
+      "gate"
+    ],
+    "scope": "default ESM import, direct const app/router, literal method/path/mount, ordinary handlers"
+  },
+  "suite_sha256": "992cf555cdf16ecc30390a40e2c109a02aa184196d545d45f4489da8412a155f",
+  "counts": {
+    "facts": {
+      "correct": 8,
+      "total": 8
+    },
+    "decision": {
+      "correct": 8,
+      "total": 8
+    },
+    "verification": {
+      "correct": 8,
+      "total": 8
+    },
+    "gate": {
+      "correct": 8,
+      "total": 8
+    }
+  },
+  "false_verified": [],
+  "missed_known_violations": [],
+  "cases": [
+    {
+      "id": "chain-current",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /v1/products"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /v1/products"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.001868833031039685,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; add GET /v1/products; remove GET /v1/catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "bc26980a81c44edfad63d728ad880dd5",
+          "started_at": "2026-10-07T05:21:24.960030+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "input_sha256": "4c3f92476751a005b4b66dbbcde5c607363978116d3a3d7b65131311c5f4d187"
+        }
+      },
+      "input_sha256": "4c3f92476751a005b4b66dbbcde5c607363978116d3a3d7b65131311c5f4d187"
+    },
+    {
+      "id": "chain-stale",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /v1/products"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /v1/products"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0005323749501258135,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "confidence": "low",
+            "confidence_basis": "path-specificity; not a probability of correctness",
+            "change_types": [
+              "other"
+            ],
+            "change_type": "other",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/api.js",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "diff --git a/src/api.js b/src/api.js\nindex 9fc9ceb..851733d 100644\n--- a/src/api.js\n+++ b/src/api.js\n@@ -2,5 +2,5 @@ import express from 'express';\n const app = express();\n const router = express.Router();\n function handler(req, res) { res.send('ok'); }\n-router.route('/catalog').get(handler);\n+router.route('/products').get(handler);\n app.use('/v1', router);\n",
+                "semantic_signals": [],
+                "semantic_evidence": [],
+                "analysis_method": "grammar+heuristic",
+                "analysis_reason": "",
+                "documented_env_keys": null,
+                "document_input_state": ""
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; add GET /v1/products; remove GET /v1/catalog",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "checklist": [
+              "docs 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "impl-only",
+            "change_intensities": [
+              "impl-only"
+            ],
+            "trigger_patterns": [
+              "src/**"
+            ],
+            "blast_radius": [
+              "missing requirement group: docs"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "decision": "violated",
+            "verification": "verified",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; add GET /v1/products; remove GET /v1/catalog",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "f3539192955d493691397b58467e923f",
+          "started_at": "2026-10-07T05:21:25.058123+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "input_sha256": "d511f73ab1aa005d3f930a5db633f02a49e4a7c03e652288067f83a89cbdfcc4"
+        }
+      },
+      "input_sha256": "d511f73ab1aa005d3f930a5db633f02a49e4a7c03e652288067f83a89cbdfcc4"
+    },
+    {
+      "id": "mount-prefix",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /v2/catalog"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /v2/catalog"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0004343330510891974,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; add GET /v2/catalog; remove GET /v1/catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "5bdb11c987bd450db9e55d0146d7c245",
+          "started_at": "2026-10-07T05:21:25.154977+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "input_sha256": "e03faf1c230ff68abf91912a96f40101505a76a92280220b7e5f0c2d049ca9a8"
+        }
+      },
+      "input_sha256": "e03faf1c230ff68abf91912a96f40101505a76a92280220b7e5f0c2d049ca9a8"
+    },
+    {
+      "id": "method-replaced",
+      "expected": {
+        "facts": {
+          "added": [
+            "POST /v1/catalog"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "POST /v1/catalog"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.00044370797695592046,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; add POST /v1/catalog; remove GET /v1/catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "6bb8a4cd43c74c808eefa730f5c1c8a0",
+          "started_at": "2026-10-07T05:21:25.250895+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "input_sha256": "9a50771998fd448218a40c857c757551d127abceaa3c61f2516c9b4fcb383f23"
+        }
+      },
+      "input_sha256": "9a50771998fd448218a40c857c757551d127abceaa3c61f2516c9b4fcb383f23"
+    },
+    {
+      "id": "router-unmounted",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0007462499779649079,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; remove GET /v1/catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "e48adc9ba0f34a0596f7b311e37e4f51",
+          "started_at": "2026-10-07T05:21:25.391480+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "input_sha256": "0d13d5034c3260f24deadafc81132bb6ff0367ae928dbd90597472d22c8542f1"
+        }
+      },
+      "input_sha256": "0d13d5034c3260f24deadafc81132bb6ff0367ae928dbd90597472d22c8542f1"
+    },
+    {
+      "id": "chain-deleted",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0005143339512869716,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; remove GET /v1/catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "7a13f46066c54c3699d80ae46ab2fbf9",
+          "started_at": "2026-10-07T05:21:25.492070+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "input_sha256": "8f70da349215dc8e2ca7c84eda7cbdef50e106617bb6f1aad77a0f89a4ad0b13"
+        }
+      },
+      "input_sha256": "8f70da349215dc8e2ca7c84eda7cbdef50e106617bb6f1aad77a0f89a4ad0b13"
+    },
+    {
+      "id": "fake-framework",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0003756249789148569,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "one default Express import is required; configured trigger threshold is unverified",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "auto-strict"
+              },
+              {
+                "name": "Analysis evidence unavailable",
+                "required": [
+                  "src/api.js"
+                ],
+                "type": "analysis",
+                "evidence": "Cannot establish the configured change threshold; provide analyzable input or a valid exception",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "paths"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "506c481a4cc8423ea37877f1151a6b13",
+          "started_at": "2026-10-07T05:21:25.589280+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "input_sha256": "d1a6e353dadcc7aa3df078c1a6c7c94476dd07b39742a79a95e2326a4ea3c7c0"
+        }
+      },
+      "input_sha256": "d1a6e353dadcc7aa3df078c1a6c7c94476dd07b39742a79a95e2326a4ea3c7c0"
+    },
+    {
+      "id": "shadowed-router",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.00040008401265367866,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Express binding is shadowed, reassigned, escaped or used outside registration; configured trigger threshold is unverified",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "auto-strict"
+              },
+              {
+                "name": "Analysis evidence unavailable",
+                "required": [
+                  "src/api.js"
+                ],
+                "type": "analysis",
+                "evidence": "Cannot establish the configured change threshold; provide analyzable input or a valid exception",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "paths"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "d5ee79ab9b4b472a8a3aae93fffbb0b2",
+          "started_at": "2026-10-07T05:21:25.683207+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "input_sha256": "8ae98c8e9203bb5b9ba5032f54b29777af9776ad9c44d13d0e9eec528715a465"
+        }
+      },
+      "input_sha256": "8ae98c8e9203bb5b9ba5032f54b29777af9776ad9c44d13d0e9eec528715a465"
+    }
+  ]
+}

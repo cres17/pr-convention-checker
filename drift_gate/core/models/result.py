@@ -5,6 +5,15 @@ from .changed_file import ChangedFile
 from .policy import Gate
 
 
+def _verification_status(states):
+    states = set(states)
+    if "partial" in states or ("unverified" in states and "verified" in states):
+        return "partial"
+    if "unverified" in states:
+        return "unverified"
+    return "verified" if "verified" in states else "not-applicable"
+
+
 # Pricing constants (source: https://www.anthropic.com/pricing, checked 2026-05-21)
 # All prices are per million tokens (USD).
 MODEL_PRICING: dict = {
@@ -178,9 +187,16 @@ class UnsatisfiedGroup:
     required: List[str]
     type: str  # any_changed | all_changed
     evidence: str = ""
+    decision: str = "violated"
+    verification: str = "verified"
+    content_mode: str = "paths"
+    source_files: List[str] = field(default_factory=list)
+    relation: str = ""
 
     def to_dict(self) -> dict:
-        return {"name": self.name, "required": self.required, "type": self.type, "evidence": self.evidence}
+        return {"name": self.name, "required": self.required, "type": self.type, "evidence": self.evidence,
+                "decision": self.decision, "verification": self.verification, "content_mode": self.content_mode,
+                **({"source_files": self.source_files, "relation": self.relation} if self.relation else {})}
 
 
 @dataclass
@@ -189,9 +205,16 @@ class SatisfiedGroup:
     required: List[str]
     type: str  # any_changed | all_changed
     evidence: str = ""
+    decision: str = "satisfied"
+    verification: str = "verified"
+    content_mode: str = "paths"
+    source_files: List[str] = field(default_factory=list)
+    relation: str = ""
 
     def to_dict(self) -> dict:
-        return {"name": self.name, "required": self.required, "type": self.type, "evidence": self.evidence}
+        return {"name": self.name, "required": self.required, "type": self.type, "evidence": self.evidence,
+                "decision": self.decision, "verification": self.verification, "content_mode": self.content_mode,
+                **({"source_files": self.source_files, "relation": self.relation} if self.relation else {})}
 
 
 @dataclass
@@ -205,11 +228,36 @@ class RuleDecision:
     satisfied_groups: List[SatisfiedGroup] = field(default_factory=list)
     unsatisfied_groups: List[UnsatisfiedGroup] = field(default_factory=list)
 
+    @property
+    def decision(self):
+        if self.status == "skipped":
+            return "waived"
+        if self.status == "unmatched":
+            return "not-applicable"
+        if any(g.decision == "violated" for g in self.unsatisfied_groups):
+            return "violated"
+        if any(g.decision == "undetermined" for g in self.unsatisfied_groups):
+            return "undetermined"
+        if self.status == "undetermined":
+            return "undetermined"
+        if self.status in {"fail", "rejected-ignore"}:
+            return "violated"
+        return "satisfied"
+
+    @property
+    def verification(self):
+        if self.status in {"unmatched", "skipped"}:
+            return "not-applicable"
+        groups = self.satisfied_groups + self.unsatisfied_groups
+        return _verification_status(g.verification for g in groups)
+
     def to_dict(self) -> dict:
         return {
             "rule_id": self.rule_id,
             "severity": self.severity,
             "status": self.status,
+            "decision": self.decision,
+            "verification": self.verification,
             "reason": self.reason,
             "matched_patterns": self.matched_patterns,
             "trigger_files": self.trigger_files,
@@ -246,6 +294,7 @@ class Violation:
             "rule_id": self.rule_id,
             "severity": self.severity,
             "confidence": self.confidence,
+            "confidence_basis": "path-specificity; not a probability of correctness",
             "change_types": self.change_types,
             "change_type": self.change_type,
             "message": self.message,
@@ -377,6 +426,14 @@ class EvaluationResult:
     skip_reason: str = ""
     no_policy: bool = False
     execution: dict = field(default_factory=dict)
+    # Adapter inspection output, retained in memory only; never serialized.
+    inspected_files: List[ChangedFile] = field(default_factory=list, repr=False)
+    input_snapshot: object = field(default=None, repr=False)
+    contract_diagnostics: object = field(default=None, repr=False)
+
+    @property
+    def verification(self):
+        return _verification_status(d.verification for d in self.rule_decisions)
 
     @property
     def blocker_count(self) -> int:
@@ -395,13 +452,21 @@ class EvaluationResult:
         return sum(1 for v in self.violations if v.severity == "NIT")
 
     def to_dict(self) -> dict:
+        from drift_gate.core.compat.legacy_result import project_legacy_result
+        return project_legacy_result(self)
+
+    def _legacy_dict(self) -> dict:
         d = {
+            "schema_version": 3,
+            "verification": self.verification,
             "summary": {
                 "blocker": self.blocker_count,
                 "major": self.major_count,
                 "minor": self.minor_count,
                 "nit": self.nit_count,
                 "gate_decision": self.result,
+                "undetermined_rules": sum(d.decision == "undetermined" for d in self.rule_decisions),
+                "unverified_rules": sum(d.verification in {"partial", "unverified"} for d in self.rule_decisions),
             },
             "scan_metrics": self.scan_metrics.to_dict(),
             "result": self.result,

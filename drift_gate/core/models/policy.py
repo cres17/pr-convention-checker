@@ -8,7 +8,7 @@ class Group:
     any_changed: List[str] = field(default_factory=list)
     all_changed: List[str] = field(default_factory=list)
     required: bool = True
-    content: str = "auto"  # auto | paths | api-routes | env-keys
+    content: str = "auto"  # auto (legacy) | auto-strict | paths | api-routes | env-keys | api-schema
 
     @classmethod
     def from_dict(cls, d: dict) -> "Group":
@@ -140,18 +140,21 @@ class EnrichmentPolicy:
 class Gate:
     fail_on_blocker: bool = True
     fail_on_major_count: int = 2
+    on_unverified: str = "fail"
 
     @classmethod
     def from_dict(cls, d: dict) -> "Gate":
         return cls(
             fail_on_blocker=d.get("fail_on_blocker", True),
             fail_on_major_count=d.get("fail_on_major_count", 2),
+            on_unverified=d.get("on_unverified", "fail"),
         )
 
     def to_dict(self) -> dict:
         return {
             "fail_on_blocker": self.fail_on_blocker,
             "fail_on_major_count": self.fail_on_major_count,
+            "on_unverified": self.on_unverified,
         }
 
 

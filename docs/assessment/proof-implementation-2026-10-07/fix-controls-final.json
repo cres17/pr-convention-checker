@@ -1,0 +1,2326 @@
+{
+  "schema": "proof-fix-controls-v1",
+  "checks": {
+    "R1_previous_plan_rejected": true,
+    "R2_deleted_env_not_satisfied": true,
+    "R3_distinct_scope_serialization": true,
+    "all_tampered_proofs_rejected": true
+  },
+  "stale_plan": {
+    "rejected": true,
+    "error": "source observations differ from plan"
+  },
+  "fresh_plan": {
+    "schema": "contract-proof-result-v1",
+    "request_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+    "rule_id": "review",
+    "group_id": "contracts",
+    "relation_id": "",
+    "source_paths": [
+      "src/api.py"
+    ],
+    "discovery": {
+      "schema": "contract-discovery-v1",
+      "analysis_boundary": "selected-modules/profile-subsets",
+      "requested_families": [
+        "api-response",
+        "api-route",
+        "env-key"
+      ],
+      "source_digest": "ea04159d9abfa9d7dfeda975d5ffaa64de74a65d40f1377155093b7593e1c9c7",
+      "source_paths": [
+        "src/api.py"
+      ],
+      "service_scope_certified": false,
+      "complete_within_selection": true,
+      "domains": [
+        {
+          "scope_id": "selected-module:src/api.py",
+          "source_path": "src/api.py",
+          "family": "api-response",
+          "profile_ref": [
+            "python-response-primitives",
+            "2"
+          ],
+          "state": "closed",
+          "activated": false,
+          "evidence_refs": [
+            "after:src/api.py:legacy-selected-input",
+            "before:src/api.py:legacy-selected-input"
+          ],
+          "reason_codes": []
+        },
+        {
+          "scope_id": "selected-module:src/api.py",
+          "source_path": "src/api.py",
+          "family": "api-route",
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "state": "closed",
+          "activated": true,
+          "evidence_refs": [
+            "after:src/api.py:legacy-selected-input",
+            "before:src/api.py:legacy-selected-input"
+          ],
+          "reason_codes": []
+        },
+        {
+          "scope_id": "selected-module:src/api.py",
+          "source_path": "src/api.py",
+          "family": "env-key",
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "state": "closed",
+          "activated": true,
+          "evidence_refs": [
+            "after:src/api.py:legacy-selected-input",
+            "before:src/api.py:legacy-selected-input"
+          ],
+          "reason_codes": []
+        }
+      ],
+      "legacy_modes": [
+        "api-routes",
+        "env-keys"
+      ],
+      "legacy_python_error": ""
+    },
+    "document_digest": "6b09eb1444ef0feb040d5f485757ddee13347ae30a9dbd97e437c85131983d89",
+    "truth": "F",
+    "complete_within_selection": true,
+    "service_scope_certified": false,
+    "proof_dag_attached": true,
+    "binding_schema": "contract-document-bindings-v1",
+    "bindings": [
+      {
+        "id": "api",
+        "profile_ref": [
+          "python-fastapi-routes",
+          "1"
+        ],
+        "selectors": [
+          "docs/api.md"
+        ],
+        "require_all": false
+      },
+      {
+        "id": "env",
+        "profile_ref": [
+          "python-env-literals",
+          "1"
+        ],
+        "selectors": [
+          ".env.example"
+        ],
+        "require_all": false
+      }
+    ],
+    "obligations": [
+      {
+        "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+        "family": "api-route",
+        "profile_ref": [
+          "python-fastapi-routes",
+          "1"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "applicability": "T",
+        "requirement": "F",
+        "truth": "F",
+        "not_applicable": false,
+        "requirement_complete": true,
+        "binding_id": "api",
+        "reason_codes": []
+      },
+      {
+        "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+        "family": "env-key",
+        "profile_ref": [
+          "python-env-literals",
+          "1"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "applicability": "F",
+        "requirement": "U",
+        "truth": "T",
+        "not_applicable": true,
+        "requirement_complete": false,
+        "binding_id": "env",
+        "reason_codes": []
+      }
+    ],
+    "open_guards": [],
+    "decision_proven": true,
+    "proof_ref": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+    "scope_coverage": {
+      "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+      "closed_domains": [
+        "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+        "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+        "discovery:src/api.py:api-response",
+        "discovery:src/api.py:api-route",
+        "discovery:src/api.py:env-key",
+        "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+      ],
+      "open_domains": []
+    },
+    "admitted_context": {
+      "scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+      "input_ref": "98dc2cf8cc4908f6df1e114ba0f92b8dcebf2f1344bc9ad0a8576fbaddf38260",
+      "domains": [
+        {
+          "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-response",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-route",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:env-key",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "closed": true,
+          "reason_codes": []
+        }
+      ],
+      "propositions": [
+        {
+          "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "truth": "T",
+          "domain_refs": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "discovery:src/api.py:api-route"
+          ],
+          "evidence_refs": [
+            "evidence:applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "truth": "F",
+          "domain_refs": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "discovery:src/api.py:env-key"
+          ],
+          "evidence_refs": [
+            "evidence:applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-response",
+          "truth": "T",
+          "domain_refs": [
+            "discovery:src/api.py:api-response"
+          ],
+          "evidence_refs": [
+            "evidence:discovery:src/api.py:api-response"
+          ],
+          "profile_ref": [
+            "python-response-primitives",
+            "2"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-route",
+          "truth": "T",
+          "domain_refs": [
+            "discovery:src/api.py:api-route"
+          ],
+          "evidence_refs": [
+            "evidence:discovery:src/api.py:api-route"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:env-key",
+          "truth": "T",
+          "domain_refs": [
+            "discovery:src/api.py:env-key"
+          ],
+          "evidence_refs": [
+            "evidence:discovery:src/api.py:env-key"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "truth": "F",
+          "domain_refs": [
+            "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "evidence_refs": [
+            "evidence:requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "truth": "U",
+          "domain_refs": [],
+          "evidence_refs": [],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence:applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "proposition_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "truth": "T",
+          "covered_domains": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "discovery:src/api.py:api-route"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "proposition_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "truth": "F",
+          "covered_domains": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "discovery:src/api.py:env-key"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:discovery:src/api.py:api-response",
+          "proposition_ref": "discovery:src/api.py:api-response",
+          "truth": "T",
+          "covered_domains": [
+            "discovery:src/api.py:api-response"
+          ],
+          "profile_ref": [
+            "python-response-primitives",
+            "2"
+          ]
+        },
+        {
+          "id": "evidence:discovery:src/api.py:api-route",
+          "proposition_ref": "discovery:src/api.py:api-route",
+          "truth": "T",
+          "covered_domains": [
+            "discovery:src/api.py:api-route"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:discovery:src/api.py:env-key",
+          "proposition_ref": "discovery:src/api.py:env-key",
+          "truth": "T",
+          "covered_domains": [
+            "discovery:src/api.py:env-key"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "proposition_ref": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "truth": "F",
+          "covered_domains": [
+            "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ]
+        }
+      ],
+      "profile_refs": [
+        [
+          "python-env-literals",
+          "1"
+        ],
+        [
+          "python-fastapi-routes",
+          "1"
+        ],
+        [
+          "python-response-primitives",
+          "2"
+        ]
+      ],
+      "structure": [
+        {
+          "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+        },
+        {
+          "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+        },
+        {
+          "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "operator": "conditional",
+          "children": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "proposition_ref": ""
+        },
+        {
+          "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "operator": "conditional",
+          "children": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "proposition_ref": ""
+        },
+        {
+          "id": "discovery:src/api.py:api-response",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "discovery:src/api.py:api-response"
+        },
+        {
+          "id": "discovery:src/api.py:api-route",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "discovery:src/api.py:api-route"
+        },
+        {
+          "id": "discovery:src/api.py:env-key",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "discovery:src/api.py:env-key"
+        },
+        {
+          "id": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+          "operator": "all",
+          "children": [
+            "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "discovery:src/api.py:api-response",
+            "discovery:src/api.py:api-route",
+            "discovery:src/api.py:env-key"
+          ],
+          "proposition_ref": ""
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+        }
+      ],
+      "root_ref": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a"
+    },
+    "proof": {
+      "schema": "contract-proof-evaluation-v1",
+      "context_ref": "cbddcab073a803ec2d784d5ecb11647ec5253bc32558aa4e1a659f84ea97da6f",
+      "root_ref": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+      "nodes": [
+        {
+          "spec": {
+            "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "discovery:src/api.py:api-route"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          },
+          "truth": "F",
+          "decision_proven": true,
+          "proof_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:env-key"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "operator": "conditional",
+            "children": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+            ],
+            "proposition_ref": ""
+          },
+          "truth": "F",
+          "decision_proven": true,
+          "proof_ref": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "sufficient_witness_refs": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "discovery:src/api.py:api-route",
+              "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "operator": "conditional",
+            "children": [
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+            ],
+            "proposition_ref": ""
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "sufficient_witness_refs": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:env-key"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "discovery:src/api.py:api-response",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "discovery:src/api.py:api-response"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "discovery:src/api.py:api-response",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "discovery:src/api.py:api-response"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "discovery:src/api.py:api-route",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "discovery:src/api.py:api-route"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "discovery:src/api.py:api-route",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "discovery:src/api.py:api-route"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "discovery:src/api.py:env-key",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "discovery:src/api.py:env-key"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "discovery:src/api.py:env-key",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "discovery:src/api.py:env-key"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "operator": "all",
+            "children": [
+              "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:api-response",
+              "discovery:src/api.py:api-route",
+              "discovery:src/api.py:env-key"
+            ],
+            "proposition_ref": ""
+          },
+          "truth": "F",
+          "decision_proven": true,
+          "proof_ref": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+          "sufficient_witness_refs": [
+            "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:api-response",
+              "discovery:src/api.py:api-route",
+              "discovery:src/api.py:env-key",
+              "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          },
+          "truth": "F",
+          "decision_proven": true,
+          "proof_ref": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          },
+          "truth": "U",
+          "decision_proven": false,
+          "proof_ref": null,
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [],
+            "open_domains": []
+          }
+        }
+      ],
+      "assurance": "logical-consistency-relative-to-admitted-premises",
+      "source_authenticity_verified": false,
+      "current_head_certified": false,
+      "service_scope_certified": false
+    }
+  },
+  "deleted_env": {
+    "schema": "contract-proof-result-v1",
+    "request_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+    "rule_id": "review",
+    "group_id": "contracts",
+    "relation_id": "",
+    "source_paths": [
+      "src/api.py"
+    ],
+    "discovery": {
+      "schema": "contract-discovery-v1",
+      "analysis_boundary": "selected-modules/profile-subsets",
+      "requested_families": [
+        "api-response",
+        "api-route",
+        "env-key"
+      ],
+      "source_digest": "a2f7792e45a837ece005e3c233bcc730974415eafe5b224031e7a51d80895798",
+      "source_paths": [
+        "src/api.py"
+      ],
+      "service_scope_certified": false,
+      "complete_within_selection": true,
+      "domains": [
+        {
+          "scope_id": "selected-module:src/api.py",
+          "source_path": "src/api.py",
+          "family": "api-response",
+          "profile_ref": [
+            "python-response-primitives",
+            "2"
+          ],
+          "state": "closed",
+          "activated": false,
+          "evidence_refs": [
+            "after:src/api.py:legacy-selected-input",
+            "before:src/api.py:legacy-selected-input"
+          ],
+          "reason_codes": []
+        },
+        {
+          "scope_id": "selected-module:src/api.py",
+          "source_path": "src/api.py",
+          "family": "api-route",
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "state": "closed",
+          "activated": true,
+          "evidence_refs": [
+            "after:src/api.py:legacy-selected-input",
+            "before:src/api.py:legacy-selected-input"
+          ],
+          "reason_codes": []
+        },
+        {
+          "scope_id": "selected-module:src/api.py",
+          "source_path": "src/api.py",
+          "family": "env-key",
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "state": "closed",
+          "activated": true,
+          "evidence_refs": [
+            "after:src/api.py:legacy-selected-input",
+            "before:src/api.py:legacy-selected-input"
+          ],
+          "reason_codes": []
+        }
+      ],
+      "legacy_modes": [
+        "api-routes",
+        "env-keys"
+      ],
+      "legacy_python_error": ""
+    },
+    "document_digest": "1c75e4ba7fad425a5d5050357035fb74fb861d9c387265904ef5db8f5d8b1977",
+    "truth": "U",
+    "complete_within_selection": false,
+    "service_scope_certified": false,
+    "proof_dag_attached": true,
+    "binding_schema": "contract-document-bindings-v1",
+    "bindings": [
+      {
+        "id": "api",
+        "profile_ref": [
+          "python-fastapi-routes",
+          "1"
+        ],
+        "selectors": [
+          "docs/api.md"
+        ],
+        "require_all": false
+      },
+      {
+        "id": "env",
+        "profile_ref": [
+          "python-env-literals",
+          "1"
+        ],
+        "selectors": [
+          ".env.example"
+        ],
+        "require_all": false
+      }
+    ],
+    "obligations": [
+      {
+        "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+        "family": "api-route",
+        "profile_ref": [
+          "python-fastapi-routes",
+          "1"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "applicability": "F",
+        "requirement": "U",
+        "truth": "T",
+        "not_applicable": true,
+        "requirement_complete": false,
+        "binding_id": "api",
+        "reason_codes": []
+      },
+      {
+        "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+        "family": "env-key",
+        "profile_ref": [
+          "python-env-literals",
+          "1"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "applicability": "T",
+        "requirement": "U",
+        "truth": "U",
+        "not_applicable": false,
+        "requirement_complete": false,
+        "binding_id": "env",
+        "reason_codes": [
+          "contract_document_open"
+        ]
+      }
+    ],
+    "open_guards": [],
+    "decision_proven": false,
+    "proof_ref": null,
+    "scope_coverage": {
+      "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+      "closed_domains": [
+        "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+        "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+        "discovery:src/api.py:api-response",
+        "discovery:src/api.py:api-route",
+        "discovery:src/api.py:env-key"
+      ],
+      "open_domains": [
+        "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+      ]
+    },
+    "admitted_context": {
+      "scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+      "input_ref": "e76d663cc1cf302ce815b7148e087866bee591717f9542fd1ff897e329f6a38b",
+      "domains": [
+        {
+          "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-response",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-route",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:env-key",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "closed": false,
+          "reason_codes": [
+            "document_requirement_open"
+          ]
+        }
+      ],
+      "propositions": [
+        {
+          "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "truth": "F",
+          "domain_refs": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "discovery:src/api.py:api-route"
+          ],
+          "evidence_refs": [
+            "evidence:applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "truth": "T",
+          "domain_refs": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "discovery:src/api.py:env-key"
+          ],
+          "evidence_refs": [
+            "evidence:applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": [
+            "contract_document_open"
+          ]
+        },
+        {
+          "id": "discovery:src/api.py:api-response",
+          "truth": "T",
+          "domain_refs": [
+            "discovery:src/api.py:api-response"
+          ],
+          "evidence_refs": [
+            "evidence:discovery:src/api.py:api-response"
+          ],
+          "profile_ref": [
+            "python-response-primitives",
+            "2"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-route",
+          "truth": "T",
+          "domain_refs": [
+            "discovery:src/api.py:api-route"
+          ],
+          "evidence_refs": [
+            "evidence:discovery:src/api.py:api-route"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:env-key",
+          "truth": "T",
+          "domain_refs": [
+            "discovery:src/api.py:env-key"
+          ],
+          "evidence_refs": [
+            "evidence:discovery:src/api.py:env-key"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "truth": "U",
+          "domain_refs": [],
+          "evidence_refs": [],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "truth": "U",
+          "domain_refs": [
+            "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "evidence_refs": [],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": [
+            "contract_document_open"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence:applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "proposition_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "truth": "F",
+          "covered_domains": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "discovery:src/api.py:api-route"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "proposition_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "truth": "T",
+          "covered_domains": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "discovery:src/api.py:env-key"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:discovery:src/api.py:api-response",
+          "proposition_ref": "discovery:src/api.py:api-response",
+          "truth": "T",
+          "covered_domains": [
+            "discovery:src/api.py:api-response"
+          ],
+          "profile_ref": [
+            "python-response-primitives",
+            "2"
+          ]
+        },
+        {
+          "id": "evidence:discovery:src/api.py:api-route",
+          "proposition_ref": "discovery:src/api.py:api-route",
+          "truth": "T",
+          "covered_domains": [
+            "discovery:src/api.py:api-route"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:discovery:src/api.py:env-key",
+          "proposition_ref": "discovery:src/api.py:env-key",
+          "truth": "T",
+          "covered_domains": [
+            "discovery:src/api.py:env-key"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ]
+        }
+      ],
+      "profile_refs": [
+        [
+          "python-env-literals",
+          "1"
+        ],
+        [
+          "python-fastapi-routes",
+          "1"
+        ],
+        [
+          "python-response-primitives",
+          "2"
+        ]
+      ],
+      "structure": [
+        {
+          "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+        },
+        {
+          "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+        },
+        {
+          "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "operator": "conditional",
+          "children": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "proposition_ref": ""
+        },
+        {
+          "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "operator": "conditional",
+          "children": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "proposition_ref": ""
+        },
+        {
+          "id": "discovery:src/api.py:api-response",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "discovery:src/api.py:api-response"
+        },
+        {
+          "id": "discovery:src/api.py:api-route",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "discovery:src/api.py:api-route"
+        },
+        {
+          "id": "discovery:src/api.py:env-key",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "discovery:src/api.py:env-key"
+        },
+        {
+          "id": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+          "operator": "all",
+          "children": [
+            "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "discovery:src/api.py:api-response",
+            "discovery:src/api.py:api-route",
+            "discovery:src/api.py:env-key"
+          ],
+          "proposition_ref": ""
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+        }
+      ],
+      "root_ref": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a"
+    },
+    "proof": {
+      "schema": "contract-proof-evaluation-v1",
+      "context_ref": "ce85301a59f6388cae7d8798f7c89db45a4cf08c9b7d1fe09444bcc77a496ed7",
+      "root_ref": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+      "nodes": [
+        {
+          "spec": {
+            "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          },
+          "truth": "F",
+          "decision_proven": true,
+          "proof_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "discovery:src/api.py:api-route"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:env-key"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "operator": "conditional",
+            "children": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+            ],
+            "proposition_ref": ""
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "sufficient_witness_refs": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "discovery:src/api.py:api-route"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "operator": "conditional",
+            "children": [
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+            ],
+            "proposition_ref": ""
+          },
+          "truth": "U",
+          "decision_proven": false,
+          "proof_ref": null,
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:env-key"
+            ],
+            "open_domains": [
+              "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+            ]
+          }
+        },
+        {
+          "spec": {
+            "id": "discovery:src/api.py:api-response",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "discovery:src/api.py:api-response"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "discovery:src/api.py:api-response",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "discovery:src/api.py:api-response"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "discovery:src/api.py:api-route",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "discovery:src/api.py:api-route"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "discovery:src/api.py:api-route",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "discovery:src/api.py:api-route"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "discovery:src/api.py:env-key",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "discovery:src/api.py:env-key"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "discovery:src/api.py:env-key",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "discovery:src/api.py:env-key"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "operator": "all",
+            "children": [
+              "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:api-response",
+              "discovery:src/api.py:api-route",
+              "discovery:src/api.py:env-key"
+            ],
+            "proposition_ref": ""
+          },
+          "truth": "U",
+          "decision_proven": false,
+          "proof_ref": null,
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:api-response",
+              "discovery:src/api.py:api-route",
+              "discovery:src/api.py:env-key"
+            ],
+            "open_domains": [
+              "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+            ]
+          }
+        },
+        {
+          "spec": {
+            "id": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          },
+          "truth": "U",
+          "decision_proven": false,
+          "proof_ref": null,
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          },
+          "truth": "U",
+          "decision_proven": false,
+          "proof_ref": null,
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [],
+            "open_domains": [
+              "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+            ]
+          }
+        }
+      ],
+      "assurance": "logical-consistency-relative-to-admitted-premises",
+      "source_authenticity_verified": false,
+      "current_head_certified": false,
+      "service_scope_certified": false
+    }
+  },
+  "explicit_missing_env": {
+    "schema": "contract-proof-result-v1",
+    "request_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+    "rule_id": "review",
+    "group_id": "contracts",
+    "relation_id": "",
+    "source_paths": [
+      "src/api.py"
+    ],
+    "discovery": {
+      "schema": "contract-discovery-v1",
+      "analysis_boundary": "selected-modules/profile-subsets",
+      "requested_families": [
+        "api-response",
+        "api-route",
+        "env-key"
+      ],
+      "source_digest": "a2f7792e45a837ece005e3c233bcc730974415eafe5b224031e7a51d80895798",
+      "source_paths": [
+        "src/api.py"
+      ],
+      "service_scope_certified": false,
+      "complete_within_selection": true,
+      "domains": [
+        {
+          "scope_id": "selected-module:src/api.py",
+          "source_path": "src/api.py",
+          "family": "api-response",
+          "profile_ref": [
+            "python-response-primitives",
+            "2"
+          ],
+          "state": "closed",
+          "activated": false,
+          "evidence_refs": [
+            "after:src/api.py:legacy-selected-input",
+            "before:src/api.py:legacy-selected-input"
+          ],
+          "reason_codes": []
+        },
+        {
+          "scope_id": "selected-module:src/api.py",
+          "source_path": "src/api.py",
+          "family": "api-route",
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "state": "closed",
+          "activated": true,
+          "evidence_refs": [
+            "after:src/api.py:legacy-selected-input",
+            "before:src/api.py:legacy-selected-input"
+          ],
+          "reason_codes": []
+        },
+        {
+          "scope_id": "selected-module:src/api.py",
+          "source_path": "src/api.py",
+          "family": "env-key",
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "state": "closed",
+          "activated": true,
+          "evidence_refs": [
+            "after:src/api.py:legacy-selected-input",
+            "before:src/api.py:legacy-selected-input"
+          ],
+          "reason_codes": []
+        }
+      ],
+      "legacy_modes": [
+        "api-routes",
+        "env-keys"
+      ],
+      "legacy_python_error": ""
+    },
+    "document_digest": "dc8f7321147ed0ba83a804da3518fe4bb867f233384e8e01f4d864c85c7639d6",
+    "truth": "F",
+    "complete_within_selection": true,
+    "service_scope_certified": false,
+    "proof_dag_attached": true,
+    "binding_schema": "contract-document-bindings-v1",
+    "bindings": [
+      {
+        "id": "api",
+        "profile_ref": [
+          "python-fastapi-routes",
+          "1"
+        ],
+        "selectors": [
+          "docs/api.md"
+        ],
+        "require_all": false
+      },
+      {
+        "id": "env",
+        "profile_ref": [
+          "python-env-literals",
+          "1"
+        ],
+        "selectors": [
+          ".env.example"
+        ],
+        "require_all": false
+      }
+    ],
+    "obligations": [
+      {
+        "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+        "family": "api-route",
+        "profile_ref": [
+          "python-fastapi-routes",
+          "1"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "applicability": "F",
+        "requirement": "U",
+        "truth": "T",
+        "not_applicable": true,
+        "requirement_complete": false,
+        "binding_id": "api",
+        "reason_codes": []
+      },
+      {
+        "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+        "family": "env-key",
+        "profile_ref": [
+          "python-env-literals",
+          "1"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "applicability": "T",
+        "requirement": "F",
+        "truth": "F",
+        "not_applicable": false,
+        "requirement_complete": true,
+        "binding_id": "env",
+        "reason_codes": []
+      }
+    ],
+    "open_guards": [],
+    "decision_proven": true,
+    "proof_ref": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+    "scope_coverage": {
+      "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+      "closed_domains": [
+        "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+        "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+        "discovery:src/api.py:api-response",
+        "discovery:src/api.py:api-route",
+        "discovery:src/api.py:env-key",
+        "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+      ],
+      "open_domains": []
+    },
+    "admitted_context": {
+      "scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+      "input_ref": "221fb4e70f38526d2763c29b5ffcabcb158e82f7ed2ed2a0036462651ccc601d",
+      "domains": [
+        {
+          "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-response",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-route",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:env-key",
+          "closed": true,
+          "reason_codes": []
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "closed": true,
+          "reason_codes": []
+        }
+      ],
+      "propositions": [
+        {
+          "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "truth": "F",
+          "domain_refs": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "discovery:src/api.py:api-route"
+          ],
+          "evidence_refs": [
+            "evidence:applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "truth": "T",
+          "domain_refs": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "discovery:src/api.py:env-key"
+          ],
+          "evidence_refs": [
+            "evidence:applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-response",
+          "truth": "T",
+          "domain_refs": [
+            "discovery:src/api.py:api-response"
+          ],
+          "evidence_refs": [
+            "evidence:discovery:src/api.py:api-response"
+          ],
+          "profile_ref": [
+            "python-response-primitives",
+            "2"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:api-route",
+          "truth": "T",
+          "domain_refs": [
+            "discovery:src/api.py:api-route"
+          ],
+          "evidence_refs": [
+            "evidence:discovery:src/api.py:api-route"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "discovery:src/api.py:env-key",
+          "truth": "T",
+          "domain_refs": [
+            "discovery:src/api.py:env-key"
+          ],
+          "evidence_refs": [
+            "evidence:discovery:src/api.py:env-key"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "truth": "U",
+          "domain_refs": [],
+          "evidence_refs": [],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "truth": "F",
+          "domain_refs": [
+            "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "evidence_refs": [
+            "evidence:requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ],
+          "assumptions": [
+            "admitted-analyzer-output",
+            "selected-profile-subsets",
+            "source-origin-unverified"
+          ],
+          "reason_codes": []
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence:applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "proposition_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "truth": "F",
+          "covered_domains": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "discovery:src/api.py:api-route"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "proposition_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "truth": "T",
+          "covered_domains": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "discovery:src/api.py:env-key"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:discovery:src/api.py:api-response",
+          "proposition_ref": "discovery:src/api.py:api-response",
+          "truth": "T",
+          "covered_domains": [
+            "discovery:src/api.py:api-response"
+          ],
+          "profile_ref": [
+            "python-response-primitives",
+            "2"
+          ]
+        },
+        {
+          "id": "evidence:discovery:src/api.py:api-route",
+          "proposition_ref": "discovery:src/api.py:api-route",
+          "truth": "T",
+          "covered_domains": [
+            "discovery:src/api.py:api-route"
+          ],
+          "profile_ref": [
+            "python-fastapi-routes",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:discovery:src/api.py:env-key",
+          "proposition_ref": "discovery:src/api.py:env-key",
+          "truth": "T",
+          "covered_domains": [
+            "discovery:src/api.py:env-key"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ]
+        },
+        {
+          "id": "evidence:requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "proposition_ref": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "truth": "F",
+          "covered_domains": [
+            "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "profile_ref": [
+            "python-env-literals",
+            "1"
+          ]
+        }
+      ],
+      "profile_refs": [
+        [
+          "python-env-literals",
+          "1"
+        ],
+        [
+          "python-fastapi-routes",
+          "1"
+        ],
+        [
+          "python-response-primitives",
+          "2"
+        ]
+      ],
+      "structure": [
+        {
+          "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+        },
+        {
+          "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+        },
+        {
+          "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "operator": "conditional",
+          "children": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "proposition_ref": ""
+        },
+        {
+          "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "operator": "conditional",
+          "children": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "proposition_ref": ""
+        },
+        {
+          "id": "discovery:src/api.py:api-response",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "discovery:src/api.py:api-response"
+        },
+        {
+          "id": "discovery:src/api.py:api-route",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "discovery:src/api.py:api-route"
+        },
+        {
+          "id": "discovery:src/api.py:env-key",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "discovery:src/api.py:env-key"
+        },
+        {
+          "id": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+          "operator": "all",
+          "children": [
+            "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "discovery:src/api.py:api-response",
+            "discovery:src/api.py:api-route",
+            "discovery:src/api.py:env-key"
+          ],
+          "proposition_ref": ""
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+        },
+        {
+          "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "operator": "atom",
+          "children": [],
+          "proposition_ref": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+        }
+      ],
+      "root_ref": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a"
+    },
+    "proof": {
+      "schema": "contract-proof-evaluation-v1",
+      "context_ref": "82304997ede5190797a5cb64885638be5bb715c66f340c361f8b0bdc61b6c64e",
+      "root_ref": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+      "nodes": [
+        {
+          "spec": {
+            "id": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          },
+          "truth": "F",
+          "decision_proven": true,
+          "proof_ref": "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "discovery:src/api.py:api-route"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:env-key"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "operator": "conditional",
+            "children": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+            ],
+            "proposition_ref": ""
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+          "sufficient_witness_refs": [
+            "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          ],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "discovery:src/api.py:api-route"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "operator": "conditional",
+            "children": [
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+            ],
+            "proposition_ref": ""
+          },
+          "truth": "F",
+          "decision_proven": true,
+          "proof_ref": "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "sufficient_witness_refs": [
+            "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:env-key",
+              "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "discovery:src/api.py:api-response",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "discovery:src/api.py:api-response"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "discovery:src/api.py:api-response",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "discovery:src/api.py:api-response"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "discovery:src/api.py:api-route",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "discovery:src/api.py:api-route"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "discovery:src/api.py:api-route",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "discovery:src/api.py:api-route"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "discovery:src/api.py:env-key",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "discovery:src/api.py:env-key"
+          },
+          "truth": "T",
+          "decision_proven": true,
+          "proof_ref": "discovery:src/api.py:env-key",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "discovery:src/api.py:env-key"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "operator": "all",
+            "children": [
+              "contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:api-response",
+              "discovery:src/api.py:api-route",
+              "discovery:src/api.py:env-key"
+            ],
+            "proposition_ref": ""
+          },
+          "truth": "F",
+          "decision_proven": true,
+          "proof_ref": "plan:86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+          "sufficient_witness_refs": [
+            "contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          ],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+              "applicability:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+              "discovery:src/api.py:api-response",
+              "discovery:src/api.py:api-route",
+              "discovery:src/api.py:env-key",
+              "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+            ],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "requirement:contract:selected-profile-modules:6093a3569d7cebfefddca021c3b410dda6770f62bc982e72e0ad16f4e739d3df"
+          },
+          "truth": "U",
+          "decision_proven": false,
+          "proof_ref": null,
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [],
+            "open_domains": []
+          }
+        },
+        {
+          "spec": {
+            "id": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+            "operator": "atom",
+            "children": [],
+            "proposition_ref": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+          },
+          "truth": "F",
+          "decision_proven": true,
+          "proof_ref": "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4",
+          "sufficient_witness_refs": [],
+          "coverage": {
+            "declared_scope_ref": "86ac4b87ded8deb694f9b62749c73fec0fdc4cdde3aa8cb8880b0aaa4a27fd8a",
+            "closed_domains": [
+              "requirement:contract:selected-profile-modules:c99afae2f36a3b04e464cbe5d26088f2092d4ade4fcf4f0d8263d869e1d41ed4"
+            ],
+            "open_domains": []
+          }
+        }
+      ],
+      "assurance": "logical-consistency-relative-to-admitted-premises",
+      "source_authenticity_verified": false,
+      "current_head_certified": false,
+      "service_scope_certified": false
+    }
+  },
+  "declared_families": [
+    {
+      "schema": "contract-obligation-evaluation-v1",
+      "request_ref": "df2e717709230e7cf3572914f0152d7ebca48e8e6972fa6b13024cc33f45d26e",
+      "rule_id": "review",
+      "group_id": "scope",
+      "relation_id": "",
+      "source_paths": [
+        "src/api.py"
+      ],
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-route"
+        ],
+        "source_digest": "96cda7db3431675aa8ec3647d35daa6cc9be6d643a1ba13ec515a7b089541fc8",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": true,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "state": "closed",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          }
+        ],
+        "legacy_modes": [],
+        "legacy_python_error": ""
+      },
+      "document_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "truth": "T",
+      "complete_within_selection": true,
+      "service_scope_certified": false,
+      "proof_dag_attached": false,
+      "binding_schema": "contract-document-bindings-v1",
+      "bindings": [],
+      "obligations": [],
+      "open_guards": []
+    },
+    {
+      "schema": "contract-obligation-evaluation-v1",
+      "request_ref": "df2e717709230e7cf3572914f0152d7ebca48e8e6972fa6b13024cc33f45d26e",
+      "rule_id": "review",
+      "group_id": "scope",
+      "relation_id": "",
+      "source_paths": [
+        "src/api.py"
+      ],
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "env-key"
+        ],
+        "source_digest": "96cda7db3431675aa8ec3647d35daa6cc9be6d643a1ba13ec515a7b089541fc8",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": true,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "state": "closed",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          }
+        ],
+        "legacy_modes": [],
+        "legacy_python_error": ""
+      },
+      "document_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "truth": "T",
+      "complete_within_selection": true,
+      "service_scope_certified": false,
+      "proof_dag_attached": false,
+      "binding_schema": "contract-document-bindings-v1",
+      "bindings": [],
+      "obligations": [],
+      "open_guards": []
+    }
+  ],
+  "tamper_controls": {
+    "truth": {
+      "rejected": true,
+      "error": "stored truth contradicts recomputation"
+    },
+    "coverage": {
+      "rejected": true,
+      "error": "scope coverage omitted or changed"
+    },
+    "witness": {
+      "rejected": true,
+      "error": "invalid witness reference"
+    },
+    "latest-head": {
+      "rejected": true,
+      "error": "malformed proof payload"
+    }
+  },
+  "scope": "Authored nonblind API controls, not parser soundness or real PR accuracy"
+}

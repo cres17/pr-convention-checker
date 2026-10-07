@@ -49,7 +49,8 @@ def validate_schema(data):
             fail(path + '.id', 'must be a nonempty string')
 
     mapping(data, {'rules': array(rule), 'ignore_paths': strings,
-        'gate': lambda v, p: mapping(v, {'fail_on_blocker': boolean, 'fail_on_major_count': positive}, p),
+        'gate': lambda v, p: mapping(v, {'fail_on_blocker': boolean, 'fail_on_major_count': positive,
+            'on_unverified': string}, p),
         'suppression': lambda v, p: mapping(v, {'allow_ignores': boolean,
             'require_codeowners_approval': boolean, 'allowed_rules': strings,
             'repeated_ignore_threshold': positive}, p),

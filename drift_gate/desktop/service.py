@@ -5,13 +5,10 @@ from pathlib import Path
 import subprocess
 import time
 
-from drift_gate.adapters.ast.analyzer import enrich_semantic_signals
 from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
 from drift_gate.adapters.git.client import GitAdapter
-from drift_gate.adapters.policy_loader import read_policy
-from drift_gate.adapters.execution import identity, digest
-from drift_gate.core.policy.loader import PolicyLoadError
-from drift_gate.core.engine import run
+from drift_gate.adapters.policy_loader import read_policy, require_check_policy
+from drift_gate.adapters.inspection import inspect as run
 from drift_gate.core.models.result import EvaluationResult
 from drift_gate.core.models.changed_file import ChangedFile
 
@@ -70,7 +67,7 @@ def _git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
         raise ValueError("Git을 찾지 못했습니다. Git을 설치한 뒤 다시 실행해 주세요.") from exc
 
 
-def scan_repository(path: str | Path, base: str = "HEAD") -> DesktopScan:
+def scan_repository(path: str | Path, base: str = "HEAD", *, contract_proofs: bool = False) -> DesktopScan:
     """Inspect one local checkout without changing the process working directory."""
     if not str(path).strip():
         raise ValueError("검사할 Git 저장소 폴더를 선택해 주세요.")
@@ -94,18 +91,16 @@ def scan_repository(path: str | Path, base: str = "HEAD") -> DesktopScan:
         raise ValueError(f"비교 기준 '{base}'을(를) 이 저장소에서 찾지 못했습니다.")
 
     policy_source, policy = read_policy(policy_path)
-    if not policy.rules:
-        raise PolicyLoadError('정책에 검사 규칙이 없습니다. 최소 한 개의 규칙을 설정해 주세요.')
+    require_check_policy(policy)
     started = time.perf_counter()
     git = GitAdapter(repository)
-    changed_files = enrich_semantic_signals(git.get_changed_files(base))
+    changed_files = git.get_changed_files(base)
     changed_count = len(changed_files)
     changed_files = attach_env_documents(
         changed_files, policy, local_document_reader(repository)
     )
-    result = run(changed_files=changed_files, policy=policy)
+    result = run(changed_files=changed_files, policy=policy, policy_source=policy_source,
+                 policy_path=policy_path, provenance={"source": "local-git", **git.provenance},contract_proofs=contract_proofs)
     result.scan_metrics.runtime_seconds = time.perf_counter() - started
-    result.execution = {**identity(), 'status': 'success', **git.provenance,
-                        'policy_sha256': digest(policy_source), 'warnings': policy.load_warnings}
-    return DesktopScan(repository, base, changed_count, result, tuple(changed_files),
+    return DesktopScan(repository, base, changed_count, result, tuple(result.inspected_files),
                        policy_source)

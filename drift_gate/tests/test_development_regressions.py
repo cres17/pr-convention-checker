@@ -51,7 +51,9 @@ def test_unavailable_patch_cannot_be_satisfied_by_unrelated_docs(patch):
              ChangedFile(path="docs/api/users.md", status="modified", patch="+irrelevant\n")]
     result = run(enrich_semantic_signals(files), policy=api_policy())
     assert result.result == "fail"
-    assert any(g.type == "analysis" for g in result.violations[0].unsatisfied_groups)
+    assert not result.violations  # uncertainty blocks the gate, but is not a proved violation
+    assert result.rule_decisions[0].decision == "undetermined"
+    assert any(g.type == "analysis" for g in result.rule_decisions[0].unsatisfied_groups)
 
 
 def test_grammar_failure_is_visible_without_changing_rule_result(monkeypatch):
@@ -285,12 +287,12 @@ def test_env_document_policy_requires_safe_explicit_paths(path):
 @pytest.mark.parametrize("sample,expected", [("PAYMENT_TIMEOUT=example\n", "pass"), ("OTHER=example\n", "fail")])
 def test_cli_reads_unchanged_sample_from_working_tree(tmp_path, sample, expected):
     (tmp_path / "src/config").mkdir(parents=True)
-    (tmp_path / "src/config/pay.py").write_text("timeout = 30\n")
+    (tmp_path / "src/config/pay.py").write_text("import os\ntimeout = 30\n")
     (tmp_path / ".env.example").write_text(sample)
     (tmp_path / ".drift-gate.yml").write_text(json.dumps(ENV_SUITE["policy"]))
     for args in (["init", "-q"], ["add", "."], ["-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-qm", "fixture"]):
         subprocess.run(["git", *args], cwd=tmp_path, check=True, capture_output=True)
-    (tmp_path / "src/config/pay.py").write_text("timeout = os.getenv('PAYMENT_TIMEOUT')\n")
+    (tmp_path / "src/config/pay.py").write_text("import os\ntimeout = os.getenv('PAYMENT_TIMEOUT')\n")
     # The CLI writes UTF-8 bytes, regardless of the host's default encoding.
     result = subprocess.run([sys.executable, str(ROOT / "main.py"), "check", "--base", "HEAD", "--json"],
                             cwd=tmp_path, capture_output=True, text=True, encoding="utf-8")

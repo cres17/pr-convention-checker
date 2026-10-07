@@ -1,0 +1,20 @@
+{
+  "docs_check": {
+    "docs_files": [
+      "README.md"
+    ],
+    "checked_commands": [
+      "check",
+      "demo",
+      "docs-check",
+      "init",
+      "report"
+    ],
+    "checked_json_keys": [],
+    "checked_policy_fields": [
+      "rules"
+    ],
+    "warnings": [],
+    "warning_count": 0
+  }
+}

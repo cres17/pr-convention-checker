@@ -1,0 +1,49 @@
+{
+  "finite_states": 512,
+  "permutation_checks": 12288,
+  "hash_seeds": [
+    {
+      "seed": 1,
+      "matched": 10,
+      "total": 10
+    },
+    {
+      "seed": 2,
+      "matched": 10,
+      "total": 10
+    },
+    {
+      "seed": 3,
+      "matched": 10,
+      "total": 10
+    },
+    {
+      "seed": 4,
+      "matched": 10,
+      "total": 10
+    },
+    {
+      "seed": 5,
+      "matched": 10,
+      "total": 10
+    },
+    {
+      "seed": 6,
+      "matched": 10,
+      "total": 10
+    },
+    {
+      "seed": 7,
+      "matched": 10,
+      "total": 10
+    },
+    {
+      "seed": 8,
+      "matched": 10,
+      "total": 10
+    }
+  ],
+  "policy_strengthening_pairs": 10,
+  "file_orderings": 20,
+  "all_matched": true
+}

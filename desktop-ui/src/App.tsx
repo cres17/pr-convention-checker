@@ -202,13 +202,13 @@ export default function App({
   // Only the latest live scan has an impact; history scans and stale answers do not.
   const scanImpact = !historyScan && impact && impact.scan_at === scan?.at ? impact : null;
   const issues = decisions.filter(
-    (d) => d.status === "fail" || d.status === "rejected-ignore",
+    (d) => d.status === "fail" || d.status === "rejected-ignore" || d.status === "undetermined",
   );
   const visible = decisions.filter(
     (d) =>
       (filter === "all" ||
         (filter === "issues"
-          ? d.status === "fail" || d.status === "rejected-ignore"
+          ? d.status === "fail" || d.status === "rejected-ignore" || d.status === "undetermined"
           : d.status === "pass")) &&
       `${d.rule_id} ${d.reason}`.toLowerCase().includes(search.toLowerCase()),
   );

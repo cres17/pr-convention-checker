@@ -6,6 +6,10 @@ branding:
   color: purple
 
 inputs:
+  contract_proofs:
+    description: Include validated shadow proofs without changing the policy gate
+    required: false
+    default: "false"
   anthropic_api_key:
     description: Anthropic API key (optional — used for Claude checklist enrichment)
     required: false
@@ -91,6 +95,7 @@ runs:
         POLICY_FILE: ${{ inputs.policy_file }}
         MODEL: ${{ inputs.model }}
         POST_COMMENT: ${{ inputs.post_comment }}
+        CONTRACT_PROOFS: ${{ inputs.contract_proofs }}
       run: |
         cd "${{ github.action_path }}"
         python3 -m drift_gate.adapters.github_action.runner

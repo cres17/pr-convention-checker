@@ -1,0 +1,4547 @@
+{
+  "schema_version": 3,
+  "verification": "unverified",
+  "summary": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 0,
+    "nit": 0,
+    "gate_decision": "pass",
+    "undetermined_rules": 0,
+    "unverified_rules": 5
+  },
+  "scan_metrics": {
+    "scanned_files": 103,
+    "skipped_ignored_files": 29,
+    "skipped_binary_files": 3,
+    "skipped_large_files": 4,
+    "evaluated_rules": 5,
+    "runtime_seconds": 0.3464957080432214,
+    "analysis_notes": [
+      {
+        "path": ".drift-gate.self.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": ".github/workflows/ci.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": ".github/workflows/desktop-build.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "action.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "desktop-ui/src/App.test.tsx",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "desktop-ui/src/App.tsx",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "desktop-ui/src/bridge.ts",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "desktop-ui/src/eventSchema.test.ts",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "desktop-ui/src/eventSchema.ts",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "desktop-ui/src/features/review/AnalysisNotice.test.tsx",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "desktop-ui/src/features/review/AnalysisNotice.tsx",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "desktop-ui/src/features/review/violations.ts",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "desktop-ui/src/presentation.tsx",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "docs/contracts/desktop-bridge.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/contracts/gate-and-inputs.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/contracts/mcp-transport.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/conversation-summary-2026-10-01.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/handoff-2026-10-01.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/ops/drift-gate-self-check.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "drift_gate/adapters/cli/runner.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/adapters/docs/content.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/adapters/git/client.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/github/client.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/github_action/runner.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/mcp/server.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/adapters/mcp/tools.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/adapters/policy_loader.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/engine.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/evaluation/contracts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/evaluator.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/gating/gate.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/models/changed_file.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/models/policy.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/models/result.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/patch_lines.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/policy/guard.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/policy/schema.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/core/policy/validator.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/desktop/package_check.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/desktop/service.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/reporters/html.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/reporters/markdown.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_desktop_web.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_development_regressions.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_engine.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_packaging.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/tests/test_validator.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "packaging/verify_package.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "pyproject.toml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "scripts/check_self.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/ast/express_routes.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/docs/structured.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/git/immutable.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/inspection.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/snapshot.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/compat/__init__.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/compat/legacy_result.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/__init__.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/delta.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/discovery.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/input_identity.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/planner.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/contracts/profiles.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/analysis_session.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/api_schema.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/content_result.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/contract_proof.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/environment.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/obligations.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/openapi_document.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/propositions.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/result_guard.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/routes.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/evaluation/static_routers.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/models/evaluation_context.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/models/facts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/models/git_input.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/models/input_manifest.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/core/models/proof.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/desktop/package_check_contract.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/desktop/package_git_check.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/contracts/auto-contracts-v2.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "drift_gate/tests/contracts/express-contracts-v1.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "drift_gate/tests/contracts/logical-rereview.json",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "drift_gate/tests/test_auto_development.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_contract_followup.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_contract_projection.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_enterprise_correctness.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_express_contracts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_fastapi_oracle.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_git_immutable.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_input_snapshot.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_logical_contracts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_logical_entrypoints.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_logical_rereview.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_multi_review_adapters.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_multi_review_cli.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_multi_review_core.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_obligation_planner.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_profile_discovery.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_proof_evaluation.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/tests/test_typed_facts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "scripts/audit_auto_contracts.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      }
+    ]
+  },
+  "result": "pass",
+  "skip": false,
+  "skip_reason": "",
+  "no_policy": false,
+  "change_types": [
+    "auth-permission",
+    "cli-public-interface",
+    "other",
+    "workflow-ci"
+  ],
+  "violations": [],
+  "rule_decisions": [
+    {
+      "rule_id": "self-engine-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "decision": "satisfied",
+      "verification": "unverified",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "drift_gate/adapters/*.py",
+        "drift_gate/adapters/ast/**",
+        "drift_gate/adapters/docs/**",
+        "drift_gate/core/**",
+        "drift_gate/reporters/**"
+      ],
+      "trigger_files": [
+        "drift_gate/adapters/docs/content.py",
+        "drift_gate/adapters/policy_loader.py",
+        "drift_gate/core/engine.py",
+        "drift_gate/core/evaluation/contracts.py",
+        "drift_gate/core/evaluation/evaluator.py",
+        "drift_gate/core/gating/gate.py",
+        "drift_gate/core/models/changed_file.py",
+        "drift_gate/core/models/policy.py",
+        "drift_gate/core/models/result.py",
+        "drift_gate/core/patch_lines.py",
+        "drift_gate/core/policy/guard.py",
+        "drift_gate/core/policy/schema.py",
+        "drift_gate/core/policy/validator.py",
+        "drift_gate/reporters/html.py",
+        "drift_gate/reporters/markdown.py",
+        "drift_gate/adapters/ast/express_routes.py",
+        "drift_gate/adapters/docs/structured.py",
+        "drift_gate/adapters/inspection.py",
+        "drift_gate/adapters/snapshot.py",
+        "drift_gate/core/compat/__init__.py",
+        "drift_gate/core/compat/legacy_result.py",
+        "drift_gate/core/contracts/__init__.py",
+        "drift_gate/core/contracts/delta.py",
+        "drift_gate/core/contracts/discovery.py",
+        "drift_gate/core/contracts/input_identity.py",
+        "drift_gate/core/contracts/planner.py",
+        "drift_gate/core/contracts/profiles.py",
+        "drift_gate/core/evaluation/analysis_session.py",
+        "drift_gate/core/evaluation/api_schema.py",
+        "drift_gate/core/evaluation/content_result.py",
+        "drift_gate/core/evaluation/contract_proof.py",
+        "drift_gate/core/evaluation/environment.py",
+        "drift_gate/core/evaluation/obligations.py",
+        "drift_gate/core/evaluation/openapi_document.py",
+        "drift_gate/core/evaluation/propositions.py",
+        "drift_gate/core/evaluation/result_guard.py",
+        "drift_gate/core/evaluation/routes.py",
+        "drift_gate/core/evaluation/static_routers.py",
+        "drift_gate/core/models/evaluation_context.py",
+        "drift_gate/core/models/facts.py",
+        "drift_gate/core/models/git_input.py",
+        "drift_gate/core/models/input_manifest.py",
+        "drift_gate/core/models/proof.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Gate and analysis contract",
+          "required": [
+            "docs/contracts/gate-and-inputs.md"
+          ],
+          "type": "all_changed",
+          "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+          "decision": "satisfied",
+          "verification": "unverified",
+          "content_mode": "auto"
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-cli-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "decision": "satisfied",
+      "verification": "unverified",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "drift_gate/adapters/cli/**",
+        "drift_gate/adapters/git/**",
+        "drift_gate/adapters/github/**",
+        "drift_gate/adapters/github_action/**",
+        "pyproject.toml"
+      ],
+      "trigger_files": [
+        "drift_gate/adapters/cli/runner.py",
+        "drift_gate/adapters/git/client.py",
+        "drift_gate/adapters/github/client.py",
+        "drift_gate/adapters/github_action/runner.py",
+        "pyproject.toml",
+        "drift_gate/adapters/git/immutable.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Input and CLI contract",
+          "required": [
+            "docs/contracts/gate-and-inputs.md"
+          ],
+          "type": "all_changed",
+          "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+          "decision": "satisfied",
+          "verification": "unverified",
+          "content_mode": "auto"
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-mcp-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "decision": "satisfied",
+      "verification": "unverified",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "drift_gate/adapters/mcp/**"
+      ],
+      "trigger_files": [
+        "drift_gate/adapters/mcp/server.py",
+        "drift_gate/adapters/mcp/tools.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "MCP transport contract",
+          "required": [
+            "docs/contracts/mcp-transport.md"
+          ],
+          "type": "all_changed",
+          "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+          "decision": "satisfied",
+          "verification": "unverified",
+          "content_mode": "auto"
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-progress-contract",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "decision": "not-applicable",
+      "verification": "not-applicable",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-ui-bridge-contract",
+      "severity": "MAJOR",
+      "status": "pass",
+      "decision": "satisfied",
+      "verification": "unverified",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        "desktop-ui/src/**",
+        "drift_gate/desktop/package_check.py",
+        "drift_gate/desktop/package_check_contract.py",
+        "drift_gate/desktop/package_git_check.py",
+        "drift_gate/desktop/service.py"
+      ],
+      "trigger_files": [
+        "desktop-ui/src/App.tsx",
+        "desktop-ui/src/bridge.ts",
+        "desktop-ui/src/eventSchema.ts",
+        "desktop-ui/src/features/review/AnalysisNotice.tsx",
+        "desktop-ui/src/features/review/violations.ts",
+        "desktop-ui/src/presentation.tsx",
+        "drift_gate/desktop/package_check.py",
+        "drift_gate/desktop/service.py",
+        "drift_gate/desktop/package_check_contract.py",
+        "drift_gate/desktop/package_git_check.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Desktop event and editing contract",
+          "required": [
+            "docs/contracts/desktop-bridge.md"
+          ],
+          "type": "all_changed",
+          "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+          "decision": "satisfied",
+          "verification": "unverified",
+          "content_mode": "auto"
+        }
+      ],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "self-package-operations",
+      "severity": "MAJOR",
+      "status": "pass",
+      "decision": "satisfied",
+      "verification": "unverified",
+      "reason": "trigger matched and all required groups were satisfied",
+      "matched_patterns": [
+        ".drift-gate.self.yml",
+        ".github/workflows/**",
+        "action.yml",
+        "packaging/**",
+        "scripts/check_self.py"
+      ],
+      "trigger_files": [
+        ".drift-gate.self.yml",
+        ".github/workflows/ci.yml",
+        ".github/workflows/desktop-build.yml",
+        "action.yml",
+        "packaging/verify_package.py",
+        "scripts/check_self.py"
+      ],
+      "satisfied_groups": [
+        {
+          "name": "Self-check and package operations",
+          "required": [
+            "docs/ops/drift-gate-self-check.md"
+          ],
+          "type": "all_changed",
+          "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+          "decision": "satisfied",
+          "verification": "unverified",
+          "content_mode": "auto"
+        }
+      ],
+      "unsatisfied_groups": []
+    }
+  ],
+  "skipped_rules": [],
+  "rejected_ignores": [],
+  "ignore_audit": [],
+  "temporal_warnings": [],
+  "gate": {
+    "fail_on_blocker": true,
+    "fail_on_major_count": 1,
+    "on_unverified": "fail"
+  },
+  "execution": {
+    "schema_version": 2,
+    "run_id": "83c2e7bd37294d24a37dc67e28ecc182",
+    "started_at": "2026-10-07T14:22:54.296880+00:00",
+    "status": "success",
+    "policy_sha256": "3b21d87ef6f284f5b0ce8697c4467084a2d15659c12d33b6555b3a4e581f9abe",
+    "policy_digest_kind": "source",
+    "warnings": [],
+    "evaluation_context": {
+      "evaluated_on": "2026-10-07",
+      "date_basis": "UTC"
+    },
+    "input_digest_version": 3,
+    "input_sha256": "79746d09b8535b0d56c573ba06af3ad957774912b5b01d73899b617b07a4a89d",
+    "input_capture": {
+      "schema": "input-manifest-v1",
+      "digest_protocol": "python-json-observation-v1",
+      "input_sha256": "4cc24c41f40ec867beea44d44a02e6f7fac1a0d3e59c6fc6becde8eb192775f1",
+      "collection_mode": "captured-adapter-input",
+      "atomicity": "per-artifact-observation",
+      "original_bytes_certified": false,
+      "revision_certified": false,
+      "policy_authority": "unverified-caller-input",
+      "selection_complete": false,
+      "artifacts": [
+        {
+          "path": ".drift-gate.self.yml",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".drift-gate.self.yml",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".drift-gate.self.yml",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".drift-gate.self.yml",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "19213f400326e90450a483e9e9fa4b4d8ef946e7c24a01e2a6d9f0236102d74c",
+          "observed_text_bytes": 1370,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "16a121c5566e449dc6096a932937ed50fb3b4ba6134979b391bbd0818b71c2a7",
+          "observed_text_bytes": 3027,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": ".github/workflows/desktop-build.yml",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".github/workflows/desktop-build.yml",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".github/workflows/desktop-build.yml",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".github/workflows/desktop-build.yml",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "1d290732ff11c223e51ad454d275521ce5634ba407d377e943821b1991608d14",
+          "observed_text_bytes": 2853,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "@policy",
+          "role": "policy-semantics",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0fb85e935a08e796f21f9720db28d02bc6cedec8e90be1b676213dd521639d05",
+          "observed_text_bytes": 3602,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "@policy",
+          "role": "policy-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "3b21d87ef6f284f5b0ce8697c4467084a2d15659c12d33b6555b3a4e581f9abe",
+          "observed_text_bytes": 3159,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "action.yml",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "action.yml",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "action.yml",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "action.yml",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "cef6783ba0396d17e913003242cda62754ecd2766e1e55e94164880b791025ec",
+          "observed_text_bytes": 762,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/App.test.tsx",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "dd40553364f624f78981968e6efe004e47c49ba692b5f45adf18aa4fe350a066",
+          "observed_text_bytes": 42412,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/App.test.tsx",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "434424398f9acf20f69a352e01f04b3e1a6d6ff805ce75a51f6eb30082517ced",
+          "observed_text_bytes": 41476,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/App.test.tsx",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "desktop-ui/src/App.test.tsx",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c599c918cace3c93c9c2bafa9d9cd4f9b928df248cfe9dcb2d87b511fb2ee520",
+          "observed_text_bytes": 1496,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/App.tsx",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0bed4c41198483414ffc0f79778e837ec2fd0b484d71d7ef0fc6394b3748a1aa",
+          "observed_text_bytes": 34873,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/App.tsx",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "6a5121fa0844a99f94c3560d0209d249c389d83a7a5a8aa3c91aa26e4a35c713",
+          "observed_text_bytes": 34811,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/App.tsx",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "desktop-ui/src/App.tsx",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "874817e15035b1fd9185b70c478449b38d927a833b655b31b509328d7387be8f",
+          "observed_text_bytes": 984,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/bridge.ts",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "bf8848849576e34dc2708be476780e59f2c84623d49690f789f70135c4f6e01e",
+          "observed_text_bytes": 7881,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/bridge.ts",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "60265ccc73fa3fc83581df786c0314d30310c22450b31a3015e6ac8b2c2ad358",
+          "observed_text_bytes": 7770,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/bridge.ts",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "desktop-ui/src/bridge.ts",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ff825970c69db24bb375a0780e95ca65f194b06c71ed284a3757689fd16e441f",
+          "observed_text_bytes": 744,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/eventSchema.test.ts",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ddb99775f5f8703327858ee991f9844c49afb89de8847d61431933d600c8a1e1",
+          "observed_text_bytes": 5906,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/eventSchema.test.ts",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5f3804d90927d13fdf1a9e4feeed6087f94aea708523c62ab0aa40ecb1b7eb16",
+          "observed_text_bytes": 5354,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/eventSchema.test.ts",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "desktop-ui/src/eventSchema.test.ts",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ef46f02e654a1500cfffccd59aafe72bbaab0d364567a3063b9cf5adce57f67b",
+          "observed_text_bytes": 1186,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/eventSchema.ts",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e07bf6c25ba6d88e1011d0810017986f6486cf04f462cc30254ded1435bfeea0",
+          "observed_text_bytes": 11366,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/eventSchema.ts",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5c76d2d4f584988ec3583c0684b1eb7f321ee68490ce4e2aa6b4f82c81d45b4c",
+          "observed_text_bytes": 11211,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/eventSchema.ts",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "desktop-ui/src/eventSchema.ts",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ef707787cbc257e3790376933da8e1da687d922c241a9dc35d9da29916d6d432",
+          "observed_text_bytes": 1418,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/features/review/AnalysisNotice.test.tsx",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e85703203eb6fc55a32d7d005466581908b476db92aad16c95400a9142f7d6fb",
+          "observed_text_bytes": 3145,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/features/review/AnalysisNotice.test.tsx",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "41faa43a523d080b25bb0144489056dcb2c5d78080c65953120d1ec7f2284e5a",
+          "observed_text_bytes": 1622,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/features/review/AnalysisNotice.test.tsx",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "desktop-ui/src/features/review/AnalysisNotice.test.tsx",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e81fb52268bdd63c83025bff38fef8b3d2f16698b6eebccce2d6831b7aef83a2",
+          "observed_text_bytes": 2087,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/features/review/AnalysisNotice.tsx",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "13483095fffdaf815fcde6d0eafa8eba52f7128f6845f8a77d9a140063a73e42",
+          "observed_text_bytes": 2592,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/features/review/AnalysisNotice.tsx",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "3bda765b30ff172a0d760cc3497e28adb41821af9cc8acf9ac66469c6c60bdf9",
+          "observed_text_bytes": 1524,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/features/review/AnalysisNotice.tsx",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "desktop-ui/src/features/review/AnalysisNotice.tsx",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "19864213052dfa18dda91d633b001752a5d4b4337d834986d7c8fb3e2969ef82",
+          "observed_text_bytes": 2261,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/features/review/violations.ts",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b4bf56e8949073cfe2f669aa9b924e4c116f890619246fa359f0b6b44157ba95",
+          "observed_text_bytes": 1814,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/features/review/violations.ts",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "708dda43d9d94f024c76a08d862d813ece374a108f573278e6514bc3af619ed2",
+          "observed_text_bytes": 1371,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/features/review/violations.ts",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "desktop-ui/src/features/review/violations.ts",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "2c3fc49a80bcb8b1433463d60adb2dd42a8626f34e51f5fcd805a6aa238297a7",
+          "observed_text_bytes": 1695,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/presentation.tsx",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5fdb58652231d999aa396aa7f70d18004b99a5b93cd98f8dbb25dd98edebcbf2",
+          "observed_text_bytes": 558,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/presentation.tsx",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "2696b6a32f4db994def9a4ea715c72dd37ab9b784e1f78995eef0a5d51fef845",
+          "observed_text_bytes": 523,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "desktop-ui/src/presentation.tsx",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "desktop-ui/src/presentation.tsx",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "2dc3ee0b85e00a0816c7de3fd8508268bdd205f7c72073c98b63dc42190b93ea",
+          "observed_text_bytes": 458,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/contracts/desktop-bridge.md",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/contracts/desktop-bridge.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/contracts/desktop-bridge.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/contracts/desktop-bridge.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "a6987eb6ac715dd882df71e5ae018bdd9ae07de13b5a778368e6dc51c7e716bf",
+          "observed_text_bytes": 4184,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "8e2a3346b187db0f3945649b4b1e436fec81ad0d22c54e40b4b60fabd075fbd2",
+          "observed_text_bytes": 35606,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/contracts/mcp-transport.md",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/contracts/mcp-transport.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/contracts/mcp-transport.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/contracts/mcp-transport.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "eef798dcfc75f1ec5d254b9cf6fffa06a5db4e10c37de8b47ad7539cb502f948",
+          "observed_text_bytes": 4729,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "role": "after-source",
+          "state": "absent",
+          "reason": "adapter_declared_deleted",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "06cfc14388e7348dfeec7d57537c3cd994ab8fb2831bce737766d600b1db0543",
+          "observed_text_bytes": 4648,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "role": "after-source",
+          "state": "absent",
+          "reason": "adapter_declared_deleted",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "2f9346c7b8b36e3ed1a285f97b8e861dd4da0d779f7555695e4c4d31607595af",
+          "observed_text_bytes": 10461,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/ops/drift-gate-self-check.md",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/ops/drift-gate-self-check.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/ops/drift-gate-self-check.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/ops/drift-gate-self-check.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "13563358212ac6017d4c3405de166353efee05193d3dacf3a7b83a93919b58b1",
+          "observed_text_bytes": 7819,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/ast/express_routes.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "514f1c0ccf4427efdaa602704aa7080b21951d35f3146768a2e0ff2d68b51535",
+          "observed_text_bytes": 10263,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/ast/express_routes.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/ast/express_routes.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/ast/express_routes.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ac5fecd2d0385a865d3411097017edf83e944b2a411fc920525e0ea9f323cdc5",
+          "observed_text_bytes": 10462,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "6615df2fa28867f9313ab13635da0b4a1471781b00e9cddc2d339acb47025f03",
+          "observed_text_bytes": 59190,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c8aa42371f10377ee1267d34c2c2644087351d4bc527e3473f180051ad1e1428",
+          "observed_text_bytes": 57420,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d9a8261560fd90ad8d6f525c870cc37c1e1d4310a4100b553ac0a7dacf4519a7",
+          "observed_text_bytes": 10172,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/docs/content.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "4cb6a8cb4446f2b6b89fc9e7249b9e1669ace3b828c9f9671f15d3522b84b32e",
+          "observed_text_bytes": 2829,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/docs/content.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "cd66ed469305f6153030acd2800aad3cf2cf5a5679d814b18b33de72fa303227",
+          "observed_text_bytes": 1564,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/docs/content.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/docs/content.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "2e6a2e6ade8879e05ba141927c6363f9779ec75404c988d061e39fc3a533fa52",
+          "observed_text_bytes": 3160,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/docs/structured.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "49c12057bad06d027b47da93dc6ba73a8ea7e52bb92fc4f106961913932719fa",
+          "observed_text_bytes": 1675,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/docs/structured.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/docs/structured.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/docs/structured.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "2711f039d6782bd56f47fc56e6dfb70e83e28e7e702d4ac5b83f8f636356979e",
+          "observed_text_bytes": 1727,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/git/client.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "433344284a2f127c111969146b1d63d578a35d912ce80fc786e2de97716000da",
+          "observed_text_bytes": 7802,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/git/client.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "97b6eaee4f9a609f4c152baa6c7b5aab217899ca1752ae37774b13f13df0f734",
+          "observed_text_bytes": 7476,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/git/client.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/git/client.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c6e1062be4e89142282a33b866a8083d8657b7007cc4cfa5d1185fc5de259668",
+          "observed_text_bytes": 3504,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/git/immutable.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5d4dc3c06ecea91a604ea59ee5454ebab2864ba3d8de80d2963ca4da2d945bb3",
+          "observed_text_bytes": 9422,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/git/immutable.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/git/immutable.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/git/immutable.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "62f6990578809c2e5573f81cafc163f1ed66af5c26ed0c9b3356d4b92abacc00",
+          "observed_text_bytes": 9614,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/github/client.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "92ee9fbf67148769eb12fbb32cf30513142963ff4ffed24b90e8fae8fc3e2fa1",
+          "observed_text_bytes": 10195,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/github/client.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "bce9f13f99ed7ae43562cac8a13e3c72a0ec52a946f54a1fffe941309a1d7a6f",
+          "observed_text_bytes": 8420,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/github/client.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/github/client.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "55da21449d849673fdd3405767836ba8351597e5445dd88dba38652d9dfe1623",
+          "observed_text_bytes": 3213,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/github_action/runner.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "7006a30ab8087a15d6c95aac94cac389a554ee1caabc127744a68f737d0854e5",
+          "observed_text_bytes": 9435,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/github_action/runner.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "9916ae88c7c43756353de5ca354a29feda10671e4d43bd44466e4d1b6056284b",
+          "observed_text_bytes": 9133,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/github_action/runner.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/github_action/runner.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ae58b58110a6420474df76ee5f152502a0171133b2e3d072417bb9968a7ddbc5",
+          "observed_text_bytes": 3210,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/inspection.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d7dd0cb1c91fbe6fb7ac0d2846c91b8fbee888bfe1fb0272879a21eed29901f5",
+          "observed_text_bytes": 4365,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/inspection.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/inspection.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/inspection.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ae25224b31cb524515a272a3dacbb27bc754c460d5be50232eebd8cfaab92b8e",
+          "observed_text_bytes": 4455,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/mcp/server.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d73fe9dab5db4bf2f16498a96b7c77f67753531e499715e489805b0cf22a9711",
+          "observed_text_bytes": 9225,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/mcp/server.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "59a218dbedf90e3cc3c38da0ee6af7196d896ca452be38c10115443124192041",
+          "observed_text_bytes": 8832,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/mcp/server.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/mcp/server.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e31761b1982695d2ad32d156f829d5c5aff6bb628f2238de50364c4216940f4a",
+          "observed_text_bytes": 1703,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/mcp/tools.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ac631d155cb13c52c1f15ca7eab36b1d7d6309a5fbafbb03fda0f595def98917",
+          "observed_text_bytes": 14923,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/mcp/tools.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0b4164c14e9548ce0998e721c18259287f398dc16753bd69ce0ab917de8f69db",
+          "observed_text_bytes": 10313,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/mcp/tools.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/mcp/tools.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "607a1086262031cbba7185c31d5206156faf31351cdfe6d77b6752b977da3144",
+          "observed_text_bytes": 11203,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/policy_loader.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "62c9fb2ed70705036b4526e7fc861207f64585cab3d2345a1070291b95910e42",
+          "observed_text_bytes": 1234,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/policy_loader.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5ed3837dc6b7f375aefabe0bd7c95e5e28d423084558b2d5e1da477d59e0c0d2",
+          "observed_text_bytes": 972,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/policy_loader.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/policy_loader.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0d1228e52f58e16de315f17f24ddc6699482e41056c265818e4f52008e9a3652",
+          "observed_text_bytes": 1646,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/snapshot.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "841c1c22eb8bb3bd04a4522e3ac62b60531d26a5d647fbe3793caebd45c86c1b",
+          "observed_text_bytes": 10948,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/snapshot.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/snapshot.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/snapshot.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "a181e5c797f7b0ae9a694e81c7cd29099b23d4b37b74321639fee080e398e612",
+          "observed_text_bytes": 11162,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/compat/__init__.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "4aefd7b085689ba91bb46543d6d7561daaf61f310ed036ce0094c2f53f39a215",
+          "observed_text_bytes": 70,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/compat/__init__.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/compat/__init__.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/compat/__init__.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "f8f6fee211a53f70c9c959fa3ac664af0266099184f8edaec62a361573002356",
+          "observed_text_bytes": 86,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/compat/legacy_result.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "a4d08695e7eece84f6ddc16c257a44da07657988bb4a547130ad0b3da1b08413",
+          "observed_text_bytes": 5693,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/compat/legacy_result.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/compat/legacy_result.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/compat/legacy_result.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "74c67fbe5a9ff175b8a32c016b18d6bd8ea152bd8a9f0dd225fd5e7cc6f91c40",
+          "observed_text_bytes": 5808,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/__init__.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "1d2254c52fd69c2889567b774e00180d7453ef2089b30a723d3f92c94f1d75d4",
+          "observed_text_bytes": 49,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/__init__.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/__init__.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/__init__.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "07f940686c4e88b1e81293ecc6c5dde70d989c2bb9eb63132901aeec25e6d4b1",
+          "observed_text_bytes": 65,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/delta.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5cb74d66d38efd6e317f2b9e4255a257b7db2c1d2a767f626a34fe4c059e52e3",
+          "observed_text_bytes": 1700,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/delta.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/delta.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/delta.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "1cf42f0924b148c0dd7bbeb3322eea4e0a4b654cd4fd7e4bb9b61634506f3544",
+          "observed_text_bytes": 1743,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/discovery.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0cd59390bb7597605de20983a08ee0e81ac9ab4039205d882ac80007530f37f1",
+          "observed_text_bytes": 14182,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/discovery.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/discovery.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/discovery.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "21bfde18929cf2ffdf752e754a00f70fcacf756249645231a9c68a010df8337e",
+          "observed_text_bytes": 14443,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/input_identity.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "af276ae437e1024c894f8c3e57d0fb9c323c9df6d2c010ece51fd745bbba9121",
+          "observed_text_bytes": 566,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/input_identity.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/input_identity.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/input_identity.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5b01db8e567a5e9d5954b4bbe4368c2d7a9568b7dd11c0419c07529298f85c84",
+          "observed_text_bytes": 595,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/planner.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "f7cfc82d71d69ad4cd775560f48a7970ea2bac218c9bf9d38ad1cb09c886d43d",
+          "observed_text_bytes": 16530,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/planner.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/planner.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/planner.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "6382c4780cd40f39ce890987a2e4411b8e89ae813a853fdc5e1ee512be18d419",
+          "observed_text_bytes": 16880,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/profiles.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "7dd97a8b4ae94ebb6e9b4f1cdb1a7e45d28ccfbb00a6b3007a92c14a92d9f920",
+          "observed_text_bytes": 4181,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/contracts/profiles.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/profiles.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/contracts/profiles.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5a63b38bd77ffea7d990c929bac513b0e19c4458a61496bf12dd3394e35fc634",
+          "observed_text_bytes": 4289,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/engine.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "75893f22fc47c8fb9d49fb6d0b28b21819ca5714f6589964d5c2ce0b2b661213",
+          "observed_text_bytes": 6268,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/engine.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0420a87095ac3676ef9a9780ab49c6c0065950d197aeba4cdc8e32eeb6fa9cf9",
+          "observed_text_bytes": 4865,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/engine.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/engine.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b8dbd80c2994d348f10682804e60efaabb6c867fa421f8b50cae200cbe340a3d",
+          "observed_text_bytes": 4298,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/analysis_session.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "9f3480f045bcddf8baa7795b91ec3a7c1ad6bcb309968926723ddbf35bbb2c9a",
+          "observed_text_bytes": 2578,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/analysis_session.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/analysis_session.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/analysis_session.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0034f486806ad54311fff0b26c45754899e16b531ae6995088fdf43abf046de7",
+          "observed_text_bytes": 2654,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/api_schema.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c4f354eeb2f15b6124275f5ede8c5a6bbb5a6e7deaa251b60f9f05ae60443c8d",
+          "observed_text_bytes": 20711,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/api_schema.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/api_schema.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/api_schema.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "263288deffe3a8d2b6a63f118415451c2d8bc026543e23a1e6bc56db7b92e373",
+          "observed_text_bytes": 21071,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/content_result.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e340ebedd0b4e10bed33232348a6a3b49f159a3bfcd35e86ff4cbcfd3194a126",
+          "observed_text_bytes": 2000,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/content_result.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/content_result.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/content_result.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "11783ebbb445975ffa1cac6ab34597e006ead60480e16d9fbaaa7a7abbe834cb",
+          "observed_text_bytes": 2066,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/contract_proof.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "7257ad94cffe89cea0a224ada960574d86951639f3660888f0c536593775fc9c",
+          "observed_text_bytes": 6539,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/contract_proof.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/contract_proof.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/contract_proof.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "33f4d9780235a5981cdbeeadb87ed60c7028ec3a6cdd808c189952e1351421cb",
+          "observed_text_bytes": 6673,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/contracts.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "fb4620a14f2f1f8dde3c99cad14ef06d757ba864223cf20022592c069966ff55",
+          "observed_text_bytes": 8347,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/contracts.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "11b7df3d087bfff114cead813454bc80a56a7ceef136e021813e20702ceb3e1c",
+          "observed_text_bytes": 5056,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/contracts.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/contracts.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "37c7d11fe83e353649ddc80b90fc7a4176fd5a547e5b026b5be4e2a0e0d39d57",
+          "observed_text_bytes": 8469,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/environment.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "efb44cdca5d7ca20f4efb7b3002154a4243a2a198a963c330bbeb9eae93e49ac",
+          "observed_text_bytes": 9240,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/environment.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/environment.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/environment.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "6107b5229f7a6149acede9fe7d19cbcb0ca59c156d51b36d51acf30dea076ba0",
+          "observed_text_bytes": 9434,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/evaluator.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "397af689771d2448ed56e23fb0d6205bd2e890b167ecd67725d6b3c819c9cd22",
+          "observed_text_bytes": 20381,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/evaluator.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "bd7cc7d7ff1fd6226c0bbfb83cb61e65a3d7144f88f252b404cec0b613ad37dd",
+          "observed_text_bytes": 15957,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/evaluator.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/evaluator.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ca7978e33c204856f8bb96e8d866db742d8ff17618d80ed6941f0f158f4eaad6",
+          "observed_text_bytes": 14982,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/obligations.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0be491324e2b77e03f4065c9a53f1697267817511f1f3aba1226ac1947077105",
+          "observed_text_bytes": 11375,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/obligations.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/obligations.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/obligations.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "a5647b3570f5247bd85f672ec3ceacc1eaa5a6375fc51e7f92d60ad4bb8fb65f",
+          "observed_text_bytes": 11596,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/openapi_document.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b07135b64ae86f336e9f748224619af8a76dde94a768dd28adb311759795d260",
+          "observed_text_bytes": 2266,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/openapi_document.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/openapi_document.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/openapi_document.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "583e261d48ae25488aff12b2d46f77d78518134c78d5bc24825a72362f7e946e",
+          "observed_text_bytes": 2335,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/propositions.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "8cd619e61a796c147b1d4cf3d8e562640367a12e4a55e328c58b7472c9ed8b87",
+          "observed_text_bytes": 4629,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/propositions.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/propositions.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/propositions.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "199deca7de3ba159245135af69d316c3c83b20449b16f593950a49f66075ad80",
+          "observed_text_bytes": 4734,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/result_guard.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "cc6bfcb7d96034f872cc0f4b24d9dfe87a4797fef1d6f2eadd13d6d5a243a2e3",
+          "observed_text_bytes": 9824,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/result_guard.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/result_guard.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/result_guard.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5cf25605bfd2ab67b810a60a31ba1600146dfeac7c39f31d3aaadfa204a45619",
+          "observed_text_bytes": 9997,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/routes.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "396fe4d07c633412dea71895d420fd791c36e887a67c6a53be2f79cd5966c2c1",
+          "observed_text_bytes": 10558,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/routes.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/routes.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/routes.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b854140b1b892332ef272238b601f227921fc6f481caca4ead4ab6fc2746b93a",
+          "observed_text_bytes": 10770,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/static_routers.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0b3a7f359e26f38db42c382edc2b50c1a0f4ff9791a865857e0cb5bb1fa0dfb1",
+          "observed_text_bytes": 5327,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/evaluation/static_routers.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/static_routers.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/evaluation/static_routers.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "df8d64a61c72faaca6e43029354cc8f8f7e1608af3a43fba8e1f67a5280ff0bf",
+          "observed_text_bytes": 5450,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/gating/gate.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "073d1ca1844ee56c6578400474eefdc9c64f0f3cf0e31e50cf84f07836c207c2",
+          "observed_text_bytes": 1085,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/gating/gate.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "07bed01f25053a22041cda78950deb4a5a0b85f8852d26e4601a095a73a39bd2",
+          "observed_text_bytes": 784,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/gating/gate.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/gating/gate.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "3eab97a1abe4d543f45f2f723b4e975b225e294a84af6cf8ad6c117c864b5ce5",
+          "observed_text_bytes": 649,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/changed_file.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "33c5b7d5b6bbaa061ce5a32c7b45c5bcf8eed2a7b0855ddf39847b704bac4477",
+          "observed_text_bytes": 2566,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/changed_file.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ccc062a8d30945d130229933d22480ea4bd944ba3b9ab0cdfe3c46c91513f266",
+          "observed_text_bytes": 1697,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/changed_file.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/changed_file.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "fd032fc33af53d687435636cbefc438f68cb87974b6b48fe48ca4822d982e902",
+          "observed_text_bytes": 2024,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/evaluation_context.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b54ba3f2537db960aedff2769241c4530735941c2845557dc479c681f09625b0",
+          "observed_text_bytes": 458,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/evaluation_context.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/evaluation_context.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/evaluation_context.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "8b11fb75423e76a63701746c8f97f5ddcf84fff41b9d75f6cbe95356a4e23332",
+          "observed_text_bytes": 489,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/facts.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "6b1269fdd939aaafa9562051196fdc40cdb73fdbabc402189d4c1afad01c9f39",
+          "observed_text_bytes": 6787,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/facts.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/facts.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/facts.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5531d353a317e8b200734182dce71f58bc47af66cee1b92d2a38eb14c956d8a5",
+          "observed_text_bytes": 7000,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/git_input.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d81f87331ae177485e21a0c3cfc675cdfc3f0f5d6af5d725270272c7bba14088",
+          "observed_text_bytes": 6886,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/git_input.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/git_input.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/git_input.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "1665d4e5413fbfcc093a2d06d30b3320f183f4018975f98d0fd5e5b82c28d9c6",
+          "observed_text_bytes": 7050,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/input_manifest.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "29985ee2647aa60af193837566bffbf353d0f4c217fe211c7ad114ef251b248d",
+          "observed_text_bytes": 4411,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/input_manifest.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/input_manifest.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/input_manifest.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "6eac36240cdf763db5bd58ba999947655df281810ae2355c3d6eeb52f7796ba9",
+          "observed_text_bytes": 4532,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/policy.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "cb20bdb7149f70e1de7ead9ca3de7f9a506d866bb3d8056f5eb19b9a86d240d2",
+          "observed_text_bytes": 5458,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/policy.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "29a03275b06c6bde75743321d79f331a2b07fee72aeb039d69756bf074ec50c1",
+          "observed_text_bytes": 5283,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/policy.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/policy.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "74e2f55cd21a1c89cb744107a97ae470fae2e8751cee1d68b92198272a12c0e7",
+          "observed_text_bytes": 1271,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/proof.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "7859bb6315318ccc00e0f1f31026d0a9bcb9a228f29a8bb0791fc3de6a4a171f",
+          "observed_text_bytes": 9293,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/proof.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/proof.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/proof.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "60d52c39a8b8d5e0dd4405e6b02276d830600e29a4dfc23a7371c1e4e6a86f67",
+          "observed_text_bytes": 9538,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/result.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "9bdf205abbac0f6d8ef121f9ba04fa3bbf739e4d8bc34ba039bc555e1e7d68a6",
+          "observed_text_bytes": 18081,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/result.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d9986b95a13b1d04ad0790c0aa32768daac53af28c1e6a5d1574b04fcdf00c31",
+          "observed_text_bytes": 15098,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/models/result.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/models/result.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c0d27d525bb5d77e65b26059a676d2bb1a01e56817be8b76d9d93f63192b93f6",
+          "observed_text_bytes": 5810,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/patch_lines.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c5faef0300bdb3a9bed754e0030c82ff6d520b1daa8542829451a31d252cdb5e",
+          "observed_text_bytes": 2517,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/patch_lines.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e71c13971d876a42a36d7ea8ea19d39cc3364b068e0ea63f116c388f14a63962",
+          "observed_text_bytes": 2185,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/patch_lines.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/patch_lines.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b46cf073b0160a8b2ed5269ffa446745c15169f02725b9582e0e10247a5fea52",
+          "observed_text_bytes": 1292,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/policy/guard.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b5ed8babb971ec1a4c29a430b5ac7507a029f44390267881d868feffd57bb618",
+          "observed_text_bytes": 2943,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/policy/guard.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "1179719416da80ddbc3f844b80a0bac84dc6ecfc72f006f5f3584bb892d6a768",
+          "observed_text_bytes": 2358,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/policy/guard.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/policy/guard.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0e4afc8ba80e875d03ed84289bdcaede4fe2bb4be5879b4ad3c15543677188ed",
+          "observed_text_bytes": 2081,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/policy/schema.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "12e9b1f05be2d3d0f61e1be8da4bbe845e33a367ccd889f8029fce6728125798",
+          "observed_text_bytes": 2481,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/policy/schema.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "840be74f429948879d15fa84c533ad77770c61cae48277d894aa8db4fd72744e",
+          "observed_text_bytes": 2444,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/policy/schema.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/policy/schema.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "26801005cc6266fff74eeee125a06b1d7685548c481f9176f2e5336122e02ff1",
+          "observed_text_bytes": 829,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/policy/validator.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "a6162e2df22bdece57875fa4c535a48c270276f91c295af3567e4b89b7f73399",
+          "observed_text_bytes": 6974,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/policy/validator.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "27803f892e4a67d45fe28663179f788c2f78df59f1e10c6a0ce8785f6965ae24",
+          "observed_text_bytes": 6052,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/core/policy/validator.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/core/policy/validator.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "8f10d20d35dac2084599f47809925306c572f9c8ab508903d88c2ac9c872e9e6",
+          "observed_text_bytes": 2866,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/desktop/package_check.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "a8d2fadb9ea1f851b981e28df479abbc76539f1e3f7ce2d5e5fd26b46e2464fb",
+          "observed_text_bytes": 6426,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/desktop/package_check.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "dad45bb5d83118c1e8ee552bbc95780c70a24e6c107aaf8456fe98fdc5fd532d",
+          "observed_text_bytes": 5253,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/desktop/package_check.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/desktop/package_check.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ac2645b44d006226723e0b85efcbf894caa6c2fa7c06575db607ed78f0e3b5f9",
+          "observed_text_bytes": 3546,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/desktop/package_check_contract.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c684a3779923eadf4b894647ed8d845799676ee289d2eeb986e1cb7b33fb8db0",
+          "observed_text_bytes": 2793,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/desktop/package_check_contract.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/desktop/package_check_contract.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/desktop/package_check_contract.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "afb1e29efd8286c0df19b0efcf76873b4190cb891a4bd24dcf1b0a552a2abd4a",
+          "observed_text_bytes": 2866,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/desktop/package_git_check.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "a79181266c224f970df97e5ff665664baef1e108617c601a57c110916c24877c",
+          "observed_text_bytes": 5692,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/desktop/package_git_check.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/desktop/package_git_check.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/desktop/package_git_check.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "4e4d4f06e7c6902eec104cf8ddf7770d4bd673f0fac810648d84e4b24667debb",
+          "observed_text_bytes": 5812,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/desktop/service.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ee36ce28eca8956716ef57fe2e721f1145a98385592e444288ec2af7797985fd",
+          "observed_text_bytes": 4726,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/desktop/service.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "115556abd0f4eee83fd8adb39d419383b15d359b23380f872654297468607f7d",
+          "observed_text_bytes": 4986,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/desktop/service.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/desktop/service.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ef88da1ebfb6df113ec4f26cd1f2aefb6f32b21a4136073f6d87a481c420f4fe",
+          "observed_text_bytes": 3086,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/reporters/html.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "3c0a2707ee8a50d3e6b4640162c3a0a021d047d9a32daebc95c6df358101be2c",
+          "observed_text_bytes": 20392,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/reporters/html.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "4daa1cf82630e72e3028ba438f2b21d4e16352471033cd39a0a3506025c0fa6a",
+          "observed_text_bytes": 19947,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/reporters/html.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/reporters/html.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "fbd7157d5ccd37708dc60273595b8e67fc1261da9a6ece7f8468fd0c073df0b9",
+          "observed_text_bytes": 1714,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/reporters/markdown.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "fc50e687e022fb09b621d4f0cc6a374b41d2ff5faabca320f32b25b7b4b1e7ab",
+          "observed_text_bytes": 15420,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/reporters/markdown.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "547bf48b8b5855df23c0ba1a6266aa126a8cfa2379993f269cf6984dd3655d52",
+          "observed_text_bytes": 14281,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/reporters/markdown.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/reporters/markdown.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "404a885bc28e2c576c84d883fa65c56073c0a8e1cac19a5d574052a8f0ae20b3",
+          "observed_text_bytes": 2380,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/contracts/auto-contracts-v2.json",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b5c66c01a9f07c794563c1b99d07971527a8b258b937549a0d60dc296c98830d",
+          "observed_text_bytes": 18441,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/contracts/auto-contracts-v2.json",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/contracts/auto-contracts-v2.json",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/contracts/auto-contracts-v2.json",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "f80eca7b19dd0ed62595a09cfcda3b1eda16728d6ee27e243f48b238862c53bc",
+          "observed_text_bytes": 19142,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/contracts/express-contracts-v1.json",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "992cf555cdf16ecc30390a40e2c109a02aa184196d545d45f4489da8412a155f",
+          "observed_text_bytes": 12366,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/contracts/express-contracts-v1.json",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/contracts/express-contracts-v1.json",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/contracts/express-contracts-v1.json",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b1327e312bcbab6905011c1907c8a927febeb67ad8b51e0c6c0b11f61fbb40b2",
+          "observed_text_bytes": 12796,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/contracts/logical-rereview.json",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "f25c81abbc22cc5da3a271f3504c00e4e881859faf107b70346aa9be11134d0a",
+          "observed_text_bytes": 24123,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/contracts/logical-rereview.json",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/contracts/logical-rereview.json",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/contracts/logical-rereview.json",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "1772c0092d5d9fc28eb3312396902797858da8cd566a1a7cebfb212563b7b6a8",
+          "observed_text_bytes": 24803,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_auto_development.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "4079c6e1f9d33433aec2d1719df47700182395866257e0e6b9193e7dc765a492",
+          "observed_text_bytes": 12919,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_auto_development.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_auto_development.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_auto_development.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "3d384f6e488752544c9db5f81c25192b36e3e8c7299129b0b94dc3d460d7313d",
+          "observed_text_bytes": 13169,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_contract_followup.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d041edabd10e74e83944db9b361fa8ea21ae1455a8fafd32b9e5c1e772326ad3",
+          "observed_text_bytes": 7848,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_contract_followup.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_contract_followup.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_contract_followup.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "f7d16b2a572c104954c251371a5575b1a4d2079ca9fdde6373deeca17557f567",
+          "observed_text_bytes": 8011,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_contract_projection.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ff3a602731f5181ba6ff426a91766d1663fbdc7fc1eada9a9f9b19bc7d29e966",
+          "observed_text_bytes": 13408,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_contract_projection.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_contract_projection.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_contract_projection.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "9e2bcea660f45f8ca57912ecf8daf2679a58d4efeecdd6e0b95261a5ea68ac0d",
+          "observed_text_bytes": 13654,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_desktop_web.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "765c1888cc4f7e70072ba8b95d12f4566e1fb4df0ff7991b6d7326f807c33d74",
+          "observed_text_bytes": 41859,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_desktop_web.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "109148fb9ba55afdb0e5f69dbd7a03e2f5bfff127e7e51ab84feb3076f2c605e",
+          "observed_text_bytes": 41795,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_desktop_web.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_desktop_web.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "a9132aa2bf4b9dfad8a04c9e2bd401252dd3806496c37dbecd4b81b2d01cbe12",
+          "observed_text_bytes": 719,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_development_regressions.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e67bae125504c1e2a91b894e7ad410fb37bc6d1b15f6983abb428903256a6380",
+          "observed_text_bytes": 15886,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_development_regressions.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "43d2a08a2cedbf61ec258ba0a216dd0353c017657ff07f2fa47c520163ff5017",
+          "observed_text_bytes": 15702,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_development_regressions.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_development_regressions.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b1f1f6854fede80ee07807b93184ea36653f9e8bdf781a4b4f0c8fc3e3a5ba09",
+          "observed_text_bytes": 2288,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_engine.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0a686bef7b7d1186b1d5452e0646d7b88f1312f760a9f615557d71aa99ec9b1a",
+          "observed_text_bytes": 32635,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_engine.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "8722ef00dc073ab1b92d8454bdd068a7286809f7c95a25a2bb415019c1876088",
+          "observed_text_bytes": 32403,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_engine.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_engine.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "dc3bba786c78cee6eb2fe8855bd74d1ee6b969815f16b23caf5d7ee94afc9e72",
+          "observed_text_bytes": 1612,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_enterprise_correctness.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "14cdd1760744f4dacf2f2d397f54240b2b7cbd2817aa41d4f1436d3bb6bfe70b",
+          "observed_text_bytes": 11601,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_enterprise_correctness.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_enterprise_correctness.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_enterprise_correctness.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5bcbbc4f6413b0074feebfcb62013da5ab8292625e1d25dcb5ee161c077cd385",
+          "observed_text_bytes": 11827,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_express_contracts.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "bfab8ba555111c58bf4df773e42fb77d1a52d9630d135f0762719e9f72a58b78",
+          "observed_text_bytes": 6473,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_express_contracts.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_express_contracts.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_express_contracts.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e3e8a80d3e36fcc34b6dde256df0411e6d75414482acf9b834fa952b9d3aa52d",
+          "observed_text_bytes": 6599,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_fastapi_oracle.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "445c8a9443a0dd39ccb4a6ce9854adde025d5e468829283983f30b82a81798bf",
+          "observed_text_bytes": 3919,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_fastapi_oracle.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_fastapi_oracle.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_fastapi_oracle.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d3e3a03fa446813906b213bfbaabb5452fb03b48bd5edf756eeb2031b980e401",
+          "observed_text_bytes": 4006,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_git_immutable.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "34908d6b5d9f8f414197124ecc118b3cc9c10cc21b6b1e7c541c912d1da7ad08",
+          "observed_text_bytes": 11711,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_git_immutable.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_git_immutable.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_git_immutable.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "cc26216f61b68820dfbeabdb2349913528805439aa4727dec73e8a51b99bd4d6",
+          "observed_text_bytes": 11966,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_input_snapshot.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "2b8b00973d2c8619b667628817ab49988c378215c873477067fa03132faea2f2",
+          "observed_text_bytes": 17845,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_input_snapshot.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_input_snapshot.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_input_snapshot.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "4974901235902d67fcb6c07ffb93f64c9d26db4e5576c3f219eaa0ca17544ac1",
+          "observed_text_bytes": 18188,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_logical_contracts.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d1e90b257750b498d90e315e7b7e65c8573e84489769e372013e1989ee29e173",
+          "observed_text_bytes": 15428,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_logical_contracts.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_logical_contracts.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_logical_contracts.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "a890c02fb50503161eefde923b518c564cfd13a93d22670bea84006010454e80",
+          "observed_text_bytes": 15734,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_logical_entrypoints.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "8607513682a97fab24325531aad68262f213cb07660a345e0f42ab4bc711da23",
+          "observed_text_bytes": 6670,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_logical_entrypoints.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_logical_entrypoints.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_logical_entrypoints.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "37deed4e6f044eb929992a4a5c86c60b824ccc5f6ef17f2941fae09af0b227db",
+          "observed_text_bytes": 6809,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_logical_rereview.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "7aed5c67dac05d291fedb091a37f1253d067fa608852691a272cc86944714532",
+          "observed_text_bytes": 3646,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_logical_rereview.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_logical_rereview.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_logical_rereview.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "6e98b08604024c1915efce21a8e4edf1c604e5e9538b1df12a14fce431a7ad9b",
+          "observed_text_bytes": 3730,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_adapters.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5bec4ed10b45cce469543c8e63801e91c93a09cd06abd69d2b4400d1a44aa5f7",
+          "observed_text_bytes": 5994,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_adapters.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_adapters.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_adapters.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "f759ab4c077318b6dcb8e21cf98a12dcce7cfcdec271f3eb05b52c51d81de0b7",
+          "observed_text_bytes": 6141,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_cli.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ac1d2ff789d0b5aa4bab2390ec7e22ef7ce7c7b511ac41f8b3bfccf42ad838bd",
+          "observed_text_bytes": 2219,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_cli.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_cli.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_cli.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "3697292a78ce5bdc5b5bc206c187439569a491b6abdd294dc7028d8780bf752b",
+          "observed_text_bytes": 2285,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_core.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c2b477d8d57aa13a7d5e316d640d08fe8e382cc18b4e471e443c4bac76df1384",
+          "observed_text_bytes": 8462,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_core.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_core.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_multi_review_core.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "70a748555fcf89f4098ca69d204a947f0d6ed86455ecf7e5f8e82bd91d79c9f2",
+          "observed_text_bytes": 8661,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_obligation_planner.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "5982fefb43e82022a5af674543658ef57e7291603e4de148070b5418b83db180",
+          "observed_text_bytes": 24562,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_obligation_planner.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_obligation_planner.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_obligation_planner.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "912548a64742cb75b6ee84efdaf11778990ab56fb03766c81cfb0b22a526b791",
+          "observed_text_bytes": 25007,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_packaging.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "1281a3b80a194a91ac4909c7b6337aeb2652ebd72bd249d8ad85a6d724e95466",
+          "observed_text_bytes": 17204,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_packaging.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "23ddf263fab78ebae775b495256b520e69bb0fef9a61001021ccd339e3dc0b96",
+          "observed_text_bytes": 12023,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_packaging.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_packaging.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "220e88f325943d3ab23a87074e650acf1c27985f6cd6689c90f77741a9aae100",
+          "observed_text_bytes": 7087,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_profile_discovery.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c7af98b29e8d688e718014fdf31aeb30413b73a77e7968374149311e8dbe5ec5",
+          "observed_text_bytes": 14911,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_profile_discovery.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_profile_discovery.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_profile_discovery.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "edb7eb43b0365f3cf297c317768559ee9a32697f6282cf4dd743a24894641b32",
+          "observed_text_bytes": 15240,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_proof_evaluation.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "4c910a840fd4457d7558eb1f17e2ee7573c2d9a364dbd9b31de4755eb809d916",
+          "observed_text_bytes": 18315,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_proof_evaluation.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_proof_evaluation.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_proof_evaluation.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "16fbe5787760d5aeaf57f505aee603406c0975c78aec85b5c321a97750eb01dd",
+          "observed_text_bytes": 18638,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_typed_facts.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "ad466147bafd789fe72158adba4b2e0977294e0c3d1adb58835433d6a8214a0b",
+          "observed_text_bytes": 10721,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_typed_facts.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_typed_facts.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_typed_facts.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "94838ca810175ac213d0cbeef85472eddd338370139c9cb749c50f1a08656790",
+          "observed_text_bytes": 10949,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_validator.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "9bf4e8af1cc67058fe2652b94a4065cf55b1c789c5e253c1a4f11eff9080ea15",
+          "observed_text_bytes": 43049,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_validator.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b63163e5a63c9edfd391e37ce387e57b24c9e9e80cec2d35c301b1bf917ba49e",
+          "observed_text_bytes": 42254,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/tests/test_validator.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/tests/test_validator.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "0a1e9a710bdec5cdc8dd5705e1822b7c5a9e709b53508a212a6ddc678df0526d",
+          "observed_text_bytes": 2786,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "packaging/verify_package.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e2255d9960afdeec95b957760b6672e1ecd91fd2647c74d60ec0bed09d46fbb6",
+          "observed_text_bytes": 8701,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "packaging/verify_package.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "f6bbdb9ec841837cd7f864716d664a506e6497a0ac489a347cf1fe65febbaed3",
+          "observed_text_bytes": 8263,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "packaging/verify_package.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "packaging/verify_package.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "bd76d135767015648d39bf641b46d5de4c01f19842d68a87054ec83fafacc3c8",
+          "observed_text_bytes": 3882,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "pyproject.toml",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "pyproject.toml",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "pyproject.toml",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "pyproject.toml",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "4ef5562f59c7a4dcc8965ae34cc9873abc1b6edcd3765db145b26026e7701bc6",
+          "observed_text_bytes": 446,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "scripts/audit_auto_contracts.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "cf6f839ad28b051675ffaea8b98b0ae880c0d8798804e880c7757ed6bc5f492a",
+          "observed_text_bytes": 7946,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "scripts/audit_auto_contracts.py",
+          "role": "before-source",
+          "state": "absent",
+          "reason": "adapter_declared_added",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "scripts/audit_auto_contracts.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "scripts/audit_auto_contracts.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "2a6f0c9195a0c18116fae12e418531a45704a81f4051887775a95a42ce494f33",
+          "observed_text_bytes": 8108,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "scripts/check_self.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "8bd4c08e2c967ed3b8fa3dcbfd4ac134ad8102ffaeed22afef3a6634debd0ccf",
+          "observed_text_bytes": 4389,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "scripts/check_self.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "dc7d280278ae3300c78407c71ae4071e8d6de16cda1e1a00195df8fd1e46da47",
+          "observed_text_bytes": 4430,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "scripts/check_self.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "scripts/check_self.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "6fb726c4b6e5eab66eb3c374757c8a912680c942a0e187898b768c7fb6183bfe",
+          "observed_text_bytes": 1163,
+          "encoding": "utf-8-observed-text"
+        }
+      ],
+      "manifest_sha256": "dcdd50638779e865669237a056318389a870fa516375d5b1add1fd0d256189f4",
+      "retention": "process-memory-only",
+      "replay_scope": "captured-inputs-current-engine"
+    }
+  }
+}

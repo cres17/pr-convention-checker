@@ -1,0 +1,18 @@
+{
+  "docs_check": {
+    "docs_files": [
+      "docs/review/drift-gate-logical-update-2026-10-07.md",
+      "docs/contracts/gate-and-inputs.md",
+      "docs/contracts/mcp-transport.md",
+      "docs/contracts/desktop-bridge.md"
+    ],
+    "checked_commands": [],
+    "checked_json_keys": [],
+    "checked_policy_fields": [
+      "gate",
+      "rules"
+    ],
+    "warnings": [],
+    "warning_count": 0
+  }
+}

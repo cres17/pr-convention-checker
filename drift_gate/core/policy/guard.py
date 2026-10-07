@@ -17,12 +17,18 @@ def weakening_reasons(trusted, candidate):
             errors.append(f'{old.id}: raised intensity threshold')
         if levels[new.severity] < levels[old.severity]:
             errors.append(f'{old.id}: lowered severity')
+        if (old.severity in ('major', 'minor') and new.severity == 'blocker'
+            and not candidate.gate.fail_on_blocker):
+            errors.append(f'{old.id}: promoted severity is disabled by the blocker gate')
         groups = {g.name: g for g in new.require.groups}
+        conditional_groups = {name for relation in old.require.cross_file
+                              for name in relation.require_groups}
         for group in old.require.groups:
-            if not group.required:
+            if not group.required and group.name not in conditional_groups:
                 continue
             current = groups.get(group.name)
-            if (current is None or not current.required or current.content != group.content
+            if (current is None or (group.required and not current.required)
+                or current.content != group.content
                 or (not group.any_changed and bool(current.any_changed))
                 or not set(group.all_changed).issubset(current.all_changed)
                 or (group.any_changed and (not current.any_changed or
@@ -36,6 +42,8 @@ def weakening_reasons(trusted, candidate):
         errors.append('disabled blocker gate')
     if candidate.gate.fail_on_major_count > trusted.gate.fail_on_major_count:
         errors.append('raised failure threshold')
+    if trusted.gate.on_unverified == 'fail' and candidate.gate.on_unverified != 'fail':
+        errors.append('weakened unverified-content gate')
     if set(candidate.ignore_paths) - set(trusted.ignore_paths):
         errors.append('added excluded paths')
     if trusted.suppression != candidate.suppression:

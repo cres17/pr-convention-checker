@@ -1,0 +1,778 @@
+{
+  "schema": "planner-git-probe-v1",
+  "scope": "Six authored nonblind mixed-contract controls; Git snapshots and bounded current document reads",
+  "cases": [
+    {
+      "id": "unchanged-env-stale-api",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/old')\ndef endpoint(): return {}\n",
+        "docs/api.md": "GET /old\n",
+        ".env.example": "KNOWN=example\n"
+      },
+      "changes": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/new')\ndef endpoint(): return {}\n"
+      },
+      "expected": {
+        "truth": "F",
+        "complete_within_selection": true
+      },
+      "actual": {
+        "truth": "F",
+        "complete_within_selection": true
+      },
+      "matched": true,
+      "source_paths": [
+        "src/api.py"
+      ],
+      "evaluation": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "54051d2e2445826f4c52854d35820bcba6209a4fe785303cfbeb8b62ff4646e0",
+        "rule_id": "contract-sync",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "F",
+        "complete_within_selection": true,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "env-doc",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "response-doc",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "selectors": [
+              "openapi.json"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "route-doc",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:2f06246ee4a2207dcfb1cc6940e6d6cb842d0a4314e453cb22af828b9353f30c",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "T",
+            "requirement": "F",
+            "truth": "F",
+            "not_applicable": false,
+            "requirement_complete": true,
+            "binding_id": "route-doc",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:fe2d55f3d26957e522037b3536eae230674fb876b401426ba4fe636418cf6f9c",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "F",
+            "requirement": "U",
+            "truth": "T",
+            "not_applicable": true,
+            "requirement_complete": false,
+            "binding_id": "env-doc",
+            "reason_codes": []
+          }
+        ],
+        "open_guards": []
+      }
+    },
+    {
+      "id": "new-env-missing-api",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/old')\ndef endpoint(): return {}\n",
+        "docs/api.md": "GET /old\n",
+        ".env.example": "KNOWN=example\n"
+      },
+      "changes": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('NEW')\n@app.get('/new')\ndef endpoint(): return {}\n",
+        ".env.example": "NEW=example\n",
+        "docs/api.md": null
+      },
+      "expected": {
+        "truth": "F",
+        "complete_within_selection": true
+      },
+      "actual": {
+        "truth": "F",
+        "complete_within_selection": true
+      },
+      "matched": true,
+      "source_paths": [
+        "src/api.py"
+      ],
+      "evaluation": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "54051d2e2445826f4c52854d35820bcba6209a4fe785303cfbeb8b62ff4646e0",
+        "rule_id": "contract-sync",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "F",
+        "complete_within_selection": true,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "env-doc",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "response-doc",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "selectors": [
+              "openapi.json"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "route-doc",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:2f06246ee4a2207dcfb1cc6940e6d6cb842d0a4314e453cb22af828b9353f30c",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "T",
+            "requirement": "F",
+            "truth": "F",
+            "not_applicable": false,
+            "requirement_complete": true,
+            "binding_id": "route-doc",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:fe2d55f3d26957e522037b3536eae230674fb876b401426ba4fe636418cf6f9c",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "T",
+            "requirement": "T",
+            "truth": "T",
+            "not_applicable": false,
+            "requirement_complete": true,
+            "binding_id": "env-doc",
+            "reason_codes": []
+          }
+        ],
+        "open_guards": []
+      }
+    },
+    {
+      "id": "dynamic-env-stale-api",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv(name)\n@app.get('/old')\ndef endpoint(): return {}\n",
+        "docs/api.md": "GET /old\n",
+        ".env.example": "KNOWN=example\n"
+      },
+      "changes": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv(name)\n@app.get('/new')\ndef endpoint(): return {}\n"
+      },
+      "expected": {
+        "truth": "F",
+        "complete_within_selection": false
+      },
+      "actual": {
+        "truth": "F",
+        "complete_within_selection": false
+      },
+      "matched": true,
+      "source_paths": [
+        "src/api.py"
+      ],
+      "evaluation": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "54051d2e2445826f4c52854d35820bcba6209a4fe785303cfbeb8b62ff4646e0",
+        "rule_id": "contract-sync",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "F",
+        "complete_within_selection": false,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "env-doc",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "response-doc",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "selectors": [
+              "openapi.json"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "route-doc",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:2f06246ee4a2207dcfb1cc6940e6d6cb842d0a4314e453cb22af828b9353f30c",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "T",
+            "requirement": "F",
+            "truth": "F",
+            "not_applicable": false,
+            "requirement_complete": true,
+            "binding_id": "route-doc",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:fe2d55f3d26957e522037b3536eae230674fb876b401426ba4fe636418cf6f9c",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "U",
+            "requirement": "U",
+            "truth": "U",
+            "not_applicable": false,
+            "requirement_complete": false,
+            "binding_id": "env-doc",
+            "reason_codes": [
+              "contract_analysis_open",
+              "contract_document_open"
+            ]
+          }
+        ],
+        "open_guards": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "state": "open",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "unsupported_binding"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "dynamic-env-current-api",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv(name)\n@app.get('/old')\ndef endpoint(): return {}\n",
+        "docs/api.md": "GET /old\n",
+        ".env.example": "KNOWN=example\n"
+      },
+      "changes": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv(name)\n@app.get('/new')\ndef endpoint(): return {}\n",
+        "docs/api.md": "GET /new\n"
+      },
+      "expected": {
+        "truth": "U",
+        "complete_within_selection": false
+      },
+      "actual": {
+        "truth": "U",
+        "complete_within_selection": false
+      },
+      "matched": true,
+      "source_paths": [
+        "src/api.py"
+      ],
+      "evaluation": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "54051d2e2445826f4c52854d35820bcba6209a4fe785303cfbeb8b62ff4646e0",
+        "rule_id": "contract-sync",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "U",
+        "complete_within_selection": false,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "env-doc",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "response-doc",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "selectors": [
+              "openapi.json"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "route-doc",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:2f06246ee4a2207dcfb1cc6940e6d6cb842d0a4314e453cb22af828b9353f30c",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "T",
+            "requirement": "T",
+            "truth": "T",
+            "not_applicable": false,
+            "requirement_complete": true,
+            "binding_id": "route-doc",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:fe2d55f3d26957e522037b3536eae230674fb876b401426ba4fe636418cf6f9c",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "U",
+            "requirement": "U",
+            "truth": "U",
+            "not_applicable": false,
+            "requirement_complete": false,
+            "binding_id": "env-doc",
+            "reason_codes": [
+              "contract_analysis_open",
+              "contract_document_open"
+            ]
+          }
+        ],
+        "open_guards": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "state": "open",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "unsupported_binding"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "both-no-delta",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/old')\ndef endpoint(): return {}\nunrelated = 1\n",
+        "docs/api.md": "GET /old\n",
+        ".env.example": "KNOWN=example\n"
+      },
+      "changes": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/old')\ndef endpoint(): return {}\nunrelated = 2\n"
+      },
+      "expected": {
+        "truth": "T",
+        "complete_within_selection": true
+      },
+      "actual": {
+        "truth": "T",
+        "complete_within_selection": true
+      },
+      "matched": true,
+      "source_paths": [
+        "src/api.py"
+      ],
+      "evaluation": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "54051d2e2445826f4c52854d35820bcba6209a4fe785303cfbeb8b62ff4646e0",
+        "rule_id": "contract-sync",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py"
+        ],
+        "truth": "T",
+        "complete_within_selection": true,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "env-doc",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "response-doc",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "selectors": [
+              "openapi.json"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "route-doc",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:2f06246ee4a2207dcfb1cc6940e6d6cb842d0a4314e453cb22af828b9353f30c",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "F",
+            "requirement": "U",
+            "truth": "T",
+            "not_applicable": true,
+            "requirement_complete": false,
+            "binding_id": "route-doc",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:fe2d55f3d26957e522037b3536eae230674fb876b401426ba4fe636418cf6f9c",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "F",
+            "requirement": "U",
+            "truth": "T",
+            "not_applicable": true,
+            "requirement_complete": false,
+            "binding_id": "env-doc",
+            "reason_codes": []
+          }
+        ],
+        "open_guards": []
+      }
+    },
+    {
+      "id": "unsupported-source-current-api",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/old')\ndef endpoint(): return {}\n",
+        "docs/api.md": "GET /old\n",
+        ".env.example": "KNOWN=example\n",
+        "src/opaque.go": "package api\n// before\n"
+      },
+      "changes": {
+        "src/api.py": "from fastapi import FastAPI\nimport os\napp = FastAPI()\nvalue = os.getenv('KNOWN')\n@app.get('/new')\ndef endpoint(): return {}\n",
+        "docs/api.md": "GET /new\n",
+        "src/opaque.go": "package api\n// after\n"
+      },
+      "expected": {
+        "truth": "U",
+        "complete_within_selection": false
+      },
+      "actual": {
+        "truth": "U",
+        "complete_within_selection": false
+      },
+      "matched": true,
+      "source_paths": [
+        "src/api.py",
+        "src/opaque.go"
+      ],
+      "evaluation": {
+        "schema": "contract-obligation-evaluation-v1",
+        "request_ref": "555ebb70bf8ec1ef312ab03cdf383401b72248bbcf334110879b772631206f1f",
+        "rule_id": "contract-sync",
+        "group_id": "contracts",
+        "relation_id": "",
+        "source_paths": [
+          "src/api.py",
+          "src/opaque.go"
+        ],
+        "truth": "U",
+        "complete_within_selection": false,
+        "service_scope_certified": false,
+        "proof_dag_attached": false,
+        "binding_schema": "contract-document-bindings-v1",
+        "bindings": [
+          {
+            "id": "env-doc",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "selectors": [
+              ".env.example"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "response-doc",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "selectors": [
+              "openapi.json"
+            ],
+            "require_all": false
+          },
+          {
+            "id": "route-doc",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "selectors": [
+              "docs/api.md"
+            ],
+            "require_all": false
+          }
+        ],
+        "obligations": [
+          {
+            "id": "contract:selected-profile-modules:c72d385578365fcffb04cc598504e4e1c33392c38e0e371232f32429684c2bf0",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "F",
+            "requirement": "U",
+            "truth": "T",
+            "not_applicable": true,
+            "requirement_complete": false,
+            "binding_id": "env-doc",
+            "reason_codes": []
+          },
+          {
+            "id": "contract:selected-profile-modules:e28839c7356675819738dd8b4245675660fb285f1f6292967491f84dd09e961c",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "source_paths": [
+              "src/api.py"
+            ],
+            "applicability": "T",
+            "requirement": "T",
+            "truth": "T",
+            "not_applicable": false,
+            "requirement_complete": true,
+            "binding_id": "route-doc",
+            "reason_codes": []
+          }
+        ],
+        "open_guards": [
+          {
+            "scope_id": "selected-module:src/opaque.go",
+            "source_path": "src/opaque.go",
+            "family": "api-response",
+            "profile_ref": null,
+            "state": "open",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/opaque.go:legacy-selected-input",
+              "before:src/opaque.go:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "profile_not_supported"
+            ]
+          },
+          {
+            "scope_id": "selected-module:src/opaque.go",
+            "source_path": "src/opaque.go",
+            "family": "api-route",
+            "profile_ref": null,
+            "state": "open",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/opaque.go:legacy-selected-input",
+              "before:src/opaque.go:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "profile_not_supported"
+            ]
+          },
+          {
+            "scope_id": "selected-module:src/opaque.go",
+            "source_path": "src/opaque.go",
+            "family": "env-key",
+            "profile_ref": null,
+            "state": "open",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/opaque.go:legacy-selected-input",
+              "before:src/opaque.go:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "profile_not_supported"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "matched": 6,
+  "total": 6
+}
