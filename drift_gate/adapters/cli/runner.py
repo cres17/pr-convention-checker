@@ -342,22 +342,25 @@ def run_cli(argv=None):
     inspections = {"check": _run_check, "report": _run_check,
                    "review": _run_review, "self-audit": _run_self_audit,
                    "history": _run_history, "bundle": _run_bundle, "run": _run_runs,
-                   "publication": _run_publication, "engine": _run_engine,
+                   "publication": _run_publication, "engine": _run_engine, "scope": _run_scope,
                    "trusted-check": _run_trusted_check}
     if args.command in inspections:
         args.execution = identity()
         from drift_gate.adapters.run_coordinator import RunTerminated
         from drift_gate.adapters.run_store import RunStoreError
         from drift_gate.adapters.engine_artifact import EngineArtifactError
+        from drift_gate.core.budget import ResourceLimit
         try:
             inspections[args.command](args)
         except (CLIInputError, GitInputError, PolicyLoadError, OSError, UnicodeError, ResultValidationError,
-                BundleError, RunStoreError, RunTerminated, EngineArtifactError) as exc:
+                BundleError, RunStoreError, RunTerminated, EngineArtifactError, ResourceLimit) as exc:
             terminated = isinstance(exc, RunTerminated)
             code = (exc.state.replace('-', '_') if terminated else
+                    'resource_limit' if isinstance(exc, ResourceLimit) else
                     'result_validation_error' if isinstance(exc, ResultValidationError) else 'input_error')
             error = {'execution': {**args.execution, 'status': code},
-                     'error': {'code': code, 'message': str(exc)}}
+                     'error': {'code': code, 'message': str(exc),
+                               **({'resource': exc.to_dict()} if isinstance(exc, ResourceLimit) else {})}}
             controller = getattr(args, 'run_controller', None)
             if controller is not None:
                 try:
@@ -434,7 +437,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
 
     bundle = subparsers.add_parser('bundle', help='Verify or replay a locally persisted evidence bundle')
-    bundle.add_argument('operation', choices=['verify', 'replay'])
+    bundle.add_argument('operation', choices=['verify', 'replay', 'spans'])
     bundle.add_argument('path', help='Published bundle directory (named by receipt SHA-256)')
     bundle.add_argument('--expected-receipt-sha256', help='Optional independently retained receipt digest')
     bundle.add_argument('--json', action='store_true', dest='json_output')
@@ -442,6 +445,15 @@ def _build_parser() -> argparse.ArgumentParser:
     bundle.add_argument('--engine-manifest', help='Replay with the pinned engine that produced the bundle')
     bundle.add_argument('--engine-manifest-sha256', help='Externally retained SHA-256 pin of --engine-manifest')
     bundle.add_argument('--repo-root', default='.', help='Repository holding the pinned engine commit')
+
+    scope = subparsers.add_parser('scope', help='Whole-tree dependency impact, service identity and no-delta certificates')
+    scope.add_argument('--base', required=True)
+    scope.add_argument('--head', required=True)
+    scope.add_argument('--policy', default='.drift-gate.yml')
+    scope.add_argument('--trusted-policy-ref', required=True)
+    scope.add_argument('--trusted-policy-sha256', required=True)
+    scope.add_argument('--out-json')
+    scope.add_argument('--json', action='store_true', dest='json_output')
 
     engine = subparsers.add_parser('engine', help='Build an engine manifest or attest loaded code against one')
     engine.add_argument('operation', choices=['manifest', 'attest'])
@@ -894,10 +906,13 @@ def _check_body(args, controller) -> None:
     if args.head:
         from drift_gate.adapters.git.immutable import collect_git_snapshot
         stage('validated')
+        from drift_gate.core.budget import InspectionBudget
+        budget = InspectionBudget.from_policy(None, clock=time.monotonic)
+        args.inspection_budget = budget
         snapshot = bounded('captured', lambda: collect_git_snapshot(root=root, base=args.base, head=args.head,
             trusted_policy_ref=args.trusted_policy_ref, trusted_policy_sha256=args.trusted_policy_sha256,
             policy_path=args.policy or '.drift-gate.yml', comparison_mode=args.comparison_mode,
-            contract_proofs=args.contract_proofs))
+            contract_proofs=args.contract_proofs, budget=budget))
         captured = snapshot.materialize()
         args.policy_source, policy_for_run = captured['policy_source'], captured['policy']
         changed_files = captured['changed_files']
@@ -1005,8 +1020,15 @@ def _check_body(args, controller) -> None:
             model=args.model,
         ).enrich(result)
 
+    budget = getattr(args, 'inspection_budget', None)
+    if budget is not None:
+        budget.check_time('report')
+        result.execution['budget'] = budget.to_dict()
     markdown = MarkdownReporter().render(result, explain=args.explain)
     json_report = JsonReporter().render(result)
+    if budget is not None:
+        budget.consume('report_bytes', len(json.dumps(json_report, ensure_ascii=False).encode('utf-8')),
+                       stage='report')
     html_report = HtmlReporter().render(
         result,
         policy_source=args.policy_source,
@@ -1159,6 +1181,16 @@ def _run_publication(args):
     sys.exit(0 if data['state'] == 'published' else 1)
 
 
+def _run_scope(args):
+    from drift_gate.adapters.scope_analysis import analyze_scope
+    data = analyze_scope(root=Path.cwd(), base=args.base, head=args.head, trusted_policy_ref=args.trusted_policy_ref,
+                         trusted_policy_sha256=args.trusted_policy_sha256, policy_path=args.policy)
+    if args.out_json:
+        atomic_json(args.out_json, data)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0 if data['complete'] else 2)
+
+
 def _run_engine(args):
     from hashlib import sha256
     from drift_gate.adapters import engine_artifact as engines
@@ -1214,6 +1246,13 @@ def _run_bundle(args):
         _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
         sys.exit(0 if data['certified'] else 2)
     bundle = load_bundle(args.path, expected_receipt_sha256=args.expected_receipt_sha256)
+    if args.operation == 'spans':
+        from drift_gate.adapters.evidence_spans import bundle_spans
+        data = bundle_spans(bundle)
+        if args.out_json:
+            atomic_json(args.out_json, data)
+        _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+        sys.exit(0 if data['available'] and data['verified'] == data['total'] else 2)
     if args.operation == 'verify':
         data = {'bundle': bundle.to_dict(), 'receipt': bundle.receipt,
                 'validation': 'stored-bytes-and-input-binding', 'semantic_truth_certified': False}

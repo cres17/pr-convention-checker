@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import List
+from dataclasses import asdict, dataclass, field
+from typing import List, Optional
 
 
 @dataclass
@@ -8,7 +8,10 @@ class Group:
     any_changed: List[str] = field(default_factory=list)
     all_changed: List[str] = field(default_factory=list)
     required: bool = True
-    content: str = "auto"  # auto (legacy) | auto-strict | paths | api-routes | env-keys | api-schema
+    # auto (legacy) | auto-strict | paths | api-routes | env-keys | api-schema
+    # | contract-proof (needs gate.proof_gate: v1) | api-compatibility
+    content: str = "auto"
+    direction: str = ""  # api-compatibility: request | response | both
 
     @classmethod
     def from_dict(cls, d: dict) -> "Group":
@@ -18,6 +21,7 @@ class Group:
             all_changed=d.get("all_changed", []),
             required=d.get("required", True),
             content=d.get("content", "auto"),
+            direction=d.get("direction", ""),
         )
 
 
@@ -55,15 +59,33 @@ class Require:
 
 
 @dataclass
+class Trigger:
+    """Typed trigger (design W13): change family, predicate, scope and unknown handling."""
+    family: str
+    predicate: str
+    scope: str = "selected-modules"
+    on_unknown: str = "review"   # review | trigger | ignore-with-audit
+    min_magnitude: int = 1
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Trigger":
+        return cls(family=d.get("family", ""), predicate=d.get("predicate", ""),
+                   scope=d.get("scope", "selected-modules"), on_unknown=d.get("on_unknown", "review"),
+                   min_magnitude=d.get("min_magnitude", 1))
+
+
+@dataclass
 class When:
     any_changed: List[str] = field(default_factory=list)
     min_change_intensity: str = "any"
+    trigger: Optional[Trigger] = None
 
     @classmethod
     def from_dict(cls, d: dict) -> "When":
         return cls(
             any_changed=d.get("any_changed", []),
             min_change_intensity=d.get("min_change_intensity", "any"),
+            trigger=Trigger.from_dict(d["trigger"]) if d.get("trigger") is not None else None,
         )
 
 
@@ -141,6 +163,7 @@ class Gate:
     fail_on_blocker: bool = True
     fail_on_major_count: int = 2
     on_unverified: str = "fail"
+    proof_gate: str = "off"  # off | v1: contract-proof groups decide through the proof DAG
 
     @classmethod
     def from_dict(cls, d: dict) -> "Gate":
@@ -148,14 +171,46 @@ class Gate:
             fail_on_blocker=d.get("fail_on_blocker", True),
             fail_on_major_count=d.get("fail_on_major_count", 2),
             on_unverified=d.get("on_unverified", "fail"),
+            proof_gate=d.get("proof_gate", "off"),
         )
 
     def to_dict(self) -> dict:
-        return {
+        data = {
             "fail_on_blocker": self.fail_on_blocker,
             "fail_on_major_count": self.fail_on_major_count,
             "on_unverified": self.on_unverified,
         }
+        if self.proof_gate != "off":
+            data["proof_gate"] = self.proof_gate
+        return data
+
+
+@dataclass
+class ServiceSpec:
+    """A declared service: module globs and its entrypoint modules (design W11)."""
+    id: str
+    paths: List[str] = field(default_factory=list)
+    entrypoints: List[str] = field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "ServiceSpec":
+        return cls(id=d.get("id", ""), paths=d.get("paths", []), entrypoints=d.get("entrypoints", []))
+
+
+@dataclass
+class Budget:
+    """Whole-inspection resource limits (design W12). None leaves a limit at its default."""
+    max_files: Optional[int] = None
+    max_total_bytes: Optional[int] = None
+    max_git_calls: Optional[int] = None
+    max_wall_seconds: Optional[int] = None
+    max_graph_edges: Optional[int] = None
+    max_report_bytes: Optional[int] = None
+    max_memory_bytes: Optional[int] = None
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Budget":
+        return cls(**{name: d.get(name) for name in cls.__dataclass_fields__})
 
 
 @dataclass
@@ -168,6 +223,8 @@ class Policy:
     # Populated by load_policy() — callers (adapters) should print/log these.
     # core never writes to stdout/stderr.
     load_warnings: List[str] = field(default_factory=list)
+    services: List[ServiceSpec] = field(default_factory=list)
+    budget: Optional[Budget] = None
 
     @classmethod
     def from_dict(cls, d: dict) -> "Policy":
@@ -177,4 +234,28 @@ class Policy:
             ignore_paths=d.get("ignore_paths", []),
             suppression=SuppressionPolicy.from_dict(d.get("suppression") or {}),
             enrichment=EnrichmentPolicy.from_dict(d.get("enrichment") or {}),
+            services=[ServiceSpec.from_dict(item) for item in d.get("services", [])],
+            budget=Budget.from_dict(d["budget"]) if d.get("budget") is not None else None,
         )
+
+
+def policy_identity_dict(policy):
+    """asdict(policy) without fields added after inspection-snapshot-v1 while they hold defaults.
+
+    Keeps the identity (and stored-bundle policy binding) of every policy that
+    does not use the newer options unchanged.
+    """
+    data = asdict(policy)
+    if not data.get("services"):
+        data.pop("services", None)
+    if data.get("budget") is None:
+        data.pop("budget", None)
+    if data["gate"].get("proof_gate") == "off":
+        data["gate"].pop("proof_gate", None)
+    for rule in data["rules"]:
+        if rule["when"].get("trigger") is None:
+            rule["when"].pop("trigger", None)
+        for group in rule["require"]["groups"]:
+            if group.get("direction") == "":
+                group.pop("direction", None)
+    return data

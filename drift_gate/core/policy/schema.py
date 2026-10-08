@@ -34,23 +34,35 @@ def validate_schema(data):
                 check(item, f'{path}[{i}]')
         return validate
 
+    def optional_positive(value, path):
+        if value is not None:
+            positive(value, path)
+
     strings = array(string)
     group = lambda v, p: mapping(v, {'name': string, 'any_changed': strings,
-        'all_changed': strings, 'required': boolean, 'content': string}, p)
+        'all_changed': strings, 'required': boolean, 'content': string, 'direction': string}, p)
+    trigger = lambda v, p: mapping(v, {'family': string, 'predicate': string, 'scope': string,
+        'on_unknown': string, 'min_magnitude': positive}, p)
+    service = lambda v, p: mapping(v, {'id': string, 'paths': strings, 'entrypoints': strings}, p)
+    budget = lambda v, p: mapping(v, {name: optional_positive for name in (
+        'max_files', 'max_total_bytes', 'max_git_calls', 'max_wall_seconds', 'max_graph_edges',
+        'max_report_bytes', 'max_memory_bytes')}, p)
     relation = lambda v, p: mapping(v, {'name': string, 'when_any_changed': strings,
         'require_groups': strings, 'message': string}, p)
 
     def rule(value, path):
         mapping(value, {'id': string, 'severity': string, 'message': string,
             'allow_ignore': boolean,
-            'when': lambda v, p: mapping(v, {'any_changed': strings, 'min_change_intensity': string}, p),
+            'when': lambda v, p: mapping(v, {'any_changed': strings, 'min_change_intensity': string,
+                                             'trigger': trigger}, p),
             'require': lambda v, p: mapping(v, {'groups': array(group), 'cross_file': array(relation)}, p)}, path)
         if not value.get('id'):
             fail(path + '.id', 'must be a nonempty string')
 
     mapping(data, {'rules': array(rule), 'ignore_paths': strings,
         'gate': lambda v, p: mapping(v, {'fail_on_blocker': boolean, 'fail_on_major_count': positive,
-            'on_unverified': string}, p),
+            'on_unverified': string, 'proof_gate': string}, p),
+        'services': array(service), 'budget': budget,
         'suppression': lambda v, p: mapping(v, {'allow_ignores': boolean,
             'require_codeowners_approval': boolean, 'allowed_rules': strings,
             'repeated_ignore_threshold': positive}, p),

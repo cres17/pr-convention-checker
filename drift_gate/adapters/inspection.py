@@ -23,7 +23,8 @@ def execution_metadata(execution, policy_path, source, policy, files, provenance
                **({"document_json_sha256": digest(file.document_json)} if file.document_json is not None else {}),
                **({'route_facts_sha256': digest(json.dumps([file.before_routes, file.after_routes]))}
                   if file.before_routes is not None else {})} for file in files]
-    policy_text = source if source is not None else json.dumps(asdict(policy), sort_keys=True)
+    from drift_gate.core.models.policy import policy_identity_dict
+    policy_text = source if source is not None else json.dumps(policy_identity_dict(policy), sort_keys=True)
     metadata = {**execution, "status": "success", **provenance,
                 "policy_sha256": digest(policy_text), "policy_digest_kind": "source" if source is not None else "policy-object",
                 "warnings": policy.load_warnings,

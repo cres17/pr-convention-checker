@@ -1,6 +1,7 @@
 """Collect exact immutable Git objects without working-tree or replacement refs."""
 from datetime import datetime, timezone
 from contextlib import contextmanager
+import contextvars
 from hashlib import sha256
 import os
 from pathlib import Path
@@ -33,13 +34,32 @@ def _git_environment():
             'GIT_TERMINAL_PROMPT': '0', 'GIT_NO_LAZY_FETCH': '1', 'LC_ALL': 'C'}
 
 
-def _git(root, args, *, env=None):
+# The active whole-inspection budget, if a caller opened one (design W12).
+ACTIVE_BUDGET = contextvars.ContextVar('drift_gate_inspection_budget', default=None)
+
+
+@contextmanager
+def budget_scope(budget):
+    token = ACTIVE_BUDGET.set(budget)
     try:
-        return subprocess.check_output(['git', '--no-replace-objects', '--literal-pathspecs', *args],
+        yield budget
+    finally:
+        ACTIVE_BUDGET.reset(token)
+
+
+def _git(root, args, *, env=None):
+    budget = ACTIVE_BUDGET.get()
+    if budget is not None:
+        budget.consume('git_calls', 1, stage='git-collection')
+    try:
+        output = subprocess.check_output(['git', '--no-replace-objects', '--literal-pathspecs', *args],
             cwd=root, env=_git_environment() if env is None else env,
             stderr=subprocess.PIPE, timeout=30)
     except (OSError, subprocess.SubprocessError) as exc:
         raise GitInputError('Could not read immutable Git objects') from exc
+    if budget is not None:
+        budget.consume('bytes', len(output), stage='git-collection')
+    return output
 
 
 @contextmanager
@@ -146,7 +166,20 @@ class GitObjectReader:
 
 def collect_git_snapshot(*, root, base, head, trusted_policy_ref, trusted_policy_sha256,
                          policy_path='.drift-gate.yml', comparison_mode='commit',
-                         context=None, contract_proofs=False):
+                         context=None, contract_proofs=False, budget=None):
+    """Collect under one whole-inspection budget; the trusted policy may tighten its limits."""
+    import time
+    from drift_gate.core.budget import InspectionBudget
+    budget = budget if budget is not None else InspectionBudget.from_policy(None, clock=time.monotonic)
+    with budget_scope(budget):
+        return _collect_git_snapshot(root=root, base=base, head=head, trusted_policy_ref=trusted_policy_ref,
+                                     trusted_policy_sha256=trusted_policy_sha256, policy_path=policy_path,
+                                     comparison_mode=comparison_mode, context=context,
+                                     contract_proofs=contract_proofs, budget=budget)
+
+
+def _collect_git_snapshot(*, root, base, head, trusted_policy_ref, trusted_policy_sha256, policy_path,
+                          comparison_mode, context, contract_proofs, budget):
     relative_path(policy_path)
     reader = GitObjectReader(root)
     base_oid, head_oid, trusted_oid = (_resolve(reader.root, ref) for ref in (base, head, trusted_policy_ref))
@@ -170,10 +203,15 @@ def collect_git_snapshot(*, root, base, head, trusted_policy_ref, trusted_policy
     reasons = weakening_reasons(trusted, candidate)
     if reasons:
         raise GitInputError('Candidate weakened pinned policy: ' + '; '.join(reasons))
+    if trusted.budget is not None:
+        from drift_gate.core.budget import InspectionBudget
+        budget.limits.update(InspectionBudget.from_policy(trusted.budget).limits)
+        budget.check_time('policy-loaded')
     files = []
     with _raw_diff(reader.root, 'sha1' if len(head_oid) == 40 else 'sha256') as diff:
         changed = _parse_name_status(diff(['--name-status', '-z', base_oid, head_oid, '--']))
         for file in changed:
+            budget.consume('files', 1, stage='git-changed-files')
             old_path = file.previous_path or file.path
             before = reader.read(base_oid, old_path)
             after = reader.read(head_oid, file.path)
