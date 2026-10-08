@@ -343,6 +343,7 @@ def run_cli(argv=None):
                    "review": _run_review, "self-audit": _run_self_audit,
                    "history": _run_history, "bundle": _run_bundle, "run": _run_runs,
                    "publication": _run_publication, "engine": _run_engine, "scope": _run_scope, "migrate": _run_migrate,
+                   "holdout": _run_holdout,
                    "trusted-check": _run_trusted_check}
     if args.command in inspections:
         args.execution = identity()
@@ -350,10 +351,11 @@ def run_cli(argv=None):
         from drift_gate.adapters.run_store import RunStoreError
         from drift_gate.adapters.engine_artifact import EngineArtifactError
         from drift_gate.core.budget import ResourceLimit
+        from drift_gate.adapters.holdout import HoldoutError
         try:
             inspections[args.command](args)
         except (CLIInputError, GitInputError, PolicyLoadError, OSError, UnicodeError, ResultValidationError,
-                BundleError, RunStoreError, RunTerminated, EngineArtifactError, ResourceLimit) as exc:
+                BundleError, RunStoreError, RunTerminated, EngineArtifactError, ResourceLimit, HoldoutError) as exc:
             terminated = isinstance(exc, RunTerminated)
             code = (exc.state.replace('-', '_') if terminated else
                     'resource_limit' if isinstance(exc, ResourceLimit) else
@@ -465,6 +467,25 @@ def _build_parser() -> argparse.ArgumentParser:
     migrate.add_argument('--trusted-policy-sha256', required=True)
     migrate.add_argument('--out-json')
     migrate.add_argument('--json', action='store_true', dest='json_output')
+
+    holdout = subparsers.add_parser('holdout', help='Independent evaluation: split, freeze, run, review packet, adjudicate, score')
+    holdout.add_argument('operation', choices=['split', 'freeze', 'run', 'packet', 'adjudicate', 'score'])
+    holdout.add_argument('--input', help='Candidate cases (split) / holdout cases (freeze)')
+    holdout.add_argument('--frozen', help='Frozen holdout file')
+    holdout.add_argument('--frozen-sha256', help='Pinned SHA-256 of --frozen')
+    holdout.add_argument('--results', help='Results file (score)')
+    holdout.add_argument('--results-sha256', help='Pinned SHA-256 of --results')
+    holdout.add_argument('--packet', help='Review packet (adjudicate)')
+    holdout.add_argument('--reviews', nargs='*', default=[], help='Review JSONL files (adjudicate)')
+    holdout.add_argument('--resolutions', help='Adjudicator resolutions JSONL (optional)')
+    holdout.add_argument('--labels', help='Adjudicated labels file (score)')
+    holdout.add_argument('--seed', default='drift-gate-holdout')
+    holdout.add_argument('--holdout-fraction', type=float, default=0.3)
+    holdout.add_argument('--regression-families', nargs='*', default=[])
+    holdout.add_argument('--protocol', default='drift-gate-holdout-protocol-v1')
+    holdout.add_argument('--out', required=True, help='Output path (never overwritten)')
+    holdout.add_argument('--out-development', help='Development split output (split)')
+    holdout.set_defaults(json_output=True)
 
     engine = subparsers.add_parser('engine', help='Build an engine manifest or attest loaded code against one')
     engine.add_argument('operation', choices=['manifest', 'attest'])
@@ -1190,6 +1211,47 @@ def _run_publication(args):
         atomic_json(args.out_json, data)
     _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
     sys.exit(0 if data['state'] == 'published' else 1)
+
+
+def _run_holdout(args):
+    from drift_gate.adapters import holdout as h
+
+    def load(path):
+        return json.loads(Path(path).read_text(encoding='utf-8'))
+
+    def lines(path):
+        return [json.loads(line) for line in Path(path).read_text(encoding='utf-8').splitlines() if line.strip()]
+
+    if args.operation == 'split':
+        held, development = h.split(load(args.input), seed=args.seed, holdout_fraction=args.holdout_fraction,
+                                    regression_families=tuple(args.regression_families))
+        digest = h.write_once(args.out, held)
+        extra = {'development_sha256': h.write_once(args.out_development, development)} if args.out_development else {}
+        data = {'holdout_sha256': digest, 'holdout_cases': len(held['cases']),
+                'development_cases': len(development['cases']), **extra}
+    elif args.operation == 'freeze':
+        digest = h.write_once(args.out, h.freeze(load(args.input), protocol=args.protocol))
+        data = {'frozen_sha256': digest, 'pin_this_value_before_running': True}
+    elif args.operation == 'run':
+        frozen, digest = h.read_pinned(args.frozen, args.frozen_sha256, h.FROZEN)
+        data = {'results_sha256': h.write_once(args.out, h.run_frozen(frozen, digest))}
+    elif args.operation == 'packet':
+        frozen, _ = h.read_pinned(args.frozen, args.frozen_sha256, h.FROZEN)
+        from drift_gate.adapters.holdout_instructions import REVIEW_INSTRUCTIONS
+        data = {'packet_sha256': h.write_once(args.out, h.review_packet(frozen, instructions=REVIEW_INSTRUCTIONS))}
+    elif args.operation == 'adjudicate':
+        packet = load(args.packet)
+        reviews = [row for path in args.reviews for row in lines(path)]
+        resolutions = lines(args.resolutions) if args.resolutions else []
+        labels = h.adjudicate(packet, reviews, resolutions)
+        data = {'labels_sha256': h.write_once(args.out, labels), 'unresolved': len(labels['unresolved']),
+                'agreement': labels['agreement']}
+    else:
+        results, _ = h.read_pinned(args.results, args.results_sha256, h.RESULTS)
+        labels, _ = h.read_pinned(args.labels, None, h.LABELS)
+        data = {'metrics_sha256': h.write_once(args.out, h.score_all(results, labels))}
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0)
 
 
 def _run_migrate(args):
