@@ -1,0 +1,31 @@
+{
+  "schema": "bundle-replay-summary",
+  "source": "packaging/check_evidence_bundle.py output (full file not committed: 651 KB)",
+  "bundle": {
+    "receipt_sha256": "32906154aeeae8c146a9610dce4694c11c57d418faece8bfcbb56e6af094b12e",
+    "integrity_verified": true,
+    "producer_authenticated": false,
+    "contains_raw_inputs": true
+  },
+  "replay": {
+    "schema": "inspection-bundle-replay-v1",
+    "receipt_sha256": "32906154aeeae8c146a9610dce4694c11c57d418faece8bfcbb56e6af094b12e",
+    "recorded_result_matches_current": true,
+    "observed_producer_matches": true,
+    "replay_scope": "captured-inputs-current-engine",
+    "producer_authenticated": false,
+    "inspection_inputs_reread": false,
+    "producer_sources_observed": true,
+    "current_policy_authorization_verified": false
+  },
+  "result": "pass",
+  "summary": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 0,
+    "nit": 0,
+    "gate_decision": "pass",
+    "undetermined_rules": 0,
+    "unverified_rules": 5
+  }
+}

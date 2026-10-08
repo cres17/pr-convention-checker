@@ -1,0 +1,886 @@
+{
+  "requested_base": "b5c52ab",
+  "inputs": {
+    "requested_base": "b5c52ab",
+    "resolved_base": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+    "comparison_mode": "commit",
+    "head": "3c7d463405c90bb94549b3610f4dd11789163238",
+    "dirty": false,
+    "untracked_skipped": [],
+    "snapshot_sha256": "a4bbb3639ec9f423de5294caec7aa45bf23063e0b301a6a75b52761898cda49d"
+  },
+  "policy_sha256": "49a5a5cb4674d5ae3f73619047014f509d3435c0b11c4716e4ff51141cfa9481",
+  "trusted_policy_ref": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+  "warnings": [],
+  "evaluation": {
+    "schema_version": 3,
+    "verification": "unverified",
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass",
+      "undetermined_rules": 0,
+      "unverified_rules": 5
+    },
+    "scan_metrics": {
+      "scanned_files": 83,
+      "skipped_ignored_files": 14,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 5,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": ".drift-gate.self.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": ".github/workflows/desktop-build.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/live_check.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/published-report.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run1-before-fix.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run2-after-footer-fix.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run2-reconcile-C-before-order-fix.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run3-final.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run3-reconcile-C.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run3-reconcile-D.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/stored-body-run1.txt",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/desktop-bridge.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/mcp-transport.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/ops/drift-gate-self-check.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/ops/holdout-evaluation.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/drift-gate-run-lifecycle-implementation-2026-10-08.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/adapters/analysis_cache.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/analyzer_worker.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/approval_signing.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/bundle_codec.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/adapters/engine_artifact.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/evidence_spans.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/git/immutable.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/adapters/github/approvals.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/adapters/github/publication.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/adapters/github_action/runner.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/adapters/holdout.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/holdout_instructions.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/inspection.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/mcp/tools.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/migration.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/org_service.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/scope_analysis.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/snapshot.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/adapters/trusted_validation.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/budget.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/classification/triggers.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/contracts/certificates.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/contracts/dependency.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/contracts/services.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation/compatibility.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation/contracts.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation/evaluator.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation/evidence_spans.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation/membership.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation/obligations.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation/proof_gate.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation_stats.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/execution/publication.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/models/evaluation_context.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/models/policy.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/models/result.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/org/__init__.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/org/policy.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/policy/guard.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/policy/schema.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/policy/validator.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/trust/__init__.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/trust/approvals.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/trust/validation.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/desktop/cli_entry.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/desktop/package_check.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/desktop/web_app.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_analyzer_worker.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_contract_projection.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_decision_models.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_development_regressions.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_engine.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_github_publication.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_holdout_evaluation.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_logical_entrypoints.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_membership_and_spans.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_org_and_cache.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_packaged_cli.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_run_lifecycle.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_scope_analysis.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/tests/test_trust_boundary.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "packaging/teardown_diagnosis.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "packaging/verify_package_cli.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        }
+      ]
+    },
+    "result": "pass",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "auth-permission",
+      "other",
+      "workflow-ci"
+    ],
+    "violations": [],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/*.py",
+          "drift_gate/core/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/analysis_cache.py",
+          "drift_gate/adapters/analyzer_worker.py",
+          "drift_gate/adapters/approval_signing.py",
+          "drift_gate/adapters/bundle_codec.py",
+          "drift_gate/adapters/engine_artifact.py",
+          "drift_gate/adapters/evidence_spans.py",
+          "drift_gate/adapters/holdout.py",
+          "drift_gate/adapters/holdout_instructions.py",
+          "drift_gate/adapters/inspection.py",
+          "drift_gate/adapters/migration.py",
+          "drift_gate/adapters/org_service.py",
+          "drift_gate/adapters/scope_analysis.py",
+          "drift_gate/adapters/snapshot.py",
+          "drift_gate/adapters/trusted_validation.py",
+          "drift_gate/core/budget.py",
+          "drift_gate/core/classification/triggers.py",
+          "drift_gate/core/contracts/certificates.py",
+          "drift_gate/core/contracts/dependency.py",
+          "drift_gate/core/contracts/services.py",
+          "drift_gate/core/evaluation/compatibility.py",
+          "drift_gate/core/evaluation/contracts.py",
+          "drift_gate/core/evaluation/evaluator.py",
+          "drift_gate/core/evaluation/evidence_spans.py",
+          "drift_gate/core/evaluation/membership.py",
+          "drift_gate/core/evaluation/obligations.py",
+          "drift_gate/core/evaluation/proof_gate.py",
+          "drift_gate/core/evaluation_stats.py",
+          "drift_gate/core/execution/publication.py",
+          "drift_gate/core/models/evaluation_context.py",
+          "drift_gate/core/models/policy.py",
+          "drift_gate/core/models/result.py",
+          "drift_gate/core/org/__init__.py",
+          "drift_gate/core/org/policy.py",
+          "drift_gate/core/policy/guard.py",
+          "drift_gate/core/policy/schema.py",
+          "drift_gate/core/policy/validator.py",
+          "drift_gate/core/trust/__init__.py",
+          "drift_gate/core/trust/approvals.py",
+          "drift_gate/core/trust/validation.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/cli/**",
+          "drift_gate/adapters/git/**",
+          "drift_gate/adapters/github/**",
+          "drift_gate/adapters/github_action/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/cli/runner.py",
+          "drift_gate/adapters/git/immutable.py",
+          "drift_gate/adapters/github/approvals.py",
+          "drift_gate/adapters/github/publication.py",
+          "drift_gate/adapters/github_action/runner.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Input and CLI contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/mcp/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/mcp/tools.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "MCP transport contract",
+            "required": [
+              "docs/contracts/mcp-transport.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/desktop/cli_entry.py",
+          "drift_gate/desktop/package_check.py",
+          "drift_gate/desktop/web_app.py"
+        ],
+        "trigger_files": [
+          "drift_gate/desktop/cli_entry.py",
+          "drift_gate/desktop/package_check.py",
+          "drift_gate/desktop/web_app.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Desktop event and editing contract",
+            "required": [
+              "docs/contracts/desktop-bridge.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          ".drift-gate.self.yml",
+          ".github/workflows/**",
+          "packaging/**"
+        ],
+        "trigger_files": [
+          ".drift-gate.self.yml",
+          ".github/workflows/ci.yml",
+          ".github/workflows/desktop-build.yml",
+          "packaging/teardown_diagnosis.py",
+          "packaging/verify_package_cli.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Self-check and package operations",
+            "required": [
+              "docs/ops/drift-gate-self-check.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1,
+      "on_unverified": "fail"
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {
+      ".drift-gate.self.yml": [
+        "self-package-operations"
+      ],
+      ".github/workflows/ci.yml": [
+        "self-package-operations"
+      ],
+      ".github/workflows/desktop-build.yml": [
+        "self-package-operations"
+      ],
+      "drift_gate/adapters/analysis_cache.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/analyzer_worker.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/approval_signing.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/bundle_codec.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/cli/runner.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/engine_artifact.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/evidence_spans.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/git/immutable.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/github/approvals.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/github/publication.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/github_action/runner.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/holdout.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/holdout_instructions.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/inspection.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/mcp/tools.py": [
+        "self-mcp-contract"
+      ],
+      "drift_gate/adapters/migration.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/org_service.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/scope_analysis.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/snapshot.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/trusted_validation.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/budget.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/classification/triggers.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/contracts/certificates.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/contracts/dependency.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/contracts/services.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/compatibility.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/contracts.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/evaluator.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/evidence_spans.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/membership.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/obligations.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/proof_gate.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation_stats.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/execution/publication.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/models/evaluation_context.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/models/policy.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/models/result.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/org/__init__.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/org/policy.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/policy/guard.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/policy/schema.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/policy/validator.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/trust/__init__.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/trust/approvals.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/trust/validation.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/desktop/cli_entry.py": [
+        "self-ui-bridge-contract"
+      ],
+      "drift_gate/desktop/package_check.py": [
+        "self-ui-bridge-contract"
+      ],
+      "drift_gate/desktop/web_app.py": [
+        "self-ui-bridge-contract"
+      ],
+      "packaging/teardown_diagnosis.py": [
+        "self-package-operations"
+      ],
+      "packaging/verify_package_cli.py": [
+        "self-package-operations"
+      ]
+    },
+    "unmatched": [
+      "README.md",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/live_check.py",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/published-report.md",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run1-before-fix.json",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run2-after-footer-fix.json",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run2-reconcile-C-before-order-fix.json",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run3-final.json",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run3-reconcile-C.json",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/run3-reconcile-D.json",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/live-pr1/stored-body-run1.txt",
+      "docs/contracts/desktop-bridge.md",
+      "docs/contracts/gate-and-inputs.md",
+      "docs/contracts/mcp-transport.md",
+      "docs/ops/drift-gate-self-check.md",
+      "docs/ops/holdout-evaluation.md",
+      "docs/review/drift-gate-run-lifecycle-implementation-2026-10-08.md"
+    ],
+    "ignored": [
+      "drift_gate/tests/test_analyzer_worker.py",
+      "drift_gate/tests/test_contract_projection.py",
+      "drift_gate/tests/test_decision_models.py",
+      "drift_gate/tests/test_development_regressions.py",
+      "drift_gate/tests/test_engine.py",
+      "drift_gate/tests/test_github_publication.py",
+      "drift_gate/tests/test_holdout_evaluation.py",
+      "drift_gate/tests/test_logical_entrypoints.py",
+      "drift_gate/tests/test_membership_and_spans.py",
+      "drift_gate/tests/test_org_and_cache.py",
+      "drift_gate/tests/test_packaged_cli.py",
+      "drift_gate/tests/test_run_lifecycle.py",
+      "drift_gate/tests/test_scope_analysis.py",
+      "drift_gate/tests/test_trust_boundary.py"
+    ]
+  },
+  "execution": {
+    "schema_version": 2,
+    "run_id": "6638d38841164c6f8a11c5f2c073fd36",
+    "started_at": "2026-10-08T07:03:15.081103+00:00",
+    "status": "success"
+  }
+}
