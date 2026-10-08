@@ -40,8 +40,21 @@ def validate(policy: Policy) -> ValidationResult:
     result = ValidationResult()
     seen_ids: set = set()
 
+    if policy.gate.proof_gate not in {"off", "v1"}:
+        result.errors.append(f"gate.proof_gate must be off or v1, not '{policy.gate.proof_gate}'")
+    service_ids = [service.id for service in policy.services]
+    if len(service_ids) != len(set(service_ids)) or any(not sid for sid in service_ids):
+        result.errors.append("services require unique nonempty ids")
+    for service in policy.services:
+        if not service.paths:
+            result.errors.append(f"service '{service.id}': paths are required")
+
     for rule in policy.rules:
         rule_id = rule.id
+        trigger = rule.when.trigger
+        if trigger is not None:
+            from drift_gate.core.classification.triggers import validate_trigger
+            result.errors.extend(f"rule '{rule_id}': {error}" for error in validate_trigger(trigger))
 
         # 1. rule id 중복
         if rule_id in seen_ids:
@@ -125,9 +138,16 @@ def validate(policy: Policy) -> ValidationResult:
 
         # 6. require.groups 경로가 ignore_paths에 포함 → 충족 불가
         for group in rule.require.groups:
-            if group.content not in {"auto", "auto-strict", "paths", "api-routes", "env-keys", "api-schema"}:
+            if group.content not in {"auto", "auto-strict", "paths", "api-routes", "env-keys", "api-schema",
+                                     "contract-proof", "api-compatibility"}:
                 result.errors.append(f"rule '{rule_id}': unknown group content mode '{group.content}'")
-            if group.content in {"env-keys", "api-schema", "auto-strict"} and any(
+            if group.content == "contract-proof" and policy.gate.proof_gate != "v1":
+                result.errors.append(f"rule '{rule_id}': contract-proof requires gate.proof_gate: v1")
+            if group.content == "api-compatibility" and group.direction not in {"request", "response", "both"}:
+                result.errors.append(f"rule '{rule_id}': api-compatibility requires direction request|response|both")
+            if group.direction and group.content != "api-compatibility":
+                result.errors.append(f"rule '{rule_id}': direction applies only to api-compatibility groups")
+            if group.content in {"env-keys", "api-schema", "auto-strict", "contract-proof", "api-compatibility"} and any(
                 any(c in p for c in "*?[]") or p.startswith("/") or ".." in p.split("/")
                 for p in (group.any_changed or group.all_changed)
             ):

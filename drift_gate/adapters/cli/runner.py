@@ -342,7 +342,7 @@ def run_cli(argv=None):
     inspections = {"check": _run_check, "report": _run_check,
                    "review": _run_review, "self-audit": _run_self_audit,
                    "history": _run_history, "bundle": _run_bundle, "run": _run_runs,
-                   "publication": _run_publication, "engine": _run_engine, "scope": _run_scope,
+                   "publication": _run_publication, "engine": _run_engine, "scope": _run_scope, "migrate": _run_migrate,
                    "trusted-check": _run_trusted_check}
     if args.command in inspections:
         args.execution = identity()
@@ -454,6 +454,16 @@ def _build_parser() -> argparse.ArgumentParser:
     scope.add_argument('--trusted-policy-sha256', required=True)
     scope.add_argument('--out-json')
     scope.add_argument('--json', action='store_true', dest='json_output')
+
+    migrate = subparsers.add_parser('migrate', help='Shadow-compare legacy decisions with proof-gate or typed triggers')
+    migrate.add_argument('kind', choices=['proof-gate', 'typed-trigger'])
+    migrate.add_argument('--base', required=True)
+    migrate.add_argument('--head', required=True)
+    migrate.add_argument('--policy', default='.drift-gate.yml')
+    migrate.add_argument('--trusted-policy-ref', required=True)
+    migrate.add_argument('--trusted-policy-sha256', required=True)
+    migrate.add_argument('--out-json')
+    migrate.add_argument('--json', action='store_true', dest='json_output')
 
     engine = subparsers.add_parser('engine', help='Build an engine manifest or attest loaded code against one')
     engine.add_argument('operation', choices=['manifest', 'attest'])
@@ -1179,6 +1189,20 @@ def _run_publication(args):
         atomic_json(args.out_json, data)
     _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
     sys.exit(0 if data['state'] == 'published' else 1)
+
+
+def _run_migrate(args):
+    from drift_gate.adapters.git.immutable import collect_git_snapshot
+    from drift_gate.adapters.migration import proof_gate_report, typed_trigger_report
+    snapshot = collect_git_snapshot(root=Path.cwd(), base=args.base, head=args.head,
+                                    trusted_policy_ref=args.trusted_policy_ref,
+                                    trusted_policy_sha256=args.trusted_policy_sha256, policy_path=args.policy)
+    data = proof_gate_report(snapshot) if args.kind == 'proof-gate' else typed_trigger_report(snapshot)
+    data['subject'] = snapshot.git_evidence.subject.to_dict()
+    if args.out_json:
+        atomic_json(args.out_json, data)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0 if data.get('safe_to_switch', data.get('differences', 0) == 0) else 1)
 
 
 def _run_scope(args):

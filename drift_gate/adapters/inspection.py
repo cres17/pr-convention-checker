@@ -1,7 +1,6 @@
 """Shared inspection boundary; adapters still own Git/network/document reads."""
 import json
 import time
-from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
