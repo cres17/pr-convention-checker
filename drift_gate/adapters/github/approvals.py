@@ -4,6 +4,7 @@ Supports common CODEOWNERS globs and @user / @org/team owners. Unsupported
 syntax and API failures reject the exemption, never weaken the policy.
 """
 from dataclasses import replace
+import hashlib
 import re
 from urllib.parse import quote
 
@@ -39,11 +40,12 @@ def _owners(text: str, path: str) -> list[str]:
     return owners
 
 
-def verify_ignores(github, pr_number, directives, policy, files):
+def verify_ignores(github, pr_number, directives, policy, files, *, policy_sha256=None):
     if not policy.suppression.require_codeowners_approval or not directives:
         return directives
     # Drop any caller-supplied proof before verifying it ourselves.
-    clean = [replace(d, approval_verified=False, approval_commit="", approval_error="") for d in directives]
+    clean = [replace(d, approval_verified=False, approval_commit="", approval_error="",
+                     approval_envelope=None, approval_signature=None) for d in directives]
     try:
         pr = github._get(f"{github._base}/repos/{github._repo}/pulls/{pr_number}")
         head = pr["head"]["sha"]
@@ -110,6 +112,8 @@ def verify_ignores(github, pr_number, directives, policy, files):
             return ""
 
         rules = {rule.id: rule for rule in policy.rules}
+        review_by_login = {login: review for login, review in latest.items() if login in approved}
+        codeowners_sha256 = hashlib.sha256(codeowners.encode("utf-8")).hexdigest()
         verified = []
         for directive in clean:
             rule = rules.get(directive.rule_id)
@@ -125,10 +129,17 @@ def verify_ignores(github, pr_number, directives, policy, files):
                     complete = False
                     break
                 reviewers.add(reviewer)
+            envelope = signature = None
+            error = "" if complete else "current-commit CODEOWNERS approval could not be verified"
+            if complete:
+                envelope, signature, error = _envelope(directive, paths, head, policy_sha256, codeowners_sha256,
+                                                       [review_by_login[login] for login in sorted(reviewers)])
+                complete = envelope is not None
             verified.append(replace(directive, approval_verified=complete,
                                     approved_by=", ".join(sorted(reviewers)) if complete else directive.approved_by,
                                     approval_commit=head if complete else "",
-                                    approval_error="" if complete else "current-commit CODEOWNERS approval could not be verified"))
+                                    approval_envelope=envelope, approval_signature=signature,
+                                    approval_error=error))
         # A new push during verification must not inherit stale proof.
         current = github._get(f"{github._base}/repos/{github._repo}/pulls/{pr_number}")
         if current["head"]["sha"] != head or current["base"]["sha"] != base:
@@ -137,3 +148,26 @@ def verify_ignores(github, pr_number, directives, policy, files):
     except Exception as exc:
         # No API payloads, tokens, or PR prose in the audit error.
         return [replace(d, approval_error=f"approval verification unavailable ({type(exc).__name__})") for d in clean]
+
+
+def _envelope(directive, paths, head, policy_sha256, codeowners_sha256, reviews):
+    """Bind the verified approval to rule, paths, head, policy and validity dates."""
+    from drift_gate.adapters.approval_signing import sign, signing_key
+    from drift_gate.core.trust.approvals import ApprovalEnvelope
+    if policy_sha256 is None:
+        return None, None, "policy digest unavailable; approval cannot be bound to the policy"
+    submitted = max((review.get("submitted_at") or "")[:10] for review in reviews)
+    try:
+        envelope = ApprovalEnvelope(directive.rule_id, tuple(paths), head, policy_sha256, directive.reason or "",
+                                    submitted, directive.expires,
+                                    tuple((review.get("user") or {}).get("login", "") for review in reviews),
+                                    {"kind": "github-codeowners-review", "codeowners_sha256": codeowners_sha256,
+                                     "codeowners_revision": "pull-request-base",
+                                     "reviews": [{"id": review.get("id"), "commit_id": review.get("commit_id"),
+                                                  "state": review.get("state"),
+                                                  "submitted_at": review.get("submitted_at")} for review in reviews],
+                                     "permission_check": "collaborator-or-team-write"}).to_dict()
+    except ValueError as exc:
+        return None, None, f"approval envelope could not be formed ({exc})"
+    key = signing_key()
+    return envelope, sign(envelope, *key) if key else None, ""

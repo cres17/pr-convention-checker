@@ -159,6 +159,10 @@ class DriftIgnoreDirective:
     approval_verified: bool = False
     approval_commit: str = ""
     approval_error: str = ""
+    # Adapter-owned approval envelope (approval-envelope-v1 dict) and, when an
+    # organization key signed it, its keyed signature. Never read from from_dict.
+    approval_envelope: Optional[dict] = None
+    approval_signature: Optional[dict] = None
 
     @classmethod
     def from_dict(cls, d: dict) -> "DriftIgnoreDirective":
@@ -178,7 +182,16 @@ class DriftIgnoreDirective:
             "approval_verified": self.approval_verified,
             "approval_commit": self.approval_commit,
             "approval_error": self.approval_error,
+            **({"approval_envelope_sha256": _envelope_digest(self.approval_envelope)}
+               if self.approval_envelope is not None else {}),
         }
+
+
+def _envelope_digest(envelope):
+    import hashlib
+    import json
+    return hashlib.sha256(json.dumps(envelope, sort_keys=True, ensure_ascii=True,
+                                     separators=(',', ':')).encode()).hexdigest()
 
 
 @dataclass
@@ -396,6 +409,7 @@ class IgnoreAuditEntry:
     expires: Optional[str] = None
     approval_verified: bool = False
     approval_commit: str = ""
+    approval_envelope_sha256: str = ""
 
     def to_dict(self) -> dict:
         return {
@@ -403,6 +417,8 @@ class IgnoreAuditEntry:
             "action": self.action,
             "approval_verified": self.approval_verified,
             "approval_commit": self.approval_commit,
+            **({"approval_envelope_sha256": self.approval_envelope_sha256}
+               if self.approval_envelope_sha256 else {}),
             "reason": self.reason,
             "approved_by": self.approved_by,
             "expires": self.expires,

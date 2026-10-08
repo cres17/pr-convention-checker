@@ -7,6 +7,7 @@ from typing import List, Tuple
 
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.change_paths import is_ignored, triggers
+from drift_gate.utils.glob_matcher import matches_any
 from drift_gate.core.models.policy import Policy, Group, CrossFileRelation
 from drift_gate.core.models.evaluation_context import EvaluationContext
 from drift_gate.core.models.result import (
@@ -117,7 +118,10 @@ def evaluate(
         # drift-ignore 처리
         if rule_id in ignore_map:
             directive = ignore_map[rule_id]
-            rejection_reason = _ignore_rejection_reason(directive, rule, policy, context)
+            trigger_paths = sorted({path for f in relevant_files for path in (f.path, f.previous_path)
+                                    if path and matches_any(path, rule.when.any_changed)
+                                    and not matches_any(path, policy.ignore_paths)})
+            rejection_reason = _ignore_rejection_reason(directive, rule, policy, context, trigger_paths)
             if rejection_reason:
                 rejected_ignores.append(RejectedIgnore(
                     rule_id=rule_id,
@@ -130,6 +134,7 @@ def evaluate(
                     action="rejected",
                     approval_verified=directive.approval_verified,
                     approval_commit=directive.approval_commit,
+                    approval_envelope_sha256=_envelope_sha(directive),
                     reason=rejection_reason,
                     approved_by=directive.approved_by,
                     expires=directive.expires,
@@ -145,6 +150,7 @@ def evaluate(
                     action="accepted",
                     approval_verified=directive.approval_verified,
                     approval_commit=directive.approval_commit,
+                    approval_envelope_sha256=_envelope_sha(directive),
                     reason=directive.reason or "",
                     approved_by=directive.approved_by,
                     expires=directive.expires,
@@ -453,11 +459,37 @@ def _blast_radius(
     return sorted(radius)
 
 
+def _envelope_sha(directive):
+    if directive.approval_envelope is None:
+        return ""
+    from drift_gate.core.models.result import _envelope_digest
+    return _envelope_digest(directive.approval_envelope)
+
+
+def _approval_binding_error(directive, rule, context, trigger_paths):
+    from drift_gate.core.trust.approvals import ApprovalEnvelope, binding_errors
+    if directive.approval_envelope is None:
+        return "approval envelope bound to rule, head, policy and dates is required"
+    try:
+        envelope = ApprovalEnvelope.from_dict(directive.approval_envelope)
+    except ValueError as exc:
+        return f"invalid approval envelope: {exc}"
+    if envelope.subject_head_oid != directive.approval_commit:
+        return "approval envelope and verified commit differ"
+    errors = binding_errors(envelope, rule_id=rule.id, trigger_paths=trigger_paths,
+                            head_oid=context.subject_head_oid if context else None,
+                            policy_sha256=context.policy_sha256 if context else None,
+                            evaluated_on=context.evaluated_on if context else None,
+                            reason=directive.reason)
+    return "; ".join(errors)
+
+
 def _ignore_rejection_reason(
     directive: DriftIgnoreDirective,
     rule,
     policy: Policy,
     context: EvaluationContext | None = None,
+    trigger_paths=(),
 ) -> str:
     severity = rule.severity.upper()
     suppression = policy.suppression
@@ -472,6 +504,9 @@ def _ignore_rejection_reason(
             return "CODEOWNERS approval is required"
         if not directive.approval_verified or not directive.approval_commit:
             return directive.approval_error or "verified CODEOWNERS approval for the current commit is required"
+        binding_error = _approval_binding_error(directive, rule, context, trigger_paths)
+        if binding_error:
+            return binding_error
     if severity in ("BLOCKER", "MAJOR") and not directive.reason:
         return "reason is required"
     if not directive.expires:

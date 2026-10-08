@@ -342,15 +342,17 @@ def run_cli(argv=None):
     inspections = {"check": _run_check, "report": _run_check,
                    "review": _run_review, "self-audit": _run_self_audit,
                    "history": _run_history, "bundle": _run_bundle, "run": _run_runs,
-                   "publication": _run_publication}
+                   "publication": _run_publication, "engine": _run_engine,
+                   "trusted-check": _run_trusted_check}
     if args.command in inspections:
         args.execution = identity()
         from drift_gate.adapters.run_coordinator import RunTerminated
         from drift_gate.adapters.run_store import RunStoreError
+        from drift_gate.adapters.engine_artifact import EngineArtifactError
         try:
             inspections[args.command](args)
         except (CLIInputError, GitInputError, PolicyLoadError, OSError, UnicodeError, ResultValidationError,
-                BundleError, RunStoreError, RunTerminated) as exc:
+                BundleError, RunStoreError, RunTerminated, EngineArtifactError) as exc:
             terminated = isinstance(exc, RunTerminated)
             code = (exc.state.replace('-', '_') if terminated else
                     'result_validation_error' if isinstance(exc, ResultValidationError) else 'input_error')
@@ -437,6 +439,30 @@ def _build_parser() -> argparse.ArgumentParser:
     bundle.add_argument('--expected-receipt-sha256', help='Optional independently retained receipt digest')
     bundle.add_argument('--json', action='store_true', dest='json_output')
     bundle.add_argument('--out-json', help='Write verification or replay JSON')
+    bundle.add_argument('--engine-manifest', help='Replay with the pinned engine that produced the bundle')
+    bundle.add_argument('--engine-manifest-sha256', help='Externally retained SHA-256 pin of --engine-manifest')
+    bundle.add_argument('--repo-root', default='.', help='Repository holding the pinned engine commit')
+
+    engine = subparsers.add_parser('engine', help='Build an engine manifest or attest loaded code against one')
+    engine.add_argument('operation', choices=['manifest', 'attest'])
+    engine.add_argument('--ref', help='Immutable engine commit (manifest)')
+    engine.add_argument('--manifest', help='Engine manifest file (attest)')
+    engine.add_argument('--manifest-sha256', help='Externally retained SHA-256 pin of --manifest')
+    engine.add_argument('--out', help='Write the manifest (never overwrites an existing file)')
+    engine.add_argument('--json', action='store_true', dest='json_output')
+
+    trusted = subparsers.add_parser('trusted-check',
+                                    help='Evaluate the candidate head with a pinned trusted engine and policy')
+    trusted.add_argument('--base', required=True)
+    trusted.add_argument('--head', required=True)
+    trusted.add_argument('--policy', default='.drift-gate.yml')
+    trusted.add_argument('--trusted-policy-ref', required=True)
+    trusted.add_argument('--trusted-policy-sha256', required=True)
+    trusted.add_argument('--engine-manifest', required=True)
+    trusted.add_argument('--engine-manifest-sha256', required=True)
+    trusted.add_argument('--comparison-mode', choices=['commit', 'merge-base'], default='commit')
+    trusted.add_argument('--out-json')
+    trusted.add_argument('--json', action='store_true', dest='json_output')
 
     runs = subparsers.add_parser('run', help='Inspect, cancel or recover journaled runs and latest pointers')
     runs.add_argument('operation', choices=['show', 'list', 'cancel', 'recover', 'latest', 'reconcile'])
@@ -895,8 +921,13 @@ def _check_body(args, controller) -> None:
         from datetime import datetime, timezone
         from drift_gate.adapters.snapshot import capture_inspection
         from drift_gate.core.models.evaluation_context import EvaluationContext
+        context = EvaluationContext(datetime.now(timezone.utc).date())
+        if args.pr:
+            from drift_gate.adapters.execution import digest
+            from drift_gate.adapters.github_action.runner import _approval_context
+            context = _approval_context(getattr(args, 'approval_head', None), digest(args.policy_source), drift_ignores)
         snapshot = capture_inspection(changed_files=changed_files, policy=policy_for_run,
-            drift_ignores=drift_ignores, context=EvaluationContext(datetime.now(timezone.utc).date()),
+            drift_ignores=drift_ignores, context=context,
             policy_source=args.policy_source, policy_path=args.policy,
             provenance=getattr(args, 'input_provenance', {}), contract_proofs=args.contract_proofs)
     observation = None
@@ -1128,8 +1159,60 @@ def _run_publication(args):
     sys.exit(0 if data['state'] == 'published' else 1)
 
 
+def _run_engine(args):
+    from hashlib import sha256
+    from drift_gate.adapters import engine_artifact as engines
+    if args.operation == 'manifest':
+        if not args.ref:
+            raise CLIInputError('engine manifest requires --ref')
+        manifest = engines.build_manifest(Path.cwd(), args.ref)
+        raw = engines.manifest_bytes(manifest)
+        if args.out:
+            target = Path(args.out)
+            if target.exists():
+                raise CLIInputError('--out already exists; manifests are never overwritten')
+            from drift_gate.adapters.execution import atomic_bytes
+            atomic_bytes(target, raw)
+        data = {'manifest_sha256': sha256(raw).hexdigest(), 'manifest': manifest}
+    else:
+        if not args.manifest or not args.manifest_sha256:
+            raise CLIInputError('engine attest requires --manifest and --manifest-sha256')
+        manifest = engines.load_manifest(args.manifest, args.manifest_sha256)
+        from drift_gate.adapters.grammar_resources import get_parser
+        get_parser('python')  # load the grammar the engine uses before attesting it
+        data = engines.attest(manifest)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0 if args.operation == 'manifest' or data['loaded_code_matches_manifest'] else 2)
+
+
+def _run_trusted_check(args):
+    from drift_gate.adapters import engine_artifact as engines
+    from drift_gate.adapters.trusted_validation import trusted_check
+    manifest = engines.load_manifest(args.engine_manifest, args.engine_manifest_sha256)
+    data = trusted_check(root=Path.cwd(), base=args.base, head=args.head, policy=args.policy,
+                         trusted_policy_ref=args.trusted_policy_ref, trusted_policy_sha256=args.trusted_policy_sha256,
+                         manifest=manifest, comparison_mode=args.comparison_mode, execution=args.execution)
+    if args.out_json:
+        atomic_json(args.out_json, data)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    # allow 0, block 1, review (no merge basis without a reviewed reason) 5.
+    sys.exit({'allow': 0, 'block': 1, 'review': 5}[data['decision']['action']])
+
+
 def _run_bundle(args):
     from drift_gate.adapters.evidence_bundle import load_bundle
+    if args.engine_manifest or args.engine_manifest_sha256:
+        if args.operation != 'replay' or not (args.engine_manifest and args.engine_manifest_sha256):
+            raise CLIInputError('certified replay requires replay with --engine-manifest and --engine-manifest-sha256')
+        from drift_gate.adapters import engine_artifact as engines
+        from drift_gate.adapters.trusted_validation import certified_replay
+        manifest = engines.load_manifest(args.engine_manifest, args.engine_manifest_sha256)
+        data = certified_replay(args.path, root=Path(args.repo_root).resolve(), manifest=manifest,
+                                expected_receipt_sha256=args.expected_receipt_sha256)
+        if args.out_json:
+            atomic_json(args.out_json, data)
+        _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+        sys.exit(0 if data['certified'] else 2)
     bundle = load_bundle(args.path, expected_receipt_sha256=args.expected_receipt_sha256)
     if args.operation == 'verify':
         data = {'bundle': bundle.to_dict(), 'receipt': bundle.receipt,
@@ -1840,7 +1923,10 @@ def _collect_inputs(args) -> tuple[list, list]:
         directives = parse_drift_ignores(pr_body)
         policy = args.loaded_policy
         if policy:
-            directives = verify_ignores(github, args.pr, directives, policy, changed_files)
+            from drift_gate.adapters.execution import digest
+            directives = verify_ignores(github, args.pr, directives, policy, changed_files,
+                                        policy_sha256=digest(args.policy_source))
+            args.approval_head = getattr(github, '_snapshot_head', None)
             changed_files = github.attach_env_documents(args.pr, changed_files, policy)
         args.input_provenance = {"source": "github-pr", "repository": args.repo, "pr_number": args.pr}
         return changed_files, directives

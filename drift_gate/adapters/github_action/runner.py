@@ -77,7 +77,10 @@ def _main(controller, execution, *, token, repo, pr_number, runner_temp, contrac
         policy_source, _policy_obj = read_policy(policy_path)
         require_check_policy(_policy_obj)
         from drift_gate.adapters.github.approvals import verify_ignores
-        drift_ignores = verify_ignores(gh, pr_number, drift_ignores, _policy_obj, changed_files)
+        from drift_gate.adapters.execution import digest
+        policy_sha256 = digest(policy_source)
+        drift_ignores = verify_ignores(gh, pr_number, drift_ignores, _policy_obj, changed_files,
+                                       policy_sha256=policy_sha256)
         changed_files = gh.attach_env_documents(pr_number, changed_files, _policy_obj)
         head_oid = getattr(gh, '_snapshot_head', None)
         controller.advance('captured', changed_files=len(changed_files), head_oid=head_oid,
@@ -93,6 +96,7 @@ def _main(controller, execution, *, token, repo, pr_number, runner_temp, contrac
             policy_source=policy_source, policy_path=policy_path,
             provenance={"source": "github-pr", "repository": repo, "pr_number": pr_number},
             contract_proofs=contract_proofs == 'true', execution=execution,
+            context=_approval_context(head_oid, policy_sha256, drift_ignores),
         )
     except Exception as exc:
         _write_github_output({"result": "fail", "policy_error": str(exc)})
@@ -190,6 +194,21 @@ def _main(controller, execution, *, token, repo, pr_number, runner_temp, contrac
 
     # 콘솔 출력 (Actions 로그에 표시)
     print(md)
+
+
+def _approval_context(head_oid, policy_sha256, directives):
+    """UTC evaluation date, plus the subject/policy only when an approval envelope must match them.
+
+    Without envelopes the context stays date-only so every entrypoint keeps one input identity.
+    """
+    from datetime import datetime, timezone
+    import re
+    from drift_gate.core.models.evaluation_context import EvaluationContext
+    today = datetime.now(timezone.utc).date()
+    if not any(getattr(d, 'approval_envelope', None) is not None for d in directives or ()):
+        return EvaluationContext(today)
+    head = head_oid if isinstance(head_oid, str) and re.fullmatch('[0-9a-f]{40}([0-9a-f]{24})?', head_oid) else None
+    return EvaluationContext(today, head, policy_sha256)
 
 
 def _publish_comment(controller, *, token, repo, pr_number, body, head_oid, result_sha256, runner_temp,

@@ -5,7 +5,6 @@ storage can retain the capsule beyond process lifetime; neither path authenticat
 the producer, organization approval, simultaneous local reads or freshness.
 """
 from dataclasses import asdict, dataclass, field
-from datetime import date
 from hashlib import sha256
 import json
 import os
@@ -178,7 +177,7 @@ class InspectionSnapshot:
             'changed_files': files,
             'policy': policy,
             'drift_ignores': [DriftIgnoreDirective(**d) for d in data['drift_ignores']],
-            'context': EvaluationContext(date.fromisoformat(data['context']['evaluated_on'])),
+            'context': EvaluationContext.from_dict(data['context']),
             'policy_source': data['policy_source'], 'policy_path': data['policy_path'],
             'provenance': data['provenance'], 'contract_proofs': data['contract_proofs'],
         }
@@ -189,6 +188,15 @@ class InspectionSnapshot:
                 'retention': 'process-memory-only', 'replay_scope': 'captured-inputs-current-engine',
                 **({'git_input': {**self.git_evidence.to_dict(), 'manifest_sha256': self.git_evidence.digest}}
                    if self.git_evidence is not None else {})}
+
+
+def _directive(directive):
+    # Envelope fields are omitted when absent so earlier capture identities hold.
+    data = asdict(directive)
+    for key in ('approval_envelope', 'approval_signature'):
+        if data.get(key) is None:
+            data.pop(key, None)
+    return data
 
 
 def capture_inspection(*, changed_files, policy, context, drift_ignores=None,
@@ -204,7 +212,7 @@ def capture_inspection(*, changed_files, policy, context, drift_ignores=None,
     payload = canonical_bytes({
         'schema': 'inspection-snapshot-v1', 'collection_mode': mode,
         'files': [asdict(file) for file in changed_files], 'policy': policy_data,
-        'drift_ignores': [asdict(d) for d in drift_ignores or []],
+        'drift_ignores': [_directive(d) for d in drift_ignores or []],
         'context': context.to_dict(), 'policy_source': policy_source,
         'policy_path': str(Path(policy_path).resolve()) if policy_path is not None else None,
         'provenance': provenance, 'contract_proofs': contract_proofs,

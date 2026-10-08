@@ -74,7 +74,10 @@ def drift_gate_check_pr(
     github = GitHubAdapter(token=token, repo=repo)
     changed_files, pr_body = github.get_pr_files_and_body(pr_number)
     from drift_gate.adapters.github.approvals import verify_ignores
-    directives = verify_ignores(github, pr_number, parse_drift_ignores(pr_body), policy, changed_files)
+    from drift_gate.adapters.execution import digest
+    from drift_gate.adapters.github_action.runner import _approval_context
+    directives = verify_ignores(github, pr_number, parse_drift_ignores(pr_body), policy, changed_files,
+                                policy_sha256=digest(source))
     changed_files = github.attach_env_documents(pr_number, changed_files, policy)
     result = run(
         changed_files=changed_files,
@@ -83,6 +86,7 @@ def drift_gate_check_pr(
         execution=execution, policy_source=source, policy_path=policy_path,
         provenance={"source": "github-pr", "repository": repo, "pr_number": pr_number},
         contract_proofs=contract_proofs,
+        context=_approval_context(getattr(github, '_snapshot_head', None), digest(source), directives),
     )
     return _render_for_agent(
         result,

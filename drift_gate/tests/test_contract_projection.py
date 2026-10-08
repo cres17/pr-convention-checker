@@ -126,7 +126,7 @@ def test_cli_mcp_desktop_action_html_use_one_projection(tmp_path,monkeypatch,cap
         def attach_env_documents(self,number,files,policy): return attach_env_documents(files,policy,local_document_reader(tmp_path))
     monkeypatch.setattr(action,'GitHubAdapter',Remote)
     monkeypatch.setattr(tools,'GitHubAdapter',Remote)
-    monkeypatch.setattr('drift_gate.adapters.github.approvals.verify_ignores',lambda *args: [])
+    monkeypatch.setattr('drift_gate.adapters.github.approvals.verify_ignores',lambda *args, **kwargs: [])
     env={'GITHUB_TOKEN':'fixture','REPO':'fixture/repo','PR_NUMBER':'1','GITHUB_WORKSPACE':str(tmp_path),
          'RUNNER_TEMP':str(tmp_path),'POST_COMMENT':'false','ANTHROPIC_API_KEY':'','GITHUB_EVENT_PATH':'',
          'GITHUB_OUTPUT':'','GITHUB_STEP_SUMMARY':'','CONTRACT_PROOFS':str(enabled).lower()}

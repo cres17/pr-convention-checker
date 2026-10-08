@@ -121,10 +121,14 @@ def test_json_cannot_supply_approval_proof():
     assert run([route_file()], policy=api_policy(require_codeowners_approval=True), drift_ignores=[directive]).result == "fail"
 
 
+HEAD, NEW_HEAD, OLD_HEAD, BASE = "a" * 40, "b" * 40, "c" * 40, "d" * 40
+POLICY_SHA = "e" * 64  # The adapter binds approvals to the evaluated policy digest.
+
+
 class FakeGitHub:
     _base = "https://api.github.com"
     _repo = "owner/repo"
-    _snapshot_head = "head"
+    _snapshot_head = HEAD
 
     def __init__(self, *, reviews=None, owners="/src/routes/** @reviewer", error=False, move=False):
         self.owners, self.error, self.move, self.reads = owners, error, move, 0
@@ -142,38 +146,43 @@ class FakeGitHub:
         if "/teams/" in url and "/repos/" in url:
             return {"permissions": {"push": True}}
         self.reads += 1
-        return {"head": {"sha": "new-head" if self.move and self.reads > 1 else "head"},
-                "base": {"sha": "base"}, "user": {"login": "author"}}
+        return {"head": {"sha": NEW_HEAD if self.move and self.reads > 1 else HEAD},
+                "base": {"sha": BASE}, "user": {"login": "author"}}
 
     def get_file_text(self, path, ref):
-        assert ref == "base"
+        assert ref == BASE
         return self.owners if path == ".github/CODEOWNERS" else None
 
 
-def review(login, state, *, commit="head", index=1):
+def review(login, state, *, commit=HEAD, index=1):
     return {"user": {"login": login}, "state": state, "commit_id": commit,
             "submitted_at": f"2026-09-22T00:00:{index:02d}Z", "id": index}
 
 
-def verify(fake):
+def verify(fake, *, context_head=HEAD, policy_sha=POLICY_SHA, on=None, expires=None):
+    from datetime import date
+    from drift_gate.core.models.evaluation_context import EvaluationContext
     policy = api_policy(require_codeowners_approval=True)
-    directives = parse_drift_ignores("drift-ignore: api-doc\nreason: maintenance\napproved-by: arbitrary-text")
-    directives = verify_ignores(fake, 1, directives, policy, [route_file()])
-    return run([route_file()], policy=policy, drift_ignores=directives)
+    body = "drift-ignore: api-doc\nreason: maintenance\napproved-by: arbitrary-text"
+    directives = parse_drift_ignores(body + (f"\nexpires: {expires}" if expires else ""))
+    directives = verify_ignores(fake, 1, directives, policy, [route_file()], policy_sha256=POLICY_SHA)
+    context = EvaluationContext(on or date(2026, 9, 22), context_head, policy_sha)
+    return run([route_file()], policy=policy, drift_ignores=directives, context=context)
 
 
 def test_current_codeowner_approval_allows_exception():
     result = verify(FakeGitHub())
     assert result.result == "pass"
     assert result.ignore_audit[0].approved_by == "reviewer"
-    assert result.ignore_audit[0].approval_commit == "head"
+    assert result.ignore_audit[0].approval_commit == HEAD
+    assert result.ignore_audit[0].approval_envelope_sha256
 
 
 @pytest.mark.parametrize("fake", [
     FakeGitHub(reviews=[]), FakeGitHub(error=True), FakeGitHub(move=True),
     FakeGitHub(owners="/other/** @reviewer"), FakeGitHub(owners="* @reviewer\n/src/routes/**"),
     FakeGitHub(reviews=[review("outsider", "APPROVED")]),
-    FakeGitHub(reviews=[review("reviewer", "APPROVED", commit="old-head")]),
+    FakeGitHub(reviews=[review("reviewer", "APPROVED", commit=OLD_HEAD)]),
     FakeGitHub(reviews=[review("reviewer", "APPROVED"), review("reviewer", "DISMISSED", index=2)]),
     FakeGitHub(reviews=[review("reviewer", "APPROVED"), review("reviewer", "CHANGES_REQUESTED", index=2)]),
     FakeGitHub(owners="* @author", reviews=[review("author", "APPROVED")]),
@@ -181,6 +190,39 @@ def test_current_codeowner_approval_allows_exception():
 ])
 def test_unverified_or_stale_approvals_do_not_bypass(fake):
     assert verify(fake).result == "fail"
+
+
+def test_envelope_binds_head_policy_and_validity_window():
+    """W09: the same verified approval is refused for another head, policy or date."""
+    from datetime import date
+    assert verify(FakeGitHub()).result == "pass"
+    assert verify(FakeGitHub(), context_head=NEW_HEAD).result == "fail"
+    assert verify(FakeGitHub(), policy_sha="f" * 64).result == "fail"
+    assert verify(FakeGitHub(), context_head=None).result == "fail"
+    assert verify(FakeGitHub(), on=date(2026, 9, 21)).result == "fail"  # before the review date
+    assert verify(FakeGitHub(), expires="2026-09-30", on=date(2026, 10, 1)).result == "fail"
+    rejected = verify(FakeGitHub(), context_head=NEW_HEAD).rejected_ignores[0].reason
+    assert "different head" in rejected
+
+
+def test_forged_envelope_and_text_approval_are_not_authority():
+    from dataclasses import replace
+    from datetime import date
+    from drift_gate.core.models.evaluation_context import EvaluationContext
+    policy = api_policy(require_codeowners_approval=True)
+    directives = verify_ignores(FakeGitHub(), 1, parse_drift_ignores("drift-ignore: api-doc\nreason: maintenance"),
+                                policy, [route_file()], policy_sha256=POLICY_SHA)
+    envelope = dict(directives[0].approval_envelope, rule_id="other-rule")
+    context = EvaluationContext(date(2026, 9, 22), HEAD, POLICY_SHA)
+    forged = replace(directives[0], approval_envelope=envelope)
+    assert run([route_file()], policy=policy, drift_ignores=[forged], context=context).result == "fail"
+    bare = replace(directives[0], approval_envelope=None)  # flag without envelope
+    assert run([route_file()], policy=policy, drift_ignores=[bare], context=context).result == "fail"
+    assert DriftIgnoreDirective.from_dict({"rule_id": "api-doc", "approval_verified": True,
+                                           "approval_envelope": envelope}).approval_envelope is None
+    missing_digest = verify_ignores(FakeGitHub(), 1, parse_drift_ignores("drift-ignore: api-doc\nreason: x"),
+                                    policy, [route_file()])
+    assert not missing_digest[0].approval_verified and "policy digest" in missing_digest[0].approval_error
 
 
 def test_later_comment_does_not_cancel_valid_approval():
