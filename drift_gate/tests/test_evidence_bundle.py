@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import sys
 
@@ -66,6 +67,17 @@ def fake_pass(data):
     data['scan_metrics']['evaluated_rules'] = 0
 
 
+def remove_git_fixture(path):
+    # Windows Git marks loose objects read-only. This changes only a disposable
+    # fixture before deletion; a failure to delete it must not fake no-Git replay.
+    def retry_readonly(function, failed_path, error):
+        if not isinstance(error[1], PermissionError):
+            raise error[1]
+        os.chmod(failed_path, stat.S_IRWXU)
+        function(failed_path)
+    shutil.rmtree(path, onerror=retry_readonly)
+
+
 def test_disk_roundtrip_retains_full_shadow_proofs_and_attempt_identity(tmp_path, result):
     bundle = store.save_bundle(result, tmp_path)
     assert bundle.snapshot == result.input_snapshot
@@ -87,7 +99,8 @@ def test_git_originals_survive_deleted_repository_and_no_git_replay(git_reposito
     raw = bundle.snapshot.git_evidence.get(head, 'src/api.py').content
     assert b'\r\n' in raw
     assert (bundle.path / ('objects/' + sha256(raw).hexdigest())).read_bytes() == raw
-    shutil.rmtree(root / '.git')
+    remove_git_fixture(root / '.git')
+    assert not (root / '.git').exists()
     (root / 'src/api.py').unlink()
     from drift_gate.adapters.git import immutable
     monkeypatch.setattr(immutable, '_git', lambda *a, **k: pytest.fail('replay read repository'))
@@ -206,6 +219,18 @@ def test_reader_enforces_its_limits_not_receipt_limits(tmp_path, result):
         store.load_bundle(bundle.path, limits=store.BundleLimits(max_total_bytes=100))
     with pytest.raises(BundleError, match='limit'):
         store.load_bundle(bundle.path, limits=store.BundleLimits(max_files=3))
+
+
+def test_large_payload_bound_allows_measured_pr_capture():
+    limits = store.BundleLimits()
+    # No giant allocation: enforce the serialized-size bound with a sized
+    # sentinel, then separately exercise real PR I/O in the recorded probe.
+    class Sized:
+        def __len__(self):
+            return 61_752_569
+    store._check_files({'snapshot.json': Sized()}, limits, reserved_files=2)
+    with pytest.raises(BundleError, match='individual'):
+        store._check_files({'snapshot.json': Sized()}, replace(limits, max_file_bytes=8_000_000))
 
 
 @pytest.mark.parametrize('mutation', ['path', 'negative-size', 'authentication', 'state', 'extra-file'])
