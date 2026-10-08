@@ -17,7 +17,7 @@ from hashlib import sha256
 import json
 
 REASONS = ('missing_source', 'unsupported_binding', 'open_dependency_scope', 'ambiguous_service_scope',
-           'resource_limit', 'identity_delta', 'profile_mismatch')
+           'resource_limit', 'identity_delta', 'profile_mismatch', 'unsupported_language')
 
 
 def _digest(value):
@@ -57,9 +57,15 @@ class NoDeltaRefusal:
 
 def certify(*, service_id, family, profile_before, profile_after, before_facts, after_facts, modules,
             unread_modules, open_modules, dependency_open_modules, ambiguous_modules, limited,
-            before_tree, after_tree):
-    """Return a certificate or a refusal listing every unmet condition."""
+            before_tree, after_tree, unsupported_language_modules=()):
+    """Return a certificate or a refusal listing every unmet condition.
+
+    ``unsupported_language_modules``: source files of the service in languages the profiles do not
+    read. Their facts are unknown, so the service as a whole cannot be certified.
+    """
     reasons = []
+    if unsupported_language_modules:
+        reasons.append('unsupported_language')
     if unread_modules:
         reasons.append('missing_source')
     if profile_before != profile_after:

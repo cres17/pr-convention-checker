@@ -33,6 +33,10 @@ arm64 종료 진단은 5회 모두 0으로 `event-loop-returned`·`atexit`까지
 PR 전체(`main`→`ver2`) immutable 검사는 `snapshot.json`이 64,439,924 bytes로 묶음 파일당 한도를 넘어 실패했으며
 한도를 조정했다([Gate와 입력 계약](../contracts/gate-and-inputs.md)).
 
+설치본 CLI 검증 결과에는 `producer_sources_observed`와 `certified_engine_replay=false`를 함께 기록한다. 설치 앱에는
+Python 소스가 없어 producer digest가 빈 파일 집합을 가리키므로, 이 검증은 결과 재현이며 같은 엔진으로 인증한
+재실행이 아니다(791565f 검토).
+
 ## S2-d 실행 기록과 게시 근거 (2026-10-08)
 
 `action.yml`은 실행 journal 경로(`run_record_path`), 실행 ID, PR 댓글 게시 상태와 기록

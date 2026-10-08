@@ -199,12 +199,16 @@ class LoadedBundle:
     def replay(self, *, execution=None):
         from drift_gate.adapters.inspection import inspect_snapshot
         current = inspect_snapshot(self.snapshot, execution=execution)
+        observed = producer_identity()
+        # A frozen app ships no .py sources, so its producer digest covers an empty file set. Two empty
+        # digests are equal but identify nothing; they are reported as unobserved, never as a match.
+        sources_observed = observed['source_files'] > 0 and self.receipt['producer']['source_files'] > 0
         comparison = {'schema': 'inspection-bundle-replay-v1',
             'receipt_sha256': sha256(self.receipt_bytes).hexdigest(),
             'recorded_result_matches_current': semantic_result(current.to_dict()) == semantic_result(self.recorded_result),
-            'observed_producer_matches': producer_identity() == self.receipt['producer'],
+            'observed_producer_matches': sources_observed and observed == self.receipt['producer'],
             'replay_scope': 'captured-inputs-current-engine', 'producer_authenticated': False,
-            'inspection_inputs_reread': False, 'producer_sources_observed': True,
+            'inspection_inputs_reread': False, 'producer_sources_observed': sources_observed,
             'current_policy_authorization_verified': False}
         current.execution['bundle_replay'] = comparison
         return current

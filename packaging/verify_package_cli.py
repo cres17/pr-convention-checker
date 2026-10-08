@@ -107,6 +107,9 @@ def verify(executable, output):
                'receipt_sha256': check['execution']['evidence_bundle']['receipt_sha256'],
                'replay_matches': True, 'spans_verified': spans['verified'],
                'producer': frozen_producer, 'repository_deleted_before_replay': True,
+               # A frozen app has no .py sources: its replay matches results, not a producer identity.
+               'producer_sources_observed': replay['execution']['bundle_replay']['producer_sources_observed'],
+               'certified_engine_replay': False,
                'platform': sys.platform}
     (output / 'result.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding='utf-8')
     print(f"PASS: packaged CLI stored, verified, replayed and span-checked evidence; {output / 'result.json'}")

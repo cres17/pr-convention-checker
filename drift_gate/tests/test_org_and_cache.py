@@ -46,6 +46,24 @@ def test_transient_failures_are_never_cached_and_tampering_is_a_miss(tmp_path):
     assert cache_key(inputs()) == path.stem
 
 
+def test_editing_only_the_cached_result_is_rejected(tmp_path):
+    # Review 791565f R7: key inputs unchanged, value rewritten in canonical form.
+    from drift_gate.core.models.input_manifest import canonical_bytes
+    cache = AnalysisCache(tmp_path)
+    secret = inputs(op='python-env', profile=('python-env-literals', '1'))
+    cache.put(secret, status='complete', value=['SECRET_KEY'])
+    path = next((tmp_path / 'entries').rglob('*.json'))
+    entry = json.loads(path.read_bytes())
+    entry['value'] = []
+    path.write_bytes(canonical_bytes(entry))
+    assert cache.get(secret) is None and cache.stats()['rejected_entries'] == 1
+    entry['status'] = 'unsupported'
+    path.write_bytes(canonical_bytes(entry))
+    assert cache.get(secret) is None and cache.stats()['rejected_entries'] == 2
+    cache.put(secret, status='complete', value=['SECRET_KEY'])
+    assert cache.get(secret)['value'] == ['SECRET_KEY']
+
+
 def test_scope_analysis_reuses_cached_facts_with_identical_results(tmp_path):
     from drift_gate.tests.test_scope_analysis import commit, repo as repo_fixture, route, run
     (tmp_path / 'r').mkdir()
@@ -162,3 +180,40 @@ def test_cli_org_flow(tmp_path, capsys):
     assert code == 0 and stored['result_id']
     code, denied = cli('list', '--tenant', 'acme', '--actor', 'mallory')
     assert code == 2 and 'unknown-principal' in denied['error']['message']
+
+
+# -- permission matrix for management actions (review 791565f R3) -------------------------------
+def test_repository_scoped_admin_cannot_act_on_the_whole_tenant(tmp_path):
+    clock = Clock()
+    svc = OrgService(tmp_path / 'store', clock=clock)
+    svc.create_tenant('acme', admin_id='root', retention_days=1)
+    svc.add_principal('root', 'acme', 'limited', roles=['admin'], scopes=['org/A'])
+    inside = svc.store_result('root', 'acme', 'org/A', {'marker': 'inside-A'})
+    outside = svc.store_result('root', 'acme', 'org/B', {'marker': 'outside-scope-B'})
+    with pytest.raises(OrgError, match='repository-outside-principal-scope'):
+        svc.get_result('limited', 'acme', outside)
+    for call in (lambda: svc.backup('limited', 'acme', tmp_path / 'b.zip'),
+                 lambda: svc.add_principal('limited', 'acme', 'escalated', roles=['admin'], scopes=['*']),
+                 lambda: svc.set_retention('limited', 'acme', 30),
+                 lambda: svc.audit_log('limited', 'acme')):
+        with pytest.raises(OrgError, match='tenant-wide-action-requires-tenant-scope'):
+            call()
+    assert not (tmp_path / 'b.zip').exists()
+    clock.now += timedelta(days=2)
+    assert svc.purge('limited', 'acme') == [inside]  # only the expired result inside its own scope
+    assert [row['id'] for row in svc.list_results('root', 'acme')] == [outside]
+    assert [row['id'] for row in svc.list_results('limited', 'acme')] == []
+
+
+def test_grants_cannot_exceed_the_grantor(tmp_path):
+    svc = OrgService(tmp_path / 'store', clock=Clock())
+    svc.create_tenant('acme', admin_id='root')
+    svc.add_principal('root', 'acme', 'ops', roles=['runner'], scopes=['*'])
+    with pytest.raises(OrgError, match='role-lacks-permission'):
+        svc.add_principal('ops', 'acme', 'x', roles=['viewer'], scopes=['org/A'])
+    from drift_gate.core.org.policy import Principal, delegation_decision
+    grantor = Principal('lead', 'acme', ('runner',), ('*',))
+    assert delegation_decision(grantor, ('admin',), ('*',)).reason == 'grant-exceeds-grantor-permissions'
+    assert delegation_decision(grantor, ('viewer',), ('org/A',)).allowed
+    scoped = Principal('lead', 'acme', ('admin',), ('org/A',))
+    assert delegation_decision(scoped, ('viewer',), ('org/B',)).reason == 'grant-exceeds-grantor-scope'

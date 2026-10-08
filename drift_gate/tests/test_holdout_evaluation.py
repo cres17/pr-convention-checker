@@ -1,4 +1,5 @@
 """W10: holdout split, frozen expectations, blind review packets, adjudication and statistics."""
+from copy import deepcopy
 import json
 
 import pytest
@@ -92,7 +93,7 @@ def test_packet_is_blind_and_scores_keep_label_sources_apart(tmp_path):
                                      'votes': {'gpt-a': 'violated', 'gpt-b': 'satisfied'}}]
     resolved = h.adjudicate(packet, reviews, [{'item_id': 'c1::api', 'source': 'llm-proxy', 'label': 'violated'}])
     assert not resolved['unresolved'] and resolved['agreement']['llm-proxy']['cohen_kappa'] is not None
-    results = h.run_frozen(frozen, 'f' * 64)
+    results = h.run_frozen(frozen, h.artifact_sha256(frozen))
     report = h.score_all(results, resolved)
     proxy = report['by_label_source']['llm-proxy']['obligations']
     assert report['by_label_source']['human'] is None and 'not blind ground truth' in report['independence']
@@ -146,3 +147,49 @@ def test_cli_end_to_end_without_overwrites(tmp_path, capsys):
     code, error = cli('freeze', '--input', str(tmp_path / 'holdout.json'), '--out', str(tmp_path / 'frozen.json'))
     assert code == 2 and 'never overwritten' in error['error']['message']
     assert json.loads((tmp_path / 'frozen.json').read_text())['schema'] == 'holdout-frozen-v1'  # error not written over it
+
+
+# -- review 791565f R4/R5: product-equivalent runs and artifact lineage ----------------------------
+EXPRESS = ('import express from "express";\nconst app=express();\nconst router=express.Router();\n'
+           'function handler(req,res) { res.send("ok"); }\n'
+           'router.route("/catalog").get(handler);\napp.use("/v1",router);\n')
+
+
+def test_holdout_runs_the_product_inspection_path():
+    from drift_gate.adapters.inspection import inspect
+    from drift_gate.core.models.evaluation_context import EvaluationContext
+    from drift_gate.core.policy.loader import load_policy_from_dict
+    from datetime import date
+    item = case('x1', 'fam-x', doc='GET /v1/products\n', expected_decision='satisfied', gate='pass')
+    item['changed_files'][0] = {'path': 'src/api.js', 'status': 'modified',
+                                'patch': '@@\n-router.route("/catalog").get(handler);\n'
+                                         '+router.route("/products").get(handler);\n',
+                                'before_source': EXPRESS, 'after_source': EXPRESS.replace('/catalog', '/products')}
+    frozen = h.freeze({'schema': h.CASES, 'split': 'holdout', 'cases': [item]}, protocol='express')
+    held = h.run_frozen(frozen, h.artifact_sha256(frozen))
+    product = inspect(changed_files=[h._changed_file(f) for f in item['changed_files']],
+                      policy=load_policy_from_dict(item['policy']), context=EvaluationContext(date(2026, 10, 8)))
+    assert held['cases'][0]['gate'] == product.result == 'pass'
+    assert held['cases'][0]['input_sha256'] == product.execution['input_sha256']  # same inputs, same context
+    assert held['inspection_path'] == 'drift_gate.adapters.inspection.inspect'
+    with pytest.raises(h.HoldoutError, match='does not match'):
+        h.run_frozen(frozen, 'e' * 64)
+
+
+def test_labels_for_another_frozen_input_are_refused():
+    first = full_holdout()
+    second = h.freeze({'schema': h.CASES, 'split': 'holdout', 'cases': first['cases']}, protocol='p2')
+    altered = deepcopy(first)
+    altered['cases'][0]['changed_files'][1]['after_source'] = 'GET /stale\n'
+    for other in (second, altered):
+        packet = h.review_packet(other, instructions='x')
+        assert packet['frozen_sha256'] == h.artifact_sha256(other)
+        reviews = [{'item_id': i['item_id'], 'reviewer_id': r, 'reviewer_kind': 'llm-proxy',
+                    'label': i['allowed_labels'][0]} for i in packet['items'] for r in ('r1', 'r2')]
+        labels = h.adjudicate(packet, reviews)
+        assert labels['packet_sha256'] == h.artifact_sha256(packet) and labels['frozen_sha256'] == packet['frozen_sha256']
+        results = h.run_frozen(first, h.artifact_sha256(first))
+        with pytest.raises(h.HoldoutError, match='different (frozen input|protocols)'):
+            h.score_all(results, labels)
+    with pytest.raises(h.HoldoutError, match='bound to its frozen input'):
+        h.adjudicate({'schema': h.PACKET, 'items': []}, [])

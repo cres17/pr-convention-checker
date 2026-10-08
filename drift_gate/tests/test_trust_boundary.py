@@ -142,6 +142,43 @@ def test_trusted_engine_runs_in_a_separate_interpreter_and_decides(engine_repo):
     assert fixed['trusted']['gate_result'] == 'pass' and fixed['decision']['action'] == 'allow'
 
 
+def test_moving_ref_after_the_trusted_run_cannot_rebind_its_verdict(engine_repo, monkeypatch):
+    # Review 791565f R2: the branch moved between the trusted run and the shadow capture.
+    r = engine_repo
+    git(r['root'], 'branch', '-f', 'candidate', r['fixed'])
+    real = engines.run_pinned
+
+    def then_move(*args, **kwargs):
+        envelope = real(*args, **kwargs)
+        git(r['root'], 'update-ref', 'refs/heads/candidate', r['stale'], r['fixed'])
+        return envelope
+
+    monkeypatch.setattr(engines, 'run_pinned', then_move)
+    data = trusted_check(root=r['root'], base=r['base'], head='candidate', policy='.drift-gate.yml',
+                         trusted_policy_ref=r['base'], trusted_policy_sha256=POLICY_SHA, manifest=r['manifest'])
+    # Both engines evaluated the commit the ref named when the check began.
+    assert data['subject']['head_oid'] == r['fixed'] == data['subject_binding']['resolved_refs']['head']
+    assert data['subject_binding']['mismatches'] == [] and data['subject_binding']['input_digest_compared']
+    assert data['decision']['action'] == 'allow'
+
+
+def test_trusted_report_for_another_subject_is_not_a_merge_basis(engine_repo, monkeypatch):
+    r = engine_repo
+    real = engines.run_pinned
+
+    def other_head(*args, **kwargs):
+        envelope = real(*args, **kwargs)
+        report = json.loads(envelope['stdout'])
+        report['execution']['head'] = r['stale']
+        return {**envelope, 'stdout': json.dumps(report)}
+
+    monkeypatch.setattr(engines, 'run_pinned', other_head)
+    data = check(engine_repo, 'fixed')
+    assert data['trusted']['gate_result'] == 'pass'
+    assert data['decision']['action'] == 'review' and data['decision']['merge_basis'] == 'none'
+    assert 'trusted-subject-mismatch:head' in data['decision']['reasons']
+
+
 def test_unmatched_parser_pins_leave_no_merge_basis(engine_repo, monkeypatch):
     real = engines.run_pinned
 

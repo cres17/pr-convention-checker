@@ -21,7 +21,10 @@ PY = ('.py',)
 JS = ('.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs')
 _JS_IMPORT = re.compile(r'''(?:^|[^.\w$])(?:import\s+(?:[^'"]*?\s+from\s+)?|export\s+[^'"]*?\s+from\s+)(['"])([^'"\n]+)\1''')
 _JS_REQUIRE = re.compile(r'''(?:^|[^.\w$])require\s*\(\s*(['"])([^'"\n]+)\1\s*\)''')
-_JS_DYNAMIC = re.compile(r'''(?:^|[^.\w$])(?:require|import)\s*\(\s*(?!['"][^'"\n]*['"]\s*\))''')
+# ``import("./x")`` with a literal specifier is resolved like a static import (review 791565f R6).
+_JS_LITERAL_IMPORT = re.compile(r'''(?:^|[^.\w$])import\s*\(\s*(['"])([^'"\n]+)\1\s*\)''')
+# The whitespace sits inside the lookahead: a leading ``\s*`` could backtrack and flag a literal call.
+_JS_DYNAMIC = re.compile(r'''(?:^|[^.\w$])(?:require|import)\s*\((?!\s*['"][^'"\n]*['"]\s*\))''')
 
 
 @dataclass(frozen=True)
@@ -151,7 +154,7 @@ def _js_resolve(path, specifier, paths):
 
 def _js_edges(path, text, paths):
     edges, boundaries = set(), []
-    for pattern in (_JS_IMPORT, _JS_REQUIRE):
+    for pattern in (_JS_IMPORT, _JS_REQUIRE, _JS_LITERAL_IMPORT):
         for match in pattern.finditer(text):
             specifier = match.group(2)
             if specifier.startswith('.'):
@@ -289,7 +292,9 @@ def impact(before, after, seeds):
     union_graph = Graph(before.modules | after.modules, frozenset(union))
     boundaries = tuple(sorted(set(before.boundaries) | set(after.boundaries),
                               key=lambda b: (b.module, b.kind, b.detail)))
-    relevant_open = tuple(b for b in boundaries if b.kind in OPEN_KINDS and b.module in scope)
+    # Any open boundary can hide an edge: inside the scope it may reach more modules, outside it a module
+    # with an unresolved import may depend on a seed and belong to ``affected``. Either way not closed.
+    relevant_open = tuple(b for b in boundaries if b.kind in OPEN_KINDS)
     external = tuple(b for b in boundaries if b.kind == 'external' and b.module in scope)
     return ImpactScope(seeds, tuple(sorted(affected)), tuple(sorted(scope)),
                        tuple(sorted(before.edges - after.edges)), tuple(sorted(after.edges - before.edges)),

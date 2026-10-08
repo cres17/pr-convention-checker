@@ -7,8 +7,15 @@ limits. Only complete results and deterministic "unsupported" refusals are
 stored. Timeouts, crashes, resource limits and other transient failures are
 never cached, so a passing retry is never shadowed by an old failure. Entries
 are content-addressed, written once with a no-replace link, and re-verified on
-read (the stored key inputs must hash to the entry name). A tampered or
-truncated entry is a miss, not a hit.
+read: the stored key inputs must hash to the entry name and the stored result
+must hash to the entry's ``result_sha256``. A truncated entry, or one whose
+result alone was edited, is rejected and recomputed.
+
+Trust boundary: both digests sit in the same file, so anyone who can rewrite a
+whole entry can forge a consistent one. The check detects corruption and
+partial edits, not a writer with access to the cache directory. Cached facts
+are an optimisation for trusted local runs; a merge decision must not rest on a
+cache an untrusted party could write (the trusted-engine path never uses one).
 """
 from hashlib import sha256
 import json
@@ -18,7 +25,7 @@ import tempfile
 
 from drift_gate.core.models.input_manifest import canonical_bytes
 
-SCHEMA = 'analysis-cache-entry-v1'
+SCHEMA = 'analysis-cache-entry-v2'  # v2 adds result_sha256; v1 entries are rejected and recomputed
 STORABLE = ('complete', 'unsupported')
 
 
@@ -51,6 +58,17 @@ def cache_key(inputs):
     return sha256(canonical_bytes(inputs)).hexdigest()
 
 
+def _result_digest(status, value):
+    return sha256(canonical_bytes({'status': status, 'value': value})).hexdigest()
+
+
+def _entry_ok(entry, raw, inputs, key):
+    return (isinstance(entry, dict) and entry.get('schema') == SCHEMA and canonical_bytes(entry) == raw
+            and entry.get('key_inputs') == inputs and cache_key(entry['key_inputs']) == key
+            and entry.get('status') in STORABLE
+            and entry.get('result_sha256') == _result_digest(entry.get('status'), entry.get('value')))
+
+
 class AnalysisCache:
     def __init__(self, root):
         self.root = Path(root).absolute()
@@ -66,9 +84,7 @@ class AnalysisCache:
             entry = json.loads(raw)
         except (OSError, ValueError):
             return False
-        return (isinstance(entry, dict) and entry.get('schema') == SCHEMA and canonical_bytes(entry) == raw
-                and entry.get('key_inputs') == inputs and cache_key(entry['key_inputs']) == key
-                and entry.get('status') in STORABLE)
+        return _entry_ok(entry, raw, inputs, key)
 
     def get(self, inputs):
         key = cache_key(inputs)
@@ -76,9 +92,7 @@ class AnalysisCache:
         try:
             raw = path.read_bytes()
             entry = json.loads(raw)
-            valid = (isinstance(entry, dict) and entry.get('schema') == SCHEMA and canonical_bytes(entry) == raw
-                     and entry.get('key_inputs') == inputs and cache_key(entry['key_inputs']) == key
-                     and entry.get('status') in STORABLE)
+            valid = _entry_ok(entry, raw, inputs, key)
         except (OSError, ValueError):
             valid = False if path.exists() else None
         if valid is None:
@@ -96,7 +110,8 @@ class AnalysisCache:
             self.skipped += 1
             return False
         key = cache_key(inputs)
-        entry = {'schema': SCHEMA, 'key_inputs': inputs, 'status': status, 'value': value}
+        entry = {'schema': SCHEMA, 'key_inputs': inputs, 'status': status, 'value': value,
+                 'result_sha256': _result_digest(status, value)}
         raw = canonical_bytes(entry)
         target = self._path(key)
         target.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -122,5 +137,6 @@ class AnalysisCache:
 
     def stats(self):
         return {'hits': self.hits, 'misses': self.misses, 'rejected_entries': self.rejected,
+                'integrity': 'detects-corruption-and-partial-edits-not-forgery',
                 'stored': self.stored, 'not_stored_transient_or_incomplete': self.skipped,
                 'root': str(self.root)}

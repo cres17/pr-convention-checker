@@ -1,0 +1,20 @@
+{
+  "README.md": "c497843ef45196f1661907ac2b9633e3cb22e466e61b774157f2a7b3064f788b",
+  "ci-37744699455/Windows/offline-cli/result.json": "e98fab6fd5b176ee97cdfd2473c1579bc0514d1b2f87a3ea3ed3aa660b81fe66",
+  "ci-37744699455/Windows/offline-installer-cli/result.json": "0aa349bbd6edc2aadd91fb347c72eafddcd188f26a2872434b994f7f0f4821e9",
+  "ci-37744699455/macOS-arm64/offline-cli/result.json": "acfbddb48655501272a1ed40b01c5ba6c6ba073e699fe6ec59ae8a9b750538a3",
+  "ci-37744699455/macOS-arm64/offline-dmg-cli/result.json": "b0417c406c2de2472a1c54e675815099eda962b9a80acba29222908823cf41dc",
+  "ci-37744699455/macOS-arm64/teardown-diagnosis/summary.json": "1e0614929b032b05d6e033a36c61eae9a42b7ab91ee160d6488d94cb91a40d5e",
+  "ci-37744699455/macOS-intel/offline-cli/result.json": "37b0f741446efbbd4bd27fc0f39b696182812d672e2c469d61aaaf69cfad1bc0",
+  "ci-37744699455/macOS-intel/offline-dmg-cli/result.json": "707663cbd2248e8e37a727d5c06984d66a55fe73431aff1527e494f385840367",
+  "ci-37744699455/macOS-intel/teardown-diagnosis/summary.json": "fbc86df558c1ec41235977a5fd3e2970d64e52202cead555d41a77d27236bf92",
+  "desktop-run.json": "d22a1b1d0142e7e6ca8c8e6c6ae9d0dfd015ab343c9ff3a76fd288bfee959713",
+  "native-summary.json": "e9dd5cce9979a45cb2cbf5f321b42d877a4ff3311a92efa9d8c54a7e6a973d68",
+  "pytest.log": "5ce86ae617c255aaa184289f5da8e8404fc4021528d322d2b491169c0e9011fa",
+  "refs-results.json": "144b38eff2958b8224b4954e8898c83547ae28ec86d809da790307e8003472f5",
+  "remote-runs.json": "23858204afe61999191fb19a4223503814218cd0aee7addcaf89032d9d03fd57",
+  "reproduce.py": "6aa9e454563719a2671d682d1b34171fd633feb44d189c2031957f55f14d779d",
+  "reproduce_refs.py": "9bc02a0c565d1a98f39f9a5938ee57fccd60b78fa017e1d3801ee8108aa7fee3",
+  "results.json": "988b3e165c789c8a4e6585cc137b1e6b861353b7aec56359da0222257a948a3e",
+  "ruff.log": "b3ca8c448ddbb169df7d3aa335ab371ec490e44e6c28632b28dbee157eb907e4"
+}

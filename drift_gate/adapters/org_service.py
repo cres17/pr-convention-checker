@@ -2,7 +2,11 @@
 
 Tenant data lives under ``tenants/<tenant_id>/`` and is reachable only through
 this service, which checks the principal's tenant, role and repository scope on
-every call. Results are stored without raw inputs; the audit log is a hash-chained
+every call except the operator's ``create_tenant`` bootstrap. Tenant-wide actions
+(principals, retention, backup/restore, audit log) need the tenant scope ``*``;
+purge and listing act only on results inside the principal's scopes; a grant may
+not exceed the grantor's permissions or scopes. Results are stored as given
+(keeping raw inputs out is the caller's job); the audit log is a hash-chained
 append-only sequence whose details are redacted of token-like material.
 
 Boundaries: this module authorizes a principal it is given. Authenticating that
@@ -25,7 +29,7 @@ from drift_gate.adapters.execution import atomic_bytes
 from drift_gate.adapters.run_store import Sequence
 from drift_gate.core.models.input_manifest import canonical_bytes
 from drift_gate.core.org.policy import (
-    Principal, Quota, authorize, expired, quota_decision, redact, valid_tenant,
+    Principal, Quota, authorize, delegation_decision, expired, in_scope, quota_decision, redact, valid_tenant,
 )
 
 BACKUP_SCHEMA = 'org-tenant-backup-v1'
@@ -106,6 +110,10 @@ class OrgService:
     def add_principal(self, actor, tenant_id, principal_id, *, roles, scopes):
         self._require(actor, tenant_id, 'principals.manage')
         principal = Principal(principal_id, tenant_id, tuple(roles), tuple(scopes))
+        decision = delegation_decision(self._principal(tenant_id, actor), principal.roles, principal.scopes)
+        if not decision.allowed:
+            self._audit(tenant_id, actor, 'principals.manage', 'denied', reason=decision.reason, principal=principal_id)
+            raise OrgError(decision.reason)
         rows = self._read(self._tenant(tenant_id) / 'principals.json', {})
         rows[principal_id] = {'id': principal.id, 'tenant_id': tenant_id, 'roles': list(principal.roles),
                               'scopes': list(principal.scopes)}
@@ -151,7 +159,7 @@ class OrgService:
         self._require(actor, tenant_id, 'results.read', repository)
         principal = self._principal(tenant_id, actor)
         rows, _, _ = self._usage(tenant_id)
-        visible = [row for row in rows if '*' in principal.scopes or row['repository'] in principal.scopes]
+        visible = [row for row in rows if in_scope(principal, row['repository'])]
         if repository is not None:
             visible = [row for row in visible if row['repository'] == repository]
         return [{k: row[k] for k in ('id', 'repository', 'created_at', 'result_sha256', 'bytes')} for row in visible]
@@ -182,16 +190,19 @@ class OrgService:
         self._audit(tenant_id, actor, 'retention.configure', 'ok', retention_days=retention_days)
 
     def purge(self, actor, tenant_id):
-        """Delete results older than the tenant's retention period; returns the removed IDs."""
+        """Delete expired results within the actor's repository scope; returns the removed IDs."""
         self._require(actor, tenant_id, 'results.delete')
+        principal = self._principal(tenant_id, actor)
         config = self._read(self._tenant(tenant_id) / 'config.json')
         rows, _, _ = self._usage(tenant_id)
         removed = []
         for row in rows:
-            if expired(row['created_at'], config['retention_days'], self.clock()):
+            if in_scope(principal, row['repository']) and expired(row['created_at'], config['retention_days'],
+                                                                  self.clock()):
                 (self._results(tenant_id) / f"{row['id']}.json").unlink()
                 removed.append(row['id'])
-        self._audit(tenant_id, actor, 'retention.purge', 'ok', removed=len(removed))
+        self._audit(tenant_id, actor, 'retention.purge', 'ok', removed=len(removed),
+                    scope='tenant' if '*' in principal.scopes else ','.join(principal.scopes))
         return removed
 
     def audit_log(self, actor, tenant_id):

@@ -1,0 +1,158 @@
+[
+  {
+    "platform": "Windows",
+    "artifact": "Offline-check-Windows/offline-cli/result.json",
+    "all_steps_ok": true,
+    "replay_matches": true,
+    "repository_deleted_before_replay": true,
+    "spans_verified": 3,
+    "gate_result": "fail",
+    "executable_sha256": "f6fe1ace7e75afa2b34ac48ee1b35e56fc8f3a61f1ff5892bf7be183e65b158d",
+    "producer": {
+      "authenticated": false,
+      "loaded_code_attested": false,
+      "packages": {
+        "PyYAML": null,
+        "drift-gate": null,
+        "tree-sitter": null,
+        "tree-sitter-language-pack": "1.20.0"
+      },
+      "parser_binary_attested": false,
+      "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+      "schema": "observed-producer-v1",
+      "source_files": 0,
+      "source_scope": "available-core-adapters-utils-python-files",
+      "source_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    }
+  },
+  {
+    "platform": "Windows",
+    "artifact": "Offline-check-Windows/offline-installer-cli/result.json",
+    "all_steps_ok": true,
+    "replay_matches": true,
+    "repository_deleted_before_replay": true,
+    "spans_verified": 3,
+    "gate_result": "fail",
+    "executable_sha256": "f6fe1ace7e75afa2b34ac48ee1b35e56fc8f3a61f1ff5892bf7be183e65b158d",
+    "producer": {
+      "authenticated": false,
+      "loaded_code_attested": false,
+      "packages": {
+        "PyYAML": null,
+        "drift-gate": null,
+        "tree-sitter": null,
+        "tree-sitter-language-pack": "1.20.0"
+      },
+      "parser_binary_attested": false,
+      "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+      "schema": "observed-producer-v1",
+      "source_files": 0,
+      "source_scope": "available-core-adapters-utils-python-files",
+      "source_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    }
+  },
+  {
+    "platform": "macOS-arm64",
+    "artifact": "Offline-check-macOS-arm64/offline-cli/result.json",
+    "all_steps_ok": true,
+    "replay_matches": true,
+    "repository_deleted_before_replay": true,
+    "spans_verified": 3,
+    "gate_result": "fail",
+    "executable_sha256": "2886d21086abc81cdc26be03a2184e4f9a62da94d68fecb82c209ca991d8b306",
+    "producer": {
+      "authenticated": false,
+      "loaded_code_attested": false,
+      "packages": {
+        "PyYAML": null,
+        "drift-gate": null,
+        "tree-sitter": null,
+        "tree-sitter-language-pack": "1.20.0"
+      },
+      "parser_binary_attested": false,
+      "python": "3.11.9 (v3.11.9:de54cf5be3, Apr  2 2024, 07:12:50) [Clang 13.0.0 (clang-1300.0.29.30)]",
+      "schema": "observed-producer-v1",
+      "source_files": 0,
+      "source_scope": "available-core-adapters-utils-python-files",
+      "source_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    }
+  },
+  {
+    "platform": "macOS-arm64",
+    "artifact": "Offline-check-macOS-arm64/offline-dmg-cli/result.json",
+    "all_steps_ok": true,
+    "replay_matches": true,
+    "repository_deleted_before_replay": true,
+    "spans_verified": 3,
+    "gate_result": "fail",
+    "executable_sha256": "2886d21086abc81cdc26be03a2184e4f9a62da94d68fecb82c209ca991d8b306",
+    "producer": {
+      "authenticated": false,
+      "loaded_code_attested": false,
+      "packages": {
+        "PyYAML": null,
+        "drift-gate": null,
+        "tree-sitter": null,
+        "tree-sitter-language-pack": "1.20.0"
+      },
+      "parser_binary_attested": false,
+      "python": "3.11.9 (v3.11.9:de54cf5be3, Apr  2 2024, 07:12:50) [Clang 13.0.0 (clang-1300.0.29.30)]",
+      "schema": "observed-producer-v1",
+      "source_files": 0,
+      "source_scope": "available-core-adapters-utils-python-files",
+      "source_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    }
+  },
+  {
+    "platform": "macOS-intel",
+    "artifact": "Offline-check-macOS-intel/offline-cli/result.json",
+    "all_steps_ok": true,
+    "replay_matches": true,
+    "repository_deleted_before_replay": true,
+    "spans_verified": 3,
+    "gate_result": "fail",
+    "executable_sha256": "f1804498881b6409bacca44be2531dc783918c01263a11bf6580e4e1e04ad231",
+    "producer": {
+      "authenticated": false,
+      "loaded_code_attested": false,
+      "packages": {
+        "PyYAML": null,
+        "drift-gate": null,
+        "tree-sitter": null,
+        "tree-sitter-language-pack": "1.20.0"
+      },
+      "parser_binary_attested": false,
+      "python": "3.11.9 (v3.11.9:de54cf5be3, Apr  2 2024, 07:12:50) [Clang 13.0.0 (clang-1300.0.29.30)]",
+      "schema": "observed-producer-v1",
+      "source_files": 0,
+      "source_scope": "available-core-adapters-utils-python-files",
+      "source_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    }
+  },
+  {
+    "platform": "macOS-intel",
+    "artifact": "Offline-check-macOS-intel/offline-dmg-cli/result.json",
+    "all_steps_ok": true,
+    "replay_matches": true,
+    "repository_deleted_before_replay": true,
+    "spans_verified": 3,
+    "gate_result": "fail",
+    "executable_sha256": "f1804498881b6409bacca44be2531dc783918c01263a11bf6580e4e1e04ad231",
+    "producer": {
+      "authenticated": false,
+      "loaded_code_attested": false,
+      "packages": {
+        "PyYAML": null,
+        "drift-gate": null,
+        "tree-sitter": null,
+        "tree-sitter-language-pack": "1.20.0"
+      },
+      "parser_binary_attested": false,
+      "python": "3.11.9 (v3.11.9:de54cf5be3, Apr  2 2024, 07:12:50) [Clang 13.0.0 (clang-1300.0.29.30)]",
+      "schema": "observed-producer-v1",
+      "source_files": 0,
+      "source_scope": "available-core-adapters-utils-python-files",
+      "source_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    }
+  }
+]
