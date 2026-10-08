@@ -1,0 +1,26 @@
+{
+  "Offline-check-macOS-arm64/offline-dmg/result.json": {
+    "sha256": "4d90a46bf342f98c66ce8203a6d63846deb0f3902361ceb3907f5b8bfffb82a0",
+    "bytes": 104175
+  },
+  "Offline-check-macOS-arm64/offline-package/result.json": {
+    "sha256": "9be4cd1a61fa7ab97b5439f37d87daa450ad8a298fa5172a1e03b565ae6d842c",
+    "bytes": 104226
+  },
+  "Offline-check-Windows/offline-package/result.json": {
+    "sha256": "25dcb1298230d977c30c3369412d2a1c2cb36824aa3b67b9b4895b263a7a3957",
+    "bytes": 106874
+  },
+  "Offline-check-Windows/offline-installer/result.json": {
+    "sha256": "c038b4e867e6dc612b305fe0b3b5ffc0624f3ffe1edb11f97bfef019036cb8de",
+    "bytes": 106806
+  },
+  "Offline-check-macOS-intel/offline-dmg/result.json": {
+    "sha256": "e79490bec3d2eb89686c1cdc72750c1aca0d99373d575cab14c5a0af0962de0f",
+    "bytes": 104177
+  },
+  "Offline-check-macOS-intel/offline-package/result.json": {
+    "sha256": "18229f16e42db711fea53b7bb39aab168672841d4ef230cebdc476500b2fa8c0",
+    "bytes": 104224
+  }
+}

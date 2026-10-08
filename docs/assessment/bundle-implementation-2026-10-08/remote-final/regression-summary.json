@@ -1,0 +1,56 @@
+{
+  "regression-windows-latest-3.10": {
+    "passed": 1751,
+    "skipped": 10,
+    "raw_sha256": "21ec3a1f9b1f95bd8839f10f6f1fd05d313b801c2d5cd0d2503cd1b6c501ecb8",
+    "bundle_failed_cases": false
+  },
+  "regression-windows-latest-3.11": {
+    "passed": 1751,
+    "skipped": 10,
+    "raw_sha256": "6946817d8885d34ba2ba61140dfd96a7cd3c67f947dbdb2ae13608c9427cb43b",
+    "bundle_failed_cases": false
+  },
+  "regression-ubuntu-latest-3.12": {
+    "passed": 1756,
+    "skipped": 5,
+    "raw_sha256": "29fd2e3ddd6a445a2747674488ac4b699ee58e47872a8245d7499aee2d00518f",
+    "bundle_failed_cases": false
+  },
+  "regression-macos-latest-3.12": {
+    "passed": 1756,
+    "skipped": 5,
+    "raw_sha256": "cd01d260d8d6ba32b2077d4201ad25027a5e3eee7a71ac350fe2f6f8cc578174",
+    "bundle_failed_cases": false
+  },
+  "regression-windows-latest-3.12": {
+    "passed": 1751,
+    "skipped": 10,
+    "raw_sha256": "18aceeca60e1b28ac2d77029a90a570c78abda66aa92ef33054fd1bf12ba7536",
+    "bundle_failed_cases": false
+  },
+  "regression-ubuntu-latest-3.11": {
+    "passed": 1756,
+    "skipped": 5,
+    "raw_sha256": "312bacf3256b897baacda97ad58cbdd4cc6976907dd146e552930cb5e6c201ae",
+    "bundle_failed_cases": false
+  },
+  "regression-ubuntu-latest-3.10": {
+    "passed": 1756,
+    "skipped": 5,
+    "raw_sha256": "9c4726c83dd94c75e07a5347157c498bb3b80d31cb4c0e8fc5dc2d12505bf0cf",
+    "bundle_failed_cases": false
+  },
+  "regression-macos-latest-3.11": {
+    "passed": 1756,
+    "skipped": 5,
+    "raw_sha256": "f4f033d1f86e88be8af807c2fdfeac5e43a48b979f56a8095a38626c198e7f44",
+    "bundle_failed_cases": false
+  },
+  "regression-macos-latest-3.10": {
+    "passed": 1756,
+    "skipped": 5,
+    "raw_sha256": "455125fb451ab9030679cb3ae75ff1123575a335dc63be97705eeee90ade376d",
+    "bundle_failed_cases": false
+  }
+}
