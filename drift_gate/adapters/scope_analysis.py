@@ -97,7 +97,29 @@ def _isolated_facts(sources, budget):
     return facts, failures
 
 
-def _module_facts(sources):
+def _cached(cache, text, op, compute, engine, parser):
+    from drift_gate.adapters.analysis_cache import key_inputs
+    if cache is None:
+        return compute()
+    inputs = key_inputs(artifact_sha256=sha256(text.encode('utf-8')).hexdigest(), op=op,
+                        profile=PROFILES['api-route' if op == 'python-routes' else 'env-key'],
+                        engine_sha256=engine, parser_sha256=parser)
+    entry = cache.get(inputs)
+    if entry is not None:
+        value = entry['value']
+        return None if value is None else set(map(tuple, value)) if op == 'python-routes' else set(value)
+    value = compute()
+    cache.put(inputs, status='complete' if value is not None else 'unsupported',
+              value=None if value is None else sorted(map(list, value)) if op == 'python-routes' else sorted(value))
+    return value
+
+
+def _module_facts(sources, cache=None):
+    if cache is not None:
+        from drift_gate.adapters.analysis_cache import engine_digest, parser_pins_digest
+        engine, parser = engine_digest(), parser_pins_digest()
+    else:
+        engine = parser = None
     facts = {}
     for path, text in sources.items():
         if not path.endswith(PY):
@@ -107,17 +129,23 @@ def _module_facts(sources):
         if text is None:
             facts[path] = {'routes': None, 'env': None}
             continue
-        try:
-            routes = extract_routes(text)
-        except (UnsupportedContract, RecursionError, ValueError):
-            routes = None
-        env = environment_facts(text)
-        facts[path] = {'routes': routes, 'env': None if env.uncertain else set(env.keys)}
+        def routes(text=text):
+            try:
+                return extract_routes(text)
+            except (UnsupportedContract, RecursionError, ValueError):
+                return None
+
+        def env(text=text):
+            facts = environment_facts(text)
+            return None if facts.uncertain else set(facts.keys)
+
+        facts[path] = {'routes': _cached(cache, text, 'python-routes', routes, engine, parser),
+                       'env': _cached(cache, text, 'python-env', env, engine, parser)}
     return facts
 
 
 def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256, policy_path='.drift-gate.yml',
-                  budget=None, isolated=False):
+                  budget=None, isolated=False, cache_dir=None):
     budget = budget or InspectionBudget.from_policy(None, clock=time.monotonic)
     with budget_scope(budget):
         reader = GitObjectReader(root)
@@ -148,13 +176,17 @@ def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256
         seeds = sorted(path for path in changed.decode('utf-8').split('\0') if path)
         scope = impact(g_before, g_after, [seed for seed in seeds if seed in g_before.modules | g_after.modules])
         sides = {}
+        cache = None
+        if cache_dir is not None:
+            from drift_gate.adapters.analysis_cache import AnalysisCache
+            cache = AnalysisCache(cache_dir)
         worker_failures = {}
         for side, sources, graph in (('before', before_src, g_before), ('after', after_src, g_after)):
             if isolated:
                 facts, failed = _isolated_facts(sources, budget)
                 worker_failures.update({f'{side}:{path}': status for path, status in failed.items()})
             else:
-                facts = _module_facts(sources)
+                facts = _module_facts(sources, cache)
             assignment, reasons = service_model.assign(sources, declared)
             membership = service_model.entrypoint_membership(declared, graph.edges, graph.modules)
             sides[side] = (service_model.service_facts(facts, declared, assignment, reasons, membership),
@@ -190,6 +222,7 @@ def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256
                 'unread_modules': sorted(unread), 'dependency': scope.to_dict(),
                 'analysis_boundary': 'isolated-worker-processes' if isolated else 'in-process',
                 'worker_failures': worker_failures,
+                'cache': cache.stats() if cache is not None else None,
                 'services': comparison, 'no_delta_certificates': rows,
                 'selection_vs_scope': 'certificates cover every enumerated module of a service, '
                                       'not only the changed selection',

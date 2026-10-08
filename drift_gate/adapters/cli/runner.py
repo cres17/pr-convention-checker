@@ -343,7 +343,7 @@ def run_cli(argv=None):
                    "review": _run_review, "self-audit": _run_self_audit,
                    "history": _run_history, "bundle": _run_bundle, "run": _run_runs,
                    "publication": _run_publication, "engine": _run_engine, "scope": _run_scope, "migrate": _run_migrate,
-                   "holdout": _run_holdout,
+                   "holdout": _run_holdout, "org": _run_org,
                    "trusted-check": _run_trusted_check}
     if args.command in inspections:
         args.execution = identity()
@@ -455,6 +455,7 @@ def _build_parser() -> argparse.ArgumentParser:
     scope.add_argument('--trusted-policy-ref', required=True)
     scope.add_argument('--trusted-policy-sha256', required=True)
     scope.add_argument('--isolated-workers', action='store_true', help='Extract module facts in isolated worker processes')
+    scope.add_argument('--cache-dir', help='Persistent analysis cache keyed by input, engine, profile and parser digests')
     scope.add_argument('--out-json')
     scope.add_argument('--json', action='store_true', dest='json_output')
 
@@ -486,6 +487,20 @@ def _build_parser() -> argparse.ArgumentParser:
     holdout.add_argument('--out', required=True, help='Output path (never overwritten)')
     holdout.add_argument('--out-development', help='Development split output (split)')
     holdout.set_defaults(json_output=True)
+
+    org = subparsers.add_parser('org', help='Organization service operations on a local tenant store')
+    org.add_argument('operation', choices=['create-tenant', 'add-principal', 'store', 'list', 'delete', 'purge',
+                                           'audit', 'backup', 'restore', 'set-retention'])
+    org.add_argument('--root', required=True, help='Service store directory')
+    org.add_argument('--tenant', required=True)
+    org.add_argument('--actor', required=True, help='Principal performing the action (self-asserted in the CLI)')
+    org.add_argument('--principal'); org.add_argument('--roles', nargs='*', default=[])
+    org.add_argument('--scopes', nargs='*', default=[]); org.add_argument('--repository')
+    org.add_argument('--result-json', help='Inspection JSON to store'); org.add_argument('--result-id')
+    org.add_argument('--retention-days', type=int, default=90); org.add_argument('--archive')
+    org.add_argument('--archive-sha256'); org.add_argument('--max-runs-per-day', type=int, default=500)
+    org.add_argument('--max-stored-bytes', type=int, default=1_000_000_000)
+    org.set_defaults(json_output=True)
 
     engine = subparsers.add_parser('engine', help='Build an engine manifest or attest loaded code against one')
     engine.add_argument('operation', choices=['manifest', 'attest'])
@@ -1213,6 +1228,41 @@ def _run_publication(args):
     sys.exit(0 if data['state'] == 'published' else 1)
 
 
+def _run_org(args):
+    from drift_gate.adapters.org_service import OrgService
+    from drift_gate.core.org.policy import Quota
+    service, op = OrgService(args.root), args.operation
+    if op == 'create-tenant':
+        service.create_tenant(args.tenant, admin_id=args.actor, retention_days=args.retention_days,
+                              quota=Quota(args.max_runs_per_day, args.max_stored_bytes))
+        data = {'tenant': args.tenant, 'admin': args.actor}
+    elif op == 'add-principal':
+        service.add_principal(args.actor, args.tenant, args.principal, roles=args.roles, scopes=args.scopes)
+        data = {'principal': args.principal}
+    elif op == 'store':
+        result = json.loads(Path(args.result_json).read_text(encoding='utf-8'))
+        data = {'result_id': service.store_result(args.actor, args.tenant, args.repository, result)}
+    elif op == 'list':
+        data = {'results': service.list_results(args.actor, args.tenant, args.repository)}
+    elif op == 'delete':
+        service.delete_result(args.actor, args.tenant, args.result_id)
+        data = {'deleted': args.result_id}
+    elif op == 'purge':
+        data = {'removed': service.purge(args.actor, args.tenant)}
+    elif op == 'audit':
+        data = {'audit': service.audit_log(args.actor, args.tenant)}
+    elif op == 'backup':
+        data = {'archive_sha256': service.backup(args.actor, args.tenant, args.archive)}
+    elif op == 'restore':
+        service.restore(args.actor, args.tenant, args.archive, expected_sha256=args.archive_sha256)
+        data = {'restored': args.tenant}
+    else:
+        service.set_retention(args.actor, args.tenant, args.retention_days)
+        data = {'retention_days': args.retention_days}
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0)
+
+
 def _run_holdout(args):
     from drift_gate.adapters import holdout as h
 
@@ -1272,7 +1322,7 @@ def _run_scope(args):
     from drift_gate.adapters.scope_analysis import analyze_scope
     data = analyze_scope(root=Path.cwd(), base=args.base, head=args.head, trusted_policy_ref=args.trusted_policy_ref,
                          trusted_policy_sha256=args.trusted_policy_sha256, policy_path=args.policy,
-                         isolated=args.isolated_workers)
+                         isolated=args.isolated_workers, cache_dir=args.cache_dir)
     if args.out_json:
         atomic_json(args.out_json, data)
     _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
