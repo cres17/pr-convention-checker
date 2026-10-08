@@ -1,0 +1,34 @@
+{
+  "schema": "pr-comment-publication-record-v1",
+  "idempotency_key": "059da10afa61fc96101086b8caf2dc22934b5fa8821723d59d30b650f9cffc41",
+  "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+  "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "race_window": "read-check-write-not-atomic-on-provider",
+  "operation": "update",
+  "comment_id": 6051129812,
+  "url": null,
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "lost-response",
+      "detail": "simulated: response lost after provider applied it"
+    }
+  ],
+  "body_match": null,
+  "content_verified": false,
+  "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "reconciliation": {
+    "state": "publication-unknown",
+    "reason": "update-not-applied",
+    "retry_safe": true,
+    "comment_id": 6051129812,
+    "duplicates": 0,
+    "body_match": null,
+    "content_verified": false
+  },
+  "duplicates": 0,
+  "head_after": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "state": "publication-unknown",
+  "reason": "update-not-applied",
+  "published": true
+}
