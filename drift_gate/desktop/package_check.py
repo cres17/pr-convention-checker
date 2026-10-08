@@ -61,6 +61,8 @@ class PackageCheck(QObject):
         self.finished = True
         self.output.write_text(json.dumps({"error": reason, 'phase': self.phase,
                                           'last_scan': self.last_scan}, ensure_ascii=False), encoding="utf-8")
+        from drift_gate.desktop.cli_entry import trace
+        trace('package-check-exit-requested', code=1)
         self.app.exit(1)
 
     def on_bridge_event(self, raw):
@@ -147,4 +149,6 @@ class PackageCheck(QObject):
         self.window.grab().save(str(self.output.with_suffix(".png")))
         self.finished = True
         self.timeout.stop()
+        from drift_gate.desktop.cli_entry import trace
+        trace('package-check-exit-requested', code=0)
         self.app.exit(0)
