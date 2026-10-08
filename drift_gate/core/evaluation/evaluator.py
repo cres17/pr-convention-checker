@@ -171,6 +171,19 @@ def evaluate(
         ]
         min_intensity = rule.when.min_change_intensity
         trigger_files, uncertain_thresholds = _threshold_candidates(trigger_files, rule, session)
+        typed_open, typed_note = False, ""
+        if rule.when.trigger is not None and trigger_files:
+            from drift_gate.core.classification.triggers import evaluate_trigger, resolve_unknown
+            from drift_gate.core.contracts.planner import Truth
+            outcome = evaluate_trigger(rule.when.trigger, trigger_files, session)
+            applicability, typed_note = resolve_unknown(outcome, rule.when.trigger.on_unknown)
+            if applicability == Truth.FALSE:
+                rule_decisions.append(RuleDecision(
+                    rule_id=rule_id, severity=severity, status="unmatched",
+                    reason="typed trigger predicate is false" + (f"; {typed_note}" if typed_note else ""),
+                ))
+                continue
+            typed_open = applicability == Truth.UNKNOWN
 
         if not trigger_files:
             rule_decisions.append(RuleDecision(
@@ -208,6 +221,15 @@ def evaluate(
                 name="Analysis evidence unavailable", required=unavailable, type="analysis",
                 evidence="Cannot establish the configured change threshold; provide analyzable input or a valid exception",
                 decision="undetermined", verification="unverified",
+            ))
+        if typed_open and unsatisfied:
+            # Conditional ¬A ∨ R with A=U: a missing document is not a confirmed violation.
+            unsatisfied = [replace(g, decision="undetermined", verification="unverified",
+                evidence=g.evidence + "; typed trigger is unresolved") if g.decision == "violated" else g
+                for g in unsatisfied]
+            unsatisfied.append(UnsatisfiedGroup(
+                name="Typed trigger unresolved", required=[f.path for f in trigger_files], type="analysis",
+                evidence=typed_note, decision="undetermined", verification="unverified",
             ))
         matched_patterns = _matched_patterns(trigger_files, when_patterns)
 

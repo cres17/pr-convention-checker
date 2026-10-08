@@ -83,6 +83,12 @@ def content_requirement(group, triggers, changed_files, session=None):
     if group.content == 'auto-strict':
         from drift_gate.core.evaluation.routes import strict_auto_requirement
         return strict_auto_requirement(group, triggers, changed_files, session)
+    if group.content == 'contract-proof':
+        from drift_gate.core.evaluation.proof_gate import contract_proof_requirement
+        return contract_proof_requirement(group, triggers, changed_files, session)
+    if group.content == 'api-compatibility':
+        from drift_gate.core.evaluation.compatibility import compatibility_requirement
+        return compatibility_requirement(group, triggers, changed_files, session)
     if group.content == 'api-routes' and all(
         (f.status == 'added' or f.before_source is not None) and (f.status == 'deleted' or f.after_source is not None) for f in triggers):
         from drift_gate.core.evaluation.routes import complete_route_delta, route_document_requirement
