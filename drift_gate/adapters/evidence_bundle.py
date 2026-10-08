@@ -28,11 +28,12 @@ SCHEMA = 'inspection-bundle-receipt-v1'
 
 @dataclass(frozen=True)
 class BundleLimits:
-    # The repository's full PR capture measured 125 MB total / 62 MB payload.
+    # The repository's full PR capture (main bffc655 -> ver2, 2026-10-08) measured 135.5 MB total,
+    # a 64.4 MB snapshot.json and 3,895 files, which exceeded the earlier 64 MB / 4,096-file bounds.
     # Keep explicit bounds with headroom; this is not a process-memory budget.
     max_total_bytes: int = 256_000_000
-    max_file_bytes: int = 64_000_000
-    max_files: int = 4096
+    max_file_bytes: int = 128_000_000
+    max_files: int = 20_000
 
     def __post_init__(self):
         if any(type(v) is not int or v <= 0 for v in (

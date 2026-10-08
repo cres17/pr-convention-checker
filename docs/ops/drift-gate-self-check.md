@@ -24,6 +24,15 @@ macOS job은 `packaging/teardown_diagnosis.py`로 package UI 검사를 5회 반�
 job을 실패시킨다. 기존 `verify_package.py` 단계가 gate다. 문제 없는
 반복은 이전 Intel 종료 실패가 해결되었다는 증명이 아니다.
 
+첫 원격 실행(2026-10-08)에서 확인하고 고친 문제는 다음과 같다. Windows는 fixture를 `write_text`로 써서 CRLF가 된
+정책 bytes가 pin과 달라 `verify_package_cli.py`가 실패했다(LF로 고정). macOS의 종료 진단은 상대 출력 경로 때문에
+sandbox profile을 찾지 못해 5회 모두 앱 시작 전 65로 끝났다(절대 경로로 고정, 앱에 도달하지 못한 실행은
+`runs_without_trace`로 표시). 수정 후 run 37742364446에서 arm64 dist·DMG와 Windows dist·설치본의 CLI 검증이 통과했고,
+arm64 종료 진단은 5회 모두 0으로 `event-loop-returned`·`atexit`까지 기록됐다. 같은 날 Intel runner의 React 테스트가
+기본 5초 제한을 넘겨 두 번 실패해 이후 단계가 실행되지 않았으므로 `App.test.tsx` 제한을 20초로 늘렸다.
+PR 전체(`main`→`ver2`) immutable 검사는 `snapshot.json`이 64,439,924 bytes로 묶음 파일당 한도를 넘어 실패했으며
+한도를 조정했다([Gate와 입력 계약](../contracts/gate-and-inputs.md)).
+
 ## S2-d 실행 기록과 게시 근거 (2026-10-08)
 
 `action.yml`은 실행 journal 경로(`run_record_path`), 실행 ID, PR 댓글 게시 상태와 기록

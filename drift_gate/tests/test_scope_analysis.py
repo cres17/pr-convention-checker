@@ -192,5 +192,8 @@ def test_policy_memory_budget_reaches_isolated_workers(tmp_path, monkeypatch):
     report = analyze_scope(root=tmp_path, base=base, head=head, trusted_policy_ref=base,
                            trusted_policy_sha256=sha256(policy.encode()).hexdigest(), isolated=True)
     assert seen and all(limits['max_memory_bytes'] == 900_000_000 for limits in seen)
-    expected = [] if __import__('sys').platform.startswith('linux') else ['memory']
+    platform = __import__('sys').platform
+    # Reported by the worker itself: Linux sets every limit, macOS cannot bound memory, Windows has no rlimits.
+    expected = ([] if platform.startswith('linux') else ['memory'] if platform == 'darwin'
+                else ['cpu', 'file-size', 'memory', 'open-files'])
     assert report['worker_limits_unapplied'] == expected and not report['worker_failures']

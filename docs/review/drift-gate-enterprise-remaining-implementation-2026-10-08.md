@@ -1,6 +1,6 @@
 # 심화 설계 남은 항목 5~23 구현 (W05·W07~W17)
 
-2026-10-08 KST · 기준 `b5c52ab`(원격 `ver2`) 위 커밋 `5cd00ed`~`3c7d463`와 이 보고서 커밋 · 원격 CI는 push 후 확인
+2026-10-08 KST · 기준 `b5c52ab`(원격 `ver2`) 위 커밋 `5cd00ed`~`3c7d463`와 이 보고서 커밋, 이후 CI 수정 커밋
 
 [심화 설계](../architecture/drift-gate-enterprise-detailed-design-2026-10-07.md)의 남은 항목 목록 중 1~4번은
 [실행 수명주기 보고서](drift-gate-run-lifecycle-implementation-2026-10-08.md)에 있다. 이 보고서는 5~23번을 다룬다.
@@ -59,9 +59,30 @@ core에는 시각·파일·네트워크·subprocess 호출이 없다. 시간·�
 | 호환성 판정 독립 oracle | 테스트 통과. 별도 12 seed 18,000쌍 실행에서 불일치 0(로그 미보존) | `test_decision_models.py`. oracle 문법에 union이 없어 U 판정은 0건이며 union 경로는 이 대조로 검증되지 않음 |
 
 건너뛴 12개는 컨테이너에 PySide6(4), Express 4.21.2 대조 설치(4), zstandard(3)가 없고 Windows junction 시험(1)이 Linux에서
-제외되어 생긴 것이다. 설치본 검증(14)과 종료 진단(15)은 Desktop
-workflow에서만 실행되며, 이 표에는 아직 결과가 없다. macOS·Windows 단위 테스트도 push 후 CI 결과로 확인한다. 로컬 Linux 통과를
-다른 OS 검증으로 승계하지 않는다.
+제외되어 생긴 것이다. 로컬 Linux 통과를 다른 OS 검증으로 승계하지 않는다.
+
+## 원격 CI에서 발견하고 고친 문제
+
+`82473a4` push 후 CI와 Desktop 빌드에서 다음이 실패했다. 로컬 Linux에서는 재현되지 않던 문제다.
+
+| 실패 | 원인 | 수정 |
+|---|---|---|
+| Windows 단위 테스트(3.10~3.12), Windows 설치본 CLI 검증 | `write_text`가 CRLF로 써서 commit된 정책 bytes가 pin한 SHA-256과 다름 | fixture를 LF로 기록 (`d226ce5`) |
+| Windows 단위 테스트 1건 | Windows worker는 모든 OS 제한이 미적용인데 테스트가 macOS 기대값 사용 | OS별 기대값 |
+| macOS 종료 진단 5회 전부 exit 65 | 상대 출력 경로라 sandbox profile을 찾지 못해 앱이 시작되지 않음 | 절대 경로, `runs_without_trace` 표시 (`bc3acda`) |
+| PR(`main`→`ver2`) immutable 자체 검사 | `snapshot.json` 64,439,924 bytes가 묶음 파일당 64,000,000 bytes 한도 초과(파일 3,895개로 4,096 한도에도 근접) | 파일당 128,000,000 bytes·20,000 files |
+| Intel React 테스트 2/3회 | 전체 App render가 vitest 기본 5초 초과 | `App.test.tsx` 제한 20초 |
+| push 범위 자체 검사(`d226ce5`, `bc3acda`) | `packaging/**` 변경에 ops 문서 변경이 없음 | 다음 commit에서 ops 문서 갱신. 해당 두 push의 실패 기록은 남아 있다 |
+
+수정 후 Desktop run 37742364446의 결과([근거](../assessment/enterprise-remaining-implementation-2026-10-08/ci-37742364446/)):
+
+- macOS arm64 dist·DMG, Windows dist·설치본: `--cli` 검사 fail(의도한 위반), 저장소 삭제 후 replay 일치, spans 3/3 검증,
+  run 기록 `publication-skipped`로 종료.
+- macOS arm64 종료 진단: 5회 모두 exit 0, `main-start`→`event-loop-start`→`package-check-exit-requested`→
+  `event-loop-returned`→`atexit` 기록. Intel은 React 테스트 실패로 이 단계까지 가지 못했다. 15번(Intel 종료 실패)의 원인은
+  아직 관찰되지 않았다.
+
+최종 commit의 CI 결과는 이 보고서에 포함되지 않으며 실행 기록으로 확인한다.
 
 ## 남은 한계
 
