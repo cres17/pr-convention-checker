@@ -53,14 +53,22 @@ def trust_sensitive_paths(changed_paths):
     return tuple(sorted({path for path in changed_paths if matches_any(path, list(TRUST_SENSITIVE))}))
 
 
-def decide(trusted, candidate, changed_paths):
-    """Combine a trusted run and a candidate shadow run into an action."""
+def decide(trusted, candidate, changed_paths, *, subject_mismatches=()):
+    """Combine a trusted run and a candidate shadow run into an action.
+
+    ``subject_mismatches`` lists identity fields (commits, policy, comparison, evaluation
+    context, input digest) on which the two runs disagree. A verdict about a different
+    subject is never a merge basis for this one.
+    """
     if not isinstance(trusted, EngineRun) or trusted.role != 'trusted':
         raise ValueError('expected the trusted engine run')
     if candidate is not None and (not isinstance(candidate, EngineRun) or candidate.role != 'candidate'):
         raise ValueError('expected the candidate engine run')
     sensitive = trust_sensitive_paths(changed_paths)
     reasons = []
+    if subject_mismatches:
+        reasons.extend(f'trusted-subject-mismatch:{field}' for field in subject_mismatches)
+        return TrustDecision('review', 'none', tuple(reasons), sensitive)
     if trusted.gate_result is None or not trusted.attested:
         reasons.append('trusted-engine-unavailable' if trusted.gate_result is None else 'trusted-engine-unattested')
         # Without an independent verdict nothing, including a candidate pass, is a merge basis.

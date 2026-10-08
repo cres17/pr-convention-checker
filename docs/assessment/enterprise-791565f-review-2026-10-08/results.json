@@ -1,0 +1,203 @@
+{
+  "oneof_overlap": {
+    "old": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "new": {
+      "type": "integer"
+    },
+    "witness": 1,
+    "oracle_old_accepts": false,
+    "oracle_new_accepts": true,
+    "comparison": {
+      "schema": "api-compatibility-v1",
+      "direction": "response",
+      "truth": "T",
+      "breaking": [],
+      "unknown": [],
+      "semantics": "strict-json-schema-inclusion"
+    },
+    "actual_gate": "pass"
+  },
+  "allof_additional_properties": {
+    "old": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "a": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "b": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "new": {
+      "type": "object",
+      "properties": {
+        "a": {
+          "type": "string"
+        },
+        "b": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "witness": {
+      "a": "x"
+    },
+    "oracle_old_accepts": false,
+    "oracle_new_accepts": true,
+    "comparison": {
+      "schema": "api-compatibility-v1",
+      "direction": "response",
+      "truth": "T",
+      "breaking": [],
+      "unknown": [],
+      "semantics": "strict-json-schema-inclusion"
+    },
+    "actual_gate": "pass"
+  },
+  "default_response": {
+    "schema": "api-compatibility-v1",
+    "direction": "response",
+    "truth": "T",
+    "breaking": [],
+    "unknown": [],
+    "semantics": "strict-json-schema-inclusion"
+  },
+  "path_item_required_parameter": {
+    "schema": "api-compatibility-v1",
+    "direction": "request",
+    "truth": "T",
+    "breaking": [],
+    "unknown": [],
+    "semantics": "strict-json-schema-inclusion"
+  },
+  "literal_dynamic_import": {
+    "schema": "dependency-impact-v1",
+    "seeds": [
+      "dep.js"
+    ],
+    "affected": [
+      "dep.js"
+    ],
+    "analysis_scope": [
+      "dep.js"
+    ],
+    "removed_edges": [],
+    "added_edges": [],
+    "cycles": [],
+    "closed": true,
+    "open_boundaries": [],
+    "external_boundaries": [],
+    "assumptions": [
+      "external-packages-contribute-no-repository-contract-facts",
+      "static-literal-imports-only"
+    ]
+  },
+  "static_import_control": {
+    "schema": "dependency-impact-v1",
+    "seeds": [
+      "dep.js"
+    ],
+    "affected": [
+      "app.js",
+      "dep.js"
+    ],
+    "analysis_scope": [
+      "app.js",
+      "dep.js"
+    ],
+    "removed_edges": [],
+    "added_edges": [],
+    "cycles": [],
+    "closed": true,
+    "open_boundaries": [],
+    "external_boundaries": [],
+    "assumptions": [
+      "external-packages-contribute-no-repository-contract-facts",
+      "static-literal-imports-only"
+    ]
+  },
+  "cache_value_tamper": {
+    "value_after_tamper": [],
+    "stats": {
+      "hits": 1,
+      "misses": 0,
+      "rejected_entries": 0,
+      "stored": 1,
+      "not_stored_transient_or_incomplete": 0,
+      "root": "/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-review-abnwbm09/cache"
+    }
+  },
+  "org_scope": {
+    "direct_read_denied_control": true,
+    "backup_contains_out_of_scope_result": true,
+    "purge_deletes_out_of_scope_result": true,
+    "limited_admin_created_wildcard_admin": true
+  },
+  "holdout_cross_input_labels": {
+    "exit_code": 0,
+    "cli": {
+      "metrics_sha256": "6bd2fb6f21f870ed9d5eb62e09422f555b87ee9c12eaf7b6326830d496238c13"
+    },
+    "source_A_sha256": "cf4fa7a2325e1fcf2cbfbd98bfdd4819dfd36ad9818b55e528894c6c2afe81df",
+    "source_B_sha256": "08c0d91d1419325df31ee29a7b35e9a4500531f4ae1690635908f2e3ec91d34f",
+    "both_file_pins_correct": true,
+    "metrics_written": true,
+    "results_gate_A": "pass",
+    "reviewed_gate_B": "fail",
+    "labels_fields": [
+      "agreement",
+      "labels",
+      "schema",
+      "sources_kept_separate",
+      "unresolved"
+    ]
+  },
+  "holdout_express_equivalence": {
+    "production_gate": "pass",
+    "production_rules": [
+      "pass"
+    ],
+    "holdout": [
+      {
+        "case_id": "shared-id",
+        "gate": "fail",
+        "expected_gate": "pass",
+        "error": ""
+      }
+    ],
+    "units": [
+      {
+        "unit_id": "shared-id::api",
+        "case_id": "shared-id",
+        "rule_id": "api",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "expected_decision": "satisfied",
+        "expected_support": "supported",
+        "known_violation": false
+      }
+    ]
+  }
+}

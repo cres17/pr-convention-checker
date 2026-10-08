@@ -1,0 +1,76 @@
+{
+  "schema": "packaged-cli-check-v1",
+  "executable": "/Users/runner/work/pr-convention-checker/pr-convention-checker/dist/DriftGate.app/Contents/MacOS/DriftGate",
+  "executable_sha256": "f1804498881b6409bacca44be2531dc783918c01263a11bf6580e4e1e04ad231",
+  "steps": [
+    {
+      "step": "check-with-evidence-and-journal",
+      "exit_code": 1,
+      "expected": [
+        1
+      ],
+      "stderr_tail": "",
+      "ok": true
+    },
+    {
+      "step": "bundle-verify",
+      "exit_code": 0,
+      "expected": [
+        0
+      ],
+      "stderr_tail": "",
+      "ok": true
+    },
+    {
+      "step": "bundle-replay",
+      "exit_code": 1,
+      "expected": [
+        1
+      ],
+      "stderr_tail": "",
+      "ok": true
+    },
+    {
+      "step": "bundle-spans",
+      "exit_code": 0,
+      "expected": [
+        0
+      ],
+      "stderr_tail": "",
+      "ok": true
+    }
+  ],
+  "gate_result": "fail",
+  "run_history": [
+    "requested",
+    "validated",
+    "captured",
+    "planned",
+    "analyzing",
+    "evaluated",
+    "result-validated",
+    "persisted",
+    "publication-skipped"
+  ],
+  "receipt_sha256": "0d087302072408d994ed1607cbdd35736e6e7254375bf9d5aceba658d2275d20",
+  "replay_matches": true,
+  "spans_verified": 3,
+  "producer": {
+    "authenticated": false,
+    "loaded_code_attested": false,
+    "packages": {
+      "PyYAML": null,
+      "drift-gate": null,
+      "tree-sitter": null,
+      "tree-sitter-language-pack": "1.20.0"
+    },
+    "parser_binary_attested": false,
+    "python": "3.11.9 (v3.11.9:de54cf5be3, Apr  2 2024, 07:12:50) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "schema": "observed-producer-v1",
+    "source_files": 0,
+    "source_scope": "available-core-adapters-utils-python-files",
+    "source_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "repository_deleted_before_replay": true,
+  "platform": "darwin"
+}

@@ -14,6 +14,8 @@ from drift_gate.core.models.evaluation_context import EvaluationContext
 from drift_gate.adapters.snapshot import capture_inspection, InspectionSnapshot
 
 
+INPUT_DIGEST_VERSION = 3  # bump when the execution input digest changes shape
+
 def execution_metadata(execution, policy_path, source, policy, files, provenance, context):
     # Internal snapshots affect semantic decisions, but their contents must not
     # enter reports/history. Hashes bind the receipt to the actual inputs.
@@ -28,7 +30,7 @@ def execution_metadata(execution, policy_path, source, policy, files, provenance
                 "policy_sha256": digest(policy_text), "policy_digest_kind": "source" if source is not None else "policy-object",
                 "warnings": policy.load_warnings,
                 "evaluation_context": context.to_dict(),
-                "input_digest_version": 3,
+                "input_digest_version": INPUT_DIGEST_VERSION,
                 "input_sha256": digest(json.dumps({'files': inputs, 'evaluation_context': context.to_dict()},
                                                   sort_keys=True, allow_nan=False))}
     if policy_path is not None:

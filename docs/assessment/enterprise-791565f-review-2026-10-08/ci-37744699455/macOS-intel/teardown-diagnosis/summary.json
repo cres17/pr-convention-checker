@@ -1,0 +1,89 @@
+{
+  "schema": "qt-teardown-diagnosis-v1",
+  "platform": "darwin",
+  "executable": "/Users/runner/work/pr-convention-checker/pr-convention-checker/dist/DriftGate.app/Contents/MacOS/DriftGate",
+  "runs": [
+    {
+      "run": 1,
+      "exit_code": 0,
+      "seconds": 5.58,
+      "last_events": [
+        "main-start",
+        "event-loop-start",
+        "package-check-exit-requested",
+        "event-loop-returned",
+        "atexit"
+      ],
+      "faulthandler_lines": [],
+      "result_written": true,
+      "crashed_after_event_loop": false
+    },
+    {
+      "run": 2,
+      "exit_code": 0,
+      "seconds": 5.63,
+      "last_events": [
+        "main-start",
+        "event-loop-start",
+        "package-check-exit-requested",
+        "event-loop-returned",
+        "atexit"
+      ],
+      "faulthandler_lines": [],
+      "result_written": true,
+      "crashed_after_event_loop": false
+    },
+    {
+      "run": 3,
+      "exit_code": 0,
+      "seconds": 5.55,
+      "last_events": [
+        "main-start",
+        "event-loop-start",
+        "package-check-exit-requested",
+        "event-loop-returned",
+        "atexit"
+      ],
+      "faulthandler_lines": [],
+      "result_written": true,
+      "crashed_after_event_loop": false
+    },
+    {
+      "run": 4,
+      "exit_code": 0,
+      "seconds": 5.51,
+      "last_events": [
+        "main-start",
+        "event-loop-start",
+        "package-check-exit-requested",
+        "event-loop-returned",
+        "atexit"
+      ],
+      "faulthandler_lines": [],
+      "result_written": true,
+      "crashed_after_event_loop": false
+    },
+    {
+      "run": 5,
+      "exit_code": 0,
+      "seconds": 5.58,
+      "last_events": [
+        "main-start",
+        "event-loop-start",
+        "package-check-exit-requested",
+        "event-loop-returned",
+        "atexit"
+      ],
+      "faulthandler_lines": [],
+      "result_written": true,
+      "crashed_after_event_loop": false
+    }
+  ],
+  "exit_codes": {
+    "0": 5
+  },
+  "nonzero_runs": [],
+  "crash_phase": [],
+  "runs_without_trace": [],
+  "interpretation": "observation only; a clean set of runs does not prove the earlier failure is fixed"
+}

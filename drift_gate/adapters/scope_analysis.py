@@ -24,29 +24,63 @@ MAX_MODULE_BYTES = 1_000_000
 PROFILES = {'api-route': ('python-fastapi-routes', '1'), 'env-key': ('python-env-literals', '1')}
 
 
-def _batch_read(root, oids, budget):
-    """{oid: bytes} via one cat-file process; each object is size-checked before use."""
-    if not oids:
-        return {}
-    budget.consume('git_calls', 1, stage='scope-batch-read')
+def _cat_file(root, mode, oids):
     request = ''.join(oid + '\n' for oid in oids).encode('ascii')
     try:
-        completed = subprocess.run(['git', '--no-replace-objects', 'cat-file', '--batch'], cwd=root, input=request,
+        completed = subprocess.run(['git', '--no-replace-objects', 'cat-file', mode], cwd=root, input=request,
                                    env=_git_environment(), capture_output=True, timeout=120)
     except (OSError, subprocess.SubprocessError) as exc:
         raise GitInputError('Could not batch-read Git objects') from exc
-    data, position, objects = completed.stdout, 0, {}
-    for oid in oids:
+    if completed.returncode != 0:
+        raise GitInputError('Could not batch-read Git objects')
+    return completed.stdout
+
+
+def _batch_read(root, oids, budget, *, max_object_bytes=None):
+    """{oid: bytes} for objects within ``max_object_bytes``.
+
+    Sizes are read first (``--batch-check``) and the byte budget is charged for everything that
+    will be read *before* any content is loaded, so an over-budget scope fails without holding
+    the objects in memory. Larger objects are not read at all and are absent from the result.
+    """
+    if not oids:
+        return {}
+    budget.consume('git_calls', 1, stage='scope-batch-size')
+    sizes = {}
+    for line in _cat_file(root, '--batch-check', oids).splitlines():
+        parts = line.decode('ascii').split()
+        if len(parts) != 3 or parts[1] != 'blob' or not parts[2].isdigit():
+            raise GitInputError('Unexpected batch object')
+        sizes[parts[0]] = int(parts[2])
+    if set(sizes) != set(oids):
+        raise GitInputError('Unexpected batch object')
+    wanted = [oid for oid in oids if max_object_bytes is None or sizes[oid] <= max_object_bytes]
+    budget.consume('bytes', sum(sizes[oid] for oid in wanted), stage='scope-batch-read')
+    if not wanted:
+        return {}
+    budget.consume('git_calls', 1, stage='scope-batch-read')
+    data, position, objects = _cat_file(root, '--batch', wanted), 0, {}
+    for oid in wanted:
         end = data.index(b'\n', position)
         header = data[position:end].decode('ascii').split()
-        if len(header) != 3 or header[0] != oid or header[1] != 'blob':
+        if len(header) != 3 or header[0] != oid or header[1] != 'blob' or int(header[2]) != sizes[oid]:
             raise GitInputError('Unexpected batch object')
-        size = int(header[2])
         start = end + 1
-        objects[oid] = data[start:start + size]
-        position = start + size + 1
-        budget.consume('bytes', size, stage='scope-batch-read')
+        objects[oid] = data[start:start + sizes[oid]]
+        position = start + sizes[oid] + 1
     return objects
+
+
+# Source languages the scope profiles do not read. A service containing them is never certified whole.
+OTHER_SOURCE = ('.go', '.rb', '.java', '.kt', '.kts', '.scala', '.php', '.cs', '.rs', '.swift', '.c', '.cc',
+                '.cpp', '.h', '.hpp', '.m', '.mm', '.ex', '.exs', '.clj', '.dart', '.lua', '.pl', '.r', '.vue',
+                '.svelte', '.groovy', '.fs', '.erl', '.hs')
+
+
+def _other_sources(reader, revision):
+    return sorted(path for path, entry in reader.catalog(revision).items()
+                  if path.lower().endswith(OTHER_SOURCE) and entry[1] == 'blob'
+                  and '/node_modules/' not in '/' + path and '/.venv/' not in '/' + path)
 
 
 def _modules(reader, revision):
@@ -60,7 +94,7 @@ def _sources(root, reader, revision, budget):
     modules = _modules(reader, revision)
     budget.consume('files', len(modules), stage=f'scope-enumerate-{revision[:12]}')
     oids = sorted({entry[2] for entry in modules.values()})
-    objects = _batch_read(root, oids, budget)
+    objects = _batch_read(root, oids, budget, max_object_bytes=MAX_MODULE_BYTES)
     sources, unread = {}, []
     for path, (mode, kind, oid) in sorted(modules.items()):
         raw = objects.get(oid)
@@ -197,6 +231,8 @@ def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256
         all_open = {b.module for b in g_before.open_boundaries + g_after.open_boundaries}
         ambiguous = {row[0] for row in comparison['ambiguous_service_scope']}
         unread = set(before_unread) | set(after_unread)
+        other = sorted(set(_other_sources(reader, base_oid)) | set(_other_sources(reader, head_oid)))
+        other_owner, _ = service_model.assign(other, declared)
         rows = []
         for service in declared:
             members = {m for side in ('before', 'after') for m, owner in sides[side][1].items() if owner == service.id}
@@ -214,7 +250,8 @@ def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256
                     profile_after=PROFILES[family], before_facts=facts[0], after_facts=facts[1],
                     modules=len(members), unread_modules=sorted(members & unread), open_modules=sorted(set(open_members)),
                     dependency_open_modules=sorted(members & all_open), ambiguous_modules=sorted(ambiguous),
-                    limited=False, before_tree=reader.tree_ids[base_oid], after_tree=reader.tree_ids[head_oid]
+                    limited=False, before_tree=reader.tree_ids[base_oid], after_tree=reader.tree_ids[head_oid],
+                    unsupported_language_modules=[p for p, owner in other_owner.items() if owner == service.id],
                 ).to_dict())
         budget.check_time('scope-complete')
         return {'schema': 'scope-analysis-v1', 'complete': True,
@@ -229,4 +266,6 @@ def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256
                 'services': comparison, 'no_delta_certificates': rows,
                 'selection_vs_scope': 'certificates cover every enumerated module of a service, '
                                       'not only the changed selection',
+                'languages_read': ['python', 'javascript', 'typescript'],
+                'unsupported_language_files': other,
                 'budget': budget.to_dict()}

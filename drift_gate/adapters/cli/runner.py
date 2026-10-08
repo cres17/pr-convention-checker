@@ -1300,7 +1300,7 @@ def _run_holdout(args):
         from drift_gate.adapters.holdout_instructions import REVIEW_INSTRUCTIONS
         data = {'packet_sha256': h.write_once(args.out, h.review_packet(frozen, instructions=REVIEW_INSTRUCTIONS))}
     elif args.operation == 'adjudicate':
-        packet, _ = h.read_pinned(args.packet, args.packet_sha256, 'holdout-review-packet-v1')
+        packet, _ = h.read_pinned(args.packet, args.packet_sha256, h.PACKET)
         reviews = [row for path in args.reviews for row in lines(path)]
         resolutions = lines(args.resolutions) if args.resolutions else []
         labels = h.adjudicate(packet, reviews, resolutions)

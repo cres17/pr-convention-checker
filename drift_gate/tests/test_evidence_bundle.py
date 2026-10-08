@@ -305,6 +305,26 @@ def test_changed_producer_is_reported_without_claiming_pinned_engine(tmp_path, r
     assert comparison['producer_authenticated'] is False
 
 
+def test_frozen_build_without_sources_never_claims_a_producer_match(tmp_path, result, monkeypatch):
+    # Review 791565f: packaged apps recorded source_files=0 and the digest of an empty map.
+    real = store.producer_identity
+
+    def frozen():
+        identity = real()
+        identity.update(source_files=0, source_sha256=sha256(canonical_bytes({})).hexdigest())
+        return identity
+
+    monkeypatch.setattr(store, 'producer_identity', frozen)
+    bundle = store.save_bundle(result, tmp_path)
+    comparison = bundle.replay().execution['bundle_replay']
+    assert comparison['recorded_result_matches_current'] is True
+    assert comparison['producer_sources_observed'] is False and comparison['observed_producer_matches'] is False
+    from drift_gate.adapters.trusted_validation import certified_replay
+    refused = certified_replay(bundle.path, root=tmp_path, manifest={'producer_source_sha256': 'f' * 64})
+    assert refused == {'schema': 'certified-replay-v1', 'certified': False,
+                       'reason': 'bundle-producer-sources-unobserved', 'receipt_producer_source_files': 0}
+
+
 def test_substituted_input_snapshot_is_rejected_before_storage(tmp_path, result):
     result.input_snapshot = capture(contract_proofs=False)
     with pytest.raises(BundleError, match='bind'):

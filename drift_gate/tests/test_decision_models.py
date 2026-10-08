@@ -361,3 +361,146 @@ def test_policy_group_uses_before_and_after_documents():
     with pytest.raises(PolicyLoadError, match='direction'):
         load_policy_from_dict({'rules': [{'id': 'c', 'when': {'any_changed': ['o.json']},
             'require': {'groups': [{'name': 'g', 'any_changed': ['o.json'], 'content': 'api-compatibility'}]}}]})
+
+
+# -- 21b. composites against an independent JSON Schema validator (review 791565f R1) --------------
+def _jsonschema():
+    return pytest.importorskip('jsonschema', minversion='4.0').Draft202012Validator
+
+
+def _op_document(schema=None, *, status='200', responses=None, path_params=None, op_params=None):
+    operation = {'responses': responses or {status: {'content': {'application/json': {'schema': schema or {}}}}}}
+    if op_params is not None:
+        operation['parameters'] = op_params
+    item = {'get': operation}
+    if path_params is not None:
+        item['parameters'] = path_params
+    return {'openapi': '3.1.0', 'paths': {'/x': item}}
+
+
+@pytest.mark.parametrize('old, new, witness', [
+    ({'oneOf': [{'type': 'number'}, {'type': 'integer'}]}, {'type': 'integer'}, 1),
+    ({'allOf': [{'type': 'object', 'properties': {'a': {'type': 'string'}}, 'additionalProperties': False},
+                {'type': 'object', 'properties': {'b': {'type': 'string'}}, 'additionalProperties': False}]},
+     {'type': 'object', 'properties': {'a': {'type': 'string'}, 'b': {'type': 'string'}}, 'additionalProperties': False},
+     {'a': 'x'}),
+])
+def test_review_counterexamples_are_never_reported_compatible(old, new, witness):
+    validator = _jsonschema()
+    assert not validator(old).is_valid(witness) and validator(new).is_valid(witness)
+    result = compare_documents(_op_document(old), _op_document(new), 'response')
+    assert result.truth != Truth.TRUE, result.to_dict()
+    policy = load_policy_from_dict({'rules': [{'id': 'compat', 'when': {'any_changed': ['openapi.json']},
+        'require': {'groups': [{'name': 'compatible', 'any_changed': ['openapi.json'], 'content': 'api-compatibility',
+                                'direction': 'response'}]}, 'severity': 'blocker'}]})
+    before, after = json.dumps(_op_document(old)), json.dumps(_op_document(new))
+    file = ChangedFile('openapi.json', 'modified', patch='@@\n+x\n', before_source=before, after_source=after)
+    assert run([file], policy=policy).result != 'pass'
+
+
+def test_oneof_with_disjoint_branches_still_proves_inclusion():
+    old = {'oneOf': [{'type': 'string'}, {'type': 'integer'}]}
+    assert compare_documents(_op_document(old), _op_document({'type': 'integer'}), 'response').truth == Truth.TRUE
+    enums = {'oneOf': [{'type': 'string', 'enum': ['a']}, {'type': 'string', 'enum': ['b']}]}
+    assert compare_documents(_op_document(enums), _op_document({'type': 'string', 'enum': ['a']}),
+                             'response').truth == Truth.TRUE
+    overlapping = {'oneOf': [{'type': 'number'}, {'type': 'integer'}]}
+    assert compare_documents(_op_document({'type': 'string'}), _op_document(overlapping), 'response').truth \
+        == Truth.UNKNOWN  # not F: a string fits neither branch of the new oneOf, but no witness is proven here
+
+
+def test_allof_branches_forbidding_each_others_keys():
+    old = {'allOf': [{'type': 'object', 'properties': {'a': {'type': 'string'}}, 'additionalProperties': False},
+                     {'type': 'object', 'properties': {'b': {'type': 'string'}}, 'additionalProperties': False}]}
+    node = normalize(old, {})
+    assert admits(node, {}) == Truth.TRUE and admits(node, {'a': 'x'}) == Truth.FALSE
+    compatible = {'type': 'object', 'additionalProperties': False}
+    assert compare_documents(_op_document(old), _op_document(compatible), 'response').truth == Truth.TRUE
+    with pytest.raises(Unsupported):
+        normalize({'allOf': [{'type': 'object', 'required': ['a'], 'additionalProperties': False},
+                             {'type': 'object', 'properties': {'a': {'type': 'string'}}}]}, {})
+
+
+def test_default_and_range_responses_are_compared_with_the_status_they_answer():
+    default_old = {'default': {'content': {'application/json': {'schema': {'type': 'string'}}}}}
+    narrower = _op_document(responses={'200': {'content': {'application/json': {'schema': {'type': 'string'}}}},
+                                       **default_old})
+    wider = _op_document(responses={'200': {'content': {'application/json': {'schema': {'type': 'integer'}}}},
+                                    **default_old})
+    old = _op_document(responses=default_old)
+    assert compare_documents(old, narrower, 'response').truth == Truth.TRUE
+    result = compare_documents(old, wider, 'response')
+    assert result.truth == Truth.FALSE and result.breaking[0].location.startswith('responses.200(old default)')
+    ranged = _op_document(responses={'2XX': {'content': {'application/json': {'schema': {'type': 'string'}}}}})
+    assert compare_documents(ranged, _op_document({'type': 'string'}, status='201'), 'response').truth == Truth.TRUE
+    assert compare_documents(_op_document({}), _op_document(responses={'200': {'content': {'application/json': {
+        'schema': {}}}}, 'default': {}}), 'response').truth == Truth.UNKNOWN  # new catch-all
+
+
+def test_path_item_parameters_apply_to_every_operation():
+    old = _op_document({'type': 'string'})
+    required = [{'name': 'tenant', 'in': 'query', 'required': True, 'schema': {'type': 'string'}}]
+    result = compare_documents(old, _op_document({'type': 'string'}, path_params=required), 'request')
+    assert result.truth == Truth.FALSE and result.breaking[0].check == 'required-parameter-added'
+    overridden = [{'name': 'tenant', 'in': 'query', 'required': False, 'schema': {'type': 'string'}}]
+    relaxed = _op_document({'type': 'string'}, path_params=required, op_params=overridden)
+    assert compare_documents(old, relaxed, 'request').truth == Truth.TRUE
+    referenced = _op_document({'type': 'string'}, path_params=[{'$ref': '#/components/parameters/T'}])
+    assert compare_documents(old, referenced, 'request').truth == Truth.UNKNOWN
+
+
+def random_composite(rng, depth=0):
+    if depth < 2 and rng.random() < 0.45:
+        keyword = rng.choice(['oneOf', 'anyOf', 'allOf'])
+        return {keyword: [random_composite(rng, depth + 1) for _ in range(rng.randint(1, 3))]}
+    schema = random_schema(rng, depth + 1)
+    schema.pop('nullable', None)  # OpenAPI 3.0 keyword; the JSON Schema validator does not know it
+    for sub in schema.get('properties', {}).values():
+        sub.pop('nullable', None)
+    if 'items' in schema:
+        schema['items'].pop('nullable', None)
+    return schema
+
+
+def _members(schema):
+    for keyword in ('oneOf', 'anyOf', 'allOf'):
+        if keyword in schema:
+            return [value for branch in schema[keyword] for value in _members(branch)]
+    return instances(schema) if not any(k in json.dumps(schema) for k in ('oneOf', 'anyOf', 'allOf')) else []
+
+
+def test_composite_inclusion_is_sound_against_jsonschema():
+    validator = _jsonschema()
+    rng = random.Random(791565)
+    decided = {Truth.TRUE: 0, Truth.FALSE: 0, Truth.UNKNOWN: 0}
+    for _ in range(1500):
+        a, b = random_composite(rng), random_composite(rng)
+        try:
+            verdict = subset(normalize(a, {}), normalize(b, {}), '$', [])
+        except Unsupported:
+            continue
+        decided[verdict] += 1
+        va, vb = validator(a), validator(b)
+        candidates = UNIVERSE + _members(a)
+        counterexamples = [v for v in candidates if va.is_valid(v) and not vb.is_valid(v)]
+        if verdict == Truth.TRUE:
+            assert not counterexamples, (a, b, counterexamples[:3])
+        elif verdict == Truth.FALSE:
+            assert counterexamples, (a, b)
+    assert decided[Truth.TRUE] > 100 and decided[Truth.FALSE] > 100 and decided[Truth.UNKNOWN] > 10, decided
+
+
+def test_admits_on_composites_matches_jsonschema():
+    validator = _jsonschema()
+    rng = random.Random(42)
+    for _ in range(300):
+        schema = random_composite(rng)
+        try:
+            node = normalize(schema, {})
+        except Unsupported:
+            continue
+        check = validator(schema)
+        for value in UNIVERSE:
+            verdict = admits(node, value)
+            if verdict != Truth.UNKNOWN:
+                assert (verdict == Truth.TRUE) == check.is_valid(value), (schema, value)

@@ -40,6 +40,9 @@ undetermined, skipped, error는 분모에서 빼지 않는다.
 
 모든 출력은 한 번만 쓰이고 같은 경로에 다시 쓰면 오류다. 각 단계가 출력하는 SHA-256을 다음 단계에 넘긴다.
 run·packet·adjudicate·score는 pin 인자가 없으면 실행하지 않는다.
+각 산출물은 원본 산출물의 digest를 기록한다(packet → frozen, labels → packet·frozen). `score`는 labels가 results와
+같은 frozen 입력·protocol에서 나왔는지 확인하고, 다른 frozen 입력을 검토한 labels는 항목 ID가 같아도 거부한다.
+`run`은 제품 검사와 같은 inspection 경로로 실행하므로 Express 등 제품의 전처리가 평가에도 적용된다.
 
 ```bash
 drift-gate holdout split --input candidates.json --seed <공개한 seed> --holdout-fraction 0.3 \

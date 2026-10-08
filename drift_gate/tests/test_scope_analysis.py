@@ -197,3 +197,49 @@ def test_policy_memory_budget_reaches_isolated_workers(tmp_path, monkeypatch):
     expected = ([] if platform.startswith('linux') else ['memory'] if platform == 'darwin'
                 else ['cpu', 'file-size', 'memory', 'open-files'])
     assert report['worker_limits_unapplied'] == expected and not report['worker_failures']
+
+
+@pytest.mark.parametrize('app, affected, open_kinds', [
+    ('export async function run() { return import("./dep.js"); }\n', ['app.js', 'dep.js'], []),
+    ("export const lazy = () => import(\n  './dep'\n);\n", ['app.js', 'dep.js'], []),
+    ('import {x} from "./dep.js";\n', ['app.js', 'dep.js'], []),
+    ('const dep = require("./dep.js");\n', ['app.js', 'dep.js'], []),
+    ('export const load = (name) => import(name);\n', ['dep.js'], ['dynamic-import']),
+    ('export const load = (n) => import(`./${n}.js`);\n', ['dep.js'], ['dynamic-import']),
+])
+def test_js_import_forms_are_edges_or_open_boundaries(app, affected, open_kinds):
+    # Review 791565f R6: a literal import() was neither an edge nor an open boundary, yet closed=true.
+    graph = build_graph({'app.js': app, 'dep.js': 'export const x = 1;\n'})
+    scope = impact(graph, graph, ['dep.js']).to_dict()
+    assert scope['affected'] == affected
+    assert sorted({b['kind'] for b in scope['open_boundaries']}) == open_kinds
+    assert scope['closed'] == (not open_kinds)
+
+
+def test_byte_budget_is_charged_before_object_contents_are_loaded(repo, monkeypatch):
+    from drift_gate.adapters import scope_analysis
+    root, base = repo
+    calls = []
+    real = scope_analysis._cat_file
+
+    def record(where, mode, oids):
+        calls.append(mode)
+        return real(where, mode, oids)
+
+    monkeypatch.setattr(scope_analysis, '_cat_file', record)
+    used = run(root, base, base)['budget']['usage']['bytes']
+    calls.clear()
+    budget = InspectionBudget.from_policy(None)
+    budget.limits['max_total_bytes'] = used - 1  # the last (head-side) module read no longer fits
+    data = run(root, base, base, budget=budget)
+    assert data['complete'] is False and data['resource_limit']['unit'] == 'bytes'
+    assert calls == ['--batch-check', '--batch', '--batch-check']  # head contents were never loaded
+
+
+def test_service_with_unread_languages_is_not_certified_whole(repo):
+    root, base = repo
+    head = commit(root, {'services/billing/worker.go': 'package billing\n'}, 'add go worker')
+    data = run(root, base, head)
+    assert data['unsupported_language_files'] == ['services/billing/worker.go']
+    assert 'unsupported_language' in cert(data, 'billing', 'env-key')['reason_codes']
+    assert cert(data, 'shipping', 'env-key')['certified']

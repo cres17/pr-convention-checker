@@ -16,6 +16,10 @@ ROLES = {
     'auditor': {'audit.read', 'results.read'},
 }
 ACTIONS = sorted(set().union(*ROLES.values()))
+# Actions whose effect is not limited to one repository: they read, change or delegate the whole
+# tenant, so a repository-scoped principal may never perform them, whatever its role.
+TENANT_WIDE = frozenset({'principals.manage', 'retention.configure', 'backup.create', 'backup.restore',
+                         'audit.read'})
 _TENANT = re.compile('[a-z][a-z0-9-]{1,62}')
 _PRINCIPAL = re.compile('[A-Za-z0-9._@-]{1,128}')
 
@@ -59,8 +63,25 @@ def authorize(principal, *, tenant_id, action, repository=None):
         return Decision(False, 'unknown-action')
     if not any(action in ROLES[role] for role in principal.roles):
         return Decision(False, 'role-lacks-permission')
+    if action in TENANT_WIDE and '*' not in principal.scopes:
+        return Decision(False, 'tenant-wide-action-requires-tenant-scope')
     if repository is not None and '*' not in principal.scopes and repository not in principal.scopes:
         return Decision(False, 'repository-outside-principal-scope')
+    return Decision(True, 'allowed')
+
+
+def in_scope(principal, repository):
+    return '*' in principal.scopes or repository in principal.scopes
+
+
+def delegation_decision(grantor, roles, scopes):
+    """A grant may not exceed the grantor: every granted permission and scope must be the grantor's own."""
+    granted = set().union(*(ROLES[role] for role in roles)) if roles else set()
+    held = set().union(*(ROLES[role] for role in grantor.roles))
+    if not granted <= held:
+        return Decision(False, 'grant-exceeds-grantor-permissions')
+    if '*' not in grantor.scopes and not set(scopes) <= set(grantor.scopes):
+        return Decision(False, 'grant-exceeds-grantor-scope')
     return Decision(True, 'allowed')
 
 

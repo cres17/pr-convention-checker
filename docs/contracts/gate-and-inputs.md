@@ -18,8 +18,15 @@ merge 근거는 신뢰 엔진 판정뿐이다. 후보 엔진 결과는 shadow이
 allow를 review로 낮출 뿐 block을 해제하지 않는다. 후보가 `drift_gate/**`, 정책, workflow,
 `action.yml`, `packaging/**`, 의존성 파일을 바꾸면 `candidate-changes-checker-policy-or-workflow`로
 review가 된다. 종료 코드는 allow 0, block 1, review 5다. 신뢰 엔진이 판정을 내지 못하거나 module·grammar
-해시 중 하나라도 pin과 다르면 `merge_basis=none`인 review다. 자식이 attestation을 내지 못하면 오류(2)다. 같은 기계의 파일 시스템·네트워크를 공유하므로
-코드 동일성 경계이며 sandbox가 아니다.
+해시 중 하나라도 pin과 다르면 `merge_basis=none`인 review다. 자식이 attestation을 내지 못하면 오류(2)다.
+
+`trusted-check`는 시작할 때 `--base`·`--head`·`--trusted-policy-ref`를 한 번만 commit OID로 확정하고, 두 엔진에
+같은 OID를 넘긴다. 실행 중 branch가 이동해도 두 엔진은 확정한 commit을 검사한다(`subject_binding.resolved_refs`).
+결과를 결합하기 전에 신뢰 엔진 보고서의 head·base·정책 revision·정책 SHA-256·비교 방식을 후보 snapshot과
+대조하고, 두 엔진의 입력 digest protocol이 같으면 입력 digest도 대조한다. 하나라도 다르면
+`trusted-subject-mismatch:<필드>`와 `merge_basis=none`인 review다. protocol이 다르면 digest는 비교하지 않고
+`input_digest_compared=false`로 기록하며, 원본 commit·정책 identity 일치가 공통 규칙이다. 같은 기계의 파일
+시스템·네트워크를 공유하므로 코드 동일성 경계이며 sandbox가 아니다.
 
 ### 면제 승인 envelope (W09)
 
@@ -39,7 +46,10 @@ context에 들어가므로 면제가 없는 실행의 입력 digest는 바뀌지
 
 `bundle replay <묶음> --engine-manifest <파일> --engine-manifest-sha256 <hex> --repo-root <저장소>`는
 현재 프로세스가 아니라 pin된 엔진으로 저장 입력을 다시 평가하고 attestation을 함께 기록한다.
-`certified=false`이면 종료 코드 2다.
+`certified=false`이면 종료 코드 2다. Python 소스가 없는 빌드(설치 앱)가 쓴 묶음은 producer 파일 수가 0이므로
+`bundle-producer-sources-unobserved`로 인증하지 않는다. 일반 `bundle replay`도 이 경우
+`producer_sources_observed=false`, `observed_producer_matches=false`로 기록한다. 빈 파일 집합의 digest가 같아도
+같은 producer라는 근거가 아니다.
 
 ### 문서 membership 구간 (W05/W08)
 
@@ -74,31 +84,49 @@ snapshot을 기존 방식과 proof 방식으로 평가해 그룹별 차이를 �
 `content: api-compatibility`와 `direction: request|response|both`는 OpenAPI 문서 before/after의
 엄격한 JSON Schema 언어 포함으로 판정한다. response는 새 ⊆ 기존, request는 기존 ⊆ 새다.
 지원 profile은 type·required·nullable·enum·properties·additionalProperties·items·status·media type·
-request body·parameter와 local `$ref`, 병합 가능한 `allOf`, union으로서의 `oneOf/anyOf`다.
-재귀 참조는 양쪽 정의가 동일할 때만 같다고 보며, 범위 밖은 U다. 문서와 구현의 일치(consistency)와는
+request body·parameter와 local `$ref`, `allOf`, `anyOf`, `oneOf`다.
+
+- `anyOf`는 합집합이다. `oneOf`는 정확히 한 분기만 받아야 유효하므로, 분기가 서로소임을 증명할 수 있을 때만
+  합집합과 같게 다룬다. 겹칠 수 있는 `oneOf`가 포함 관계의 상위 쪽이면 U이고, 하위 쪽에서 나온 위반 증거도
+  겹침 영역일 수 있으므로 U로 낮춘다.
+- `allOf`는 object key마다 모든 분기가 그 key에 적용하는 schema의 교집합을 쓴다. 한 분기가
+  `additionalProperties:false`로 금지한 key는 다른 분기가 나열해도 금지로 남는다. 교집합을 표현할 수 없는 조합,
+  금지된 key를 required로 요구하는 조합은 U다.
+- 응답은 status별로 대응 응답을 찾는다. 같은 code, `NXX` 범위, `default` 순서이며 새 응답이 기존 `default`가
+  답하던 code를 명시하면 그 body를 기존 `default`와 비교한다. 기존에 없던 `default`의 추가는 U다.
+- parameter는 Path Item의 `parameters`에 operation의 같은 (in, name)을 덮어쓴 유효 목록이다. `$ref` parameter는 U다.
+
+재귀 참조는 양쪽 정의가 동일할 때만 같다고 보며, 범위 밖은 U다. 회귀 시험은 `jsonschema` 4.26.0
+`Draft202012Validator`를 독립 판정기로 써서 T 판정에 반례가 없고 F 판정에 반례가 있는지 확인한다. 문서와 구현의 일치(consistency)와는
 다른 판정이며 실제 소비자는 엄격한 포함보다 더 많은 변화를 허용할 수 있다.
 
 ### 범위 분석: 의존 그래프·서비스 identity·NoDeltaCertificate·예산 (W05/W11/W12)
 
 `scope --base --head --trusted-policy-ref --trusted-policy-sha256`은 Git 객체만 읽어 다음을 낸다.
 
-- 정적 import(Python, JS/TS literal `import`/`require`) 그래프의 before/after. 동적 import, 해석되지 않는
-  상대 import, 저장소 안 package의 미해석 import는 열린 경계다. 영향 범위는 Gbefore ∪ Gafter의
-  역방향 도달이다.
+- 정적 import(Python `import`·literal `import_module`, JS/TS literal `import`/`require`/`import("...")`) 그래프의
+  before/after. 비 literal 동적 import(template literal 포함), 해석되지 않는 상대 import, 저장소 안 package의
+  미해석 import는 열린 경계다. 영향 범위는 Gbefore ∪ Gafter의 역방향 도달이다. 열린 경계는 범위 밖 module에
+  있어도 그 module이 seed에 의존할 수 있으므로 `closed=false`로 만든다. 정규식 기반 JS 탐지이므로 주석·문자열 안의
+  호출을 구분하지 않는다.
 - 정책 `services: [{id, paths, entrypoints}]`에 따른 route identity `(service, entrypoint, METHOD, path)`와
   env identity `(service, KEY)`. 어느 서비스에도 속하지 않거나 둘 이상에 속하는 module은
   `ambiguous_service_scope`이며 사실을 병합하지 않는다. 서비스가 없으면 저장소 전체를 하나의
   서비스로 본다(`implicit-single-repository-service`).
 - 서비스·family별 NoDeltaCertificate 또는 거부 사유(`missing_source`, `profile_mismatch`,
-  `unsupported_binding`, `open_dependency_scope`, `ambiguous_service_scope`, `identity_delta`). 선택한 파일
-  집합의 빈 변경은 이 인증서가 아니다. 예산 초과 시에는 인증서를 만들지 않고 보고서 전체가
+  `unsupported_binding`, `open_dependency_scope`, `ambiguous_service_scope`, `identity_delta`,
+  `unsupported_language`). 분석은 Python·JavaScript·TypeScript만 읽는다. 서비스 경로에 Go·Java 등 다른 언어 소스가
+  있으면 그 서비스는 `unsupported_language`로 인증하지 않으며 보고서의 `unsupported_language_files`에 남긴다.
+  선택한 파일 집합의 빈 변경은 이 인증서가 아니다. 예산 초과 시에는 인증서를 만들지 않고 보고서 전체가
   `complete=false`와 `resource_limit`이 된다.
 - 정책 `budget`(max_files, max_total_bytes, max_git_calls, max_wall_seconds, max_graph_edges,
   max_report_bytes, max_memory_bytes). immutable 수집·`scope`·보고서 단계가 사용량을 기록한다. `check`에서
   초과하면 `error.code=resource_limit`과 `error.resource`로 종료 코드 2, `scope`에서 초과하면
   `complete=false`·`resource_limit` 보고서와 종료 코드 2다. 부분 결과를 성공으로 내지 않는다.
   기본값은 이 저장소 전체 PR 수집(125MB, 3,688파일)에 여유를 둔 값이며 서비스 수준 보장이 아니다.
-  `max_memory_bytes`는 `--isolated-workers`의 worker 주소 공간 제한에만 적용된다.
+  `max_memory_bytes`는 `--isolated-workers`의 worker 주소 공간 제한에만 적용된다. `scope`는 객체 크기를 먼저
+  조회(`cat-file --batch-check`)해 읽을 bytes 전체를 예산에 청구한 뒤 내용을 읽으므로, 예산을 넘는 범위는 내용을
+  memory에 올리기 전에 끝난다. 1,000,000 bytes를 넘는 module은 읽지 않고 `missing_source`가 된다.
 
 새 정책 필드(services, budget, proof_gate, trigger, direction)는 기본값일 때 정책 identity에서 빠지므로
 기존 묶음의 정책 binding은 그대로 유지된다. 신뢰 정책 대비 proof_gate·services·typed trigger 변경, budget 제거나
@@ -118,13 +146,21 @@ POSIX에서는 process group을 만들고 종료 시 group 전체를 kill한다.
 `scope --cache-dir <경로>`는 artifact SHA-256, 분석 연산·profile 버전, 엔진 source digest, parser pin을
 key로 사실을 저장한다. key에는 승인 context와 자원 제한 칸도 있으나 `scope`는 현재 고정값(`none`, `{}`)을
 넣는다. `complete`와 결정적 `unsupported`만 저장하고 timeout·crash·자원 제한은 저장하지 않는다. 읽을 때
-key 입력을 다시 hash해 다르면 miss로 처리한다. `--isolated-workers`와 함께 쓰면 캐시는 사용되지 않는다.
+key 입력을 다시 hash하고 결과(`status`·`value`)를 `result_sha256`과 대조해 다르면 거부·재계산한다(entry v2,
+v1 entry는 거부). 두 digest가 같은 파일에 있으므로 entry 전체를 다시 쓸 수 있는 주체는 일관된 위조 entry를 만들
+수 있다. 이 검사는 손상과 부분 수정을 검출할 뿐이며(`integrity`), 신뢰하지 않는 주체가 쓸 수 있는 캐시를 merge
+판단 근거로 쓰지 않는다. `trusted-check`는 캐시를 쓰지 않는다. `--isolated-workers`와 함께 쓰면 캐시는 사용되지
+않는다.
 
 ### holdout 평가 (W10)
 
 `holdout split|freeze|run|packet|adjudicate|score`는 출처 family 단위 분할, 기대값 동결, blind review packet,
 검토자 합의(Cohen's kappa), Wilson 95% 구간 지표를 제공한다. run·packet·adjudicate·score는 앞 단계 산출물의
-SHA-256 pin이 없으면 거부한다. 모든 산출물은 한 번만 쓰고, 실패해도 출력 경로에 오류 JSON을 쓰지 않는다. 검토 label의 출처는 `human`과 `llm-proxy`로 스스로 선언되며 도구가 확인할 수
+SHA-256 pin이 없으면 거부한다. 모든 산출물은 한 번만 쓰고, 실패해도 출력 경로에 오류 JSON을 쓰지 않는다.
+packet은 frozen digest·protocol을, labels는 packet·frozen digest·protocol을 기록하며 `score`는 labels의 frozen
+digest·protocol이 results와 같고 labels의 항목이 results에 있을 때만 계산한다. `run`은 제품과 같은
+`adapters.inspection.inspect` 경로(Express 전처리 포함)를 사례의 고정 평가 날짜로 실행하고, 주어진 frozen
+SHA-256이 내용과 다르면 거부한다. 검토 label의 출처는 `human`과 `llm-proxy`로 스스로 선언되며 도구가 확인할 수
 없고, 지표는 출처별로 따로 계산한다. 절차는 `docs/ops/holdout-evaluation.md`에 있다.
 
 ### 조직 서비스 (W17)
@@ -132,6 +168,9 @@ SHA-256 pin이 없으면 거부한다. 모든 산출물은 한 번만 쓰고, �
 `org create-tenant|add-principal|store|list|delete|set-retention|purge|audit|backup|restore`는 로컬 저장소에
 tenant별 결과·감사 기록을 둔다. `create-tenant`는 운영자가 실행하는 초기 생성이며 권한 확인 없이 실행자를
 admin으로 등록한다. 나머지 호출은 principal의 tenant·역할(viewer·runner·admin·auditor)·저장소 범위를 확인한다.
+tenant 전체에 영향을 주는 작업(principal 관리, 보존 기간 설정, backup·restore, 감사 기록 조회)은 tenant 범위 `*`가
+있어야 하며 저장소 범위가 제한된 admin은 할 수 없다. `purge`와 `list`는 principal의 범위 안 결과만 다룬다.
+권한 위임은 위임자가 가진 권한·범위를 넘을 수 없다.
 `store`는 받은 결과 JSON을 그대로 저장하므로 원본 입력을 넣지 않는 것은 호출자 책임이다. 감사 기록은
 hash chain이며 token 형태 문자열을 가린다.
 일일 실행 수·저장 bytes quota, 보존 기간 purge, SHA-256 pin과 inventory를 확인하는 backup/restore를 제공한다.
@@ -153,6 +192,11 @@ result-validated → persisted → publish-pending → published`이며, `persis
 분석 thread는 강제 종료되지 않으므로 프로세스 격리가 아니다. 취소·시간 초과·복구로
 의미 결과가 없으면 종료 코드 3이다. SIGTERM·Ctrl-C는 `cancelled`, 기록 없이 사라진 실행은
 lease 경과 후 `abandoned`, 게시 요청 후 침묵은 `publication-unknown`이다.
+
+`--timeout-seconds`와 `run recover --stale-after`는 양수인 유한 숫자만 허용한다.
+NaN·Infinity·0·음수는 종료 코드 2의 입력 오류이며, 새 journal을 만들거나 기존 실행을
+복구 상태로 바꾸기 전에 거부한다. 내부 복구 함수도 현재 시각·마지막 활동 시각이 유한
+숫자인지 확인한다. boolean은 시간 입력으로 인정하지 않는다.
 
 `--retry-of <run_id>`는 종료된 이전 실행에 대한 새 run을 만들고 `attempt`와 입력 digest
 관계를 기록한다. 이전 실행에는 `retry-created` 주석만 추가한다. `publication-unknown`은
