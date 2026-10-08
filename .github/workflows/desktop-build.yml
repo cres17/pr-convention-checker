@@ -154,6 +154,18 @@ jobs:
           else
             python packaging/verify_package.py dist/DriftGate/DriftGate.exe --output build/offline-package
           fi
+      - name: Verify evidence, replay, spans and run journal in the packaged executable
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            python packaging/verify_package_cli.py dist/DriftGate.app/Contents/MacOS/DriftGate --output build/offline-cli
+          else
+            python packaging/verify_package_cli.py dist/DriftGate/DriftGate.exe --output build/offline-cli
+          fi
+      - name: Diagnose Qt teardown with repeated packaged runs
+        if: runner.os == 'macOS'
+        shell: bash
+        run: python packaging/teardown_diagnosis.py dist/DriftGate.app/Contents/MacOS/DriftGate --runs 5 --output build/teardown-diagnosis
       - name: Work out the version
         id: version
         shell: bash
@@ -186,6 +198,7 @@ jobs:
           test -L "$RUNNER_TEMP/dgmount/Applications"
           lipo -archs "$RUNNER_TEMP/dgmount/DriftGate.app/Contents/MacOS/DriftGate"
           python packaging/verify_package.py "$RUNNER_TEMP/dgmount/DriftGate.app/Contents/MacOS/DriftGate" --output build/offline-dmg
+          python packaging/verify_package_cli.py "$RUNNER_TEMP/dgmount/DriftGate.app/Contents/MacOS/DriftGate" --output build/offline-dmg-cli
           hdiutil detach "$RUNNER_TEMP/dgmount"
 
       # Windows: a Setup.exe installer plus a portable zip (unzip and run DriftGate.exe).
@@ -206,6 +219,8 @@ jobs:
           if (-not (Test-Path "$dir\DriftGate.exe")) { throw "installer did not install DriftGate.exe" }
           python packaging/verify_package.py "$dir\DriftGate.exe" --output build/offline-installer
           if ($LASTEXITCODE -ne 0) { throw "installed app failed to start" }
+          python packaging/verify_package_cli.py "$dir\DriftGate.exe" --output build/offline-installer-cli
+          if ($LASTEXITCODE -ne 0) { throw "installed app failed the evidence CLI check" }
           Start-Process -FilePath "$dir\unins000.exe" -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES' -Wait
           Get-ChildItem .\DriftGate-Windows-Setup.exe | Format-List Name, Length
 
@@ -218,6 +233,10 @@ jobs:
             build/offline-package/
             build/offline-dmg/
             build/offline-installer/
+            build/offline-cli/
+            build/offline-dmg-cli/
+            build/offline-installer-cli/
+            build/teardown-diagnosis/
             build/parser-libraries/manifest.json
 
       - name: Remove leftover CI firewall rules after cancellation

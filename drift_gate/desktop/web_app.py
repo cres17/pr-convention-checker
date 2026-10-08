@@ -577,6 +577,8 @@ class WebDesktopWindow(QMainWindow):
         self.view.load(QUrl.fromLocalFile(str((WEB_ROOT / 'index.html').resolve())))
 
     def closeEvent(self, event):
+        from drift_gate.desktop.cli_entry import trace
+        trace('window-close-event')
         if self.bridge.progress_dirty:
             recovery = ('보관 완료된 초안은 다음 실행에서 복구할 수 있습니다.'
                         if self.bridge.progress_recovery_ready else
@@ -607,6 +609,10 @@ class WebDesktopWindow(QMainWindow):
 
 
 def main():
+    from drift_gate.desktop.cli_entry import run_cli_passthrough, trace
+    if run_cli_passthrough(sys.argv) is not None:  # headless CLI inside the packaged app
+        return
+    trace('main-start', argv=len(sys.argv))
     app = QApplication(sys.argv)
     app.setApplicationName('Cross Agent')
     app.setOrganizationName('Drift Gate')
@@ -625,7 +631,10 @@ def main():
         from drift_gate.desktop.package_check import PackageCheck
         _package_check = PackageCheck(app, window, sys.argv[2], sys.argv[3])
     window.show()
-    sys.exit(app.exec())
+    trace('event-loop-start')
+    code = app.exec()
+    trace('event-loop-returned', code=code)
+    sys.exit(code)
 
 
 if __name__ == '__main__':
