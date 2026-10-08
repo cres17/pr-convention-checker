@@ -325,9 +325,10 @@ def test_operator_cancel_discards_late_reply(tmp_path):
 
 
 def test_deadline_closes_run_and_late_reply_cannot_reopen_it(tmp_path):
-    controller = started(tmp_path, timeout_seconds=0.15, late_grace_seconds=2)
+    # Generous margins: the deadline also covers the journaled stages before analysis.
+    controller = started(tmp_path, timeout_seconds=2, late_grace_seconds=10)
     with pytest.raises(RunTerminated) as closed:
-        controller.call('analyzing', lambda: time.sleep(0.4) or 'late')
+        controller.call('analyzing', lambda: time.sleep(4) or 'late')
     view = controller.view()
     assert closed.value.state == view.state == 'timed-out'
     assert view.data['termination']['stage'] == 'analyzing'
@@ -398,11 +399,15 @@ def test_cli_timeout_retry_and_lineage(git_repository, tmp_path, monkeypatch, ca
     from drift_gate.adapters import inspection
     monkeypatch.chdir(git_repository[0])
     real = inspection.inspect_snapshot
-    monkeypatch.setattr(inspection, 'inspect_snapshot', lambda *a, **k: time.sleep(1.0) or real(*a, **k))
-    _, data = check(capsys, git_repository, tmp_path / 'runs', '--timeout-seconds', '0.3', code=3)
+    # The deadline counts from run start. Leave Git capture ample time on slow
+    # CI runners (a 0.3 s deadline expired during capture on macOS/Windows) and
+    # make analysis outlast it; the daemon thread is discarded with the run.
+    monkeypatch.setattr(inspection, 'inspect_snapshot', lambda *a, **k: time.sleep(30) or real(*a, **k))
+    _, data = check(capsys, git_repository, tmp_path / 'runs', '--timeout-seconds', '5', code=3)
     assert data['error']['code'] == 'timed_out'
     first = data['execution']['run']
     assert first['state'] == 'timed-out' and not first['semantic_completed']
+    assert first['termination']['stage'] == 'analyzing', first
     monkeypatch.setattr(inspection, 'inspect_snapshot', real)
     _, data = check(capsys, git_repository, tmp_path / 'runs', '--retry-of', first['run_id'], code=1)
     second = data['execution']['run']

@@ -164,3 +164,18 @@ VM 제약으로 백그라운드 전체 실행이 중단되어 같은 파일 목�
 - Action journal은 runner 임시 경로에 있으며 artifact 업로드로만 보존된다. Action 안의
   `publication-unknown`을 journal에 다시 반영하는 경로는 없고, 기록 파일 재조회만 제공한다.
 - 분석 worker 프로세스 격리(W12), 신뢰 검증기·승인 인증(W09), 인증된 엔진 재실행.
+
+## 최초 원격 검증에서 발견한 보완 (2026-10-08)
+
+`fd9b1c2`의 push·PR CI에서 lint·self-check·benchmark와 Ubuntu 3개 job은 통과했다. macOS·Windows
+6개 job은 각각 `test_cli_timeout_retry_and_lineage` 1건만 실패했다
+(macOS 3.10: 1 failed·1,793 passed·5 skipped, Windows 3.11: 1 failed·1,787 passed·11 skipped).
+[push CI](https://github.com/cres17/pr-convention-checker/actions/runs/37717210478),
+[PR CI](https://github.com/cres17/pr-convention-checker/actions/runs/37717213526).
+
+원인은 시험의 시간 가정이다. 마감 0.3초가 느린 runner의 Git 수집 단계 안에서 끝나
+`captured`가 기록되지 않았고, 재시도의 입력 관계는 설계대로 `previous-not-captured`였다.
+제품 동작이 아니라 시험 기대가 틀렸다. 마감을 5초로 늘리고 분석이 그보다 오래 걸리게 하며,
+종료 단계가 `analyzing`임을 함께 확인한다. 같은 가정에 기대던 coordinator 마감 시험도
+0.15초에서 2초로 늘렸다. 위의 로컬 검증 기록과 `validation.json`의 hash는 보완 전 상태이며
+덮어쓰지 않는다.
