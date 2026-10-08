@@ -205,6 +205,14 @@ drift-gate check --base HEAD --explain
 | CLI·정책 문서의 정합성 확인 | `drift-gate docs-check README.md --json` |
 | 기존 평가 사례 전체 실행 | `drift-gate-eval --recursive --compare-baseline` |
 
+검사 입력과 결과를 재실행 근거로 남기려면 `check/report`에
+`--evidence-store .drift-gate-evidence`를 추가합니다. 원본 코드·문서·샘플 값도 저장되므로
+보관 경로를 직접 선택할 때만 켜집니다. 출력의 `execution.evidence_bundle.path`를 사용해
+`drift-gate bundle verify <경로> --json`으로 파일 무결성을 확인하고,
+`drift-gate bundle replay <경로> --json`으로 저장소 없이 현재 엔진 결과를 대조합니다.
+history·LLM 보강 전 기본 결과를 보관하며 조직 승인이나 인증된 엔진 재현을 뜻하지 않습니다.
+상세 보장과 한계는 [증거 묶음 구현 보고서](docs/review/drift-gate-bundle-implementation-2026-10-08.md)에 기록합니다.
+
 ## 정책 작성
 
 예를 들어 다음 정책은 API 계약 수준의 변경이 있을 때 API 문서를 확인합니다.

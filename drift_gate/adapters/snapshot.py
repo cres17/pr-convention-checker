@@ -1,7 +1,8 @@
-"""Seal supplied observations before analysis; replay never rereads the checkout.
+"""Seal supplied observations; replay never rereads the checkout.
 
-This first S2 stage captures decoded adapter inputs in memory. It cannot attest
-original Git/disk bytes, simultaneous collection, trusted policy, or freshness.
+Optional Git evidence binds originals to observations. Explicit evidence bundle
+storage can retain the capsule beyond process lifetime; neither path authenticates
+the producer, organization approval, simultaneous local reads or freshness.
 """
 from dataclasses import asdict, dataclass, field
 from datetime import date
@@ -132,6 +133,17 @@ class InspectionSnapshot:
     manifest: InputManifest
     payload: bytes = field(repr=False)
     git_evidence: GitInputEvidence | None = field(default=None, repr=False)
+
+    @classmethod
+    def from_payload(cls, payload, *, git_evidence=None):
+        """Reconstruct observations; the caller must establish storage integrity.
+
+        This does not authenticate approval evidence or the producing engine.
+        Disk readers must reject caller-controlled approval_verified claims.
+        """
+        data = json.loads(payload)
+        manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), data['collection_mode'])
+        return cls(manifest, payload, git_evidence)
 
     def __post_init__(self):
         if type(self.payload) is not bytes or not isinstance(self.manifest, InputManifest):

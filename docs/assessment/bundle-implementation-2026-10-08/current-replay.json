@@ -1,0 +1,1001 @@
+{
+  "bundle": {
+    "schema": "inspection-bundle-reference-v1",
+    "bundle_id": "a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09",
+    "path": "/Users/moon/Documents/pr-convention-checker/docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09",
+    "receipt_sha256": "a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09",
+    "integrity_verified": true,
+    "producer_authenticated": false,
+    "retention": "explicit-local-store-until-user-removal",
+    "contains_raw_inputs": true,
+    "result_scope": "base-inspection-before-history-and-enrichment"
+  },
+  "replay": {
+    "schema": "inspection-bundle-replay-v1",
+    "receipt_sha256": "a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09",
+    "recorded_result_matches_current": true,
+    "observed_producer_matches": true,
+    "replay_scope": "captured-inputs-current-engine",
+    "producer_authenticated": false,
+    "inspection_inputs_reread": false,
+    "producer_sources_observed": true,
+    "current_policy_authorization_verified": false
+  },
+  "result": {
+    "schema_version": 3,
+    "verification": "verified",
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass",
+      "undetermined_rules": 0,
+      "unverified_rules": 0
+    },
+    "scan_metrics": {
+      "scanned_files": 2,
+      "skipped_ignored_files": 0,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 1,
+      "runtime_seconds": 0.009080416988581419,
+      "analysis_notes": [
+        {
+          "path": "docs/api.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "src/api.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        }
+      ]
+    },
+    "result": "pass",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "other"
+    ],
+    "violations": [],
+    "rule_decisions": [
+      {
+        "rule_id": "pinned-api",
+        "severity": "BLOCKER",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "src/**"
+        ],
+        "trigger_files": [
+          "src/api.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "api-contract",
+            "required": [
+              "docs/api.md"
+            ],
+            "type": "any_changed",
+            "evidence": "auto-strict selected api-routes; Complete document route coverage; add GET /new; remove GET /old",
+            "decision": "satisfied",
+            "verification": "verified",
+            "content_mode": "auto-strict"
+          }
+        ],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 2,
+      "on_unverified": "fail"
+    },
+    "execution": {
+      "schema_version": 2,
+      "run_id": "3c632abd488b403ab952bb45f2f89c26",
+      "started_at": "2026-10-08T00:21:16.713647+00:00",
+      "status": "success",
+      "comparison_mode": "commit",
+      "diff_mode": "isolated-raw-git",
+      "head": "49dbf87a8f00ae7e0632e45a9ca1f34ec64080fd",
+      "policy_revision": "1ec5da76ce69113a89620eac5d5841a29e7a088a",
+      "resolved_base": "1ec5da76ce69113a89620eac5d5841a29e7a088a",
+      "source": "immutable-git",
+      "policy_sha256": "759e009cdef34a0274d55322a4e7028c21ba34b7d7bfecd104e7a1885785cea7",
+      "policy_digest_kind": "source",
+      "warnings": [],
+      "evaluation_context": {
+        "evaluated_on": "2026-10-08",
+        "date_basis": "UTC"
+      },
+      "input_digest_version": 3,
+      "input_sha256": "f1ffc036e7fd89dde1b88e74ef3c0c1a62347f843b4e98637695f0954b7a04dd",
+      "input_capture": {
+        "schema": "input-manifest-v1",
+        "digest_protocol": "python-json-observation-v1",
+        "input_sha256": "2e9eb35da111efbf2d381a25eddba22b6e48a94a23ed95b501e150017ef9c4f9",
+        "collection_mode": "captured-adapter-input",
+        "atomicity": "per-artifact-observation",
+        "original_bytes_certified": false,
+        "revision_certified": false,
+        "policy_authority": "unverified-caller-input",
+        "selection_complete": false,
+        "artifacts": [
+          {
+            "path": "@policy",
+            "role": "policy-semantics",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "2c96b043507e971fc5716cb8f91841a511361f8f30866208e53a4b0412adafa8",
+            "observed_text_bytes": 587,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "@policy",
+            "role": "policy-source",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "759e009cdef34a0274d55322a4e7028c21ba34b7d7bfecd104e7a1885785cea7",
+            "observed_text_bytes": 210,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "docs/api.md",
+            "role": "after-source",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "70833be5968dda1338ad6c98733538cbb253b65bf00a2d7dedb93625876fea25",
+            "observed_text_bytes": 10,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "docs/api.md",
+            "role": "before-source",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "fa6021bfb5433530a90462d1b650e30b0a7c8a1576024c73602555d9b05990f9",
+            "observed_text_bytes": 10,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "docs/api.md",
+            "role": "document-json",
+            "state": "not-collected",
+            "reason": "not_collected",
+            "observed_text_sha256": null,
+            "observed_text_bytes": null,
+            "encoding": null
+          },
+          {
+            "path": "docs/api.md",
+            "role": "patch",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "27643f3de5cf5ed6399442efad44e1ba3d1430202b6c4a2fadccb04f2b6fb041",
+            "observed_text_bytes": 139,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "src/api.py",
+            "role": "after-source",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+            "observed_text_bytes": 86,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "src/api.py",
+            "role": "before-source",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+            "observed_text_bytes": 86,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "src/api.py",
+            "role": "document-json",
+            "state": "not-collected",
+            "reason": "not_collected",
+            "observed_text_sha256": null,
+            "observed_text_bytes": null,
+            "encoding": null
+          },
+          {
+            "path": "src/api.py",
+            "role": "patch",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "13ab32725e7fa4d113deec9114c3dc9fc8af50fe1849d7398e4d84c757618b6f",
+            "observed_text_bytes": 226,
+            "encoding": "utf-8-observed-text"
+          }
+        ],
+        "manifest_sha256": "d8646328071fa78fd25d1ee5488a0f6d796b413e72f086a4b074d4bc75135728",
+        "retention": "process-memory-only",
+        "replay_scope": "captured-inputs-current-engine",
+        "git_input": {
+          "schema": "git-input-evidence-v1",
+          "subject": {
+            "base_oid": "1ec5da76ce69113a89620eac5d5841a29e7a088a",
+            "head_oid": "49dbf87a8f00ae7e0632e45a9ca1f34ec64080fd",
+            "base_tree": "a2719194511eb6554d10dd056236509f21f81981",
+            "head_tree": "a49c09486130e717210d901351ad82c592735f99",
+            "comparison_mode": "commit",
+            "collection_mode": "immutable-git",
+            "working_tree_ignored": true,
+            "unsaved_buffers_included": false,
+            "untracked_included": false
+          },
+          "catalog_sha256": "92fd5ba5fb8c79dbfdb0bc09f9c6871141b129cecbf520e31457273242846569",
+          "policy_anchor": {
+            "revision": "1ec5da76ce69113a89620eac5d5841a29e7a088a",
+            "path": ".drift-gate.yml",
+            "sha256": "759e009cdef34a0274d55322a4e7028c21ba34b7d7bfecd104e7a1885785cea7",
+            "integrity_verified": true,
+            "authority": "explicit-caller-pin",
+            "organization_approval_verified": false,
+            "evaluation_policy": "pinned-policy",
+            "candidate_weakening": "rejected"
+          },
+          "checker_authority": "current-engine-not-attested",
+          "selection_scope": "changed-paths-and-configured-document-observations",
+          "artifacts": [
+            {
+              "revision": "1ec5da76ce69113a89620eac5d5841a29e7a088a",
+              "path": ".drift-gate.yml",
+              "object_id": "d22244a002b224829648fbb9f0cefe8b0c0b251b",
+              "kind": "blob",
+              "mode": "100644",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "759e009cdef34a0274d55322a4e7028c21ba34b7d7bfecd104e7a1885785cea7",
+              "raw_bytes": 210
+            },
+            {
+              "revision": "1ec5da76ce69113a89620eac5d5841a29e7a088a",
+              "path": "@tree/67b128bcaa38ed9c6c7b1fa813a9dc7022228809",
+              "object_id": "67b128bcaa38ed9c6c7b1fa813a9dc7022228809",
+              "kind": "tree",
+              "mode": "040000",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "e6acea5ab4a5d735df8fffbca2bb62b668fbb5f92d7e06fcec3cf88f77abb575",
+              "raw_bytes": 34
+            },
+            {
+              "revision": "1ec5da76ce69113a89620eac5d5841a29e7a088a",
+              "path": "@tree/a2719194511eb6554d10dd056236509f21f81981",
+              "object_id": "a2719194511eb6554d10dd056236509f21f81981",
+              "kind": "tree",
+              "mode": "040000",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "20c5c2f4e289bc760e6b47363d1ad145a9bbc339a86e9058fd942f71707e8d19",
+              "raw_bytes": 104
+            },
+            {
+              "revision": "1ec5da76ce69113a89620eac5d5841a29e7a088a",
+              "path": "@tree/f37e15226704e387aeb93e8601110fa8dd371823",
+              "object_id": "f37e15226704e387aeb93e8601110fa8dd371823",
+              "kind": "tree",
+              "mode": "040000",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "2a123c02f3ec96a555ea566e00190bd84f2ab574fa50b8a1e31a1164dc7fa493",
+              "raw_bytes": 34
+            },
+            {
+              "revision": "1ec5da76ce69113a89620eac5d5841a29e7a088a",
+              "path": "docs/api.md",
+              "object_id": "eb19770c824965f9f71f9f7e87e28cd654870f39",
+              "kind": "blob",
+              "mode": "100644",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "fa6021bfb5433530a90462d1b650e30b0a7c8a1576024c73602555d9b05990f9",
+              "raw_bytes": 10
+            },
+            {
+              "revision": "1ec5da76ce69113a89620eac5d5841a29e7a088a",
+              "path": "src/api.py",
+              "object_id": "17c0111f805ff502e74ca2f1509dc1af1a11f7c3",
+              "kind": "blob",
+              "mode": "100644",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+              "raw_bytes": 86
+            },
+            {
+              "revision": "49dbf87a8f00ae7e0632e45a9ca1f34ec64080fd",
+              "path": ".drift-gate.yml",
+              "object_id": "d22244a002b224829648fbb9f0cefe8b0c0b251b",
+              "kind": "blob",
+              "mode": "100644",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "759e009cdef34a0274d55322a4e7028c21ba34b7d7bfecd104e7a1885785cea7",
+              "raw_bytes": 210
+            },
+            {
+              "revision": "49dbf87a8f00ae7e0632e45a9ca1f34ec64080fd",
+              "path": "@tree/a2fc20203788b35b14ee49af2f1bb597c2a2921b",
+              "object_id": "a2fc20203788b35b14ee49af2f1bb597c2a2921b",
+              "kind": "tree",
+              "mode": "040000",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "3803899b320dd6d925b4d5dfa60e94f4a6f188a281ba561397897cb0327a9de6",
+              "raw_bytes": 34
+            },
+            {
+              "revision": "49dbf87a8f00ae7e0632e45a9ca1f34ec64080fd",
+              "path": "@tree/a49c09486130e717210d901351ad82c592735f99",
+              "object_id": "a49c09486130e717210d901351ad82c592735f99",
+              "kind": "tree",
+              "mode": "040000",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "d8b83633f48e88ec3dc225ec8ac5b80f0b428b8d4f0b3fac6b9a1bdf4eda8312",
+              "raw_bytes": 104
+            },
+            {
+              "revision": "49dbf87a8f00ae7e0632e45a9ca1f34ec64080fd",
+              "path": "@tree/fdb6c8c6e946436389d40a26da439e4f2b0ad634",
+              "object_id": "fdb6c8c6e946436389d40a26da439e4f2b0ad634",
+              "kind": "tree",
+              "mode": "040000",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "d7062494e07680721fe0cbb8a0baf34381ff0e238e09b239f182925b603e653a",
+              "raw_bytes": 34
+            },
+            {
+              "revision": "49dbf87a8f00ae7e0632e45a9ca1f34ec64080fd",
+              "path": "docs/api.md",
+              "object_id": "dde37a3dde6228bcf59e609cbb0da66cb1d94a04",
+              "kind": "blob",
+              "mode": "100644",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "70833be5968dda1338ad6c98733538cbb253b65bf00a2d7dedb93625876fea25",
+              "raw_bytes": 10
+            },
+            {
+              "revision": "49dbf87a8f00ae7e0632e45a9ca1f34ec64080fd",
+              "path": "src/api.py",
+              "object_id": "a275b2e85d50e7f7dc9a5200f27471bfd5b76e02",
+              "kind": "blob",
+              "mode": "100644",
+              "state": "present",
+              "reason": "",
+              "raw_sha256": "cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+              "raw_bytes": 86
+            }
+          ],
+          "manifest_sha256": "c3b63e4e87f4387143e3dc4d7f46ce5cdc6ecab05866035b0bac5a2766ae0af3"
+        }
+      },
+      "bundle_replay": {
+        "schema": "inspection-bundle-replay-v1",
+        "receipt_sha256": "a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09",
+        "recorded_result_matches_current": true,
+        "observed_producer_matches": true,
+        "replay_scope": "captured-inputs-current-engine",
+        "producer_authenticated": false,
+        "inspection_inputs_reread": false,
+        "producer_sources_observed": true,
+        "current_policy_authorization_verified": false
+      }
+    },
+    "contract_diagnostics": {
+      "schema": "contract-diagnostics-v1",
+      "role": "legacy-selector-shadow",
+      "status": "retained-shadow-records",
+      "complete_policy_coverage": false,
+      "gate_action_applied": false,
+      "records_seen": 1,
+      "retained_count": 1,
+      "retention_limit": 128,
+      "omitted_record_count": 0,
+      "trace_truncated": false,
+      "full_proofs_omitted": false,
+      "entries": [
+        {
+          "projection": {
+            "schema": "contract-legacy-projection-v1",
+            "context_ref": "d9f59a44ade74aa4f17f8744fd6a4275cf9cfb5c697fd0cd86620dfecaa0d79e",
+            "rule_id": "legacy-selector-shadow",
+            "group_id": "api-contract",
+            "relation_id": "",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "truth": "U",
+            "decision_proven": false,
+            "proof_ref": null,
+            "complete_within_selection": false,
+            "source_paths": [
+              "src/api.py"
+            ],
+            "closed_domains": [
+              "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+              "discovery:src/api.py:api-response",
+              "discovery:src/api.py:api-route",
+              "discovery:src/api.py:env-key"
+            ],
+            "open_domains": [
+              "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+            ],
+            "requested_families": [
+              "api-response",
+              "api-route",
+              "env-key"
+            ],
+            "obligations": [
+              {
+                "id": "contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                "decision": "undetermined",
+                "verification": "unverified"
+              }
+            ],
+            "gate_action_applied": false,
+            "service_scope_certified": false,
+            "assurance": "logical-consistency-relative-to-admitted-premises"
+          },
+          "proof_result": {
+            "schema": "contract-proof-result-v1",
+            "request_ref": "dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+            "rule_id": "legacy-selector-shadow",
+            "group_id": "api-contract",
+            "relation_id": "",
+            "source_paths": [
+              "src/api.py"
+            ],
+            "discovery": {
+              "schema": "contract-discovery-v1",
+              "analysis_boundary": "selected-modules/profile-subsets",
+              "requested_families": [
+                "api-response",
+                "api-route",
+                "env-key"
+              ],
+              "source_digest": "fdd66172ea3fae1eb1e1466c7e8fa12ee61239ea5e6bd1339b2cb5e9ac4eb5d1",
+              "source_paths": [
+                "src/api.py"
+              ],
+              "service_scope_certified": false,
+              "complete_within_selection": true,
+              "domains": [
+                {
+                  "scope_id": "selected-module:src/api.py",
+                  "source_path": "src/api.py",
+                  "family": "api-response",
+                  "profile_ref": [
+                    "python-response-primitives",
+                    "2"
+                  ],
+                  "state": "closed",
+                  "activated": false,
+                  "evidence_refs": [
+                    "after:src/api.py:legacy-selected-input",
+                    "before:src/api.py:legacy-selected-input"
+                  ],
+                  "reason_codes": []
+                },
+                {
+                  "scope_id": "selected-module:src/api.py",
+                  "source_path": "src/api.py",
+                  "family": "api-route",
+                  "profile_ref": [
+                    "python-fastapi-routes",
+                    "1"
+                  ],
+                  "state": "closed",
+                  "activated": true,
+                  "evidence_refs": [
+                    "after:src/api.py:legacy-selected-input",
+                    "before:src/api.py:legacy-selected-input"
+                  ],
+                  "reason_codes": []
+                },
+                {
+                  "scope_id": "selected-module:src/api.py",
+                  "source_path": "src/api.py",
+                  "family": "env-key",
+                  "profile_ref": [
+                    "python-env-literals",
+                    "1"
+                  ],
+                  "state": "closed",
+                  "activated": false,
+                  "evidence_refs": [
+                    "after:src/api.py:legacy-selected-input",
+                    "before:src/api.py:legacy-selected-input"
+                  ],
+                  "reason_codes": []
+                }
+              ],
+              "legacy_modes": [
+                "api-routes"
+              ],
+              "legacy_python_error": ""
+            },
+            "document_digest": "6c9180522f03f9fc4b88c047756457ba01588f47d56ba70f678d0aa7c66a7380",
+            "truth": "U",
+            "complete_within_selection": false,
+            "service_scope_certified": false,
+            "proof_dag_attached": true,
+            "binding_schema": "contract-document-bindings-v1",
+            "bindings": [],
+            "obligations": [
+              {
+                "id": "contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                "family": "api-route",
+                "profile_ref": [
+                  "python-fastapi-routes",
+                  "1"
+                ],
+                "source_paths": [
+                  "src/api.py"
+                ],
+                "applicability": "T",
+                "requirement": "U",
+                "truth": "U",
+                "not_applicable": false,
+                "requirement_complete": false,
+                "binding_id": null,
+                "reason_codes": [
+                  "unmapped_contract_document"
+                ]
+              }
+            ],
+            "open_guards": [],
+            "decision_proven": false,
+            "proof_ref": null,
+            "scope_coverage": {
+              "declared_scope_ref": "dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+              "closed_domains": [
+                "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                "discovery:src/api.py:api-response",
+                "discovery:src/api.py:api-route",
+                "discovery:src/api.py:env-key"
+              ],
+              "open_domains": [
+                "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+              ]
+            },
+            "admitted_context": {
+              "scope_ref": "dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+              "input_ref": "03e3a7e1f55f026e12a284b42c5fab7b66a68df28dbc6f7833319c7e9934dcc9",
+              "domains": [
+                {
+                  "id": "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                  "closed": true,
+                  "reason_codes": []
+                },
+                {
+                  "id": "discovery:src/api.py:api-response",
+                  "closed": true,
+                  "reason_codes": []
+                },
+                {
+                  "id": "discovery:src/api.py:api-route",
+                  "closed": true,
+                  "reason_codes": []
+                },
+                {
+                  "id": "discovery:src/api.py:env-key",
+                  "closed": true,
+                  "reason_codes": []
+                },
+                {
+                  "id": "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                  "closed": false,
+                  "reason_codes": [
+                    "document_requirement_open"
+                  ]
+                }
+              ],
+              "propositions": [
+                {
+                  "id": "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                  "truth": "T",
+                  "domain_refs": [
+                    "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                    "discovery:src/api.py:api-route"
+                  ],
+                  "evidence_refs": [
+                    "evidence:applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                  ],
+                  "profile_ref": [
+                    "python-fastapi-routes",
+                    "1"
+                  ],
+                  "assumptions": [
+                    "admitted-analyzer-output",
+                    "selected-profile-subsets",
+                    "source-origin-unverified"
+                  ],
+                  "reason_codes": [
+                    "unmapped_contract_document"
+                  ]
+                },
+                {
+                  "id": "discovery:src/api.py:api-response",
+                  "truth": "T",
+                  "domain_refs": [
+                    "discovery:src/api.py:api-response"
+                  ],
+                  "evidence_refs": [
+                    "evidence:discovery:src/api.py:api-response"
+                  ],
+                  "profile_ref": [
+                    "python-response-primitives",
+                    "2"
+                  ],
+                  "assumptions": [
+                    "admitted-analyzer-output",
+                    "selected-profile-subsets",
+                    "source-origin-unverified"
+                  ],
+                  "reason_codes": []
+                },
+                {
+                  "id": "discovery:src/api.py:api-route",
+                  "truth": "T",
+                  "domain_refs": [
+                    "discovery:src/api.py:api-route"
+                  ],
+                  "evidence_refs": [
+                    "evidence:discovery:src/api.py:api-route"
+                  ],
+                  "profile_ref": [
+                    "python-fastapi-routes",
+                    "1"
+                  ],
+                  "assumptions": [
+                    "admitted-analyzer-output",
+                    "selected-profile-subsets",
+                    "source-origin-unverified"
+                  ],
+                  "reason_codes": []
+                },
+                {
+                  "id": "discovery:src/api.py:env-key",
+                  "truth": "T",
+                  "domain_refs": [
+                    "discovery:src/api.py:env-key"
+                  ],
+                  "evidence_refs": [
+                    "evidence:discovery:src/api.py:env-key"
+                  ],
+                  "profile_ref": [
+                    "python-env-literals",
+                    "1"
+                  ],
+                  "assumptions": [
+                    "admitted-analyzer-output",
+                    "selected-profile-subsets",
+                    "source-origin-unverified"
+                  ],
+                  "reason_codes": []
+                },
+                {
+                  "id": "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                  "truth": "U",
+                  "domain_refs": [
+                    "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                  ],
+                  "evidence_refs": [],
+                  "profile_ref": [
+                    "python-fastapi-routes",
+                    "1"
+                  ],
+                  "assumptions": [
+                    "admitted-analyzer-output",
+                    "selected-profile-subsets",
+                    "source-origin-unverified"
+                  ],
+                  "reason_codes": [
+                    "unmapped_contract_document"
+                  ]
+                }
+              ],
+              "evidence": [
+                {
+                  "id": "evidence:applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                  "proposition_ref": "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                  "truth": "T",
+                  "covered_domains": [
+                    "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                    "discovery:src/api.py:api-route"
+                  ],
+                  "profile_ref": [
+                    "python-fastapi-routes",
+                    "1"
+                  ]
+                },
+                {
+                  "id": "evidence:discovery:src/api.py:api-response",
+                  "proposition_ref": "discovery:src/api.py:api-response",
+                  "truth": "T",
+                  "covered_domains": [
+                    "discovery:src/api.py:api-response"
+                  ],
+                  "profile_ref": [
+                    "python-response-primitives",
+                    "2"
+                  ]
+                },
+                {
+                  "id": "evidence:discovery:src/api.py:api-route",
+                  "proposition_ref": "discovery:src/api.py:api-route",
+                  "truth": "T",
+                  "covered_domains": [
+                    "discovery:src/api.py:api-route"
+                  ],
+                  "profile_ref": [
+                    "python-fastapi-routes",
+                    "1"
+                  ]
+                },
+                {
+                  "id": "evidence:discovery:src/api.py:env-key",
+                  "proposition_ref": "discovery:src/api.py:env-key",
+                  "truth": "T",
+                  "covered_domains": [
+                    "discovery:src/api.py:env-key"
+                  ],
+                  "profile_ref": [
+                    "python-env-literals",
+                    "1"
+                  ]
+                }
+              ],
+              "profile_refs": [
+                [
+                  "python-env-literals",
+                  "1"
+                ],
+                [
+                  "python-fastapi-routes",
+                  "1"
+                ],
+                [
+                  "python-response-primitives",
+                  "2"
+                ]
+              ],
+              "structure": [
+                {
+                  "id": "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                  "operator": "atom",
+                  "children": [],
+                  "proposition_ref": "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                },
+                {
+                  "id": "contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                  "operator": "conditional",
+                  "children": [
+                    "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                    "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                  ],
+                  "proposition_ref": ""
+                },
+                {
+                  "id": "discovery:src/api.py:api-response",
+                  "operator": "atom",
+                  "children": [],
+                  "proposition_ref": "discovery:src/api.py:api-response"
+                },
+                {
+                  "id": "discovery:src/api.py:api-route",
+                  "operator": "atom",
+                  "children": [],
+                  "proposition_ref": "discovery:src/api.py:api-route"
+                },
+                {
+                  "id": "discovery:src/api.py:env-key",
+                  "operator": "atom",
+                  "children": [],
+                  "proposition_ref": "discovery:src/api.py:env-key"
+                },
+                {
+                  "id": "plan:dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+                  "operator": "all",
+                  "children": [
+                    "contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                    "discovery:src/api.py:api-response",
+                    "discovery:src/api.py:api-route",
+                    "discovery:src/api.py:env-key"
+                  ],
+                  "proposition_ref": ""
+                },
+                {
+                  "id": "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                  "operator": "atom",
+                  "children": [],
+                  "proposition_ref": "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                }
+              ],
+              "root_ref": "plan:dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86"
+            },
+            "proof": {
+              "schema": "contract-proof-evaluation-v1",
+              "context_ref": "d9f59a44ade74aa4f17f8744fd6a4275cf9cfb5c697fd0cd86620dfecaa0d79e",
+              "root_ref": "plan:dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+              "nodes": [
+                {
+                  "spec": {
+                    "id": "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                    "operator": "atom",
+                    "children": [],
+                    "proposition_ref": "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                  },
+                  "truth": "T",
+                  "decision_proven": true,
+                  "proof_ref": "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                  "sufficient_witness_refs": [],
+                  "coverage": {
+                    "declared_scope_ref": "dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+                    "closed_domains": [
+                      "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                      "discovery:src/api.py:api-route"
+                    ],
+                    "open_domains": []
+                  }
+                },
+                {
+                  "spec": {
+                    "id": "contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                    "operator": "conditional",
+                    "children": [
+                      "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                      "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                    ],
+                    "proposition_ref": ""
+                  },
+                  "truth": "U",
+                  "decision_proven": false,
+                  "proof_ref": null,
+                  "sufficient_witness_refs": [],
+                  "coverage": {
+                    "declared_scope_ref": "dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+                    "closed_domains": [
+                      "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                      "discovery:src/api.py:api-route"
+                    ],
+                    "open_domains": [
+                      "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                    ]
+                  }
+                },
+                {
+                  "spec": {
+                    "id": "discovery:src/api.py:api-response",
+                    "operator": "atom",
+                    "children": [],
+                    "proposition_ref": "discovery:src/api.py:api-response"
+                  },
+                  "truth": "T",
+                  "decision_proven": true,
+                  "proof_ref": "discovery:src/api.py:api-response",
+                  "sufficient_witness_refs": [],
+                  "coverage": {
+                    "declared_scope_ref": "dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+                    "closed_domains": [
+                      "discovery:src/api.py:api-response"
+                    ],
+                    "open_domains": []
+                  }
+                },
+                {
+                  "spec": {
+                    "id": "discovery:src/api.py:api-route",
+                    "operator": "atom",
+                    "children": [],
+                    "proposition_ref": "discovery:src/api.py:api-route"
+                  },
+                  "truth": "T",
+                  "decision_proven": true,
+                  "proof_ref": "discovery:src/api.py:api-route",
+                  "sufficient_witness_refs": [],
+                  "coverage": {
+                    "declared_scope_ref": "dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+                    "closed_domains": [
+                      "discovery:src/api.py:api-route"
+                    ],
+                    "open_domains": []
+                  }
+                },
+                {
+                  "spec": {
+                    "id": "discovery:src/api.py:env-key",
+                    "operator": "atom",
+                    "children": [],
+                    "proposition_ref": "discovery:src/api.py:env-key"
+                  },
+                  "truth": "T",
+                  "decision_proven": true,
+                  "proof_ref": "discovery:src/api.py:env-key",
+                  "sufficient_witness_refs": [],
+                  "coverage": {
+                    "declared_scope_ref": "dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+                    "closed_domains": [
+                      "discovery:src/api.py:env-key"
+                    ],
+                    "open_domains": []
+                  }
+                },
+                {
+                  "spec": {
+                    "id": "plan:dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+                    "operator": "all",
+                    "children": [
+                      "contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                      "discovery:src/api.py:api-response",
+                      "discovery:src/api.py:api-route",
+                      "discovery:src/api.py:env-key"
+                    ],
+                    "proposition_ref": ""
+                  },
+                  "truth": "U",
+                  "decision_proven": false,
+                  "proof_ref": null,
+                  "sufficient_witness_refs": [],
+                  "coverage": {
+                    "declared_scope_ref": "dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+                    "closed_domains": [
+                      "applicability:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                      "discovery:src/api.py:api-response",
+                      "discovery:src/api.py:api-route",
+                      "discovery:src/api.py:env-key"
+                    ],
+                    "open_domains": [
+                      "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                    ]
+                  }
+                },
+                {
+                  "spec": {
+                    "id": "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d",
+                    "operator": "atom",
+                    "children": [],
+                    "proposition_ref": "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                  },
+                  "truth": "U",
+                  "decision_proven": false,
+                  "proof_ref": null,
+                  "sufficient_witness_refs": [],
+                  "coverage": {
+                    "declared_scope_ref": "dd60e99f7c8cf2da82dcdfc78d0b37453755bd8957ddaf729ce33cc56614fc86",
+                    "closed_domains": [],
+                    "open_domains": [
+                      "requirement:contract:selected-profile-modules:bc12bf8a933ac481fbef92db190fffc98c128a13dbaa3193134b0b520204892d"
+                    ]
+                  }
+                }
+              ],
+              "assurance": "logical-consistency-relative-to-admitted-premises",
+              "source_authenticity_verified": false,
+              "current_head_certified": false,
+              "service_scope_certified": false
+            }
+          }
+        }
+      ]
+    }
+  }
+}

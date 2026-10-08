@@ -1,5 +1,49 @@
 # Gate와 입력 계약
 
+## S2-c 원본 증거 묶음 저장·재실행 (2026-10-08)
+
+`check/report --evidence-store <경로>`는 명시적으로 원본 입력 보관을 켠다. 기본 검사는
+디스크에 원문을 저장하지 않는다. 저장 대상은 history/temporal gate·선택적 LLM 보강
+이전의 기본 검사다. 출력의 `execution.evidence_bundle`은 보관 위치와 receipt SHA-256을
+알리며, 이후 보강된 출력 전체가 보관된 것이라고 해석하지 않는다.
+
+`bundles/<receipt SHA-256>/`에 입력 capsule, 관찰 manifest, Git evidence metadata,
+내용 hash로 이름 붙인 원본 objects, schema 3 결과, receipt, `COMMITTED.json`을 보관한다.
+Git blob·tree와 CRLF를 원래 bytes로 보존하며 UTF-8로 해석한 관찰과 별도로 검증한다.
+부분 수집·명시 부재·unavailable·빈 파일의 상태도 유지한다. 같은 bytes의 반복 저장은
+기존 묶음을 검증하고 재사용하며 다른 attempt는 별도 묶음으로 보존한다.
+
+모든 파일을 비공개 staging directory에 쓰고 파일 fsync·POSIX directory fsync와 재검증
+뒤 같은 filesystem의 directory rename 한 번으로 공개한다. `.pending-*`는 commit marker가
+있어도 공개된 묶음으로 읽지 않는다. 중간 실패와 강제 종료는 부분 성공으로 반환하지
+않는다. rename 후 parent sync 실패는 `publication-unknown`으로 경로를 알려 주고,
+해당 묶음을 확인한 뒤 재시도한다. 정상 실패 시 staging을 정리하되 cleanup 실패나
+강제 종료로 남은 staging을 자동 삭제하지 않는다.
+
+`bundle verify <묶음 경로> [--expected-receipt-sha256 <별도 보관한 hash>]`는 파일 목록,
+size·SHA-256, Git OID, 입력·정책·결과 binding을 재검증한다. 예상하지 않은 파일,
+symlink, 경로 이탈, 잘못된 schema, 손상된/누락된 원본은 거부한다. v1 기본 한도는
+총 64,000,000 bytes·파일당 8,000,000 bytes·4,096 files이며 reader가 자신의 한도를
+적용한다. 이 한도는 bundle I/O에만 적용되고 Git 수집 전체의 자원 예산을 대신하지 않는다.
+
+`bundle replay <묶음 경로>`는 저장소를 다시 읽지 않고 **현재 엔진**으로 실행한다.
+전체 정책·shadow proof 결과를 attempt ID와 runtime만 제외해 비교한다. 동일하면 기존
+gate 종료 코드(pass/warn 0, fail 1), 달라지면 결과와 차이 표시를 남기고 종료 2다.
+잘못된 묶음도 기존 입력 오류 JSON과 종료 2다. source/package/Python의 관찰 identity와
+실제 결과 일치 여부를 별도로 표시한다. parser binary·실행 중 code의 인증은 하지 않는다.
+
+unsigned receipt의 hash 일치는 생산자의 신뢰나 의미적 진위를 증명하지 않는다. 전체
+묶음을 일관되게 위조하면 별도 hash pin이 없는 integrity 검사만으로는 탐지할 수 없다.
+실제 재실행 대조와 독립 보관한 receipt hash의 역할이 다르다. JSON의
+`approval_verified=true`를 재실행의 승인 근거로 사용하지 않으며 v1은 해당 입력의 저장·
+불러오기를 거부한다. 외부 승인 envelope를 재검증하는 것은 후속 과제다.
+
+원본에는 코드·문서·샘플 값·ignore 이유가 들어갈 수 있다. 명시적으로 선택한 store는
+자동 업로드하거나 자동 삭제하지 않는다. 새 directory/file은 POSIX 0700/0600으로 만들고,
+기존 상위 directory 권한과 Windows ACL은 사용자 환경을 따른다. 사용자나 관리자 권한의
+동시 변조를 격리하는 보안 서비스나 전원 장애 후 모든 OS의 durability 보장은 아니다.
+최신 결과 pointer·외부 게시·영구 cache·조직 승인·신뢰 검증기 분리는 아직 구현하지 않았다.
+
 ## S1-e 출력 projection·진입점 계약 (2026-10-07)
 
 CLI `check/report --contract-proofs`, MCP `contract_proofs=true`, Desktop 서비스의

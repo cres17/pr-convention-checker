@@ -31,6 +31,7 @@ benchmark.md
 benchmark.html
 benchmark-reports/
 .drift-gate-history.jsonl
+.drift-gate-evidence/
 trend.html
 
 # IDE

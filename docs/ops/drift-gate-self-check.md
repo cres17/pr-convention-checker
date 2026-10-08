@@ -1,5 +1,20 @@
 # Drift Gate 자체 검사와 패키지 검증
 
+## S2-c 저장 근거 대조 (2026-10-08)
+
+immutable Git 자체 검사에 `--evidence-store build/object-evidence`를 적용한다.
+`packaging/check_evidence_bundle.py`가 출력에 기록된 receipt hash를 pin하여 디스크 원본을
+다시 읽고, Git을 다시 수집하지 않은 현재 엔진 재실행 결과를 대조한다. 결과가 다르면
+job을 실패시킨다. 공개된 묶음과 대조 JSON을 CI artifact로 보존한다. CI의 원문은
+선택한 commit의 소스·문서이며 환경변수나 작업 폴더의 미저장 값은 수집하지 않는다.
+원문 artifact는 보관 대상과 접근권한을 확인한 workflow에서만 명시적으로 사용한다.
+
+일반 OS/Python matrix는 `test_evidence_bundle.py`의 파일 변조, 저장 실패, directory
+공개 전후 강제 종료, thread·별도 process 동시 저장과 replay 시험을 포함한다.
+POSIX mode bit과 Windows directory fsync의 한계는 서로 다르다. 로컬 Mac 통과를
+Windows 검증으로 승계하지 않는다. 네이티브 설치본의 S2-b 대조와 새 CLI 저장 기능의
+검증도 별도 범위이며 이번 변경으로 설치본을 다시 검증했다고 자동 표시하지 않는다.
+
 ## S1-e 진입점 일치 검사
 
 `test_contract_projection.py`를 Desktop CI 명시 목록에 포함한다. 임시 Git의 동일한

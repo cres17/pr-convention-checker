@@ -1,0 +1,629 @@
+{
+  "requested_base": "ad2640c",
+  "inputs": {
+    "requested_base": "ad2640c",
+    "resolved_base": "ad2640cccebc37fdbfe4cd136d24a831776b1e3b",
+    "comparison_mode": "commit",
+    "head": "ad2640cccebc37fdbfe4cd136d24a831776b1e3b",
+    "dirty": true,
+    "untracked_skipped": [],
+    "snapshot_sha256": "7c2c951211ad73bfa26fc0aacaa1efc699c92509731d0daa263c7563629cfec8"
+  },
+  "policy_sha256": "3b21d87ef6f284f5b0ce8697c4467084a2d15659c12d33b6555b3a4e581f9abe",
+  "trusted_policy_ref": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+  "warnings": [],
+  "evaluation": {
+    "schema_version": 3,
+    "verification": "unverified",
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass",
+      "undetermined_rules": 0,
+      "unverified_rules": 3
+    },
+    "scan_metrics": {
+      "scanned_files": 70,
+      "skipped_ignored_files": 1,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 3,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": ".gitattributes",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": ".gitignore",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/auto-contracts.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/auto-contracts.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/bundle-tests.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/current-reference.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/current-replay.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/docs-check.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/express-contracts.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/express-contracts.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/local-validation.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-results.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/COMMITTED.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/git-input.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/manifest.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/13ab32725e7fa4d113deec9114c3dc9fc8af50fe1849d7398e4d84c757618b6f",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/20c5c2f4e289bc760e6b47363d1ad145a9bbc339a86e9058fd942f71707e8d19",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/2a123c02f3ec96a555ea566e00190bd84f2ab574fa50b8a1e31a1164dc7fa493",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/2c96b043507e971fc5716cb8f91841a511361f8f30866208e53a4b0412adafa8",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/3803899b320dd6d925b4d5dfa60e94f4a6f188a281ba561397897cb0327a9de6",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/759e009cdef34a0274d55322a4e7028c21ba34b7d7bfecd104e7a1885785cea7",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/e6acea5ab4a5d735df8fffbca2bb62b668fbb5f92d7e06fcec3cf88f77abb575",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/f59d3510c2465311565748517e4a3eddbc354f14c45c9b01c10715d880f5a492",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/fa6021bfb5433530a90462d1b650e30b0a7c8a1576024c73602555d9b05990f9",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/receipt.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/result.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/snapshot.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/COMMITTED.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/git-input.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/manifest.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/13ab32725e7fa4d113deec9114c3dc9fc8af50fe1849d7398e4d84c757618b6f",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/20c5c2f4e289bc760e6b47363d1ad145a9bbc339a86e9058fd942f71707e8d19",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/27643f3de5cf5ed6399442efad44e1ba3d1430202b6c4a2fadccb04f2b6fb041",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/2a123c02f3ec96a555ea566e00190bd84f2ab574fa50b8a1e31a1164dc7fa493",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/2c96b043507e971fc5716cb8f91841a511361f8f30866208e53a4b0412adafa8",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/3803899b320dd6d925b4d5dfa60e94f4a6f188a281ba561397897cb0327a9de6",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/70833be5968dda1338ad6c98733538cbb253b65bf00a2d7dedb93625876fea25",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/759e009cdef34a0274d55322a4e7028c21ba34b7d7bfecd104e7a1885785cea7",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/d7062494e07680721fe0cbb8a0baf34381ff0e238e09b239f182925b603e653a",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/d8b83633f48e88ec3dc225ec8ac5b80f0b428b8d4f0b3fac6b9a1bdf4eda8312",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/e6acea5ab4a5d735df8fffbca2bb62b668fbb5f92d7e06fcec3cf88f77abb575",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/fa6021bfb5433530a90462d1b650e30b0a7c8a1576024c73602555d9b05990f9",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/receipt.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/result.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/snapshot.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/probe.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/python-full-final.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/python-full.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/ruff.log",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/self-check.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/stale-reference.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/assessment/bundle-implementation-2026-10-08/stale-replay.json",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/ops/drift-gate-self-check.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/review/drift-gate-bundle-implementation-2026-10-08.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/adapters/bundle_codec.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/adapters/evidence_bundle.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/snapshot.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/tests/test_evidence_bundle.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "packaging/check_evidence_bundle.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        }
+      ]
+    },
+    "result": "pass",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "other",
+      "workflow-ci"
+    ],
+    "violations": [],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/*.py"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/bundle_codec.py",
+          "drift_gate/adapters/evidence_bundle.py",
+          "drift_gate/adapters/snapshot.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/cli/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/cli/runner.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Input and CLI contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          ".github/workflows/**",
+          "packaging/**"
+        ],
+        "trigger_files": [
+          ".github/workflows/ci.yml",
+          "packaging/check_evidence_bundle.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Self-check and package operations",
+            "required": [
+              "docs/ops/drift-gate-self-check.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1,
+      "on_unverified": "fail"
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {
+      ".github/workflows/ci.yml": [
+        "self-package-operations"
+      ],
+      "drift_gate/adapters/bundle_codec.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/cli/runner.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/evidence_bundle.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/snapshot.py": [
+        "self-engine-contract"
+      ],
+      "packaging/check_evidence_bundle.py": [
+        "self-package-operations"
+      ]
+    },
+    "unmatched": [
+      ".gitattributes",
+      ".gitignore",
+      "README.md",
+      "docs/assessment/bundle-implementation-2026-10-08/auto-contracts.json",
+      "docs/assessment/bundle-implementation-2026-10-08/auto-contracts.log",
+      "docs/assessment/bundle-implementation-2026-10-08/bundle-tests.log",
+      "docs/assessment/bundle-implementation-2026-10-08/current-reference.json",
+      "docs/assessment/bundle-implementation-2026-10-08/current-replay.json",
+      "docs/assessment/bundle-implementation-2026-10-08/docs-check.json",
+      "docs/assessment/bundle-implementation-2026-10-08/express-contracts.json",
+      "docs/assessment/bundle-implementation-2026-10-08/express-contracts.log",
+      "docs/assessment/bundle-implementation-2026-10-08/local-validation.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-results.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/COMMITTED.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/git-input.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/manifest.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/13ab32725e7fa4d113deec9114c3dc9fc8af50fe1849d7398e4d84c757618b6f",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/20c5c2f4e289bc760e6b47363d1ad145a9bbc339a86e9058fd942f71707e8d19",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/2a123c02f3ec96a555ea566e00190bd84f2ab574fa50b8a1e31a1164dc7fa493",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/2c96b043507e971fc5716cb8f91841a511361f8f30866208e53a4b0412adafa8",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/3803899b320dd6d925b4d5dfa60e94f4a6f188a281ba561397897cb0327a9de6",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/759e009cdef34a0274d55322a4e7028c21ba34b7d7bfecd104e7a1885785cea7",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/e6acea5ab4a5d735df8fffbca2bb62b668fbb5f92d7e06fcec3cf88f77abb575",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/f59d3510c2465311565748517e4a3eddbc354f14c45c9b01c10715d880f5a492",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/fa6021bfb5433530a90462d1b650e30b0a7c8a1576024c73602555d9b05990f9",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/objects/fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/receipt.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/result.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/3565cbabe6483742913625841bf94a259c2c0b5197f866170a103c42af8beb58/snapshot.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/COMMITTED.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/git-input.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/manifest.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/13ab32725e7fa4d113deec9114c3dc9fc8af50fe1849d7398e4d84c757618b6f",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/20c5c2f4e289bc760e6b47363d1ad145a9bbc339a86e9058fd942f71707e8d19",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/27643f3de5cf5ed6399442efad44e1ba3d1430202b6c4a2fadccb04f2b6fb041",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/2a123c02f3ec96a555ea566e00190bd84f2ab574fa50b8a1e31a1164dc7fa493",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/2c96b043507e971fc5716cb8f91841a511361f8f30866208e53a4b0412adafa8",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/3803899b320dd6d925b4d5dfa60e94f4a6f188a281ba561397897cb0327a9de6",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/70833be5968dda1338ad6c98733538cbb253b65bf00a2d7dedb93625876fea25",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/759e009cdef34a0274d55322a4e7028c21ba34b7d7bfecd104e7a1885785cea7",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/cab2aa49f7b05b3cde07bf7ed7400e39b4464007db0a53d69041081d5fff1ed3",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/d7062494e07680721fe0cbb8a0baf34381ff0e238e09b239f182925b603e653a",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/d8b83633f48e88ec3dc225ec8ac5b80f0b428b8d4f0b3fac6b9a1bdf4eda8312",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/e6acea5ab4a5d735df8fffbca2bb62b668fbb5f92d7e06fcec3cf88f77abb575",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/fa6021bfb5433530a90462d1b650e30b0a7c8a1576024c73602555d9b05990f9",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/objects/fd9f5a17e203a21874364378533de5cd58888f3346ac904e14d1836e52652168",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/receipt.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/result.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe-store/bundles/a00219b9bf5c498cdfd4ec248d6cfaf9cdf9ad14dae657b2209d2d83620ccb09/snapshot.json",
+      "docs/assessment/bundle-implementation-2026-10-08/probe.py",
+      "docs/assessment/bundle-implementation-2026-10-08/python-full-final.log",
+      "docs/assessment/bundle-implementation-2026-10-08/python-full.log",
+      "docs/assessment/bundle-implementation-2026-10-08/ruff.log",
+      "docs/assessment/bundle-implementation-2026-10-08/self-check.json",
+      "docs/assessment/bundle-implementation-2026-10-08/stale-reference.json",
+      "docs/assessment/bundle-implementation-2026-10-08/stale-replay.json",
+      "docs/contracts/gate-and-inputs.md",
+      "docs/conversation-summary-2026-10-01.md",
+      "docs/handoff-2026-10-01.md",
+      "docs/ops/drift-gate-self-check.md",
+      "docs/review/drift-gate-bundle-implementation-2026-10-08.md"
+    ],
+    "ignored": [
+      "drift_gate/tests/test_evidence_bundle.py"
+    ]
+  },
+  "execution": {
+    "schema_version": 2,
+    "run_id": "fb9d33ca5745427e81bc2d801555a5a0",
+    "started_at": "2026-10-08T00:21:19.108151+00:00",
+    "status": "success"
+  }
+}

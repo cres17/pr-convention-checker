@@ -1,0 +1,7 @@
+diff --git a/docs/api.md b/docs/api.md
+index eb19770..dde37a3 100644
+--- a/docs/api.md
++++ b/docs/api.md
+@@ -1 +1 @@
+-GET /old
++GET /new

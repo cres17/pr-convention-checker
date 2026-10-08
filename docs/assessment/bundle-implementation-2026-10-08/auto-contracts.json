@@ -1,0 +1,3372 @@
+{
+  "protocol": {
+    "version": 2,
+    "input": "real Git before/after snapshots and bounded current documents",
+    "axes": [
+      "facts",
+      "decision",
+      "verification",
+      "gate"
+    ],
+    "authorship": "author-created, non-blind; regression controls, not real PR accuracy",
+    "freeze": "expected values written before first harness run; suite v1 remains unchanged"
+  },
+  "suite_sha256": "b5c66c01a9f07c794563c1b99d07971527a8b258b937549a0d60dc296c98830d",
+  "counts": {
+    "facts": {
+      "correct": 14,
+      "total": 14
+    },
+    "decision": {
+      "correct": 14,
+      "total": 14
+    },
+    "verification": {
+      "correct": 14,
+      "total": 14
+    },
+    "gate": {
+      "correct": 14,
+      "total": 14
+    }
+  },
+  "false_verified": [],
+  "missed_known_violations": [],
+  "cases": [
+    {
+      "id": "multiline-current",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.011998666974250227,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; Complete document route coverage; add GET /new; remove GET /old",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "25c5b9e095e441ed97bb5621f2fe0cd0",
+          "started_at": "2026-10-08T00:13:28.245618+00:00",
+          "status": "success",
+          "policy_sha256": "e3f2dd51976c8a773f3080a9dc44625a57c08eae41c0b9a03adf2370e85c7fb3",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "43f2c6daa496bfe3400fe1eda5f8d82e3c2ef02180376cc438e0951f939a6758",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "277c2f6f521b06d5d47eae5fefd82e677a5bc586e43d22fd45e2fb6af9d5fd03",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "22acff2b8bca8a5a0fb9e4e10e3b22e9c6547d4cf4cb20ec0c7c6beee71ed5b0",
+                "observed_text_bytes": 599,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "479f215a0f736fac0edf8597ff3dc0cecd33e5362a7790d685917f92c347d312",
+                "observed_text_bytes": 15,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "docs/api.md",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "8b9c8b3351f27fdfc4cdce7fd1d1030865bdd76e1729d05e5a057f2af4cf99df",
+                "observed_text_bytes": 93,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "d684d035a4b512bf3ef1b4cc53385e3f3669dc0dae91c237e4d651a821b02110",
+                "observed_text_bytes": 93,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "51ddcde72014f838ccc1b88e5830bec9ce5eccf6b00cd16616a08779cafc376b",
+                "observed_text_bytes": 229,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "be475cff36474ba4722ffaa4a174a5ee0cd484ebbbfe180fb1b6c8cfbcff1694",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "43f2c6daa496bfe3400fe1eda5f8d82e3c2ef02180376cc438e0951f939a6758"
+    },
+    {
+      "id": "multiline-stale",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0021040000137872994,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "confidence": "low",
+            "confidence_basis": "path-specificity; not a probability of correctness",
+            "change_types": [
+              "other"
+            ],
+            "change_type": "other",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/api.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "diff --git a/src/api.py b/src/api.py\nindex 4c396a2..ce040b9 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -1,7 +1,7 @@\n from fastapi import FastAPI\n app = FastAPI()\n @app.get(\n-    '/old'\n+    '/new'\n )\n def read():\n     return {}\n",
+                "semantic_signals": [],
+                "semantic_evidence": [],
+                "analysis_method": "grammar+heuristic",
+                "analysis_reason": "",
+                "documented_env_keys": null,
+                "document_input_state": ""
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; Complete document route coverage; add GET /new; remove GET /old",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "checklist": [
+              "document 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "impl-only",
+            "change_intensities": [
+              "impl-only"
+            ],
+            "trigger_patterns": [
+              "src/**"
+            ],
+            "blast_radius": [
+              "missing requirement group: document"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "decision": "violated",
+            "verification": "verified",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; Complete document route coverage; add GET /new; remove GET /old",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "49675127c5f34b57b400ffa288ffe27b",
+          "started_at": "2026-10-08T00:13:28.337979+00:00",
+          "status": "success",
+          "policy_sha256": "d73cef636f3fd07af45bc84142fa57445e630763ad747250c9e7deb337936327",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "1f87e9e098e5c70e2223ab08c1747250375a5d330e1238cb8bcb5458c79b9e73",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "85385c3a35b5b1772f84f3c06c1b7f6b898226f957e303c4310d65d77101a5fb",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "9d7ba0e3b305a122fbc1737b6a70a8f904f6385c088137943f4c8b88a93a3bd7",
+                "observed_text_bytes": 581,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "dafd31c40e438ca9c4ae27ea607599d5eff94c988ff1ed886c4988a831dae617",
+                "observed_text_bytes": 15,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "docs/api.md",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "8b9c8b3351f27fdfc4cdce7fd1d1030865bdd76e1729d05e5a057f2af4cf99df",
+                "observed_text_bytes": 93,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "d684d035a4b512bf3ef1b4cc53385e3f3669dc0dae91c237e4d651a821b02110",
+                "observed_text_bytes": 93,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "51ddcde72014f838ccc1b88e5830bec9ce5eccf6b00cd16616a08779cafc376b",
+                "observed_text_bytes": 229,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "4f8f14cfe175fdbc4b26a1c8393cae4412877146c72cb5c722be03d7ad77a07b",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "1f87e9e098e5c70e2223ab08c1747250375a5d330e1238cb8bcb5458c79b9e73"
+    },
+    {
+      "id": "prefix-yaml-current",
+      "expected": {
+        "facts": {
+          "added": [
+            "POST /api/new/item"
+          ],
+          "removed": [
+            "POST /api/old/item"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "POST /api/new/item"
+          ],
+          "removed": [
+            "POST /api/old/item"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.003570333996322006,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "openapi.yaml",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.yaml"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; Complete document route coverage; add POST /api/new/item; remove POST /api/old/item",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "282fde1b14b145cf99cbb8b32a213cf3",
+          "started_at": "2026-10-08T00:13:28.429029+00:00",
+          "status": "success",
+          "policy_sha256": "95af6338629b5f83819674778aeed2943c007b56db4c1ad1257cdf724d443366",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "6a79f142f753b255c123f68f0aba24a34eac81f8c4b4b4797fb1e6cc4628194f",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "d1401cd22eb17eb5dfd1ba90d5ec62a47722640bf32051059ffe38a6be15e5da",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "204b7010e5a546bd2124843f1771167f46a957b0cd93245ca49e3545488cd238",
+                "observed_text_bytes": 600,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.yaml",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "09059f58bb1dcbe6efff62072a4179009119fd5e2ac6e454803fa3f6138b8fc9",
+                "observed_text_bytes": 69,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "openapi.yaml",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.yaml",
+                "role": "document-json",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "31226278708e83841b13fba7e89fb12a8bd9744cf5574d3086088b627a8e98fe",
+                "observed_text_bytes": 77,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "openapi.yaml",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "11e6d96cf4dd32f1bf54d6b5cc0ae9a87ba8a120b6f118e3d3855263972461a3",
+                "observed_text_bytes": 179,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "983cdacb4e9ee7a695b68789ac3f0c12ac2c54bfdaea573adda7f47bf680d81b",
+                "observed_text_bytes": 179,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "75c6c5b8b2ac742799fd494c2e8946102de1869be1563b41831b778837ff7309",
+                "observed_text_bytes": 295,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "dd20c5a089221c582ea34901d8f268eb843723ee39a8eaf72cfb7661c144f55b",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "6a79f142f753b255c123f68f0aba24a34eac81f8c4b4b4797fb1e6cc4628194f"
+    },
+    {
+      "id": "unmounted-router-no-delta",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": []
+        },
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [],
+          "removed": []
+        },
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "not-applicable",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.001361666014418006,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "openapi.json",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "not-applicable",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete source establishes no route delta",
+                "decision": "satisfied",
+                "verification": "not-applicable",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "2e9f2c8c877248c9ace830a3ee7f1acd",
+          "started_at": "2026-10-08T00:13:28.517840+00:00",
+          "status": "success",
+          "policy_sha256": "a357e6f20ec7625647679489f87084fb54aad9407d618aa7d3bb283c18b4d3e7",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "286044fdb95c492212988245f91c9cfc450994e6f074cba06da5e22baa855022",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "1eb2f9c33a26b9179c69422f741fc1116d7573d6fb30520426cd4f1b6fa9591c",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "1222a4e0eb01262bb6a3b15baa981975a0aff4d0700c21a7e8b80e4c35ae4613",
+                "observed_text_bytes": 582,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "after-source",
+                "state": "absent",
+                "reason": "adapter_declared_document_missing",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "1a7419aa1052d20c998ef0488e285135a201bc7b805672fd5b54e1f1f81d3134",
+                "observed_text_bytes": 137,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "df352c1108ed2f873ee584b68fca238a96669244f3b04ce185e7ffdba1565678",
+                "observed_text_bytes": 137,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "ed1430baeb4e25426e65842af3d406814eb0decbd791851cb360a0239f6b67e5",
+                "observed_text_bytes": 295,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "a50e027fb72426b52b55292ed73a93bd03b1a44ae4ab5eac25b6b9afe6cfb024",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "286044fdb95c492212988245f91c9cfc450994e6f074cba06da5e22baa855022"
+    },
+    {
+      "id": "response-field-deleted",
+      "expected": {
+        "facts": {
+          "PUT /items": {
+            "sku": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "PUT /items": {
+            "sku": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.002580125001259148,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "openapi.json",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-schema; PUT /items: response schema matches; changed response contracts: PUT /items",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "fe723b6995bb4c7a88346ee5988a3cfc",
+          "started_at": "2026-10-08T00:13:28.609400+00:00",
+          "status": "success",
+          "policy_sha256": "a357e6f20ec7625647679489f87084fb54aad9407d618aa7d3bb283c18b4d3e7",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "f46974c9525dd53a24169754ca23008ec2999af09f944cd9c52975eb3fe67c81",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "8ba5094559d375723a45434c506137435fdc821be644aa7c6c2f31e56ccf35d5",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "1222a4e0eb01262bb6a3b15baa981975a0aff4d0700c21a7e8b80e4c35ae4613",
+                "observed_text_bytes": 582,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "1cffd6abaabbc03263904ad73155889444c4ca1fd90a0fa94ed1f3a2992b8507",
+                "observed_text_bytes": 205,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "openapi.json",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c18be34f0b1a6cb4acb4e5f6456d069dd7526054b6f904dc8ed8a7957a3181a2",
+                "observed_text_bytes": 177,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "123b1635b51ca38d11438d77704d1a031997985bd4b62ec8337f703b8208ff0e",
+                "observed_text_bytes": 204,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c9a768ebeb5238d4a30b37235c3c8a1d185560cd0bfd5829f818d73056d07dcb",
+                "observed_text_bytes": 300,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "64fbe00767bab545a3b053ea58e8bce46532c03795a784eb99978eb2a4949a6f",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "f46974c9525dd53a24169754ca23008ec2999af09f944cd9c52975eb3fe67c81"
+    },
+    {
+      "id": "response-name-only",
+      "expected": {
+        "facts": {},
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {},
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "not-applicable",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0025137910270132124,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "heuristic",
+              "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+            },
+            {
+              "path": "openapi.json",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "not-applicable",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-schema; No response contract delta in the supported static subset",
+                "decision": "satisfied",
+                "verification": "not-applicable",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "4937bda9339d45648b74bfb1aeb5c9f2",
+          "started_at": "2026-10-08T00:13:28.708003+00:00",
+          "status": "success",
+          "policy_sha256": "a357e6f20ec7625647679489f87084fb54aad9407d618aa7d3bb283c18b4d3e7",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "d77ff39bdd828ba3c6fe8a7f45aabc41400cec8922c5de3e5d1ca36b50933545",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "47729bcea029ddcf6c6027dd28d0b7f8b966a8e834a1dbcfbd79b15c70aa42dd",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "1222a4e0eb01262bb6a3b15baa981975a0aff4d0700c21a7e8b80e4c35ae4613",
+                "observed_text_bytes": 582,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "after-source",
+                "state": "absent",
+                "reason": "adapter_declared_document_missing",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "6969ee9fd045a43d2ccf156c784b8670a1edb4cfdf698ba68fa26886f101a471",
+                "observed_text_bytes": 210,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "123b1635b51ca38d11438d77704d1a031997985bd4b62ec8337f703b8208ff0e",
+                "observed_text_bytes": 204,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "8b949122cd0f3ce87fbe9a375b429dca570bb59f91fce4581a80940051589097",
+                "observed_text_bytes": 401,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "32f980a072cd9f09bbf375bc062d87057eefe9a88c997a274220b5b444015dbf",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "d77ff39bdd828ba3c6fe8a7f45aabc41400cec8922c5de3e5d1ca36b50933545"
+    },
+    {
+      "id": "alias-preexisting-document",
+      "expected": {
+        "facts": [
+          "RETRY_DELAY"
+        ],
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": [
+          "RETRY_DELAY"
+        ],
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0004748330102302134,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": ".env.example",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "Required environment keys: RETRY_DELAY; Required environment keys: RETRY_DELAY",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "env-keys"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "c3d4bc83f15348c487cdd7af43b7ca14",
+          "started_at": "2026-10-08T00:13:28.799187+00:00",
+          "status": "success",
+          "policy_sha256": "ae64bd325f2efb1ec6816fc5c39619d88bf521902f19326ec12cfdd10078ca2f",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "4a063e1933f3f5d5151e6d78e2da8adf6a328bb6446de98fb3f4dbc8929b3535",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "7b260af33f92a7a8576ca55f900f05f3b71c1157b12f489a624cadfee87395e7",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": ".env.example",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "facdf21036fcff2c60c0dfd3aa7e33e5f930790adc54452a80f52922a46a9f91",
+                "observed_text_bytes": 20,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": ".env.example",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "872deb9c20c2d178c8b1febd8f283976ee596fe028b2c13cda879b04491498c9",
+                "observed_text_bytes": 592,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "39a8f78fa9106fd3f978c2c9c71c88980d44e5e96f8d2f0f60074800c4c2acbb",
+                "observed_text_bytes": 62,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "a766739679758be14337146fe19058c363f2595263d22b8ba52a8c61fb84987a",
+                "observed_text_bytes": 181,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "e9d028e062a8081c1525f0af05239657c9693633ec93340f3c2fde1e64c37a1b",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "4a063e1933f3f5d5151e6d78e2da8adf6a328bb6446de98fb3f4dbc8929b3535"
+    },
+    {
+      "id": "alias-missing-document",
+      "expected": {
+        "facts": [
+          "RETRY_DELAY"
+        ],
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "actual": {
+        "facts": [
+          "RETRY_DELAY"
+        ],
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0004551660385914147,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": ".env.example",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config",
+          "other"
+        ],
+        "violations": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "confidence": "low",
+            "confidence_basis": "path-specificity; not a probability of correctness",
+            "change_types": [
+              "other"
+            ],
+            "change_type": "other",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/api.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "diff --git a/src/api.py b/src/api.py\nindex e69de29..cb2fd4f 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -0,0 +1,2 @@\n+from os import getenv as lookup\n+value = lookup('RETRY_DELAY')\n",
+                "semantic_signals": [
+                  "env-key-added"
+                ],
+                "semantic_evidence": [],
+                "analysis_method": "grammar+heuristic",
+                "analysis_reason": "",
+                "documented_env_keys": null,
+                "document_input_state": ""
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "Required environment keys: RETRY_DELAY; Required environment keys: RETRY_DELAY",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "env-keys"
+              }
+            ],
+            "checklist": [
+              "document 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "config-key-added",
+            "change_intensities": [
+              "config-key-added"
+            ],
+            "trigger_patterns": [
+              "src/**"
+            ],
+            "blast_radius": [
+              ".env.example consumers",
+              "deployment configuration",
+              "missing requirement group: document",
+              "runtime operators"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "decision": "violated",
+            "verification": "verified",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "Required environment keys: RETRY_DELAY; Required environment keys: RETRY_DELAY",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "env-keys"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "87a129c09758499eb1116bf80d647a82",
+          "started_at": "2026-10-08T00:13:28.887741+00:00",
+          "status": "success",
+          "policy_sha256": "ae64bd325f2efb1ec6816fc5c39619d88bf521902f19326ec12cfdd10078ca2f",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "4b1b5795e12a5d969ad67bc41c6ffbda65273cec408eda1fb027518b4bc714b1",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "9e176a936342e31e8ebc88409865610fc55cc13cc2574d1c147c55fcca5deca4",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": ".env.example",
+                "role": "after-source",
+                "state": "absent",
+                "reason": "adapter_declared_document_missing",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "872deb9c20c2d178c8b1febd8f283976ee596fe028b2c13cda879b04491498c9",
+                "observed_text_bytes": 592,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "39a8f78fa9106fd3f978c2c9c71c88980d44e5e96f8d2f0f60074800c4c2acbb",
+                "observed_text_bytes": 62,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "a766739679758be14337146fe19058c363f2595263d22b8ba52a8c61fb84987a",
+                "observed_text_bytes": 181,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "552c4c0020dbe2fd5ab0d3f16aa59b4e8fda06c65737c9c576839a2cb53080a5",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "4b1b5795e12a5d969ad67bc41c6ffbda65273cec408eda1fb027518b4bc714b1"
+    },
+    {
+      "id": "dynamic-key-unknown",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.000423500023316592,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": ".env.example",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "No static new environment keys could be established from this change; configured trigger threshold is unverified",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "env-keys"
+              },
+              {
+                "name": "Analysis evidence unavailable",
+                "required": [
+                  "src/api.py"
+                ],
+                "type": "analysis",
+                "evidence": "Cannot establish the configured change threshold; provide analyzable input or a valid exception",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "paths"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "69baa3cc332948c58412912a5b4a92e8",
+          "started_at": "2026-10-08T00:13:28.974399+00:00",
+          "status": "success",
+          "policy_sha256": "ae64bd325f2efb1ec6816fc5c39619d88bf521902f19326ec12cfdd10078ca2f",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "3f4d38cafc6345e4a408943574b7d0f054ddf4ab574c1b160194c0dfaef990bb",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "443e2c2f8cd6a8328c62e44f9ca9ae89db4db1722bbfc2d3b46d1c93be38e3fd",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": ".env.example",
+                "role": "after-source",
+                "state": "absent",
+                "reason": "adapter_declared_document_missing",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "872deb9c20c2d178c8b1febd8f283976ee596fe028b2c13cda879b04491498c9",
+                "observed_text_bytes": 592,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "91350c396f39a851557e1ca6b9e6b1b4222a860193036ae6887950461192caf3",
+                "observed_text_bytes": 34,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "3501e77ebbf86201a687b3634973fc15f6635455ea2d78f4f9679947a425f85f",
+                "observed_text_bytes": 153,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "500bf89eb7b43bc2ee942180161f518ff693f19aa727cea8de6d86e2d305fbd3",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "3f4d38cafc6345e4a408943574b7d0f054ddf4ab574c1b160194c0dfaef990bb"
+    },
+    {
+      "id": "shadowed-getter-unknown",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0003000840079039335,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": ".env.example",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "No static new environment keys could be established from this change",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "env-keys"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "aefb86735f364e3cb3faa70d02815b89",
+          "started_at": "2026-10-08T00:13:29.063333+00:00",
+          "status": "success",
+          "policy_sha256": "22623c7c522fac7087286c929edb815ff26d9f10b130601a0a4e5b1836432e69",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "2cd657a9dbe4613fee637708824c1babfcc22cfd0c004029a3cdc68d385785d4",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "085b0a36afd6044c8419115af02cd19d28f91f7110d77fb861d6f147ffa7748d",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": ".env.example",
+                "role": "after-source",
+                "state": "absent",
+                "reason": "adapter_declared_document_missing",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "bd984b912d46e4d11b764ef1429eb3f9595b2bcca6181a4c994559e6140839e0",
+                "observed_text_bytes": 579,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "50e7923f7d28d7f1381df9d29448d5f5ead8831a73a6dc6f4ab6ed473a2b4cf7",
+                "observed_text_bytes": 78,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "eb8c7e71aafd241444330575aff0c872c5ac49f7c83f8febc2d7a1ce44d71d42",
+                "observed_text_bytes": 198,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "060648a5604565aa327c68acbe90b5cfc0b9e51a4e050f127224982debaf1d4d",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "2cd657a9dbe4613fee637708824c1babfcc22cfd0c004029a3cdc68d385785d4"
+    },
+    {
+      "id": "yaml-duplicate-unknown",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0016851249965839088,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "openapi.yaml",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.yaml"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; Document could not be read or safely decoded; add GET /new; remove GET /old",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "auto-strict"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "07c657d5a7a04de09f2262cbdf88e5a0",
+          "started_at": "2026-10-08T00:13:29.160612+00:00",
+          "status": "success",
+          "policy_sha256": "ae6b355c94777a1a29563755bc782847187aecbafa263a8cbf3f3a2e8159aae4",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "74301fd00d634e5bfdac6e6aad41f3c97d0fee7be60a588c4d8c1e8669bc67ef",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "8b7684afd033be6af3aa97de02d35660fb1efaaa40816deb6cc36cedd1127aba",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "77addf49515268fa1eac6abcdba2273bc9623ed394c177bb0bc2278dc141a53d",
+                "observed_text_bytes": 582,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.yaml",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e7a74de7bb1f15210fab684f9837ef43364bb0d661a3211482929ffdf76d6843",
+                "observed_text_bytes": 35,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "openapi.yaml",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.yaml",
+                "role": "document-json",
+                "state": "unavailable",
+                "reason": "document_analysis_unavailable",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.yaml",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "8b9c8b3351f27fdfc4cdce7fd1d1030865bdd76e1729d05e5a057f2af4cf99df",
+                "observed_text_bytes": 93,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "d684d035a4b512bf3ef1b4cc53385e3f3669dc0dae91c237e4d651a821b02110",
+                "observed_text_bytes": 93,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "51ddcde72014f838ccc1b88e5830bec9ce5eccf6b00cd16616a08779cafc376b",
+                "observed_text_bytes": 229,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "4805e81176662cdf539b04666c350da7885cc8ae7e78a13104190929c1454832",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "74301fd00d634e5bfdac6e6aad41f3c97d0fee7be60a588c4d8c1e8669bc67ef"
+    },
+    {
+      "id": "module-control-unknown",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0015600829501636326,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "openapi.json",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; conditional module declarations are unsupported",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "auto-strict"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "edd4594a3f604c1182bc658eb0125543",
+          "started_at": "2026-10-08T00:13:29.253397+00:00",
+          "status": "success",
+          "policy_sha256": "a357e6f20ec7625647679489f87084fb54aad9407d618aa7d3bb283c18b4d3e7",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "001eb20e80edb0d61a22c3f2e138433c9f24f57af1b29c28b87a096eca9e61ba",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "08abce9906c4c78276f8edf29a5bbf0cc058ad34ab433af40560ba2a1300c7bc",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "1222a4e0eb01262bb6a3b15baa981975a0aff4d0700c21a7e8b80e4c35ae4613",
+                "observed_text_bytes": 582,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "after-source",
+                "state": "absent",
+                "reason": "adapter_declared_document_missing",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "fe9d60017ad10f088c8fad699e1d658981abdf57d8521dcef4a3fd743caa951b",
+                "observed_text_bytes": 106,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "d684d035a4b512bf3ef1b4cc53385e3f3669dc0dae91c237e4d651a821b02110",
+                "observed_text_bytes": 93,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "d0f0bb5fa9441f9f421ac01bc1307cb02254dea621a89960910ef80405b87580",
+                "observed_text_bytes": 260,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "15dfe9cef707368337330c7a0139f856a6238084fd55eca06493ebeee6690e8c",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "001eb20e80edb0d61a22c3f2e138433c9f24f57af1b29c28b87a096eca9e61ba"
+    },
+    {
+      "id": "comment-no-contract",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": []
+        },
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [],
+          "removed": []
+        },
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "not-applicable",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 0,
+          "runtime_seconds": 0.001681292022112757,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "heuristic",
+              "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+            },
+            {
+              "path": "openapi.json",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "decision": "not-applicable",
+            "verification": "not-applicable",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "5df12fecb1514f348c3871200be54a85",
+          "started_at": "2026-10-08T00:13:29.348028+00:00",
+          "status": "success",
+          "policy_sha256": "3670e93b5b858e1ce36247b8f0beb6689e62aaa7d48fa83870da02508bd6d517",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "b15348a9a77a522d8b0444f95fb131964b7032919a3d096c5e1554a4df065e2d",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "69540f148ab1e7e621f002260f70fcca6bc5e7e54ddd616022c74ae7c7b3adad",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "1131a22a0481b78e60b2b297a69a5febfc9b6675cdd96d17fc76257d568d5603",
+                "observed_text_bytes": 600,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "after-source",
+                "state": "absent",
+                "reason": "adapter_declared_document_missing",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "openapi.json",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c8ffdec8cabdb1d65d9e4c99126d1d475840ee1c688db96158469475579286e4",
+                "observed_text_bytes": 120,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "d684d035a4b512bf3ef1b4cc53385e3f3669dc0dae91c237e4d651a821b02110",
+                "observed_text_bytes": 93,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c10e156c98bf23dbb5fd64983fb610dad1f6306bef5429ae6b59fcd23d6c0e38",
+                "observed_text_bytes": 192,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "7baa3646aee7482877b12ca5607ccf5ec83a124f553e486ed7db4e4f7968a277",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "b15348a9a77a522d8b0444f95fb131964b7032919a3d096c5e1554a4df065e2d"
+    },
+    {
+      "id": "missing-getter-import",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.00025345798349007964,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": ".env.example",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "No static new environment keys could be established from this change",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "env-keys"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "3449e19a9af841dc8db9840f2784cb66",
+          "started_at": "2026-10-08T00:13:29.440140+00:00",
+          "status": "success",
+          "policy_sha256": "22623c7c522fac7087286c929edb815ff26d9f10b130601a0a4e5b1836432e69",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-08",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "d070b451871c905b6b002f3d85fbb916d8c343bff505447bcacf3ad94f02a9c4",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "52099b16441158f7422fe6a23f22f4e644b2cf7a614097a90996a3a746ebd525",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": ".env.example",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "43a3411da22016cb6867991c74630ba59e385438d3691e3bbd5bae68a14197e6",
+                "observed_text_bytes": 12,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": ".env.example",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": ".env.example",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "bd984b912d46e4d11b764ef1429eb3f9595b2bcca6181a4c994559e6140839e0",
+                "observed_text_bytes": 579,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "a359650b77022828a70aa2f5539362a7226e5f5ca144ad3eb510aa7fb29fa70e",
+                "observed_text_bytes": 21,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.py",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.py",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "9de4ce85fae9b83197b81a9be84c0d25eead96bb31134857f141198fa8b44da0",
+                "observed_text_bytes": 137,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "dd2c17e239ead0f6d3e5fba2229d3db984b6313df5508aa872c5eae2b15a0ccd",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "d070b451871c905b6b002f3d85fbb916d8c343bff505447bcacf3ad94f02a9c4"
+    }
+  ]
+}
