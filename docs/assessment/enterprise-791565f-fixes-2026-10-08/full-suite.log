@@ -1,0 +1,10 @@
+commit base 791565f + working tree (fixes) · Python 3.11.17 · Linux container
+SKIPPED [1] drift_gate/tests/test_desktop_ui.py:8: could not import 'PySide6': No module named 'PySide6'
+SKIPPED [1] drift_gate/tests/test_desktop_web.py:7: could not import 'PySide6.QtWebEngineWidgets': No module named 'PySide6'
+SKIPPED [1] drift_gate/tests/test_evidence_bundle.py:464: Windows junction control
+SKIPPED [4] drift_gate/tests/test_express_contracts.py:86: set DRIFT_GATE_EXPRESS_ORACLE_DIR to a fixed Express 4.21.2 installation
+SKIPPED [3] drift_gate/tests/test_packaging.py:226: could not import 'zstandard': No module named 'zstandard'
+SKIPPED [1] drift_gate/tests/test_packaging.py:318: could not import 'PySide6': No module named 'PySide6'
+SKIPPED [1] drift_gate/tests/test_subscription_review.py:113: could not import 'PySide6': No module named 'PySide6'
+1934 passed, 12 skipped, 4 warnings in 118.78s (0:01:58)
+EXIT 0

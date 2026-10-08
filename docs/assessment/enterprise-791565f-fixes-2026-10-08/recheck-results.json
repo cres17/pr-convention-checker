@@ -1,0 +1,261 @@
+{
+  "oneof_overlap": {
+    "old": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "new": {
+      "type": "integer"
+    },
+    "witness": 1,
+    "oracle_old_accepts": false,
+    "oracle_new_accepts": true,
+    "comparison": {
+      "schema": "api-compatibility-v1",
+      "direction": "response",
+      "truth": "U",
+      "breaking": [],
+      "unknown": [
+        {
+          "operation": "GET /x",
+          "location": "responses.200.application/json",
+          "check": "undecided",
+          "detail": ""
+        }
+      ],
+      "semantics": "strict-json-schema-inclusion"
+    },
+    "actual_gate": "fail"
+  },
+  "allof_additional_properties": {
+    "old": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "a": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "b": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "new": {
+      "type": "object",
+      "properties": {
+        "a": {
+          "type": "string"
+        },
+        "b": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "witness": {
+      "a": "x"
+    },
+    "oracle_old_accepts": false,
+    "oracle_new_accepts": true,
+    "comparison": {
+      "schema": "api-compatibility-v1",
+      "direction": "response",
+      "truth": "F",
+      "breaking": [
+        {
+          "operation": "GET /x",
+          "location": "responses.200.application/json.a",
+          "check": "type",
+          "detail": ""
+        },
+        {
+          "operation": "GET /x",
+          "location": "responses.200.application/json.b",
+          "check": "type",
+          "detail": ""
+        }
+      ],
+      "unknown": [],
+      "semantics": "strict-json-schema-inclusion"
+    },
+    "actual_gate": "fail"
+  },
+  "default_response": {
+    "schema": "api-compatibility-v1",
+    "direction": "response",
+    "truth": "F",
+    "breaking": [
+      {
+        "operation": "GET /x",
+        "location": "responses.200(old default).application/json",
+        "check": "type",
+        "detail": ""
+      }
+    ],
+    "unknown": [],
+    "semantics": "strict-json-schema-inclusion"
+  },
+  "path_item_required_parameter": {
+    "schema": "api-compatibility-v1",
+    "direction": "request",
+    "truth": "F",
+    "breaking": [
+      {
+        "operation": "GET /x",
+        "location": "parameters.query.tenant",
+        "check": "required-parameter-added",
+        "detail": ""
+      }
+    ],
+    "unknown": [],
+    "semantics": "strict-json-schema-inclusion"
+  },
+  "literal_dynamic_import": {
+    "schema": "dependency-impact-v1",
+    "seeds": [
+      "dep.js"
+    ],
+    "affected": [
+      "app.js",
+      "dep.js"
+    ],
+    "analysis_scope": [
+      "app.js",
+      "dep.js"
+    ],
+    "removed_edges": [],
+    "added_edges": [],
+    "cycles": [],
+    "closed": true,
+    "open_boundaries": [],
+    "external_boundaries": [],
+    "assumptions": [
+      "external-packages-contribute-no-repository-contract-facts",
+      "static-literal-imports-only"
+    ]
+  },
+  "static_import_control": {
+    "schema": "dependency-impact-v1",
+    "seeds": [
+      "dep.js"
+    ],
+    "affected": [
+      "app.js",
+      "dep.js"
+    ],
+    "analysis_scope": [
+      "app.js",
+      "dep.js"
+    ],
+    "removed_edges": [],
+    "added_edges": [],
+    "cycles": [],
+    "closed": true,
+    "open_boundaries": [],
+    "external_boundaries": [],
+    "assumptions": [
+      "external-packages-contribute-no-repository-contract-facts",
+      "static-literal-imports-only"
+    ]
+  },
+  "cache_value_tamper": {
+    "value_after_tamper": null,
+    "stats": {
+      "hits": 0,
+      "misses": 0,
+      "rejected_entries": 1,
+      "integrity": "detects-corruption-and-partial-edits-not-forgery",
+      "stored": 1,
+      "not_stored_transient_or_incomplete": 0,
+      "root": "/tmp/driftgate-review-0uhjlhwq/cache"
+    }
+  },
+  "org_scope": {
+    "direct_read_denied_control": true,
+    "backup_contains_out_of_scope_result": false,
+    "purge_deletes_out_of_scope_result": false,
+    "limited_admin_created_wildcard_admin": false,
+    "refusals": {
+      "backup": "tenant-wide-action-requires-tenant-scope",
+      "add_principal": "tenant-wide-action-requires-tenant-scope"
+    }
+  },
+  "holdout_cross_input_labels": {
+    "exit_code": 2,
+    "cli": {
+      "execution": {
+        "schema_version": 2,
+        "run_id": "c813da0a7b464508ab7a36ad692f77a3",
+        "started_at": "2026-10-08T09:05:03.852392+00:00",
+        "status": "input_error"
+      },
+      "error": {
+        "code": "input_error",
+        "message": "labels were made for a different frozen input than the results"
+      }
+    },
+    "source_A_sha256": "cf4fa7a2325e1fcf2cbfbd98bfdd4819dfd36ad9818b55e528894c6c2afe81df",
+    "source_B_sha256": "08c0d91d1419325df31ee29a7b35e9a4500531f4ae1690635908f2e3ec91d34f",
+    "both_file_pins_correct": true,
+    "metrics_written": false,
+    "results_gate_A": "pass",
+    "reviewed_gate_B": "fail",
+    "labels_fields": [
+      "agreement",
+      "frozen_sha256",
+      "labels",
+      "packet_sha256",
+      "protocol",
+      "schema",
+      "sources_kept_separate",
+      "unresolved"
+    ]
+  },
+  "holdout_express_equivalence": {
+    "production_gate": "pass",
+    "production_rules": [
+      "pass"
+    ],
+    "holdout": [
+      {
+        "case_id": "shared-id",
+        "gate": "pass",
+        "expected_gate": "pass",
+        "error": "",
+        "evaluation_context": {
+          "evaluated_on": "2026-01-01",
+          "date_basis": "UTC"
+        },
+        "input_sha256": "6e5c9bf9056486515f8336092dfd1defa5211eb13f005ca5aa3bada795517b04"
+      }
+    ],
+    "units": [
+      {
+        "unit_id": "shared-id::api",
+        "case_id": "shared-id",
+        "rule_id": "api",
+        "decision": "satisfied",
+        "verification": "verified",
+        "expected_decision": "satisfied",
+        "expected_support": "supported",
+        "known_violation": false
+      }
+    ]
+  }
+}
