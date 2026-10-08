@@ -41,11 +41,11 @@ def fixture(root):
     root.mkdir(parents=True)
     git(root, 'init', '-q')
     (root / 'src').mkdir(); (root / 'docs').mkdir()
-    (root / '.drift-gate.yml').write_text(POLICY, encoding='utf-8')
-    (root / 'src/api.py').write_text(ROUTE.format(path='/old'), encoding='utf-8')
-    (root / 'docs/api.md').write_text('GET /old\n', encoding='utf-8')
+    (root / '.drift-gate.yml').write_text(POLICY, encoding='utf-8', newline='\n')
+    (root / 'src/api.py').write_text(ROUTE.format(path='/old'), encoding='utf-8', newline='\n')
+    (root / 'docs/api.md').write_text('GET /old\n', encoding='utf-8', newline='\n')
     base = commit(root, 'base')
-    (root / 'src/api.py').write_text(ROUTE.format(path='/new'), encoding='utf-8')
+    (root / 'src/api.py').write_text(ROUTE.format(path='/new'), encoding='utf-8', newline='\n')
     return base, commit(root, 'head')
 
 
