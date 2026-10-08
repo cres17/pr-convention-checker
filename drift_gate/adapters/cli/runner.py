@@ -56,6 +56,7 @@ from drift_gate.reporters.html import HtmlReporter
 from drift_gate.reporters.markdown import MarkdownReporter
 from drift_gate.utils.glob_matcher import match_glob
 from drift_gate.adapters.execution import identity, atomic_text, atomic_json
+from drift_gate.adapters.bundle_codec import BundleError
 
 
 class CLIInputError(ValueError):
@@ -340,12 +341,12 @@ def run_cli(argv=None):
 
     inspections = {"check": _run_check, "report": _run_check,
                    "review": _run_review, "self-audit": _run_self_audit,
-                   "history": _run_history}
+                   "history": _run_history, "bundle": _run_bundle}
     if args.command in inspections:
         args.execution = identity()
         try:
             inspections[args.command](args)
-        except (CLIInputError, GitInputError, PolicyLoadError, OSError, UnicodeError, ResultValidationError) as exc:
+        except (CLIInputError, GitInputError, PolicyLoadError, OSError, UnicodeError, ResultValidationError, BundleError) as exc:
             code = 'result_validation_error' if isinstance(exc, ResultValidationError) else 'input_error'
             error = {'execution': {**args.execution, 'status': code},
                      'error': {'code': code, 'message': str(exc)}}
@@ -416,6 +417,13 @@ def _build_parser() -> argparse.ArgumentParser:
         out_json="drift-report.json",
         out_html="drift-report.html",
     )
+
+    bundle = subparsers.add_parser('bundle', help='Verify or replay a locally persisted evidence bundle')
+    bundle.add_argument('operation', choices=['verify', 'replay'])
+    bundle.add_argument('path', help='Published bundle directory (named by receipt SHA-256)')
+    bundle.add_argument('--expected-receipt-sha256', help='Optional independently retained receipt digest')
+    bundle.add_argument('--json', action='store_true', dest='json_output')
+    bundle.add_argument('--out-json', help='Write verification or replay JSON')
 
     init = subparsers.add_parser(
         "init",
@@ -619,6 +627,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _add_check_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument('--evidence-store', help='Opt in to private raw-input storage; persists the base inspection')
     parser.add_argument('--head', help='Immutable Git target ref; requires a separate policy ref and SHA-256 pin')
     parser.add_argument('--trusted-policy-ref', help='Caller-selected trusted Git policy revision')
     parser.add_argument('--trusted-policy-sha256', help='Expected raw SHA-256 of the selected trusted policy')
@@ -765,6 +774,10 @@ def _run_check(args) -> None:
             provenance=getattr(args, 'input_provenance', {}), contract_proofs=args.contract_proofs)
     runtime_seconds = time.perf_counter() - start
     result.scan_metrics.runtime_seconds = runtime_seconds
+    if args.evidence_store:
+        from drift_gate.adapters.evidence_bundle import save_bundle
+        bundle = save_bundle(result, args.evidence_store)
+        result.execution['evidence_bundle'] = bundle.to_dict()
     policy = policy_for_run
     if args.temporal_gate:
         threshold = (
@@ -840,6 +853,23 @@ def _run_check(args) -> None:
         )
 
     sys.exit(1 if result.result == "fail" else 0)
+
+
+def _run_bundle(args):
+    from drift_gate.adapters.evidence_bundle import load_bundle
+    bundle = load_bundle(args.path, expected_receipt_sha256=args.expected_receipt_sha256)
+    if args.operation == 'verify':
+        data = {'bundle': bundle.to_dict(), 'receipt': bundle.receipt,
+                'validation': 'stored-bytes-and-input-binding', 'semantic_truth_certified': False}
+        exit_code = 0
+    else:
+        result = bundle.replay(execution=args.execution)
+        data = result.to_dict()
+        exit_code = (1 if result.result == 'fail' else 0) if result.execution['bundle_replay']['recorded_result_matches_current'] else 2
+    if args.out_json:
+        atomic_json(args.out_json, data)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(exit_code)
 
 
 def _run_demo(args) -> None:

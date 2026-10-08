@@ -46,7 +46,11 @@ jobs:
           --policy .drift-gate.self.yml
           --trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b
           --trusted-policy-sha256 3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb
+          --evidence-store build/object-evidence
           --json --out-json build/object-self-check.json > build/object-self-check-stdout.json
+      - name: Verify persisted inputs and replay without collecting Git again
+        run: |
+          python packaging/check_evidence_bundle.py --report build/object-self-check.json --out build/bundle-replay.json
       - name: Preserve policy coverage and gate evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -55,6 +59,8 @@ jobs:
           path: |
             build/self-check.json
             build/object-self-check.json
+            build/bundle-replay.json
+            build/object-evidence/bundles/
 
   test:
     runs-on: ${{ matrix.os }}

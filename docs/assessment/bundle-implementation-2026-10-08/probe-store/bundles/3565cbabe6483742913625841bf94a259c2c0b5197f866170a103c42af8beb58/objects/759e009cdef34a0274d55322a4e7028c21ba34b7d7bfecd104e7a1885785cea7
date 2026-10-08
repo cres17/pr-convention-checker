@@ -1,0 +1,10 @@
+rules:
+  - id: pinned-api
+    when:
+      any_changed: [src/**]
+    require:
+      groups:
+        - name: api-contract
+          any_changed: [docs/api.md]
+          content: auto-strict
+    severity: blocker
