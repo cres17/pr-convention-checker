@@ -14,7 +14,8 @@ from drift_gate.core.evaluation.api_schema import (
     UnknownResponse, api_schema_requirement, response_changes,
 )
 from drift_gate.core.evaluation.environment import environment_fact_outcome
-from drift_gate.core.evaluation.routes import analyze_route_facts, route_document_requirement
+from drift_gate.core.evaluation.membership import Bounds, delta_bounds, route_requirement
+from drift_gate.core.evaluation.routes import analyze_route_facts, document_routes
 from drift_gate.core.evaluation.static_routers import UnsupportedContract
 from drift_gate.core.models.facts import ContractFamily, ExactDelta, ExactFacts, FactBasis, ReasonCode, UnknownFacts
 from drift_gate.core.models.policy import Group
@@ -125,10 +126,18 @@ def _document_outcome(obligation, file, discovery, by_path, session):
         return _environment_document(assessment, file)
     group = Group(name=obligation.binding.id, any_changed=[file.path])
     if assessment.scope.family == ContractFamily.API_ROUTE:
-        delta = assessment.delta
-        if not isinstance(delta, ExactDelta):
-            return Truth.UNKNOWN, False
-        check = route_document_requirement(group, [file], set(delta.added), set(delta.removed), session)
+        # Interval membership: exact deltas reproduce the previous set rule;
+        # bounded deltas can now be decided when every interpretation agrees.
+        added, removed = delta_bounds(assessment.delta)
+        if file.document_input_state == 'missing':
+            document = Bounds.exact(())
+        else:
+            try:
+                document = Bounds.exact(document_routes(file, session))
+            except UnsupportedContract:
+                document = Bounds.unknown()
+        truth = route_requirement(added, removed, document)
+        return truth, truth != Truth.UNKNOWN
     else:
         check = api_schema_requirement(group, _response_files(assessment.scope, discovery, by_path), [file], session)
     truth = {'satisfied': Truth.TRUE, 'violated': Truth.FALSE, 'undetermined': Truth.UNKNOWN}.get(check.decision)

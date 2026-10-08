@@ -48,4 +48,21 @@ def weakening_reasons(trusted, candidate):
         errors.append('added excluded paths')
     if trusted.suppression != candidate.suppression:
         errors.append('exception policy changed; explicit migration required')
+    if trusted.gate.proof_gate != candidate.gate.proof_gate:
+        errors.append('proof gate version changed; explicit migration required')
+    if trusted.services != candidate.services:
+        errors.append('service declarations changed; explicit migration required')
+    if trusted.budget is not None:
+        if candidate.budget is None:
+            errors.append('removed resource budget')
+        else:
+            for name, value in vars(trusted.budget).items():
+                current = getattr(candidate.budget, name)
+                if value is not None and (current is None or current > value):
+                    errors.append(f'raised resource limit {name}')
+    by_id = {r.id: r for r in candidate.rules}
+    for old in trusted.rules:
+        new = by_id.get(old.id)
+        if new is not None and old.when.trigger != new.when.trigger:
+            errors.append(f'{old.id}: typed trigger changed; explicit migration required')
     return errors

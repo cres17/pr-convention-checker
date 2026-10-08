@@ -16,7 +16,7 @@ from drift_gate.core.models.evaluation_context import EvaluationContext
 from drift_gate.core.models.input_manifest import (
     ArtifactState, InputManifest, SourceArtifact, canonical_bytes, relative_path,
 )
-from drift_gate.core.models.policy import Policy
+from drift_gate.core.models.policy import Policy, policy_identity_dict
 from drift_gate.core.models.result import DriftIgnoreDirective
 from drift_gate.core.models.git_input import GitInputEvidence
 from drift_gate.core.policy.loader import load_policy_from_text
@@ -59,7 +59,7 @@ def read_bounded_text(path, *, max_bytes=1_000_000):
 
 def _validate_policy_binding(policy_data, source):
     if source is not None:
-        parsed = asdict(load_policy_from_text(source))
+        parsed = policy_identity_dict(load_policy_from_text(source))
         if {k: v for k, v in parsed.items() if k != 'load_warnings'} != {
             k: v for k, v in policy_data.items() if k != 'load_warnings'
         }:
@@ -204,7 +204,7 @@ def capture_inspection(*, changed_files, policy, context, drift_ignores=None,
                        contract_proofs=False, git_evidence=None):
     if type(contract_proofs) is not bool:
         raise ValueError('contract_proofs must be a boolean')
-    policy_data = asdict(policy)
+    policy_data = policy_identity_dict(policy)
     # A caller cannot bind policy A's source hash to policy B's semantics.
     _validate_policy_binding(policy_data, policy_source)
     provenance = provenance or {}
