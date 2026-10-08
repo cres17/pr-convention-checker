@@ -480,6 +480,7 @@ def _build_parser() -> argparse.ArgumentParser:
     holdout.add_argument('--reviews', nargs='*', default=[], help='Review JSONL files (adjudicate)')
     holdout.add_argument('--resolutions', help='Adjudicator resolutions JSONL (optional)')
     holdout.add_argument('--labels', help='Adjudicated labels file (score)')
+    holdout.add_argument('--labels-sha256', help='Pinned SHA-256 of --labels (printed by adjudicate)')
     holdout.add_argument('--seed', default='drift-gate-holdout')
     holdout.add_argument('--holdout-fraction', type=float, default=0.3)
     holdout.add_argument('--regression-families', nargs='*', default=[])
@@ -1298,8 +1299,10 @@ def _run_holdout(args):
                 'agreement': labels['agreement']}
     else:
         results, _ = h.read_pinned(args.results, args.results_sha256, h.RESULTS)
-        labels, _ = h.read_pinned(args.labels, None, h.LABELS)
-        data = {'metrics_sha256': h.write_once(args.out, h.score_all(results, labels))}
+        labels, labels_digest = h.read_pinned(args.labels, args.labels_sha256, h.LABELS)
+        report = {**h.score_all(results, labels), 'labels_sha256': labels_digest,
+                  'labels_pinned_by_caller': args.labels_sha256 is not None}
+        data = {'metrics_sha256': h.write_once(args.out, report)}
     _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
     sys.exit(0)
 

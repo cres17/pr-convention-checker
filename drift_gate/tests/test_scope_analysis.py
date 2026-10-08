@@ -170,3 +170,27 @@ def test_isolated_workers_produce_the_same_scope_facts(repo):
     assert isolated['analysis_boundary'] == 'isolated-worker-processes' and not isolated['worker_failures']
     assert inline['services'] == isolated['services']
     assert inline['no_delta_certificates'] == isolated['no_delta_certificates']
+
+
+
+def test_policy_memory_budget_reaches_isolated_workers(tmp_path, monkeypatch):
+    from drift_gate.adapters import analyzer_worker
+    seen = []
+    real = analyzer_worker.WorkerPool
+
+    class Recording(real):
+        def __init__(self, **kwargs):
+            seen.append(kwargs['limits'])
+            super().__init__(**kwargs)
+
+    monkeypatch.setattr(analyzer_worker, 'WorkerPool', Recording)
+    policy = POLICY + 'budget: {max_memory_bytes: 900000000}\n'
+    git(tmp_path, 'init', '-q')
+    base = commit(tmp_path, {'.drift-gate.yml': policy, 'services/billing/main.py': 'import os\n',
+                             'services/billing/api.py': route('/health')}, 'base')
+    head = commit(tmp_path, {'services/billing/api.py': route('/v2')}, 'route change')
+    report = analyze_scope(root=tmp_path, base=base, head=head, trusted_policy_ref=base,
+                           trusted_policy_sha256=sha256(policy.encode()).hexdigest(), isolated=True)
+    assert seen and all(limits['max_memory_bytes'] == 900_000_000 for limits in seen)
+    expected = [] if __import__('sys').platform.startswith('linux') else ['memory']
+    assert report['worker_limits_unapplied'] == expected and not report['worker_failures']

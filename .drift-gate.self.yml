@@ -39,7 +39,7 @@ rules:
     severity: major
   - id: self-ui-bridge-contract
     when:
-      any_changed: ['desktop-ui/src/**', 'drift_gate/desktop/web_app.py', 'drift_gate/desktop/app.py', 'drift_gate/desktop/service.py', 'drift_gate/desktop/resources.py', 'drift_gate/desktop/package_check.py', 'drift_gate/desktop/package_check_contract.py', 'drift_gate/desktop/package_git_check.py', 'drift_gate/desktop/policy_setup.py', 'drift_gate/desktop/review_dialog.py', 'drift_gate/desktop/subscription_review.py', 'drift_gate/desktop/doc_links.py', 'drift_gate/desktop/__init__.py', 'desktop-ui/package.json', 'desktop-ui/package-lock.json', 'desktop-ui/vite.config.ts']
+      any_changed: ['desktop-ui/src/**', 'drift_gate/desktop/web_app.py', 'drift_gate/desktop/app.py', 'drift_gate/desktop/service.py', 'drift_gate/desktop/resources.py', 'drift_gate/desktop/package_check.py', 'drift_gate/desktop/package_check_contract.py', 'drift_gate/desktop/package_git_check.py', 'drift_gate/desktop/policy_setup.py', 'drift_gate/desktop/review_dialog.py', 'drift_gate/desktop/subscription_review.py', 'drift_gate/desktop/doc_links.py', 'drift_gate/desktop/cli_entry.py', 'drift_gate/desktop/__init__.py', 'desktop-ui/package.json', 'desktop-ui/package-lock.json', 'desktop-ui/vite.config.ts']
       min_change_intensity: impl-only
     require:
       groups:

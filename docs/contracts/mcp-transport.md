@@ -1,5 +1,13 @@
 # MCP 입력·출력 계약
 
+## 면제 승인 envelope 전달 (2026-10-08)
+
+`drift_gate_check_pr`은 drift-ignore 승인 확인에 정책 원문의 SHA-256을 전달한다. `require_codeowners_approval`
+규칙의 면제는 승인 envelope(rule, trigger 경로, head OID, 정책 SHA-256, 유효 기간)가 맞을 때만 인정된다.
+envelope가 하나라도 있을 때만 평가 context에 head OID와 정책 digest를 넣으므로, 면제가 없는 PR 검사의 입력
+digest와 출력 schema는 바뀌지 않는다. 새 MCP 도구나 인자는 추가하지 않았다. 신뢰 엔진 대조, 범위 분석,
+holdout, 조직 서비스는 CLI 전용이다.
+
 ## S1-e proof 진단 opt-in
 
 `drift_gate_check_local/pr`에 boolean `contract_proofs`를 추가한다. 기본 false다.

@@ -1,5 +1,133 @@
 # Gate와 입력 계약
 
+## S2-e~S4 신뢰 경계·판정 모델·범위 분석·평가·조직 기능 (2026-10-08)
+
+### 신뢰 엔진과 후보 엔진 (W09)
+
+`engine manifest --ref <commit>`은 그 commit의 `drift_gate/` Git 객체(테스트·`desktop/web/`
+제외)로 파일별 SHA-256 manifest를 만든다. `trusted-check`는 `--engine-manifest`와
+`--engine-manifest-sha256`이 일치할 때만 그 엔진을 Git 객체에서 임시 디렉터리로 꺼내
+`python -I`로 실행한다. 자식 환경에서 이름 조각에 TOKEN·SECRET·PASSWORD·KEY·CREDENTIAL·
+AUTH·COOKIE·SESSION·PAT가 있는 변수와 `PYTHONPATH` 계열을 제거한다. 자식은 import된
+`drift_gate` module과 적재된 grammar library의 해시를 manifest·`parser_hashes.json`과 대조한
+attestation을 함께 반환한다. interpreter 자체는 attestation 대상이 아니다
+(`interpreter_attested=false`).
+
+merge 근거는 신뢰 엔진 판정뿐이다. 후보 엔진 결과는 shadow이며 판정 차이가 있으면
+allow를 review로 낮출 뿐 block을 해제하지 않는다. 후보가 `drift_gate/**`, 정책, workflow,
+`action.yml`, `packaging/**`, 의존성 파일을 바꾸면 `candidate-changes-checker-policy-or-workflow`로
+review가 된다. 종료 코드는 allow 0, block 1, review 5다. 신뢰 엔진이 실패하거나 attestation이
+불일치하면 merge 근거 없이 review다. 같은 기계의 파일 시스템·네트워크를 공유하므로
+코드 동일성 경계이며 sandbox가 아니다.
+
+### 면제 승인 envelope (W09)
+
+`require_codeowners_approval` 규칙의 drift-ignore는 `approval-envelope-v1`이 있어야 인정된다.
+envelope는 rule, trigger 경로, head OID, 정책 SHA-256, reason, 유효 기간(UTC), 승인자, 확인한
+authority 근거를 묶는다. 사용자 JSON의 `verified: true`나 `approved-by:` 문구는 envelope가 아니다.
+GitHub 경로는 review API로 승인자를 확인한 뒤 envelope를 만든다. head·정책·경로·기간 중 하나라도
+다르면 거부된다. `DRIFT_GATE_APPROVAL_SIGNING_KEY=key_id:base64`가 있으면 HMAC-SHA256 서명을
+붙이고, 저장 묶음 재실행은 `DRIFT_GATE_APPROVAL_KEYS`(JSON `{key_id: base64}`)로 서명이 확인된
+면제만 다시 인정한다. 키가 없으면 저장된 면제는 재실행에서 거부된다. 공유 키 인증이며
+공개키 서명이나 승인자 본인 확인이 아니다. head·정책 digest는 envelope가 있을 때만 평가
+context에 들어가므로 면제가 없는 실행의 입력 digest는 바뀌지 않는다.
+
+### 인증된 재실행 (W07/W09/W15)
+
+`bundle replay <묶음> --engine-manifest <파일> --engine-manifest-sha256 <hex> --repo-root <저장소>`는
+현재 프로세스가 아니라 pin된 엔진으로 저장 입력을 다시 평가하고 attestation을 함께 기록한다.
+`certified=false`이면 종료 코드 2다.
+
+### 문서 membership 구간 (W05/W08)
+
+API 경로 의무는 변경 집합과 문서 사실을 `lower ⊆ actual ⊆ upper` 구간으로 받는다(`upper`가 없으면
+닫히지 않은 집합). 모든 해석이 일치할 때만 T/F이고 나머지는 U다. 구간 사이의 상관은 쓰지 않으므로
+결정 가능한 일부 사례도 U로 남는다.
+
+### 증거 byte 범위 (W07/W08)
+
+`bundle spans <묶음>`은 Python route decorator, 환경 변수 접근 literal, 문서의 `METHOD /path` 줄을
+원본 SHA-256과 `[start, end)` byte 범위로 기록하고, 저장된 원본 bytes에서 경계와 구문을 다시
+parse해 검증한다. 검증은 근거 위치를 보여 줄 뿐 해석의 정확성을 증명하지 않는다. 모두 검증되면 0,
+아니면 2다.
+
+### proof gate 전환 (W08 Migration)
+
+`gate.proof_gate: v1`이 있을 때만 `content: contract-proof` 그룹이 proof DAG로 판정한다. 닫힌 범위의
+T/F는 verified, 열린 범위는 partial, U는 undetermined이며 기존 `on_unverified`가 적용된다.
+값이 `off`(기본)이면 정책 출력과 identity에 필드가 나타나지 않는다. `migrate proof-gate`는 같은
+snapshot을 기존 방식과 proof 방식으로 평가해 그룹별 차이를 보고하며 gate를 바꾸지 않는다.
+
+### typed trigger (W13)
+
+`when.trigger: {family, predicate, scope, on_unknown, min_magnitude}`를 지원한다. family·predicate는
+`api-route`(route-added/removed/changed), `api-response`(response-shape-changed),
+`env-key`(key-added), `paths`(path-changed)다. scope는 `selected-modules`만 지원한다. 변경 identity
+수를 magnitude 구간으로 세어 T/F/U를 내고, U는 `on_unknown`(review·trigger·ignore-with-audit)으로만
+처리한다. U를 F로 접지 않는다. `migrate typed-trigger`는 `min_change_intensity`와의 차이를 보고한다.
+
+### API 호환성 방향 (W14)
+
+`content: api-compatibility`와 `direction: request|response|both`는 OpenAPI 문서 before/after의
+엄격한 JSON Schema 언어 포함으로 판정한다. response는 새 ⊆ 기존, request는 기존 ⊆ 새다.
+지원 profile은 type·required·nullable·enum·properties·additionalProperties·items·status·media type·
+request body·parameter와 local `$ref`, 병합 가능한 `allOf`, union으로서의 `oneOf/anyOf`다.
+재귀 참조는 양쪽 정의가 동일할 때만 같다고 보며, 범위 밖은 U다. 문서와 구현의 일치(consistency)와는
+다른 판정이며 실제 소비자는 엄격한 포함보다 더 많은 변화를 허용할 수 있다.
+
+### 범위 분석: 의존 그래프·서비스 identity·NoDeltaCertificate·예산 (W05/W11/W12)
+
+`scope --base --head --trusted-policy-ref --trusted-policy-sha256`은 Git 객체만 읽어 다음을 낸다.
+
+- 정적 import(Python, JS/TS literal `import`/`require`) 그래프의 before/after. 동적 import, 해석되지 않는
+  상대 import, 저장소 안 package의 미해석 import는 열린 경계다. 영향 범위는 Gbefore ∪ Gafter의
+  역방향 도달이다.
+- 정책 `services: [{id, paths, entrypoints}]`에 따른 route identity `(service, entrypoint, METHOD, path)`와
+  env identity `(service, KEY)`. 어느 서비스에도 속하지 않거나 둘 이상에 속하는 module은
+  `ambiguous_service_scope`이며 사실을 병합하지 않는다. 서비스가 없으면 저장소 전체를 하나의
+  서비스로 본다(`implicit-single-repository-service`).
+- 서비스·family별 NoDeltaCertificate 또는 거부 사유(`missing_source`, `profile_mismatch`,
+  `unsupported_binding`, `open_dependency_scope`, `ambiguous_service_scope`, `resource_limit`,
+  `identity_delta`). 선택한 파일 집합의 빈 변경은 이 인증서가 아니다.
+- 정책 `budget`(max_files, max_total_bytes, max_git_calls, max_wall_seconds, max_graph_edges,
+  max_report_bytes, max_memory_bytes). immutable 수집·`scope`·보고서 단계가 사용량을 기록하고 초과 시
+  `resource_limit`(종료 코드 2, `error.resource`)로 끝낸다. 부분 결과를 성공으로 내지 않는다.
+  기본값은 이 저장소 전체 PR 수집(125MB, 3,688파일)에 여유를 둔 값이며 서비스 수준 보장이 아니다.
+  `max_memory_bytes`는 `--isolated-workers`의 worker 주소 공간 제한에만 적용된다.
+
+새 정책 필드(services, budget, proof_gate, trigger, direction)는 기본값일 때 정책 identity에서 빠지므로
+기존 묶음의 정책 binding은 그대로 유지된다. 신뢰 정책 대비 이 필드의 약화는 guard가 거부한다.
+
+### 분석 worker 격리 (W12)
+
+`scope --isolated-workers`는 module별 Python 사실을 별도 `python -I -B` 프로세스에서 계산한다.
+POSIX에서는 process group을 만들고 종료 시 group 전체를 kill한다. Linux는 주소 공간, POSIX는 CPU 시간·
+파일 크기 0·열린 파일 수를 제한하고, worker가 설정하지 못한 제한은 `worker_limits_unapplied`에 기록한다
+(macOS는 memory를 항상 포함, Windows는 전체). Python audit hook으로 network·process 생성·허용 경로 밖
+파일 열기를 막는다. audit hook은 같은 프로세스의 native 코드를 막지 못하므로 OS sandbox가 아니다.
+출력 크기 초과·시간 초과·crash·요청과 묶이지 않은 출력은 실패 상태이며 사실로 쓰지 않는다.
+
+### 지속 분석 캐시
+
+`scope --cache-dir <경로>`는 artifact SHA-256, 분석 연산·profile 버전, 엔진 source digest, parser pin,
+승인 context, 자원 제한을 key로 사실을 저장한다. `complete`와 결정적 `unsupported`만 저장하고
+timeout·crash·자원 제한은 저장하지 않는다. 읽을 때 key 입력을 다시 hash해 다르면 miss로 처리한다.
+
+### holdout 평가 (W10)
+
+`holdout split|freeze|run|packet|adjudicate|score`는 출처 family 단위 분할, 기대값 동결, 동결 입력의
+SHA-256 pin, blind review packet, 검토자 합의(Cohen's kappa), Wilson 95% 구간 지표를 제공한다. 모든 산출물은
+한 번만 쓰고 덮어쓰지 않는다. 검토 label의 출처는 `human`과 `llm-proxy`로 스스로 선언되며 도구가 확인할 수
+없고, 지표는 출처별로 따로 계산한다. 절차는 `docs/ops/holdout-evaluation.md`에 있다.
+
+### 조직 서비스 (W17)
+
+`org create-tenant|add-principal|store|list|delete|set-retention|purge|audit|backup|restore`는 로컬 저장소에
+tenant별 결과·감사 기록을 둔다. 모든 호출은 principal의 tenant·역할(viewer·runner·admin·auditor)·저장소 범위를
+확인한다. 결과에는 원본 입력을 저장하지 않고 감사 기록은 hash chain이며 token 형태 문자열을 가린다.
+일일 실행 수·저장 bytes quota, 보존 기간 purge, SHA-256 pin과 inventory를 확인하는 backup/restore를 제공한다.
+`--actor`는 자기 선언이며 인증(SSO·token)은 호스트 책임이다. network listener와 다중 writer 동시성은 없다.
+
 ## S2-d 실행 수명주기·최신 결과·게시 복구 (2026-10-08)
 
 `check/report --run-store <경로>`를 지정하면 실행마다 `runs/<run_id>/journal/`에
