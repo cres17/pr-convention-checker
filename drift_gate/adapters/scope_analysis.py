@@ -7,6 +7,7 @@ their comparison (W11), and per-service no-delta certificates (W05 4.3).
 Service declarations come from the pinned trusted policy, never the candidate.
 """
 from hashlib import sha256
+import os
 import subprocess
 import time
 
@@ -75,6 +76,27 @@ def _sources(root, reader, revision, budget):
     return sources, unread
 
 
+def _isolated_facts(sources, budget):
+    """Per-module Python facts from isolated worker processes (design W12 worker boundary)."""
+    from drift_gate.adapters.analyzer_worker import WorkerPool
+    pool = WorkerPool(max_workers=min(4, os.cpu_count() or 1), max_queue=10_000,
+                      limits={'timeout_seconds': 60})
+    facts, failures = {}, {}
+    for path, text in sources.items():
+        if not path.endswith(PY) or text is None:
+            facts[path] = {'routes': None, 'env': None}
+            continue
+        routes = pool.run('python-routes', text)
+        env = pool.run('python-env', text)
+        budget.check_time('scope-worker')
+        if routes.status != 'ok' or env.status != 'ok':
+            failures[path] = routes.status if routes.status != 'ok' else env.status
+        facts[path] = {'routes': {tuple(row) for row in routes.value} if routes.status == 'ok' and routes.value is not None
+                       else None,
+                       'env': set(env.value) if env.status == 'ok' and env.value is not None else None}
+    return facts, failures
+
+
 def _module_facts(sources):
     facts = {}
     for path, text in sources.items():
@@ -95,7 +117,7 @@ def _module_facts(sources):
 
 
 def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256, policy_path='.drift-gate.yml',
-                  budget=None):
+                  budget=None, isolated=False):
     budget = budget or InspectionBudget.from_policy(None, clock=time.monotonic)
     with budget_scope(budget):
         reader = GitObjectReader(root)
@@ -126,8 +148,13 @@ def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256
         seeds = sorted(path for path in changed.decode('utf-8').split('\0') if path)
         scope = impact(g_before, g_after, [seed for seed in seeds if seed in g_before.modules | g_after.modules])
         sides = {}
+        worker_failures = {}
         for side, sources, graph in (('before', before_src, g_before), ('after', after_src, g_after)):
-            facts = _module_facts(sources)
+            if isolated:
+                facts, failed = _isolated_facts(sources, budget)
+                worker_failures.update({f'{side}:{path}': status for path, status in failed.items()})
+            else:
+                facts = _module_facts(sources)
             assignment, reasons = service_model.assign(sources, declared)
             membership = service_model.entrypoint_membership(declared, graph.edges, graph.modules)
             sides[side] = (service_model.service_facts(facts, declared, assignment, reasons, membership),
@@ -161,6 +188,8 @@ def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256
                 'service_basis': 'implicit-single-repository-service' if implicit else 'trusted-policy-services',
                 'modules': {'before': len(before_src), 'after': len(after_src)},
                 'unread_modules': sorted(unread), 'dependency': scope.to_dict(),
+                'analysis_boundary': 'isolated-worker-processes' if isolated else 'in-process',
+                'worker_failures': worker_failures,
                 'services': comparison, 'no_delta_certificates': rows,
                 'selection_vs_scope': 'certificates cover every enumerated module of a service, '
                                       'not only the changed selection',
