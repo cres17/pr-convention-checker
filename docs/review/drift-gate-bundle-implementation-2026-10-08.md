@@ -1,5 +1,40 @@
 # S2-c: 원본 증거 묶음 영구 저장과 원자적 공개
 
+## 최종 확인 — 2026-10-08 KST
+
+기능 소스는 `79b38614e5c33b44cdd3c53500d4dc03d874012a`다. 후속 공개는 문서·증거만
+추가한다. [커밋 원본 대조](../assessment/bundle-implementation-2026-10-08/committed-source-validation.json)는
+운영 코드·테스트가 실제 커밋과 같음을 확인한다. 검증 기록 뒤 보고서에 결과를 덧붙여
+달라진 MD 1개의 hash도 따로 기록하며, 코드 변경으로 혼동하지 않는다.
+
+| 최종 범위 | 결과 |
+|---|---|
+| 로컬 전체 Python | 1,805 통과·1 skip (Windows junction 전용) |
+| 새 저장 회귀 | 49 통과·1 skip |
+| 원격 push·PR CI | 각각 12 job 성공; 각 실행에 3 OS × 3 Python 조합 포함 |
+| 원격 회귀 원본 로그 | Linux/Mac 각 1,756 통과·5 skip; Windows 각 1,751 통과·10 skip |
+| PR 전체 저장·재실행 | 원격 자체 검사 통과; 실제 artifact 다운로드 뒤 Mac 재검증·재실행도 일치 |
+| Desktop CI | Mac arm64·Intel·Windows 3 job 성공 |
+| 설치 검사 JSON | 6/6 다운로드 후 기존 native/Git v2 계약으로 재검증 |
+| 최초 공개 증거의 fresh clone | 줄바꿈 변환을 켜도 원본 38개 hash 유지; 두 fixture 재실행 일치 |
+
+실행 링크: [push CI](https://github.com/cres17/pr-convention-checker/actions/runs/37708409032),
+[PR CI](https://github.com/cres17/pr-convention-checker/actions/runs/37708414124),
+[Desktop CI](https://github.com/cres17/pr-convention-checker/actions/runs/37708409007).
+
+[원격 PR 묶음 대조](../assessment/bundle-implementation-2026-10-08/remote-pr-bundle-recheck.json),
+[9개 원본 로그와 요약](../assessment/bundle-implementation-2026-10-08/remote-final/regression-summary.json),
+[native JSON 대조](../assessment/bundle-implementation-2026-10-08/remote-final/native-recheck.json)를 보존한다.
+일반 CI에는 Qt 의존성 부재에 따른 skip, Windows에 지원되지 않는 파일명·OS 전용 조건이
+있다. local 전체 숫자를 모든 원격 플랫폼의 실행 수로 옮겨 적지 않는다.
+
+원격 Linux와 현재 Mac의 관찰 producer identity는 다르지만 결과는 같았다. 이것은 현재
+엔진 대조이며 인증된 과거 엔진 replay가 아니다. 자체 정책 pass도 내용 verification은
+unverified로 유지한다. native JSON 재검증은 CI에서 실행된 기존 UI·8개 grammar·Git
+6개 통제를 확인한다. 새 bundle 기능은 CLI/API 경로이며 GUI에는 자동 저장을 추가하지
+않았다. 이번에 다운로드한 설치본을 로컬에서 직접 실행하거나 새 공개 릴리스를 게시하지
+않았다. 이전 Intel Qt 종료 실패의 원인도 해결됐다고 주장하지 않는다.
+
 ## 구현 범위
 
 [심화 설계](../architecture/drift-gate-enterprise-detailed-design-2026-10-07.md)의
