@@ -2,6 +2,8 @@
 
 2026-10-08 KST · 기준 `b5c52ab`(원격 `ver2`) 위 커밋 `5cd00ed`~`3c7d463`와 이 보고서 커밋, 이후 CI 수정 커밋
 
+> 후속 기록: [791565f 검토](drift-gate-enterprise-791565f-review-2026-10-08.md)가 16·21·22·23번 등의 보장에서 7개 반례를 재현했고, [수정 보고서](drift-gate-enterprise-791565f-fixes-2026-10-08.md)에 수정과 재확인을 기록했다. 아래 표의 '보장'은 작성 당시의 주장이며, 이 보고서는 코드 존재·실행 경로 구축 수준의 기록으로 읽어야 한다.
+
 [심화 설계](../architecture/drift-gate-enterprise-detailed-design-2026-10-07.md)의 남은 항목 목록 중 1~4번은
 [실행 수명주기 보고서](drift-gate-run-lifecycle-implementation-2026-10-08.md)에 있다. 이 보고서는 5~23번을 다룬다.
 12·13번은 사람 검토 대신 LLM 검토를 쓰기로 했으므로 도구와 절차만 구현했고 평가 수치는 없다.
