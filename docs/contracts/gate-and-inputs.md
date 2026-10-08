@@ -23,8 +23,10 @@ Git blob·tree와 CRLF를 원래 bytes로 보존하며 UTF-8로 해석한 관찰
 `bundle verify <묶음 경로> [--expected-receipt-sha256 <별도 보관한 hash>]`는 파일 목록,
 size·SHA-256, Git OID, 입력·정책·결과 binding을 재검증한다. 예상하지 않은 파일,
 symlink, 경로 이탈, 잘못된 schema, 손상된/누락된 원본은 거부한다. v1 기본 한도는
-총 64,000,000 bytes·파일당 8,000,000 bytes·4,096 files이며 reader가 자신의 한도를
+총 256,000,000 bytes·파일당 64,000,000 bytes·4,096 files이며 reader가 자신의 한도를
 적용한다. 이 한도는 bundle I/O에만 적용되고 Git 수집 전체의 자원 예산을 대신하지 않는다.
+이 저장소 PR 전체의 실제 입력이 총 125,172,523 bytes·단일 capsule 61,752,569 bytes로
+측정돼 초기 한도를 보완했다. 메모리·전체 실행 시간의 SLA 수치로 해석하지 않는다.
 
 `bundle replay <묶음 경로>`는 저장소를 다시 읽지 않고 **현재 엔진**으로 실행한다.
 전체 정책·shadow proof 결과를 attempt ID와 runtime만 제외해 비교한다. 동일하면 기존

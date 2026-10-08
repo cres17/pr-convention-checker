@@ -82,3 +82,24 @@ history/LLM 보강 전 기본 결과만 저장하며 외부 출력에서 그 범
 - Git 수집 전체의 bytes·호출 수·wall time 예산.
 - 이전 Intel Qt 종료 실패 원인 진단, 새 저장 기능을 포함한 native 검증.
 - 독립 평가와 dependency closure·schema 분석 확장.
+
+## 최초 원격 검증에서 발견한 보완 (2026-10-08)
+
+`74a6e47`의 push 자체 검사·Linux/Mac 회귀는 통과했지만 PR 자체 검사와 Windows
+회귀가 실패했다. 완료로 처리하지 않고 실패 로그를 별도로 보존한다.
+
+- PR 전체 입력은 총 125,172,523 bytes, 가장 큰 capsule은 61,752,569 bytes, 파일은
+  3,688개였다. 초기 총 64MB·개별 8MB 한도는 실제 저장소 규모를 반영하지 못했다.
+  총 256MB·개별 64MB로 보완하며 파일 개수 4,096개와 reader 강제 한도는 유지한다.
+  실제 전체 PR을 저장·재검증·재실행해 확인한다. 이 숫자는 동시 process 메모리 한도가 아니다.
+- Windows의 bundle 운영 회귀는 통과했으나 `.git` 삭제 fixture가 read-only loose object를
+  지우지 못해 실패했다. 임시 Git fixture의 PermissionError만 권한을 고쳐 재시도하고,
+  `.git`가 실제로 사라진 것을 확인한 뒤 replay한다. 실패를 skip하거나 저장소 삭제를
+  생략하지 않는다. Windows junction 통제도 원격에서 통과했다.
+
+보완 후 로컬 전체 Python 1,805 통과·1 skip, bundle 49 통과·1 skip이다. 기존 원본
+로그와 source hash를 덮어쓰지 않고 `*-capacity-fix.*`와
+[보완 검증](../assessment/bundle-implementation-2026-10-08/capacity-fix-validation.json)에
+기록한다. 전체 PR의 실제 묶음 저장·원본 검증·결과 재실행도 통과했다. 약 125MB의
+원문을 다시 Git에 넣지는 않고 고정 Git subject와 결과·receipt digest를 기록했다.
+작은 authored fixture의 원문 묶음 2개는 그대로 Git에 보존한다.

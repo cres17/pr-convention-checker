@@ -28,8 +28,10 @@ SCHEMA = 'inspection-bundle-receipt-v1'
 
 @dataclass(frozen=True)
 class BundleLimits:
-    max_total_bytes: int = 64_000_000
-    max_file_bytes: int = 8_000_000
+    # The repository's full PR capture measured 125 MB total / 62 MB payload.
+    # Keep explicit bounds with headroom; this is not a process-memory budget.
+    max_total_bytes: int = 256_000_000
+    max_file_bytes: int = 64_000_000
     max_files: int = 4096
 
     def __post_init__(self):
