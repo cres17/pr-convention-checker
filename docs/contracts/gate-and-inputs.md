@@ -1,5 +1,41 @@
 # Gate와 입력 계약
 
+## S2-d 실행 수명주기·최신 결과·게시 복구 (2026-10-08)
+
+`check/report --run-store <경로>`를 지정하면 실행마다 `runs/<run_id>/journal/`에
+hash chain append-only event를 기록한다. 지정하지 않으면 기존 검사와 같다.
+상태는 `requested → validated → captured → planned → analyzing → evaluated →
+result-validated → persisted → publish-pending → published`이며, `persisted` 이전에만
+`rejected-input`·`cancelled`·`timed-out`·`internal-error`·`abandoned`로 닫힌다.
+의미 결과의 완료는 `result-validated`이고 게시 결과는 이를 지우거나 바꾸지 않는다.
+`planned`는 엔진 호출 전에 고정한 정책·입력 수를 기록하며 별도 planner 출력이 아니다.
+
+진행 event는 실행 소유자 token만, 취소는 소유자나 `run cancel`, `abandoned`는
+`run recover`만 기록한다. 종료된 실행은 재개하지 않는다. 취소·마감 뒤 도착한 분석 결과는
+`late-response-discarded` 주석으로만 남는다. `--timeout-seconds`는 `evaluated`까지 적용한다.
+분석 thread는 강제 종료되지 않으므로 프로세스 격리가 아니다. 취소·시간 초과·복구로
+의미 결과가 없으면 종료 코드 3이다. SIGTERM·Ctrl-C는 `cancelled`, 기록 없이 사라진 실행은
+lease 경과 후 `abandoned`, 게시 요청 후 침묵은 `publication-unknown`이다.
+
+`--retry-of <run_id>`는 종료된 이전 실행에 대한 새 run을 만들고 `attempt`와 입력 digest
+관계를 기록한다. 이전 실행에는 `retry-created` 주석만 추가한다. `publication-unknown`은
+미종료로 보아 재시도를 거부한다.
+
+`--latest-target <이름>`은 immutable `--head`와 `--evidence-store`가 필요하다. 수집 후
+`(head OID, authority digest)`를 target ledger에 관찰하고 ticket을 받는다. authority는
+정책 원문·의미, drift-ignore, 신뢰 정책 anchor, base OID, 비교 방식, 평가 날짜, proof 옵션이다.
+갱신은 발급 ticket의 관찰 일치, 현재 generation·HEAD·authority 일치, 의미 완료, 저장 receipt
+재확인, 기존 latest보다 큰 ticket일 때만 수행한다. HEAD A→B→A와 역순 완료는 거부되어
+`publication-stale`로 남는다. ledger entry는 no-replace hard link로 공개하는 단일 호스트
+로컬 compare-and-set이며 분산 lock·원격 CAS가 아니다. 관찰은 실행 시작 시점의 것이다.
+
+GitHub Action의 PR 댓글은 idempotency key와 본문 SHA-256을 숨은 줄로 포함한다. 쓰기 전후
+PR HEAD를 확인하고 같은 workflow의 더 큰 `(run_number, run_attempt)` 댓글이나 다른 workflow
+댓글을 덮어쓰지 않는다. 응답 유실은 key 조회로 판정하며 확인되지 않은 새 댓글은 다시
+게시하지 않는다. 기존 댓글 수정의 미반영만 같은 내용으로 1회 재시도한다. provider에
+조건부 쓰기가 없어 읽기-비교-쓰기 경쟁이 남으며 기록의 `race_window`로 표시한다.
+`publication reconcile`은 조회만 한다. 실행 번호가 없으면 댓글을 쓰지 않는다.
+
 ## S2-c 원본 증거 묶음 저장·재실행 (2026-10-08)
 
 `check/report --evidence-store <경로>`는 명시적으로 원본 입력 보관을 켠다. 기본 검사는

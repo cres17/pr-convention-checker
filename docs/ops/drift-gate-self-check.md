@@ -1,5 +1,18 @@
 # Drift Gate 자체 검사와 패키지 검증
 
+## S2-d 실행 기록과 게시 근거 (2026-10-08)
+
+`action.yml`은 실행 journal 경로(`run_record_path`), 실행 ID, PR 댓글 게시 상태와 기록
+(`publication_state`, `publication_record_path`)을 출력하고 report artifact에 함께 올린다.
+journal은 `RUNNER_TEMP/drift-gate-runs`에 있으므로 artifact 업로드로만 보존된다.
+`publication-unknown`은 기록의 idempotency key로 `drift-gate publication reconcile`을 실행해
+조회하며, 이 명령은 댓글을 쓰거나 원본 기록을 덮어쓰지 않는다.
+
+일반 OS/Python matrix는 `test_run_lifecycle.py`와 `test_github_publication.py`를 실행한다.
+전이 전수표, latest 유한 모델, 8 writer 경쟁, 실제 child process 강제 종료·SIGTERM,
+취소·마감 후 응답 폐기, fake provider의 응답 유실을 포함한다. fake provider 통과는
+실제 GitHub의 일관성이나 동시성 검증이 아니다. SIGTERM 시험은 Windows에서 건너뛴다.
+
 ## S2-c 저장 근거 대조 (2026-10-08)
 
 immutable Git 자체 검사에 `--evidence-store build/object-evidence`를 적용한다.
