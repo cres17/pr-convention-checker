@@ -37,6 +37,11 @@ PR 전체(`main`→`ver2`) immutable 검사는 `snapshot.json`이 64,439,924 byt
 Python 소스가 없어 producer digest가 빈 파일 집합을 가리키므로, 이 검증은 결과 재현이며 같은 엔진으로 인증한
 재실행이 아니다(791565f 검토).
 
+`25d7518`의 Desktop run 37754952843에서 Windows의 desktop 회귀 단계가 `1123 passed, 5 skipped` 요약을 출력한 뒤
+종료 코드 127로 실패했다. 같은 commit의 CI Windows 단위 테스트(3.10~3.12)와 macOS 두 package job은 통과했다.
+원인은 확인하지 못했다. 이 단계는 `python -X faulthandler`로 실행해 interpreter 종료 중 crash의 stack을 남기고
+`build/desktop-pytest.xml`(JUnit)을 함께 보존한다. 실패를 통과로 바꾸지 않는다.
+
 ## S2-d 실행 기록과 게시 근거 (2026-10-08)
 
 `action.yml`은 실행 journal 경로(`run_record_path`), 실행 ID, PR 댓글 게시 상태와 기록

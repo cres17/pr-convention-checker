@@ -56,8 +56,19 @@ R2의 shadow 경로는 신뢰 엔진(`ed9f904`)의 보고서에 있는 head·bas
 | 자체 정책 검사 (`791565f`..`8004ca7`) | pass | 로컬 실행 |
 | 신뢰 엔진 대조 (`ed9f904`) | 신뢰 pass, 후보 pass, subject 불일치 없음, review(검사기 변경) | [trusted-check.json](../assessment/enterprise-791565f-fixes-2026-10-08/trusted-check.json) |
 
-건너뛴 12개의 사유는 이전과 같다(PySide6 4, Express 대조 설치 4, zstandard 3, Windows 전용 1). 원격 CI·설치본 결과는
-push 후 실행 기록으로 확인하며 이 표에 포함하지 않는다.
+건너뛴 12개의 사유는 이전과 같다(PySide6 4, Express 대조 설치 4, zstandard 3, Windows 전용 1).
+
+`25d7518` push 후 원격 결과:
+
+| 실행 | 결과 |
+|---|---|
+| [CI push 37754952867](https://github.com/cres17/pr-convention-checker/actions/runs/37754952867) | 성공. Ubuntu·macOS·Windows × 3.10~3.12, self-check(신뢰 엔진 대조 포함), lint, benchmark |
+| [CI PR 37754957955](https://github.com/cres17/pr-convention-checker/actions/runs/37754957955) | 성공. `main`→`ver2` 전체 범위 immutable 검사·묶음 재실행 포함 |
+| [Desktop 37754952843](https://github.com/cres17/pr-convention-checker/actions/runs/37754952843) | macOS arm64·Intel 성공. Windows는 desktop 회귀 단계가 `1123 passed, 5 skipped` 출력 후 종료 코드 127로 실패해 이후 설치본 단계가 실행되지 않음 |
+
+Windows 종료 코드 127의 원인은 확인하지 못했다. 이 단계에서 바뀐 시험 파일은 없고, 직전 세 commit에서는 같은 단계가
+통과했다. 다음 실행부터 `python -X faulthandler`와 JUnit 결과를 남기도록 workflow를 바꿨다(이후 commit). 원인을 모르는
+상태에서 재실행 통과를 해결로 기록하지 않는다.
 
 ## 남은 한계
 

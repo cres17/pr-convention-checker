@@ -71,8 +71,10 @@ jobs:
         env:
           TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
           DRIFT_GATE_EXPRESS_ORACLE_DIR: ${{ runner.temp }}/express-oracle
+        # -X faulthandler stays on through interpreter shutdown, so a crash after the summary (Windows run
+        # 37754952843 exited 127 after "1123 passed") prints a stack; the JUnit file records the test outcome.
         run: >
-          python -m pytest -q -o faulthandler_timeout=120
+          python -X faulthandler -m pytest -q -o faulthandler_timeout=120 --junitxml build/desktop-pytest.xml
           drift_gate/tests/test_desktop_service.py
           drift_gate/tests/test_desktop_ui.py
           drift_gate/tests/test_desktop_web.py
@@ -112,7 +114,9 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: desktop-regression-${{ matrix.label }}
-          path: build/desktop-pytest.log
+          path: |
+            build/desktop-pytest.log
+            build/desktop-pytest.xml
       - name: Build native app
         run: pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack --add-data "drift_gate/adapters/parser_hashes.json:drift_gate/adapters" --add-data "drift_gate/desktop/web:drift_gate/desktop/web" --add-data "build/parser-libraries:drift_gate/grammars" drift_gate/desktop/web_app.py
       - name: Seal packaged grammar bytes
