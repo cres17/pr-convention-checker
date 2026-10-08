@@ -29,6 +29,7 @@ def weakening_reasons(trusted, candidate):
             current = groups.get(group.name)
             if (current is None or (group.required and not current.required)
                 or current.content != group.content
+                or (group.direction and current.direction not in (group.direction, 'both'))
                 or (not group.any_changed and bool(current.any_changed))
                 or not set(group.all_changed).issubset(current.all_changed)
                 or (group.any_changed and (not current.any_changed or

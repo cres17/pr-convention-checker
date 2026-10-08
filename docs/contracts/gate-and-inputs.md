@@ -7,28 +7,31 @@
 `engine manifest --ref <commit>`은 그 commit의 `drift_gate/` Git 객체(테스트·`desktop/web/`
 제외)로 파일별 SHA-256 manifest를 만든다. `trusted-check`는 `--engine-manifest`와
 `--engine-manifest-sha256`이 일치할 때만 그 엔진을 Git 객체에서 임시 디렉터리로 꺼내
-`python -I`로 실행한다. 자식 환경에서 이름 조각에 TOKEN·SECRET·PASSWORD·KEY·CREDENTIAL·
-AUTH·COOKIE·SESSION·PAT가 있는 변수와 `PYTHONPATH` 계열을 제거한다. 자식은 import된
-`drift_gate` module과 적재된 grammar library의 해시를 manifest·`parser_hashes.json`과 대조한
-attestation을 함께 반환한다. interpreter 자체는 attestation 대상이 아니다
-(`interpreter_attested=false`).
+`python -I`로 실행한다. 자식 환경에서 이름을 `_`로 나눈 조각에 TOKEN·SECRET(S)·PASSWORD·PASSWD·
+KEY(S)·CREDENTIAL(S)·AUTH·COOKIE·SESSION·PAT가 있는 변수와 PYTHONPATH·PYTHONHOME·PYTHONSTARTUP·
+PYTHONUSERBASE를 제거한다. 자식은 import된 `drift_gate` module과 grammar library의 해시를
+manifest·`parser_hashes.json`과 대조한 attestation을 함께 반환한다. grammar 근거는 Linux에서는 프로세스
+memory map에 적재된 library이고, 그 밖의 OS에서는 cache directory의 파일이다(`parsers.basis`).
+interpreter 자체는 attestation 대상이 아니다(`interpreter_attested=false`).
 
 merge 근거는 신뢰 엔진 판정뿐이다. 후보 엔진 결과는 shadow이며 판정 차이가 있으면
 allow를 review로 낮출 뿐 block을 해제하지 않는다. 후보가 `drift_gate/**`, 정책, workflow,
 `action.yml`, `packaging/**`, 의존성 파일을 바꾸면 `candidate-changes-checker-policy-or-workflow`로
-review가 된다. 종료 코드는 allow 0, block 1, review 5다. 신뢰 엔진이 실패하거나 attestation이
-불일치하면 merge 근거 없이 review다. 같은 기계의 파일 시스템·네트워크를 공유하므로
+review가 된다. 종료 코드는 allow 0, block 1, review 5다. 신뢰 엔진이 판정을 내지 못하거나 module·grammar
+해시 중 하나라도 pin과 다르면 `merge_basis=none`인 review다. 자식이 attestation을 내지 못하면 오류(2)다. 같은 기계의 파일 시스템·네트워크를 공유하므로
 코드 동일성 경계이며 sandbox가 아니다.
 
 ### 면제 승인 envelope (W09)
 
-`require_codeowners_approval` 규칙의 drift-ignore는 `approval-envelope-v1`이 있어야 인정된다.
+정책의 `suppression.require_codeowners_approval`이 켜져 있으면 drift-ignore는 `approval-envelope-v1`이 있어야
+인정된다.
 envelope는 rule, trigger 경로, head OID, 정책 SHA-256, reason, 유효 기간(UTC), 승인자, 확인한
 authority 근거를 묶는다. 사용자 JSON의 `verified: true`나 `approved-by:` 문구는 envelope가 아니다.
 GitHub 경로는 review API로 승인자를 확인한 뒤 envelope를 만든다. head·정책·경로·기간 중 하나라도
 다르면 거부된다. `DRIFT_GATE_APPROVAL_SIGNING_KEY=key_id:base64`가 있으면 HMAC-SHA256 서명을
 붙이고, 저장 묶음 재실행은 `DRIFT_GATE_APPROVAL_KEYS`(JSON `{key_id: base64}`)로 서명이 확인된
-면제만 다시 인정한다. 키가 없으면 저장된 면제는 재실행에서 거부된다. 공유 키 인증이며
+면제만 다시 인정한다. 서명이 없거나 확인되지 않은 승인 면제가 든 묶음은 load 단계에서 거부되므로
+verify·replay·spans 모두 오류(2)로 끝난다. 공유 키 인증이며
 공개키 서명이나 승인자 본인 확인이 아니다. head·정책 digest는 envelope가 있을 때만 평가
 context에 들어가므로 면제가 없는 실행의 입력 digest는 바뀌지 않는다.
 
@@ -87,16 +90,19 @@ request body·parameter와 local `$ref`, 병합 가능한 `allOf`, union으로�
   `ambiguous_service_scope`이며 사실을 병합하지 않는다. 서비스가 없으면 저장소 전체를 하나의
   서비스로 본다(`implicit-single-repository-service`).
 - 서비스·family별 NoDeltaCertificate 또는 거부 사유(`missing_source`, `profile_mismatch`,
-  `unsupported_binding`, `open_dependency_scope`, `ambiguous_service_scope`, `resource_limit`,
-  `identity_delta`). 선택한 파일 집합의 빈 변경은 이 인증서가 아니다.
+  `unsupported_binding`, `open_dependency_scope`, `ambiguous_service_scope`, `identity_delta`). 선택한 파일
+  집합의 빈 변경은 이 인증서가 아니다. 예산 초과 시에는 인증서를 만들지 않고 보고서 전체가
+  `complete=false`와 `resource_limit`이 된다.
 - 정책 `budget`(max_files, max_total_bytes, max_git_calls, max_wall_seconds, max_graph_edges,
-  max_report_bytes, max_memory_bytes). immutable 수집·`scope`·보고서 단계가 사용량을 기록하고 초과 시
-  `resource_limit`(종료 코드 2, `error.resource`)로 끝낸다. 부분 결과를 성공으로 내지 않는다.
+  max_report_bytes, max_memory_bytes). immutable 수집·`scope`·보고서 단계가 사용량을 기록한다. `check`에서
+  초과하면 `error.code=resource_limit`과 `error.resource`로 종료 코드 2, `scope`에서 초과하면
+  `complete=false`·`resource_limit` 보고서와 종료 코드 2다. 부분 결과를 성공으로 내지 않는다.
   기본값은 이 저장소 전체 PR 수집(125MB, 3,688파일)에 여유를 둔 값이며 서비스 수준 보장이 아니다.
   `max_memory_bytes`는 `--isolated-workers`의 worker 주소 공간 제한에만 적용된다.
 
 새 정책 필드(services, budget, proof_gate, trigger, direction)는 기본값일 때 정책 identity에서 빠지므로
-기존 묶음의 정책 binding은 그대로 유지된다. 신뢰 정책 대비 이 필드의 약화는 guard가 거부한다.
+기존 묶음의 정책 binding은 그대로 유지된다. 신뢰 정책 대비 proof_gate·services·typed trigger 변경, budget 제거나
+한도 상향, `direction` 축소(`both`→한 방향, 방향 교체)는 guard가 거부한다.
 
 ### 분석 worker 격리 (W12)
 
@@ -109,22 +115,25 @@ POSIX에서는 process group을 만들고 종료 시 group 전체를 kill한다.
 
 ### 지속 분석 캐시
 
-`scope --cache-dir <경로>`는 artifact SHA-256, 분석 연산·profile 버전, 엔진 source digest, parser pin,
-승인 context, 자원 제한을 key로 사실을 저장한다. `complete`와 결정적 `unsupported`만 저장하고
-timeout·crash·자원 제한은 저장하지 않는다. 읽을 때 key 입력을 다시 hash해 다르면 miss로 처리한다.
+`scope --cache-dir <경로>`는 artifact SHA-256, 분석 연산·profile 버전, 엔진 source digest, parser pin을
+key로 사실을 저장한다. key에는 승인 context와 자원 제한 칸도 있으나 `scope`는 현재 고정값(`none`, `{}`)을
+넣는다. `complete`와 결정적 `unsupported`만 저장하고 timeout·crash·자원 제한은 저장하지 않는다. 읽을 때
+key 입력을 다시 hash해 다르면 miss로 처리한다. `--isolated-workers`와 함께 쓰면 캐시는 사용되지 않는다.
 
 ### holdout 평가 (W10)
 
-`holdout split|freeze|run|packet|adjudicate|score`는 출처 family 단위 분할, 기대값 동결, 동결 입력의
-SHA-256 pin, blind review packet, 검토자 합의(Cohen's kappa), Wilson 95% 구간 지표를 제공한다. 모든 산출물은
-한 번만 쓰고 덮어쓰지 않는다. 검토 label의 출처는 `human`과 `llm-proxy`로 스스로 선언되며 도구가 확인할 수
+`holdout split|freeze|run|packet|adjudicate|score`는 출처 family 단위 분할, 기대값 동결, blind review packet,
+검토자 합의(Cohen's kappa), Wilson 95% 구간 지표를 제공한다. run·packet·adjudicate·score는 앞 단계 산출물의
+SHA-256 pin이 없으면 거부한다. 모든 산출물은 한 번만 쓰고, 실패해도 출력 경로에 오류 JSON을 쓰지 않는다. 검토 label의 출처는 `human`과 `llm-proxy`로 스스로 선언되며 도구가 확인할 수
 없고, 지표는 출처별로 따로 계산한다. 절차는 `docs/ops/holdout-evaluation.md`에 있다.
 
 ### 조직 서비스 (W17)
 
 `org create-tenant|add-principal|store|list|delete|set-retention|purge|audit|backup|restore`는 로컬 저장소에
-tenant별 결과·감사 기록을 둔다. 모든 호출은 principal의 tenant·역할(viewer·runner·admin·auditor)·저장소 범위를
-확인한다. 결과에는 원본 입력을 저장하지 않고 감사 기록은 hash chain이며 token 형태 문자열을 가린다.
+tenant별 결과·감사 기록을 둔다. `create-tenant`는 운영자가 실행하는 초기 생성이며 권한 확인 없이 실행자를
+admin으로 등록한다. 나머지 호출은 principal의 tenant·역할(viewer·runner·admin·auditor)·저장소 범위를 확인한다.
+`store`는 받은 결과 JSON을 그대로 저장하므로 원본 입력을 넣지 않는 것은 호출자 책임이다. 감사 기록은
+hash chain이며 token 형태 문자열을 가린다.
 일일 실행 수·저장 bytes quota, 보존 기간 purge, SHA-256 pin과 inventory를 확인하는 backup/restore를 제공한다.
 `--actor`는 자기 선언이며 인증(SSO·token)은 호스트 책임이다. network listener와 다중 writer 동시성은 없다.
 

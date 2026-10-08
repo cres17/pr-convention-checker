@@ -142,6 +142,21 @@ def test_trusted_engine_runs_in_a_separate_interpreter_and_decides(engine_repo):
     assert fixed['trusted']['gate_result'] == 'pass' and fixed['decision']['action'] == 'allow'
 
 
+def test_unmatched_parser_pins_leave_no_merge_basis(engine_repo, monkeypatch):
+    real = engines.run_pinned
+
+    def unpinned(*args, **kwargs):
+        envelope = real(*args, **kwargs)
+        envelope['attestation']['parsers']['matched'] = False
+        return envelope
+
+    monkeypatch.setattr(engines, 'run_pinned', unpinned)
+    fixed = check(engine_repo, 'fixed')
+    assert fixed['trusted']['gate_result'] == 'pass'
+    assert fixed['decision']['action'] == 'review' and fixed['decision']['merge_basis'] == 'none'
+    assert 'trusted-engine-unattested' in fixed['decision']['reasons']
+
+
 def test_weakened_candidate_engine_cannot_turn_a_trusted_fail_into_a_pass(engine_repo, monkeypatch):
     from drift_gate.adapters import inspection
 

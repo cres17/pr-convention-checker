@@ -369,7 +369,9 @@ def run_cli(argv=None):
                     error['execution']['run'] = controller.view().to_dict()
                 except (RunStoreError, OSError):
                     error['execution']['run'] = {'state': 'unreadable'}
-            for output in (getattr(args, 'out_json', None), getattr(args, 'out', None)):
+            # holdout and engine --out name write-once artifacts; an error is never written in their place.
+            write_once_out = args.command in {'holdout', 'engine'}
+            for output in (getattr(args, 'out_json', None), None if write_once_out else getattr(args, 'out', None)):
                 if output:
                     atomic_json(output, error)
             for output in (getattr(args, 'out_html', None), getattr(args, 'out_md', None),
@@ -477,6 +479,7 @@ def _build_parser() -> argparse.ArgumentParser:
     holdout.add_argument('--results', help='Results file (score)')
     holdout.add_argument('--results-sha256', help='Pinned SHA-256 of --results')
     holdout.add_argument('--packet', help='Review packet (adjudicate)')
+    holdout.add_argument('--packet-sha256', help='Pinned SHA-256 of --packet (printed by packet)')
     holdout.add_argument('--reviews', nargs='*', default=[], help='Review JSONL files (adjudicate)')
     holdout.add_argument('--resolutions', help='Adjudicator resolutions JSONL (optional)')
     holdout.add_argument('--labels', help='Adjudicated labels file (score)')
@@ -1273,6 +1276,12 @@ def _run_holdout(args):
     def lines(path):
         return [json.loads(line) for line in Path(path).read_text(encoding='utf-8').splitlines() if line.strip()]
 
+    pins = {'run': ('frozen_sha256',), 'packet': ('frozen_sha256',), 'adjudicate': ('packet_sha256',),
+            'score': ('results_sha256', 'labels_sha256')}
+    missing = [name for name in pins.get(args.operation, ()) if not getattr(args, name)]
+    if missing:
+        raise h.HoldoutError('holdout ' + args.operation + ' requires --' + ', --'.join(n.replace('_', '-') for n in missing)
+                             + ': later steps admit earlier artifacts only through their pinned SHA-256')
     if args.operation == 'split':
         held, development = h.split(load(args.input), seed=args.seed, holdout_fraction=args.holdout_fraction,
                                     regression_families=tuple(args.regression_families))
@@ -1291,7 +1300,7 @@ def _run_holdout(args):
         from drift_gate.adapters.holdout_instructions import REVIEW_INSTRUCTIONS
         data = {'packet_sha256': h.write_once(args.out, h.review_packet(frozen, instructions=REVIEW_INSTRUCTIONS))}
     elif args.operation == 'adjudicate':
-        packet = load(args.packet)
+        packet, _ = h.read_pinned(args.packet, args.packet_sha256, 'holdout-review-packet-v1')
         reviews = [row for path in args.reviews for row in lines(path)]
         resolutions = lines(args.resolutions) if args.resolutions else []
         labels = h.adjudicate(packet, reviews, resolutions)

@@ -2,12 +2,12 @@
 
 ## 패키지 안 CLI와 종료 추적 (2026-10-08)
 
-`DriftGate --cli <인자>`는 Qt 창을 만들지 않고 `drift-gate <인자>`와 같은 CLI를 실행한 뒤 그 종료 코드로 끝난다.
+첫 인자가 `--cli`이면 `DriftGate --cli <인자>`는 Qt 창을 만들지 않고 `drift-gate <인자>`와 같은 CLI를 실행한 뒤 그 종료 코드로 끝난다.
 windowed 빌드는 표준 출력이 없을 수 있으므로 결과는 `--out-json`으로 받는다. 이 경로는 bridge event를 보내지
 않으며 화면 기능이 아니다. `--cli`가 아닌 인자는 기존 UI·`--verify-package` 흐름을 그대로 따른다.
 
 `DRIFT_GATE_TEARDOWN_TRACE=<파일>`이 있으면 `main-start`, `event-loop-start`, `event-loop-returned`,
-`window-close-event`, `package-check-exit-requested`, `atexit`을 시각·pid와 함께 기록하고 faulthandler를 그
+`window-close-event`, `package-check-exit-requested`, `atexit`을 monotonic 초·pid와 함께 기록하고 faulthandler를 그
 파일에 연결한다. 종료 순서를 바꾸지 않는다. 변수가 없으면 아무것도 기록하지 않는다.
 
 ## S1-e 서비스 결과 확장
