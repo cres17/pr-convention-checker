@@ -139,6 +139,21 @@ def test_typed_trigger_change_needs_migration_against_the_trusted_policy():
     assert any('typed trigger changed' in reason for reason in weakening_reasons(trusted, candidate))
 
 
+def test_narrowed_compatibility_direction_is_a_weakening():
+    from drift_gate.core.policy.guard import weakening_reasons
+    from drift_gate.core.policy.loader import load_policy_from_dict
+
+    def policy(direction):
+        return load_policy_from_dict({'rules': [{'id': 'compat', 'when': {'any_changed': ['openapi.json']},
+                                                 'require': {'groups': [{'name': 'api', 'any_changed': ['openapi.json'],
+                                                                         'content': 'api-compatibility',
+                                                                         'direction': direction}]},
+                                                 'severity': 'blocker'}]})
+    assert any('weakened group api' in r for r in weakening_reasons(policy('both'), policy('response')))
+    assert not weakening_reasons(policy('response'), policy('both'))
+    assert not weakening_reasons(policy('request'), policy('request'))
+
+
 # -- 21. compatibility ----------------------------------------------------------------
 def document(schema=None, *, request=None, status='200', params=None, media='application/json', components=None):
     operation = {'responses': {status: {'content': {media: {'schema': schema or {}}}}}}

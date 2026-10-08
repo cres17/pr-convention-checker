@@ -32,7 +32,10 @@ def trusted_check(*, root, base, head, policy, trusted_policy_ref, trusted_polic
         base=base, head=head, policy=policy, trusted_policy_ref=trusted_policy_ref,
         trusted_policy_sha256=trusted_policy_sha256, comparison_mode=comparison_mode), cwd=root)
     attestation = envelope['attestation']
-    attested = attestation['loaded_code_matches_manifest'] and attestation['parsers']['basis'] != 'unavailable'
+    # Both the engine code and every loaded grammar must match their pins; an unpinned or
+    # mismatched parser leaves the trusted verdict without a merge basis (review).
+    attested = (attestation['loaded_code_matches_manifest'] and attestation['parsers']['basis'] != 'unavailable'
+                and bool(attestation['parsers'].get('matched')))
     trusted_result, trusted_error = None, ''
     try:
         trusted_report = json.loads(envelope['stdout'])

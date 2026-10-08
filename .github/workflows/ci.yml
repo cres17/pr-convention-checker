@@ -70,7 +70,15 @@ jobs:
           code=$?
           set -e
           if [ "$code" = "5" ]; then
-            echo "::warning title=Trusted validation::the candidate changes the checker, policy or workflow; the pinned engine's verdict needs review"
+            # review with the trusted engine as merge basis: its verdict stands, the checker change needs a reviewer.
+            # review without a merge basis (trusted engine failed or was not attested) fails the job.
+            basis=$(python -c "import json; print(json.load(open('build/trusted-check.json'))['decision']['merge_basis'])")
+            reasons=$(python -c "import json; print(', '.join(json.load(open('build/trusted-check.json'))['decision']['reasons']))")
+            if [ "$basis" != "trusted-engine" ]; then
+              echo "::error title=Trusted validation::no trusted verdict: $reasons"
+              exit 1
+            fi
+            echo "::warning title=Trusted validation::pinned engine verdict needs review: $reasons"
             exit 0
           fi
           exit "$code"

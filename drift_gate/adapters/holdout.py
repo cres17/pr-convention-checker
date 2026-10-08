@@ -50,6 +50,10 @@ def _validate_case(case):
     for key in ('case_id', 'repository', 'source_family', 'policy', 'changed_files', 'expected'):
         if key not in case:
             raise HoldoutError(f'case is missing {key}')
+    if not isinstance(case['changed_files'], list):
+        raise HoldoutError(f"case {case['case_id']}: changed_files must be a list")
+    for data in case['changed_files']:
+        _changed_file(data)  # unknown or malformed fields are rejected before anything is frozen
     expected = case['expected']
     if expected.get('gate') not in {'pass', 'warn', 'fail'} or not isinstance(expected.get('rules'), dict):
         raise HoldoutError(f"case {case['case_id']}: expected gate and rules are required")
@@ -184,7 +188,12 @@ def adjudicate(packet, reviews, resolutions=()):
         if item is None or row.get('label') not in item['allowed_labels']:
             raise HoldoutError(f"invalid review row for {row.get('item_id')}")
         by_source[row['reviewer_kind']].setdefault(row['item_id'], {})[row['reviewer_id']] = row['label']
-    resolved = {(r['item_id'], r['source']): r['label'] for r in resolutions}
+    resolved = {}
+    for row in resolutions:
+        item = items.get(row.get('item_id'))
+        if row.get('source') not in stats.LABEL_SOURCES or item is None or row.get('label') not in item['allowed_labels']:
+            raise HoldoutError(f"invalid resolution row for {row.get('item_id')}")
+        resolved[(row['item_id'], row['source'])] = row['label']
     labels, unresolved, agreement = [], [], {}
     for source, votes in by_source.items():
         reviewers = sorted({reviewer for item_votes in votes.values() for reviewer in item_votes})

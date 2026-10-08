@@ -127,8 +127,12 @@ def test_cli_end_to_end_without_overwrites(tmp_path, capsys):
         for item in items:
             stream.write(json.dumps({'item_id': item['item_id'], 'reviewer_id': 'person-1', 'reviewer_kind': 'human',
                                      'label': item['allowed_labels'][0]}) + '\n')
-    _, labels = cli('adjudicate', '--packet', str(tmp_path / 'packet.json'), '--reviews', str(tmp_path / 'r.jsonl'),
-                    '--out', str(tmp_path / 'labels.json'))
+    code, error = cli('adjudicate', '--packet', str(tmp_path / 'packet.json'), '--reviews', str(tmp_path / 'r.jsonl'),
+                      '--out', str(tmp_path / 'labels.json'))
+    assert code == 2 and '--packet-sha256' in error['error']['message']
+    code, labels = cli('adjudicate', '--packet', str(tmp_path / 'packet.json'), '--packet-sha256', packet['packet_sha256'],
+                    '--reviews', str(tmp_path / 'r.jsonl'), '--out', str(tmp_path / 'labels.json'))
+    assert code == 0, labels
     _, metrics = cli('score', '--results', str(tmp_path / 'results.json'), '--results-sha256',
                      results['results_sha256'], '--labels', str(tmp_path / 'labels.json'),
                      '--labels-sha256', labels['labels_sha256'], '--out', str(tmp_path / 'metrics.json'))
@@ -141,3 +145,4 @@ def test_cli_end_to_end_without_overwrites(tmp_path, capsys):
     assert code == 2 and 'pinned SHA-256' in error['error']['message']
     code, error = cli('freeze', '--input', str(tmp_path / 'holdout.json'), '--out', str(tmp_path / 'frozen.json'))
     assert code == 2 and 'never overwritten' in error['error']['message']
+    assert json.loads((tmp_path / 'frozen.json').read_text())['schema'] == 'holdout-frozen-v1'  # error not written over it
