@@ -199,9 +199,13 @@ def list_runs(root):
 
 def recover(root, *, stale_after_seconds, now=None):
     """Close runs whose owner went silent; returns the transitions recorded."""
-    if not isinstance(stale_after_seconds, (int, float)) or stale_after_seconds <= 0:
-        raise RunStoreError('stale-after must be positive')
-    now = time.time() if now is None else now
+    # Validate the whole request before examining or mutating any run. NaN
+    # would otherwise make every lease comparison false and abandon live runs.
+    try:
+        stale_after_seconds = lifecycle.finite_seconds(stale_after_seconds, 'stale-after', positive=True)
+        now = lifecycle.finite_seconds(time.time() if now is None else now, 'now')
+    except lifecycle.LifecycleError as exc:
+        raise RunStoreError(str(exc)) from exc
     recorded = []
     for run_id in list_runs(root):
         journal = RunJournal(root, run_id)

@@ -27,9 +27,11 @@ class RunTerminated(RuntimeError):
 class RunController:
     def __init__(self, root, *, run_id, timeout_seconds=None, poll_seconds=0.1,
                  heartbeat_seconds=5.0, late_grace_seconds=0.0, clock=time.monotonic):
-        if timeout_seconds is not None and (not isinstance(timeout_seconds, (int, float))
-                                            or isinstance(timeout_seconds, bool) or timeout_seconds <= 0):
-            raise RunStoreError('timeout must be a positive number of seconds')
+        if timeout_seconds is not None:
+            try:
+                timeout_seconds = lifecycle.finite_seconds(timeout_seconds, 'timeout', positive=True)
+            except lifecycle.LifecycleError as exc:
+                raise RunStoreError(str(exc)) from exc
         self.journal = RunJournal(root, run_id)
         self.root, self.run_id = root, run_id
         self.owner = uuid.uuid4().hex

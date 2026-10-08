@@ -4,6 +4,7 @@ The semantic result is complete at ``result-validated``. Publication outcomes
 never delete or rewrite it. A closed run is never resumed: retry is a new run.
 """
 from dataclasses import dataclass, field
+import math
 import re
 
 STAGES = ('requested', 'validated', 'captured', 'planned', 'analyzing', 'evaluated',
@@ -32,6 +33,18 @@ _FAILABLE = set(STAGES[:STAGES.index('persisted')])
 
 class LifecycleError(ValueError):
     """Malformed journal or event that cannot be part of any valid run."""
+
+
+def finite_seconds(value, name, *, positive=False):
+    """Validate supplied times before comparisons can authorize a transition."""
+    try:
+        number = float(value) if type(value) in (int, float) else float('nan')
+    except OverflowError:
+        number = float('nan')
+    if not math.isfinite(number) or (positive and number <= 0):
+        qualifier = 'positive finite' if positive else 'finite'
+        raise LifecycleError(f'{name} must be a {qualifier} number of seconds')
+    return number
 
 
 @dataclass(frozen=True)
@@ -158,6 +171,9 @@ def recovery_event(view, *, now_seconds, last_activity_seconds, stale_after_seco
     A pending publication becomes unknown, never "not sent": the request may
     have reached the provider before the process died.
     """
+    now_seconds = finite_seconds(now_seconds, 'now')
+    last_activity_seconds = finite_seconds(last_activity_seconds, 'last activity')
+    stale_after_seconds = finite_seconds(stale_after_seconds, 'stale-after', positive=True)
     if view.closed or view.state == UNSETTLED_PUBLICATION:
         return None
     if now_seconds - last_activity_seconds < stale_after_seconds:

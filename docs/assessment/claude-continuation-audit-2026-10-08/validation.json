@@ -1,0 +1,62 @@
+{
+  "schema": "claude-continuation-audit-v1",
+  "recorded_at_utc": "2026-10-08T04:38:34.671421+00:00",
+  "workspace": "/Users/moon/Documents/pr-convention-checker",
+  "baseline_commit": "5cd00ed119e7b5e1c236fa288b225941a1d058df",
+  "baseline_lifecycle_sha256": "121cbbd7d882c68f1e2dfaf0f9154a21394adc93de6199dbf143a0770b54820e",
+  "remote_ver2_observed": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "probe": {
+    "kind": "pure-recovery-lease",
+    "now_seconds": 1000,
+    "last_activity_seconds": 1000,
+    "stale_after_input": "NaN",
+    "before": {
+      "kind": "state",
+      "state": "abandoned",
+      "controller": "recovery",
+      "data": {
+        "termination": {
+          "state": "abandoned",
+          "reason": "owner-silent-beyond-lease",
+          "last_state": "requested"
+        }
+      }
+    },
+    "after": {
+      "error_type": "LifecycleError",
+      "message": "stale-after must be a positive finite number of seconds"
+    }
+  },
+  "validation": {
+    "baseline": {
+      "passed": 1841,
+      "skipped": 5
+    },
+    "final": {
+      "passed": 1882,
+      "skipped": 5
+    },
+    "targeted": {
+      "passed": 81
+    },
+    "ruff_E9_F": "pass",
+    "self_gate": "pass",
+    "docs_check_warnings": 0,
+    "new_patch_remote_CI": "not-run",
+    "new_patch_installed_app": "not-run"
+  },
+  "scope": "Current Mac checkout only; reported W09 and later source not acquired",
+  "commit_created": false,
+  "pushed": false,
+  "source_files": {
+    "drift_gate/core/execution/lifecycle.py": "a8aa6a517928a9d289566f29d7e64eb517b55d8a20feab4cce7ce12f864f16f1",
+    "drift_gate/adapters/run_store.py": "c76dd2d636aac79f20f18352fe9f3afce284d8550aff1d1cfbd5069f9df8f954",
+    "drift_gate/adapters/run_coordinator.py": "c15c851e2c82ff10158ef7ce5ec6e0abe1d0fe903555a25037fc44e781ad6bb0",
+    "drift_gate/tests/test_run_time_contract.py": "9d6055e1ae29a70f5d442a8900c8cf6a2795299c6a84ad326174818c33df2546",
+    "docs/contracts/gate-and-inputs.md": "9a0be590a2a646f8f489b9925b5ac14123fb199dd47ca29df92119792d52f5bf"
+  },
+  "preserved_user_deletions": [
+    "docs/conversation-summary-2026-10-01.md",
+    "docs/handoff-2026-10-01.md"
+  ]
+}

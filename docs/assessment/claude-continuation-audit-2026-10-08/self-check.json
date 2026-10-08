@@ -1,0 +1,207 @@
+{
+  "requested_base": "5cd00ed",
+  "inputs": {
+    "requested_base": "5cd00ed",
+    "resolved_base": "5cd00ed119e7b5e1c236fa288b225941a1d058df",
+    "comparison_mode": "commit",
+    "head": "5cd00ed119e7b5e1c236fa288b225941a1d058df",
+    "dirty": true,
+    "untracked_skipped": [
+      "docs/review/drift-gate-claude-continuation-audit-2026-10-08.md",
+      "drift_gate/tests/test_run_time_contract.py"
+    ],
+    "snapshot_sha256": "1b8dea462ee41eb7e1cf0ad977346e2a9647c39234c2d0f1f1f65e73378c062a"
+  },
+  "policy_sha256": "3b21d87ef6f284f5b0ce8697c4467084a2d15659c12d33b6555b3a4e581f9abe",
+  "trusted_policy_ref": "ae0028d",
+  "warnings": [],
+  "evaluation": {
+    "schema_version": 3,
+    "verification": "unverified",
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass",
+      "undetermined_rules": 0,
+      "unverified_rules": 1
+    },
+    "scan_metrics": {
+      "scanned_files": 6,
+      "skipped_ignored_files": 0,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 1,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/adapters/run_coordinator.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/run_store.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/execution/lifecycle.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        }
+      ]
+    },
+    "result": "pass",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "other"
+    ],
+    "violations": [],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/*.py",
+          "drift_gate/core/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/run_coordinator.py",
+          "drift_gate/adapters/run_store.py",
+          "drift_gate/core/execution/lifecycle.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1,
+      "on_unverified": "fail"
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {
+      "drift_gate/adapters/run_coordinator.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/adapters/run_store.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/execution/lifecycle.py": [
+        "self-engine-contract"
+      ]
+    },
+    "unmatched": [
+      "docs/contracts/gate-and-inputs.md",
+      "docs/conversation-summary-2026-10-01.md",
+      "docs/handoff-2026-10-01.md"
+    ],
+    "ignored": []
+  },
+  "execution": {
+    "schema_version": 2,
+    "run_id": "d5c1496e55e04ed891d7c46386bd3538",
+    "started_at": "2026-10-08T04:36:35.522798+00:00",
+    "status": "success"
+  }
+}
