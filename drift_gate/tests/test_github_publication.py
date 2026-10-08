@@ -24,6 +24,7 @@ class FakeApi:
         self.heads, self.list_failures = list(heads), 0
         self.store = deepcopy(comments or [])
         self.writes, self.lose, self.refuse = [], [], None
+        self.footer = ''  # models an intermediary that appends to every written body
 
     def pr_head(self, pr):
         return self.heads.pop(0) if len(self.heads) > 1 else self.heads[0]
@@ -47,7 +48,7 @@ class FakeApi:
 
     def create(self, pr, body):
         def apply():
-            comment = {'id': 100 + len(self.store), 'body': body}
+            comment = {'id': 100 + len(self.store), 'body': body + self.footer}
             self.store.append(comment)
             return comment
         return self._write('create', apply)
@@ -55,7 +56,7 @@ class FakeApi:
     def update(self, comment_id, body):
         def apply():
             comment = next(c for c in self.store if c['id'] == comment_id)
-            comment['body'] = body
+            comment['body'] = body + self.footer
             return comment
         return self._write('update', apply)
 
@@ -83,6 +84,7 @@ def test_create_then_idempotent_repeat_without_second_write():
     api = FakeApi()
     record = pub.publish(api, pr_number=1, body=BODY, ident=ident())
     assert (record['state'], record['operation'], api.writes) == ('published', 'create', ['create'])
+    assert record['body_match'] == 'exact' and record['content_verified'] is True
     again = pub.publish(api, pr_number=1, body=BODY, ident=ident())
     assert again['reason'] == 'already-published-by-this-attempt' and api.writes == ['create']
 
@@ -244,3 +246,35 @@ def test_action_main_journals_every_stage_through_comment_publication(tmp_path, 
     assert pub.parse(fake.store[0]['body'])['key'] == record['idempotency_key']
     report = json.loads((tmp_path / 'drift_gate_report.json').read_text())
     assert report['result'] == 'fail' and report['execution']['run_id'] == outputs['run_id']
+
+
+def test_intermediary_footer_is_reported_without_rewrite_loop_or_false_rejection():
+    """Live regression: a footer appended in transit made every repeat rewrite and a
+    lost-response lookup report a landed write as rejected."""
+    api = FakeApi()
+    api.footer = '\n\n---\n_appended in transit_'
+    record = pub.publish(api, pr_number=1, body=BODY, ident=ident(1))
+    assert (record['state'], record['body_match'], record['content_verified']) == ('published', 'suffix-appended', False)
+    again = pub.publish(api, pr_number=1, body=BODY, ident=ident(1))
+    assert again['reason'] == 'already-published-by-this-attempt' and api.writes == ['create']
+    api.lose = ['applied']
+    lost = pub.publish(api, pr_number=1, body=BODY, ident=ident(1, run_attempt=2))
+    assert (lost['state'], lost['reason']) == ('published', 'lost-response-reconciled-by-key')
+    assert lost['reconciliation']['body_match'] == 'suffix-appended'
+
+
+def test_reconcile_after_a_later_attempt_overwrote_reports_superseded(tmp_path, monkeypatch, capsys):
+    api = FakeApi(comments=[existing(4)])
+    api.lose = ['applied']
+    record = pub.publish(api, pr_number=1, body=BODY, ident=ident(5, run_attempt=1))
+    assert record['state'] == 'published'
+    pub.publish(api, pr_number=1, body=BODY, ident=ident(5, run_attempt=2))  # later attempt replaces it
+    path = tmp_path / 'record.json'
+    path.write_text(json.dumps({**record, 'state': 'publication-unknown'}))
+    monkeypatch.setenv('GITHUB_TOKEN', 'x')
+    monkeypatch.setattr(pub, 'CommentApi', lambda *a, **k: api)
+    with pytest.raises(SystemExit) as exit:
+        run_cli(['publication', 'reconcile', '--record', str(path), '--repo', 'o/r', '--pr', '1'])
+    data = json.loads(capsys.readouterr().out)
+    assert exit.value.code == 1
+    assert (data['state'], data['reason']) == ('publication-stale', 'superseded-by-later-attempt')

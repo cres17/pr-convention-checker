@@ -221,7 +221,8 @@ def _publish_comment(controller, *, token, repo, pr_number, body, head_oid, resu
     record.setdefault('published', False)
     atomic_json(record_path, record)
     summary = {k: record.get(k) for k in ('state', 'reason', 'comment_id', 'idempotency_key', 'body_sha256',
-                                          'head_before', 'head_after', 'race_window')}
+                                          'body_match', 'content_verified', 'head_before', 'head_after',
+                                          'race_window')}
     controller.advance(record['state'], publication=summary)
     _write_github_output({"publication_state": record['state']})
     if record['state'] != 'published':

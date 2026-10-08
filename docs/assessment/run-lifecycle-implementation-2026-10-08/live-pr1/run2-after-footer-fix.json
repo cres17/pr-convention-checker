@@ -1,0 +1,444 @@
+{
+  "schema": "w15-live-publication-check-v1",
+  "repo": "cres17/pr-convention-checker",
+  "pr": 1,
+  "pr_head": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "executed_at": "2026-10-08T02:50:00.357534+00:00",
+  "code_commit": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "executor": "claude-session-direct-call-not-github-action",
+  "steps": [
+    {
+      "body_match": "suffix-appended",
+      "content_verified": false,
+      "step": "A-update-newer-run",
+      "expected": [
+        "published",
+        "provider-confirmed-write"
+      ],
+      "state": "published",
+      "reason": "provider-confirmed-write",
+      "writes": [
+        "update:sent"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "outcome": "response"
+        }
+      ],
+      "reconciliation": null,
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:47:04Z",
+          "key": "9e92193acdd3eda567444e0f6791275a6cfdc4e5b043525b48140d165438923a",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            1,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:37Z",
+          "key": "cf5908133ecb63e2a68ef572acffb2be9580279fe7f4eacf5b9bd344c7c162a2",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            1
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "cf5908133ecb63e2a68ef572acffb2be9580279fe7f4eacf5b9bd344c7c162a2",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": "update",
+        "comment_id": 6051129812,
+        "url": "https://github.com/cres17/pr-convention-checker/pull/1#issuecomment-6051129812",
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "response"
+          }
+        ],
+        "body_match": "suffix-appended",
+        "content_verified": false,
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "head_after": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "published",
+        "reason": "provider-confirmed-write",
+        "published": true
+      },
+      "matched_expectation": true
+    },
+    {
+      "body_match": "suffix-appended",
+      "content_verified": false,
+      "step": "B-same-attempt-repeat",
+      "expected": [
+        "published",
+        "already-published-by-this-attempt"
+      ],
+      "state": "published",
+      "reason": "already-published-by-this-attempt",
+      "writes": [],
+      "attempts": [],
+      "reconciliation": null,
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:37Z",
+          "key": "cf5908133ecb63e2a68ef572acffb2be9580279fe7f4eacf5b9bd344c7c162a2",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            1
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:37Z",
+          "key": "cf5908133ecb63e2a68ef572acffb2be9580279fe7f4eacf5b9bd344c7c162a2",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            1
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "cf5908133ecb63e2a68ef572acffb2be9580279fe7f4eacf5b9bd344c7c162a2",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": null,
+        "comment_id": 6051129812,
+        "url": "https://github.com/cres17/pr-convention-checker/pull/1#issuecomment-6051129812",
+        "attempts": [],
+        "body_match": "suffix-appended",
+        "content_verified": false,
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "published",
+        "reason": "already-published-by-this-attempt"
+      },
+      "matched_expectation": true
+    },
+    {
+      "body_match": "suffix-appended",
+      "content_verified": false,
+      "step": "C-update-response-lost-after-send",
+      "expected": [
+        "published",
+        "lost-response-reconciled-by-key"
+      ],
+      "state": "published",
+      "reason": "lost-response-reconciled-by-key",
+      "writes": [
+        "update:sent"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "outcome": "lost-response",
+          "detail": "simulated: response lost after provider applied it"
+        }
+      ],
+      "reconciliation": {
+        "state": "published",
+        "reason": "idempotency-key-found-body-suffix-appended",
+        "retry_safe": false,
+        "comment_id": 6051129812,
+        "duplicates": 0,
+        "body_match": "suffix-appended",
+        "content_verified": false
+      },
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:37Z",
+          "key": "cf5908133ecb63e2a68ef572acffb2be9580279fe7f4eacf5b9bd344c7c162a2",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            1
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:45Z",
+          "key": "059da10afa61fc96101086b8caf2dc22934b5fa8821723d59d30b650f9cffc41",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            2
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "059da10afa61fc96101086b8caf2dc22934b5fa8821723d59d30b650f9cffc41",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": "update",
+        "comment_id": 6051129812,
+        "url": null,
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "lost-response",
+            "detail": "simulated: response lost after provider applied it"
+          }
+        ],
+        "body_match": "suffix-appended",
+        "content_verified": false,
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "reconciliation": {
+          "state": "published",
+          "reason": "idempotency-key-found-body-suffix-appended",
+          "retry_safe": false,
+          "comment_id": 6051129812,
+          "duplicates": 0,
+          "body_match": "suffix-appended",
+          "content_verified": false
+        },
+        "duplicates": 0,
+        "head_after": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "published",
+        "reason": "lost-response-reconciled-by-key",
+        "published": true
+      },
+      "matched_expectation": true
+    },
+    {
+      "body_match": "suffix-appended",
+      "content_verified": false,
+      "step": "D-update-dropped-before-send-retried",
+      "expected": [
+        "published",
+        "provider-confirmed-write"
+      ],
+      "state": "published",
+      "reason": "provider-confirmed-write",
+      "writes": [
+        "update:dropped-before-send",
+        "update:sent"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "outcome": "lost-response",
+          "detail": "simulated: request never sent"
+        },
+        {
+          "attempt": 2,
+          "outcome": "response"
+        }
+      ],
+      "reconciliation": {
+        "state": "publication-unknown",
+        "reason": "update-not-applied",
+        "retry_safe": true,
+        "comment_id": 6051129812,
+        "duplicates": 0,
+        "body_match": null,
+        "content_verified": false
+      },
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:45Z",
+          "key": "059da10afa61fc96101086b8caf2dc22934b5fa8821723d59d30b650f9cffc41",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            2
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:50Z",
+          "key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": "update",
+        "comment_id": 6051129812,
+        "url": "https://github.com/cres17/pr-convention-checker/pull/1#issuecomment-6051129812",
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "lost-response",
+            "detail": "simulated: request never sent"
+          },
+          {
+            "attempt": 2,
+            "outcome": "response"
+          }
+        ],
+        "body_match": "suffix-appended",
+        "content_verified": false,
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "reconciliation": {
+          "state": "publication-unknown",
+          "reason": "update-not-applied",
+          "retry_safe": true,
+          "comment_id": 6051129812,
+          "duplicates": 0,
+          "body_match": null,
+          "content_verified": false
+        },
+        "head_after": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "published",
+        "reason": "provider-confirmed-write",
+        "published": true
+      },
+      "matched_expectation": true
+    },
+    {
+      "body_match": null,
+      "content_verified": false,
+      "step": "E-older-attempt-after-newer",
+      "expected": [
+        "publication-stale",
+        "later-run-already-published"
+      ],
+      "state": "publication-stale",
+      "reason": "later-run-already-published",
+      "writes": [],
+      "attempts": [],
+      "reconciliation": null,
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:50Z",
+          "key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:50Z",
+          "key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "059da10afa61fc96101086b8caf2dc22934b5fa8821723d59d30b650f9cffc41",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": null,
+        "comment_id": 6051129812,
+        "url": null,
+        "attempts": [],
+        "body_match": null,
+        "content_verified": false,
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "publication-stale",
+        "reason": "later-run-already-published"
+      },
+      "matched_expectation": true
+    },
+    {
+      "body_match": null,
+      "content_verified": false,
+      "step": "F-evaluated-head-not-current",
+      "expected": [
+        "publication-stale",
+        "head-changed-before-write"
+      ],
+      "state": "publication-stale",
+      "reason": "head-changed-before-write",
+      "writes": [],
+      "attempts": [],
+      "reconciliation": null,
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:50Z",
+          "key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:49:50Z",
+          "key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
+          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
+          "order": [
+            2,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "114cf61f61adc910286ac56d156171cf6085c30b36388b1f8367e172b88f6888",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "ed9f9046cca46c79b379ccdbafaa08feaa8241d6",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": null,
+        "comment_id": null,
+        "url": null,
+        "attempts": [],
+        "body_match": null,
+        "content_verified": false,
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "publication-stale",
+        "reason": "head-changed-before-write"
+      },
+      "matched_expectation": true
+    }
+  ],
+  "all_matched": true
+}

@@ -32,7 +32,11 @@ lease 경과 후 `abandoned`, 게시 요청 후 침묵은 `publication-unknown`�
 GitHub Action의 PR 댓글은 idempotency key와 본문 SHA-256을 숨은 줄로 포함한다. 쓰기 전후
 PR HEAD를 확인하고 같은 workflow의 더 큰 `(run_number, run_attempt)` 댓글이나 다른 workflow
 댓글을 덮어쓰지 않는다. 응답 유실은 key 조회로 판정하며 확인되지 않은 새 댓글은 다시
-게시하지 않는다. 기존 댓글 수정의 미반영만 같은 내용으로 1회 재시도한다. provider에
+게시하지 않는다. 기존 댓글 수정의 미반영만 같은 내용으로 1회 재시도한다. key가 있으면
+쓰기는 반영된 것으로 보고, 저장 본문의 일치는 `body_match`(exact·suffix-appended·different·
+unverified)와 `content_verified`로 따로 기록한다. 같은 시도의 key가 이미 있으면 본문이 달라도
+다시 쓰지 않는다. key가 없고 같은 workflow의 더 나중 시도가 댓글을 차지했으면
+`publication-stale`(`superseded-by-later-attempt`)이며 재시도하지 않는다. provider에
 조건부 쓰기가 없어 읽기-비교-쓰기 경쟁이 남으며 기록의 `race_window`로 표시한다.
 `publication reconcile`은 조회만 한다. 실행 번호가 없으면 댓글을 쓰지 않는다.
 

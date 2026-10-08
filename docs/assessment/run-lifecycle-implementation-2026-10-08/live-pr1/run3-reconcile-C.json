@@ -1,0 +1,39 @@
+{
+  "schema": "pr-comment-publication-record-v1",
+  "idempotency_key": "1096fa0cc43c4e74ee0c832ce5770a419828e2525da2898a37bd1b166d6a5519",
+  "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+  "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "race_window": "read-check-write-not-atomic-on-provider",
+  "operation": "update",
+  "comment_id": 6051129812,
+  "url": null,
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "lost-response",
+      "detail": "simulated: response lost after provider applied it"
+    }
+  ],
+  "body_match": null,
+  "content_verified": false,
+  "order": {
+    "workflow_sha256": "33807b39dcb779e0d9111fc3ea72f62d9777c7900647f9a7d4e9e720b92f23fb",
+    "run_number": 3,
+    "run_attempt": 2
+  },
+  "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "reconciliation": {
+    "state": "publication-stale",
+    "reason": "superseded-by-later-attempt",
+    "retry_safe": false,
+    "comment_id": null,
+    "duplicates": 0,
+    "body_match": null,
+    "content_verified": false
+  },
+  "duplicates": 0,
+  "head_after": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "state": "publication-stale",
+  "reason": "superseded-by-later-attempt",
+  "published": true
+}

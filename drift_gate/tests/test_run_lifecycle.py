@@ -221,19 +221,29 @@ def test_bounded_model_of_latest_pointer_invariants():
 
 # -- publication reconciliation ---------------------------------------------------
 def test_lost_response_reconciliation_table():
-    key, body = '1' * 64, '2' * 64
-    args = dict(key=key, body_sha256=body)
-    assert reconcile(**args, operation='create', target_comment_id=None, lookup=None).state == 'publication-unknown'
-    found = reconcile(**args, operation='create', target_comment_id=None,
-                      lookup=[{'id': 1, 'key': key, 'body_sha256': body}, {'id': 2, 'key': key, 'body_sha256': body}])
-    assert (found.state, found.comment_id, found.duplicates) == ('published', 1, 1)
-    assert reconcile(**args, operation='create', target_comment_id=None,
-                     lookup=[{'id': 1, 'key': key, 'body_sha256': '3' * 64}]).state == 'publication-rejected'
-    absent = reconcile(**args, operation='create', target_comment_id=None, lookup=[])
+    key = '1' * 64
+    assert reconcile(key=key, operation='create', target_comment_id=None, lookup=None).state == 'publication-unknown'
+    found = reconcile(key=key, operation='create', target_comment_id=None,
+                      lookup=[{'id': 1, 'key': key, 'body_match': 'suffix-appended'},
+                              {'id': 2, 'key': key, 'body_match': 'exact'}])
+    assert (found.state, found.comment_id, found.duplicates, found.body_match) == ('published', 2, 1, 'exact')
+    altered = reconcile(key=key, operation='create', target_comment_id=None,
+                        lookup=[{'id': 1, 'key': key, 'body_match': 'different'}])
+    # The key proves the write landed; the altered body is reported, not called a rejection.
+    assert (altered.state, altered.reason, altered.to_dict()['content_verified']) == (
+        'published', 'idempotency-key-found-body-different', False)
+    absent = reconcile(key=key, operation='create', target_comment_id=None, lookup=[])
     assert (absent.state, absent.retry_safe) == ('publication-unknown', False)
-    update = reconcile(**args, operation='update', target_comment_id=7, lookup=[{'id': 7, 'key': '4' * 64}])
+    update = reconcile(key=key, operation='update', target_comment_id=7, lookup=[{'id': 7, 'key': '4' * 64}])
     assert (update.state, update.retry_safe) == ('publication-unknown', True)
-    assert not reconcile(**args, operation='update', target_comment_id=7, lookup=[]).retry_safe
+    assert not reconcile(key=key, operation='update', target_comment_id=7, lookup=[]).retry_safe
+    # Live regression: attempt 2 landed, attempt 3 then replaced it. Never "retry safe".
+    later = [{'id': 7, 'key': '4' * 64, 'order': ('w', 1, 3)}]
+    superseded = reconcile(key=key, operation='update', target_comment_id=7, lookup=later, order=('w', 1, 2))
+    assert (superseded.state, superseded.reason, superseded.retry_safe) == (
+        'publication-stale', 'superseded-by-later-attempt', False)
+    other_workflow = reconcile(key=key, operation='update', target_comment_id=7, lookup=later, order=('v', 9, 9))
+    assert other_workflow.reason == 'update-not-applied'
 
 
 # -- local store -----------------------------------------------------------------

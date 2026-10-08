@@ -122,6 +122,10 @@ class CommentApi:
             raise LostResponse(f'{method} response lost: {exc}') from exc
 
 
+def pub_meta(body):
+    return parse(body) or {}
+
+
 def _ours(comments):
     entries = []
     for comment in comments:
@@ -131,9 +135,21 @@ def _ours(comments):
     return entries
 
 
-def _lookup(api, pr_number):
+def body_match(stored, sent, meta):
+    """Compare a stored comment with the sent body (``sent`` None: digest only)."""
+    if sent is not None and stored == sent:
+        return 'exact'
+    if sent is not None and isinstance(stored, str) and stored.startswith(sent):
+        return 'suffix-appended'
+    if sent is None:
+        return 'exact' if meta.get('body_intact') else 'unverified'
+    return 'different'
+
+
+def _lookup(api, pr_number, sent=None):
     try:
-        return [{'id': c.get('id'), 'key': m.get('key'), 'body_sha256': m.get('body_sha256') if m.get('body_intact') else None}
+        return [{'id': c.get('id'), 'key': m.get('key'), 'body_match': body_match(c.get('body'), sent, m),
+                 'order': None if m.get('legacy') else (m['workflow_sha256'], m['run_number'], m['run_attempt'])}
                 for c, m in _ours(api.comments(pr_number))]
     except (ProviderError, LostResponse):
         return None
@@ -144,7 +160,10 @@ def publish(api, *, pr_number, body, ident):
     full, digest = render(body, ident)
     record = {'schema': 'pr-comment-publication-record-v1', 'idempotency_key': ident['key'],
               'body_sha256': digest, 'expected_head_oid': ident['head_oid'], 'race_window': RACE_WINDOW,
-              'operation': None, 'comment_id': None, 'url': None, 'attempts': []}
+              'operation': None, 'comment_id': None, 'url': None, 'attempts': [],
+              'body_match': None, 'content_verified': False,
+              'order': {'workflow_sha256': ident['workflow_sha256'], 'run_number': ident['run_number'],
+                        'run_attempt': ident['run_attempt']}}
 
     def done(state, reason, **extra):
         record.update(state=state, reason=reason, **extra)
@@ -162,9 +181,12 @@ def publish(api, *, pr_number, body, ident):
     except (ProviderError, LostResponse) as exc:
         return done('publication-rejected', f'comment-lookup-unavailable: {exc}')
     for comment, meta in existing:
-        if meta.get('key') == ident['key'] and meta.get('body_sha256') == digest and meta.get('body_intact'):
+        if meta.get('key') == ident['key']:
+            # This attempt already landed. Rewriting an altered copy would loop if
+            # an intermediary alters every write, so the mismatch is only reported.
+            match = body_match(comment.get('body'), full, meta)
             return done('published', 'already-published-by-this-attempt', comment_id=comment.get('id'),
-                        url=comment.get('html_url'))
+                        url=comment.get('html_url'), body_match=match, content_verified=match == 'exact')
     target = existing[0] if existing else None
     if target is not None and not target[1].get('legacy'):
         meta = target[1]
@@ -180,7 +202,9 @@ def publish(api, *, pr_number, body, ident):
             response = api.update(comment_id, full) if operation == 'update' else api.create(pr_number, full)
             record['attempts'].append({'attempt': attempt, 'outcome': 'response'})
             comment_id = response.get('id', comment_id)
-            record.update(comment_id=comment_id, url=response.get('html_url'))
+            match = body_match(response.get('body'), full, pub_meta(response.get('body')))
+            record.update(comment_id=comment_id, url=response.get('html_url'), body_match=match,
+                          content_verified=match == 'exact')
             state, reason = 'published', 'provider-confirmed-write'
             break
         except ProviderError as exc:
@@ -188,12 +212,14 @@ def publish(api, *, pr_number, body, ident):
             return done('publication-rejected', f'provider-refused: {exc}', comment_id=comment_id)
         except LostResponse as exc:
             record['attempts'].append({'attempt': attempt, 'outcome': 'lost-response', 'detail': str(exc)})
-            outcome = reconcile(key=ident['key'], body_sha256=digest, operation=operation,
-                                target_comment_id=comment_id, lookup=_lookup(api, pr_number))
+            outcome = reconcile(key=ident['key'], operation=operation, target_comment_id=comment_id,
+                                lookup=_lookup(api, pr_number, full),
+                                order=(ident['workflow_sha256'], ident['run_number'], ident['run_attempt']))
             record['reconciliation'] = outcome.to_dict()
             if outcome.state == 'published':
                 comment_id = outcome.comment_id
-                record.update(comment_id=comment_id, duplicates=outcome.duplicates)
+                record.update(comment_id=comment_id, duplicates=outcome.duplicates, body_match=outcome.body_match,
+                              content_verified=outcome.body_match == 'exact')
                 state, reason = 'published', 'lost-response-reconciled-by-key'
                 break
             if not (outcome.retry_safe and attempt == 1):
@@ -211,7 +237,9 @@ def publish(api, *, pr_number, body, ident):
 
 def reconcile_record(api, *, pr_number, record):
     """Explicit follow-up for publication-unknown: look up by key, never re-post."""
-    outcome = reconcile(key=record['idempotency_key'], body_sha256=record['body_sha256'],
-                        operation=record.get('operation') or 'create',
-                        target_comment_id=record.get('comment_id'), lookup=_lookup(api, pr_number))
-    return {**record, 'state': outcome.state, 'reason': outcome.reason, 'reconciliation': outcome.to_dict()}
+    order = record.get('order')
+    order = (order['workflow_sha256'], order['run_number'], order['run_attempt']) if isinstance(order, dict) else None
+    outcome = reconcile(key=record['idempotency_key'], operation=record.get('operation') or 'create',
+                        target_comment_id=record.get('comment_id'), lookup=_lookup(api, pr_number), order=order)
+    return {**record, 'state': outcome.state, 'reason': outcome.reason, 'reconciliation': outcome.to_dict(),
+            'body_match': outcome.body_match, 'content_verified': outcome.body_match == 'exact'}
