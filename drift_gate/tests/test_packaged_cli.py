@@ -53,3 +53,34 @@ def test_teardown_trace_records_events_and_enables_faulthandler(tmp_path):
                               cwd=ROOT, env={k: v for k, v in os.environ.items() if k != 'DRIFT_GATE_TEARDOWN_TRACE'},
                               capture_output=True, timeout=60)
     assert untraced.returncode == 0
+
+
+@pytest.mark.skipif(os.name == 'nt', reason='the fake executable is a POSIX shell script')
+def test_teardown_diagnosis_records_every_run_with_a_relative_output(tmp_path, monkeypatch):
+    from contextlib import contextmanager
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('teardown_diagnosis', ROOT / 'packaging/teardown_diagnosis.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    @contextmanager
+    def no_block(executable, directory):
+        assert directory.is_absolute()  # the run's cwd is a temporary directory, not the caller's
+        yield [], 'test: no network block'
+
+    monkeypatch.setattr(module, 'network_block', no_block)
+    counter = tmp_path / 'count'
+    fake = tmp_path / 'DriftGate'
+    fake.write_text('#!/bin/sh\n'
+                    f'n=$(cat "{counter}" 2>/dev/null || echo 0); n=$((n+1)); echo $n > "{counter}"\n'
+                    'echo "1.0 pid=1 main-start " >> "$DRIFT_GATE_TEARDOWN_TRACE"\n'
+                    'echo "2.0 pid=1 event-loop-returned code=0" >> "$DRIFT_GATE_TEARDOWN_TRACE"\n'
+                    '[ "$n" = 2 ] && exit 134\nexit 0\n')
+    fake.chmod(0o755)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(sys, 'argv', ['teardown_diagnosis.py', str(fake), '--runs', '3', '--output', 'diag'])
+    module.main()
+    summary = json.loads((tmp_path / 'diag/summary.json').read_text())
+    assert summary['exit_codes'] == {'0': 2, '134': 1} and summary['nonzero_runs'] == [2]
+    assert summary['crash_phase'] == ['event-loop-returned'] and summary['runs_without_trace'] == []
+    assert summary['runs'][1]['crashed_after_event_loop']

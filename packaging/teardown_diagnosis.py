@@ -60,8 +60,11 @@ def main():
     parser.add_argument('--output', type=Path, default=Path('build/teardown-diagnosis'))
     args = parser.parse_args()
     executable = args.executable.resolve(strict=True)
-    args.output.mkdir(parents=True, exist_ok=False)
-    runs = [attempt(executable, args.output, index) for index in range(1, args.runs + 1)]
+    # Absolute: each run starts in its own temporary directory, and the sandbox profile path
+    # written under the output directory must still resolve there.
+    output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    runs = [attempt(executable, output, index) for index in range(1, args.runs + 1)]
     codes = {}
     for row in runs:
         codes[str(row['exit_code'])] = codes.get(str(row['exit_code']), 0) + 1
@@ -70,8 +73,13 @@ def main():
                'nonzero_runs': [row['run'] for row in runs if row['exit_code'] != 0],
                'crash_phase': sorted({row['last_events'][-1] if row['last_events'] else 'before-trace'
                                       for row in runs if row['exit_code'] not in (0,)}),
+               'runs_without_trace': [row['run'] for row in runs if not row['last_events']],
                'interpretation': 'observation only; a clean set of runs does not prove the earlier failure is fixed'}
-    (args.output / 'summary.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
+    if len(summary['runs_without_trace']) == len(runs):
+        # Nothing reached the app: the harness, not Qt teardown, failed. Say so instead of
+        # recording an empty diagnosis as if it were an observation.
+        print('::warning title=Teardown diagnosis::no run reached the app; see run-*/app.log')
+    (output / 'summary.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
     print(json.dumps({'exit_codes': codes, 'nonzero_runs': summary['nonzero_runs']}))
 
 
