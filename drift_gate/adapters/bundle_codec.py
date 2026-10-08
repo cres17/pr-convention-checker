@@ -45,12 +45,23 @@ def encode_snapshot(snapshot):
     return files
 
 
-def require_replayable(snapshot):
+def require_replayable(snapshot, keys=None):
     # An unsigned disk file must never resurrect an adapter-verified waiver.
-    # Approval envelopes/authority revalidation are a separate future protocol.
+    # A verified waiver is admitted only with an envelope whose keyed signature
+    # verifies against the organization keyring available at load time.
+    from drift_gate.adapters.approval_signing import ApprovalSignatureError, keyring, verify
     data = decode_json(snapshot.payload)
-    if any(d.get('approval_verified') for d in data['drift_ignores']):
-        raise BundleError('Persisted approval authority is unsupported; verified waivers require revalidation')
+    verified = [d for d in data['drift_ignores'] if d.get('approval_verified')]
+    if not verified:
+        return
+    try:
+        keys = keyring() if keys is None else keys
+        for directive in verified:
+            if directive.get('approval_envelope') is None or directive.get('approval_signature') is None:
+                raise ApprovalSignatureError('verified waiver has no signed approval envelope')
+            verify(directive['approval_envelope'], directive['approval_signature'], keys)
+    except ApprovalSignatureError as exc:
+        raise BundleError(f'Persisted approval authority is not verifiable: {exc}') from exc
 
 
 def decode_snapshot(files):

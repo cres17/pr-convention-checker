@@ -341,16 +341,23 @@ class TestDriftIgnorePolicy:
         assert len(result.violations) == 1
         assert result.rejected_ignores[0].reason == "CODEOWNERS approval is required"
 
-        approved = [
-            DriftIgnoreDirective(
-                rule_id="test-rule",
-                reason="temporary",
-                approved_by="@team/api",
-                approval_verified=True,
-                approval_commit="verified-current-head",
-            )
-        ]
-        approved_result = run(changed_files=files, drift_ignores=approved, policy=policy)
+        # W09: an adapter flag alone is no longer authority; a bound envelope is.
+        flag_only = [DriftIgnoreDirective(rule_id="test-rule", reason="temporary", approved_by="@team/api",
+                                          approval_verified=True, approval_commit="a" * 40)]
+        assert len(run(changed_files=files, drift_ignores=flag_only, policy=policy).violations) == 1
+
+        from datetime import date
+        from drift_gate.core.models.evaluation_context import EvaluationContext
+        from drift_gate.core.trust.approvals import ApprovalEnvelope
+        envelope = ApprovalEnvelope("test-rule", ("src/routes/users.ts",), "a" * 40, "b" * 64, "temporary",
+                                    "2026-09-01", None, ("api-owner",),
+                                    {"kind": "github-codeowners-review", "codeowners_sha256": "c" * 64,
+                                     "reviews": [{"id": 1, "commit_id": "a" * 40, "state": "APPROVED"}]}).to_dict()
+        approved = [DriftIgnoreDirective(rule_id="test-rule", reason="temporary", approved_by="@team/api",
+                                         approval_verified=True, approval_commit="a" * 40,
+                                         approval_envelope=envelope)]
+        context = EvaluationContext(date(2026, 9, 2), "a" * 40, "b" * 64)
+        approved_result = run(changed_files=files, drift_ignores=approved, policy=policy, context=context)
         assert approved_result.violations == []
         assert approved_result.ignore_audit[0].approved_by == "@team/api"
 

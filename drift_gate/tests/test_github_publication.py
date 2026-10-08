@@ -227,7 +227,7 @@ def test_action_main_journals_every_stage_through_comment_publication(tmp_path, 
 
     fake = FakeApi()
     monkeypatch.setattr(action, 'GitHubAdapter', Remote)
-    monkeypatch.setattr('drift_gate.adapters.github.approvals.verify_ignores', lambda *args: [])
+    monkeypatch.setattr('drift_gate.adapters.github.approvals.verify_ignores', lambda *args, **kwargs: [])
     monkeypatch.setattr(pub, 'CommentApi', lambda *a, **k: fake)
     out = tmp_path / 'outputs'
     for name, value in {'GITHUB_TOKEN': 'fixture', 'REPO': 'o/r', 'PR_NUMBER': '1', 'GITHUB_WORKSPACE': str(tmp_path),
