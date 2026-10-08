@@ -452,6 +452,7 @@ def _build_parser() -> argparse.ArgumentParser:
     scope.add_argument('--policy', default='.drift-gate.yml')
     scope.add_argument('--trusted-policy-ref', required=True)
     scope.add_argument('--trusted-policy-sha256', required=True)
+    scope.add_argument('--isolated-workers', action='store_true', help='Extract module facts in isolated worker processes')
     scope.add_argument('--out-json')
     scope.add_argument('--json', action='store_true', dest='json_output')
 
@@ -1208,7 +1209,8 @@ def _run_migrate(args):
 def _run_scope(args):
     from drift_gate.adapters.scope_analysis import analyze_scope
     data = analyze_scope(root=Path.cwd(), base=args.base, head=args.head, trusted_policy_ref=args.trusted_policy_ref,
-                         trusted_policy_sha256=args.trusted_policy_sha256, policy_path=args.policy)
+                         trusted_policy_sha256=args.trusted_policy_sha256, policy_path=args.policy,
+                         isolated=args.isolated_workers)
     if args.out_json:
         atomic_json(args.out_json, data)
     _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))

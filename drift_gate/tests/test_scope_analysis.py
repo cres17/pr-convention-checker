@@ -160,3 +160,13 @@ def test_cli_check_reports_budget_and_rejects_over_limit(repo, monkeypatch, caps
                  '--trusted-policy-sha256', sha256(policy.encode()).hexdigest(), '--json'])
     error = json.loads(capsys.readouterr().out)['error']
     assert exit.value.code == 2 and error['code'] == 'resource_limit' and error['resource']['unit'] == 'files'
+
+
+def test_isolated_workers_produce_the_same_scope_facts(repo):
+    root, base = repo
+    head = commit(root, {'services/billing/api.py': route('/health', extra='@app.post("/pay")\ndef p():\n    return 1\n')},
+                  'add route')
+    inline, isolated = run(root, base, head), run(root, base, head, isolated=True)
+    assert isolated['analysis_boundary'] == 'isolated-worker-processes' and not isolated['worker_failures']
+    assert inline['services'] == isolated['services']
+    assert inline['no_delta_certificates'] == isolated['no_delta_certificates']
