@@ -34,5 +34,21 @@ def atomic_text(path, text):
             Path(name).unlink()
 
 
+def atomic_bytes(path, raw):
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    name = None
+    try:
+        with tempfile.NamedTemporaryFile(mode='wb', dir=target.parent, delete=False) as stream:
+            name = stream.name
+            stream.write(raw)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(name, target)
+    finally:
+        if name and Path(name).exists():
+            Path(name).unlink()
+
+
 def atomic_json(path, data):
     atomic_text(path, json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + '\n')

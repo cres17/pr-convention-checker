@@ -45,7 +45,7 @@ from drift_gate.adapters.history.store import (
     render_history_markdown,
 )
 from drift_gate.adapters.claude.enricher import ClaudeEnricher
-from drift_gate.adapters.inspection import inspect as run
+from drift_gate.adapters.inspection import inspect as run  # noqa: F401 -- existing patch point; check now captures then inspects
 from drift_gate.core.gating.temporal import apply_temporal_gate
 from drift_gate.core.policy.loader import PolicyLoadError
 from drift_gate.core.evaluation.result_guard import ResultValidationError
@@ -341,15 +341,27 @@ def run_cli(argv=None):
 
     inspections = {"check": _run_check, "report": _run_check,
                    "review": _run_review, "self-audit": _run_self_audit,
-                   "history": _run_history, "bundle": _run_bundle}
+                   "history": _run_history, "bundle": _run_bundle, "run": _run_runs,
+                   "publication": _run_publication}
     if args.command in inspections:
         args.execution = identity()
+        from drift_gate.adapters.run_coordinator import RunTerminated
+        from drift_gate.adapters.run_store import RunStoreError
         try:
             inspections[args.command](args)
-        except (CLIInputError, GitInputError, PolicyLoadError, OSError, UnicodeError, ResultValidationError, BundleError) as exc:
-            code = 'result_validation_error' if isinstance(exc, ResultValidationError) else 'input_error'
+        except (CLIInputError, GitInputError, PolicyLoadError, OSError, UnicodeError, ResultValidationError,
+                BundleError, RunStoreError, RunTerminated) as exc:
+            terminated = isinstance(exc, RunTerminated)
+            code = (exc.state.replace('-', '_') if terminated else
+                    'result_validation_error' if isinstance(exc, ResultValidationError) else 'input_error')
             error = {'execution': {**args.execution, 'status': code},
                      'error': {'code': code, 'message': str(exc)}}
+            controller = getattr(args, 'run_controller', None)
+            if controller is not None:
+                try:
+                    error['execution']['run'] = controller.view().to_dict()
+                except (RunStoreError, OSError):
+                    error['execution']['run'] = {'state': 'unreadable'}
             for output in (getattr(args, 'out_json', None), getattr(args, 'out', None)):
                 if output:
                     atomic_json(output, error)
@@ -361,7 +373,8 @@ def run_cli(argv=None):
             if getattr(args, "json_output", False) or getattr(args, "format", "") == "json":
                 _write_stdout(json.dumps(error, ensure_ascii=False))
             print(str(exc), file=sys.stderr)
-            sys.exit(2)
+            # 3: the run closed without a semantic result (cancelled/timed out/recovered).
+            sys.exit(3 if terminated else 2)
         return
 
     if args.command == "demo":
@@ -424,6 +437,23 @@ def _build_parser() -> argparse.ArgumentParser:
     bundle.add_argument('--expected-receipt-sha256', help='Optional independently retained receipt digest')
     bundle.add_argument('--json', action='store_true', dest='json_output')
     bundle.add_argument('--out-json', help='Write verification or replay JSON')
+
+    runs = subparsers.add_parser('run', help='Inspect, cancel or recover journaled runs and latest pointers')
+    runs.add_argument('operation', choices=['show', 'list', 'cancel', 'recover', 'latest', 'reconcile'])
+    runs.add_argument('name', nargs='?', help='Run ID (show/cancel) or latest target name (latest)')
+    runs.add_argument('--run-store', required=True, help='Run store directory used by check --run-store')
+    runs.add_argument('--reason', default='operator-request', help='Cancellation reason to record')
+    runs.add_argument('--stale-after', type=float, default=600.0,
+                      help='Seconds of owner silence after which recover closes a run')
+    runs.add_argument('--json', action='store_true', dest='json_output')
+
+    publication = subparsers.add_parser('publication', help='Resolve a PR comment whose write outcome is unknown')
+    publication.add_argument('operation', choices=['reconcile'])
+    publication.add_argument('--record', required=True, help='drift_gate_publication.json from the action artifact')
+    publication.add_argument('--repo', required=True)
+    publication.add_argument('--pr', type=int, required=True)
+    publication.add_argument('--out-json', help='Write the reconciled record (never overwrites --record)')
+    publication.add_argument('--json', action='store_true', dest='json_output')
 
     init = subparsers.add_parser(
         "init",
@@ -627,6 +657,10 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _add_check_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument('--run-store', help='Journal this run (stages, failure, cancel, publication) in a local store')
+    parser.add_argument('--timeout-seconds', type=float, help='Close the run as timed-out at this deadline')
+    parser.add_argument('--retry-of', help='Closed run ID this run retries; the previous record is kept')
+    parser.add_argument('--latest-target', help='Compare-and-set this result as latest for a named target')
     parser.add_argument('--evidence-store', help='Opt in to private raw-input storage; persists the base inspection')
     parser.add_argument('--head', help='Immutable Git target ref; requires a separate policy ref and SHA-256 pin')
     parser.add_argument('--trusted-policy-ref', help='Caller-selected trusted Git policy revision')
@@ -737,47 +771,178 @@ def _add_eval_args(parser: argparse.ArgumentParser) -> None:
 
 
 def _run_check(args) -> None:
+    lifecycle_options = [name for name, value in (
+        ('--timeout-seconds', args.timeout_seconds), ('--retry-of', args.retry_of),
+        ('--latest-target', args.latest_target)) if value is not None]
+    if lifecycle_options and not args.run_store:
+        raise CLIInputError(f'{", ".join(lifecycle_options)} requires --run-store')
+    if args.latest_target is not None and not (args.head and args.evidence_store):
+        raise CLIInputError('--latest-target requires immutable --head mode and --evidence-store receipts')
+    if not args.run_store:
+        return _check_body(args, None)
+    from drift_gate.adapters.run_coordinator import RunController, RunTerminated
+    controller = RunController(args.run_store, run_id=args.execution['run_id'],
+                               timeout_seconds=args.timeout_seconds)
+    controller.start(retry_of=args.retry_of, data={
+        'command': args.command, 'mode': 'immutable-git' if args.head else 'github-pr' if args.pr else 'local-git',
+        'base': args.base, 'head': args.head, 'pr': args.pr, 'repo': args.repo,
+        'publication_target': args.latest_target, 'evidence_store': bool(args.evidence_store)})
+    args.run_controller = controller
+    import signal
+    previous_handler = None
+
+    def operator_signal(signum, frame):
+        raise KeyboardInterrupt
+
+    try:
+        previous_handler = signal.signal(signal.SIGTERM, operator_signal)
+    except (ValueError, OSError, AttributeError):  # not the main thread / unsupported
+        previous_handler = None
+    try:
+        _check_body(args, controller)
+    except SystemExit:
+        raise
+    except RunTerminated:
+        raise
+    except KeyboardInterrupt:
+        controller.fail('cancelled', 'interrupt', 'interrupted by the operator')
+        view = controller.view()
+        raise RunTerminated(view.state, 'interrupt', view) from None
+    except Exception as exc:
+        view = controller.view()
+        early = view is not None and lifecycle_stage_index(view.state) < lifecycle_stage_index('analyzing')
+        input_error = isinstance(exc, (CLIInputError, GitInputError, PolicyLoadError, UnicodeError, BundleError))
+        state = 'rejected-input' if early and input_error else 'internal-error'
+        code = ('result_validation_error' if isinstance(exc, ResultValidationError)
+                else 'input_error' if input_error else type(exc).__name__)
+        controller.fail(state, code, exc)
+        raise
+    finally:
+        if previous_handler is not None:
+            signal.signal(signal.SIGTERM, previous_handler)
+
+
+def lifecycle_stage_index(state):
+    from drift_gate.core.execution.lifecycle import STAGES
+    return STAGES.index(state) if state in STAGES else len(STAGES)
+
+
+def _authority_digest(snapshot):
+    """Policy, approvals and comparison basis that a latest result depends on."""
+    from hashlib import sha256
+    from drift_gate.adapters.bundle_codec import decode_json
+    from drift_gate.core.models.input_manifest import canonical_bytes
+    payload = decode_json(snapshot.payload)
+    evidence = snapshot.git_evidence
+    basis = {'schema': 'latest-authority-v1', 'policy_source_sha256': sha256(
+                 (payload.get('policy_source') or '').encode('utf-8')).hexdigest(),
+             'policy': payload['policy'], 'drift_ignores': payload['drift_ignores'],
+             'policy_anchor': {'revision': evidence.trusted_revision, 'path': evidence.policy_path,
+                               'sha256': evidence.expected_policy_sha256},
+             'base_oid': evidence.subject.base_oid, 'comparison_mode': evidence.subject.comparison_mode,
+             'evaluation_context': payload['context'], 'contract_proofs': payload['contract_proofs']}
+    return sha256(canonical_bytes(basis)).hexdigest()
+
+
+def _check_body(args, controller) -> None:
     from drift_gate.adapters.git.client import repository_root
+    from drift_gate.adapters.inspection import inspect_snapshot
+
+    def stage(state, **data):
+        if controller is not None:
+            controller.advance(state, **data)
+
+    def bounded(name, function):
+        return controller.call(name, function) if controller is not None else function()
+
     if bool(args.pr) != bool(args.repo):
         raise GitInputError('Specify both --pr and --repo for remote PR inspection')
+    if args.head and (args.pr or not args.trusted_policy_ref or not args.trusted_policy_sha256):
+        raise GitInputError('Immutable --head requires --trusted-policy-ref and --trusted-policy-sha256; PR API mode is separate')
+    if not args.head and (args.trusted_policy_ref or args.trusted_policy_sha256):
+        raise GitInputError('Trusted policy options require immutable --head mode')
     # Immutable collection resolves the repository with its isolated Git
     # environment; the legacy root probe would honor caller GIT_DIR/GIT_WORK_TREE.
     root = Path.cwd() if args.pr or args.head else repository_root()
     start = time.perf_counter()
     if args.head:
-        if args.pr or not args.trusted_policy_ref or not args.trusted_policy_sha256:
-            raise GitInputError('Immutable --head requires --trusted-policy-ref and --trusted-policy-sha256; PR API mode is separate')
         from drift_gate.adapters.git.immutable import collect_git_snapshot
-        from drift_gate.adapters.inspection import inspect_snapshot
-        snapshot = collect_git_snapshot(root=root, base=args.base, head=args.head,
+        stage('validated')
+        snapshot = bounded('captured', lambda: collect_git_snapshot(root=root, base=args.base, head=args.head,
             trusted_policy_ref=args.trusted_policy_ref, trusted_policy_sha256=args.trusted_policy_sha256,
             policy_path=args.policy or '.drift-gate.yml', comparison_mode=args.comparison_mode,
-            contract_proofs=args.contract_proofs)
+            contract_proofs=args.contract_proofs))
         captured = snapshot.materialize()
         args.policy_source, policy_for_run = captured['policy_source'], captured['policy']
         changed_files = captured['changed_files']
-        result = inspect_snapshot(snapshot, execution=args.execution)
     else:
-        if args.trusted_policy_ref or args.trusted_policy_sha256:
-            raise GitInputError('Trusted policy options require immutable --head mode')
         args.policy = str(Path(args.policy).resolve() if args.policy is not None else root / '.drift-gate.yml')
         args.policy_source, args.loaded_policy = read_policy(args.policy)
         require_check_policy(args.loaded_policy)
+        validate(args.loaded_policy).raise_if_errors()
+        stage('validated')
         args.local_root = root
-        changed_files, drift_ignores = _collect_inputs(args)
+
+        def collect():
+            files, ignores = _collect_inputs(args)
+            if args.loaded_policy and not (args.pr and args.repo):
+                from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+                files = attach_env_documents(files, args.loaded_policy, local_document_reader(root))
+            return files, ignores
+
+        changed_files, drift_ignores = bounded('captured', collect)
         policy_for_run = args.loaded_policy
-        if policy_for_run and not (args.pr and args.repo):
-            from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
-            changed_files = attach_env_documents(changed_files, policy_for_run, local_document_reader(root))
-        result = run(changed_files=changed_files, drift_ignores=drift_ignores, policy=policy_for_run,
-            execution=args.execution, policy_source=args.policy_source, policy_path=args.policy,
+        from datetime import datetime, timezone
+        from drift_gate.adapters.snapshot import capture_inspection
+        from drift_gate.core.models.evaluation_context import EvaluationContext
+        snapshot = capture_inspection(changed_files=changed_files, policy=policy_for_run,
+            drift_ignores=drift_ignores, context=EvaluationContext(datetime.now(timezone.utc).date()),
+            policy_source=args.policy_source, policy_path=args.policy,
             provenance=getattr(args, 'input_provenance', {}), contract_proofs=args.contract_proofs)
+    observation = None
+    capture_data = {'input_sha256': snapshot.manifest.input_sha256, 'manifest_sha256': snapshot.manifest.digest,
+                    'subject': snapshot.git_evidence.subject.to_dict() if snapshot.git_evidence else None}
+    if controller is not None:
+        if args.retry_of:
+            previous = RunJournalView(args.run_store, args.retry_of)
+            previous_input = previous.data.get('input_sha256')
+            capture_data['retry_input_relation'] = ('previous-not-captured' if previous_input is None else
+                'same-input' if previous_input == snapshot.manifest.input_sha256 else 'different-input')
+        if args.latest_target is not None:
+            from drift_gate.adapters.run_store import TargetLedger
+            observation = TargetLedger(args.run_store, args.latest_target).observe(
+                head_oid=snapshot.git_evidence.subject.head_oid, authority_sha256=_authority_digest(snapshot),
+                run_id=args.execution['run_id'])
+            capture_data['latest_observation'] = observation
+    stage('captured', **capture_data)
+    stage('planned', rules=len(policy_for_run.rules), changed_files=len(changed_files),
+          contract_proofs=args.contract_proofs, plan_scope='policy-and-inputs-fixed-before-engine-call')
+    stage('analyzing')
+    result = bounded('analyzing', lambda: inspect_snapshot(snapshot, execution=args.execution))
+    stage('evaluated', gate_result=result.result)
     runtime_seconds = time.perf_counter() - start
     result.scan_metrics.runtime_seconds = runtime_seconds
+    base_result = result.to_dict()  # Projection re-validates the retained IR.
+    if controller is not None:
+        from drift_gate.adapters.run_coordinator import result_digest
+        stage('result-validated', result_sha256=result_digest(base_result), gate_result=result.result)
+    bundle = None
     if args.evidence_store:
         from drift_gate.adapters.evidence_bundle import save_bundle
         bundle = save_bundle(result, args.evidence_store)
         result.execution['evidence_bundle'] = bundle.to_dict()
+    if controller is not None:
+        from drift_gate.adapters.execution import atomic_bytes
+        from drift_gate.core.models.input_manifest import canonical_bytes
+        raw = canonical_bytes(base_result)
+        atomic_bytes(controller.journal.path / 'result.json', raw)
+        stage('persisted', result_file='result.json', result_file_sha256=hashlib_sha256(raw),
+              receipt_sha256=bundle.to_dict()['receipt_sha256'] if bundle else None)
+        if args.latest_target is None:
+            stage('publication-skipped', publication={'state': 'publication-skipped', 'reason': 'no-target'})
+        else:
+            _publish_latest(args, controller, observation, bundle, base_result)
+        result.execution['run'] = controller.view().to_dict()
     policy = policy_for_run
     if args.temporal_gate:
         threshold = (
@@ -853,6 +1018,114 @@ def _run_check(args) -> None:
         )
 
     sys.exit(1 if result.result == "fail" else 0)
+
+
+def hashlib_sha256(raw):
+    from hashlib import sha256
+    return sha256(raw).hexdigest()
+
+
+def RunJournalView(root, run_id):
+    from drift_gate.adapters.run_store import RunJournal
+    view = RunJournal(root, run_id).view()
+    if view is None:
+        raise CLIInputError('unknown --retry-of run')
+    return view
+
+
+def _publish_latest(args, controller, observation, bundle, base_result):
+    """Local compare-and-set of the latest pointer; never rewrites the result."""
+    from drift_gate.adapters.run_coordinator import result_digest
+    from drift_gate.adapters.run_store import RunStoreError, TargetLedger
+    from drift_gate.adapters.evidence_bundle import load_bundle
+    ledger = TargetLedger(args.run_store, args.latest_target)
+    request = {**{k: observation[k] for k in ('ticket', 'generation', 'head_oid', 'authority_sha256')},
+               'run_id': args.execution['run_id'], 'receipt_sha256': bundle.to_dict()['receipt_sha256'],
+               'result_sha256': result_digest(base_result)}
+    controller.advance('publish-pending', publication={'state': 'publish-pending', 'kind': 'local-latest-pointer',
+                                                       'target': args.latest_target},
+                       publication_request={'target': args.latest_target, **request})
+    try:
+        # Re-admit the stored receipt instead of trusting the in-memory object.
+        reloaded = load_bundle(bundle.path, expected_receipt_sha256=request['receipt_sha256'])
+        completed = controller.view().semantic_completed and reloaded.receipt['status'] == 'completed'
+        decision, state = ledger.publish(request, completed=completed)
+    except (RunStoreError, OSError, BundleError) as exc:
+        try:
+            state, _ = ledger.state()
+            landed = state.latest is not None and state.latest.run_id == request['run_id']
+            outcome, reason = ('published', 'write-error-but-entry-present') if landed else (
+                'publication-rejected', f'write-failed-entry-absent: {exc}')
+        except (RunStoreError, OSError) as read_error:
+            outcome, reason = 'publication-unknown', f'write-and-lookup-failed: {read_error}'
+        controller.advance(outcome, publication={'state': outcome, 'reason': reason})
+        return
+    if decision.accepted:
+        outcome = 'published'
+    elif decision.reason in {'generation-changed', 'head-or-authority-changed', 'newer-or-same-result-already-latest'}:
+        outcome = 'publication-stale'
+    else:
+        outcome = 'publication-rejected'
+    controller.advance(outcome, publication={'state': outcome, 'reason': decision.reason,
+                                             'latest': state.to_dict()})
+
+
+def _run_runs(args):
+    from drift_gate.adapters import run_store
+    from drift_gate.adapters.run_coordinator import cancel_run
+    exit_code = 0
+    if args.operation in {'show', 'cancel', 'latest', 'reconcile'} and not args.name:
+        raise CLIInputError(f'run {args.operation} requires a name')
+    if args.operation == 'show':
+        view = run_store.RunJournal(args.run_store, args.name).view()
+        if view is None:
+            raise CLIInputError('unknown run')
+        data = view.to_dict()
+    elif args.operation == 'list':
+        runs = []
+        for run_id in run_store.list_runs(args.run_store):
+            try:
+                view = run_store.RunJournal(args.run_store, run_id).view()
+                runs.append(view.to_dict() if view else {'run_id': run_id, 'state': 'no-events-yet'})
+            except (run_store.RunStoreError, OSError) as exc:
+                runs.append({'run_id': run_id, 'state': 'unreadable', 'error': str(exc)})
+        data = {'runs': runs}
+    elif args.operation == 'reconcile':
+        data = run_store.reconcile_latest(args.run_store, args.name)
+        exit_code = 0 if data['state'] == 'published' else 1
+    elif args.operation == 'cancel':
+        decision, view = cancel_run(args.run_store, args.name, reason=args.reason)
+        data = {'cancelled': decision.accepted, 'reason': decision.reason, 'run': view.to_dict()}
+        exit_code = 0 if decision.accepted else 1
+    elif args.operation == 'recover':
+        data = {'recovered': run_store.recover(args.run_store, stale_after_seconds=args.stale_after)}
+    else:
+        state, _ = run_store.TargetLedger(args.run_store, args.name).state()
+        data = state.to_dict()
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(exit_code)
+
+
+def _run_publication(args):
+    """Look up the attempt's idempotency key; this command never posts or edits."""
+    from drift_gate.adapters.github import publication
+    token = os.environ.get('GITHUB_TOKEN', '')
+    if not token:
+        raise CLIInputError('GITHUB_TOKEN is required to look up PR comments')
+    try:
+        record = json.loads(Path(args.record).read_text(encoding='utf-8'))
+    except ValueError as exc:
+        raise CLIInputError(f'invalid publication record JSON: {exc}') from exc
+    if not isinstance(record, dict) or not isinstance(record.get('idempotency_key'), str) \
+            or not isinstance(record.get('body_sha256'), str):
+        raise CLIInputError('record has no idempotency key and body digest; nothing was attempted')
+    if args.out_json and Path(args.out_json).resolve() == Path(args.record).resolve():
+        raise CLIInputError('--out-json must not overwrite the original record')
+    data = publication.reconcile_record(publication.CommentApi(token, args.repo), pr_number=args.pr, record=record)
+    if args.out_json:
+        atomic_json(args.out_json, data)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0 if data['state'] == 'published' else 1)
 
 
 def _run_bundle(args):

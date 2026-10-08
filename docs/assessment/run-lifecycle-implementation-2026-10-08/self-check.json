@@ -1,0 +1,591 @@
+{
+  "schema_version": 3,
+  "verification": "not-applicable",
+  "summary": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 0,
+    "nit": 0,
+    "gate_decision": "pass",
+    "undetermined_rules": 0,
+    "unverified_rules": 0
+  },
+  "scan_metrics": {
+    "scanned_files": 10,
+    "skipped_ignored_files": 0,
+    "skipped_binary_files": 0,
+    "skipped_large_files": 0,
+    "evaluated_rules": 0,
+    "runtime_seconds": 0.7235894579998785,
+    "analysis_notes": [
+      {
+        "path": "README.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "action.yml",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/conversation-summary-2026-10-01.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "docs/handoff-2026-10-01.md",
+        "method": "heuristic",
+        "reason": "No grammar-backed detector for this file type"
+      },
+      {
+        "path": "drift_gate/adapters/cli/runner.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": "drift_gate/adapters/execution.py",
+        "method": "grammar+heuristic",
+        "reason": ""
+      },
+      {
+        "path": "drift_gate/adapters/github_action/runner.py",
+        "method": "heuristic",
+        "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+      },
+      {
+        "path": ".env.example",
+        "method": "unavailable",
+        "reason": "Patch unavailable; intensity cannot exclude a contract change"
+      },
+      {
+        "path": "CHANGELOG.md",
+        "method": "unavailable",
+        "reason": "Patch unavailable; intensity cannot exclude a contract change"
+      },
+      {
+        "path": "docs/spec.md",
+        "method": "unavailable",
+        "reason": "Patch unavailable; intensity cannot exclude a contract change"
+      }
+    ]
+  },
+  "result": "pass",
+  "skip": false,
+  "skip_reason": "",
+  "no_policy": false,
+  "change_types": [
+    "env-config",
+    "other"
+  ],
+  "violations": [],
+  "rule_decisions": [
+    {
+      "rule_id": "api-contract-sync",
+      "severity": "BLOCKER",
+      "status": "unmatched",
+      "decision": "not-applicable",
+      "verification": "not-applicable",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "schema-migration-proof",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "decision": "not-applicable",
+      "verification": "not-applicable",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "env-config-sync",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "decision": "not-applicable",
+      "verification": "not-applicable",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "workflow-ops-doc",
+      "severity": "MINOR",
+      "status": "unmatched",
+      "decision": "not-applicable",
+      "verification": "not-applicable",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "auth-security-doc",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "decision": "not-applicable",
+      "verification": "not-applicable",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    }
+  ],
+  "skipped_rules": [],
+  "rejected_ignores": [],
+  "ignore_audit": [],
+  "temporal_warnings": [],
+  "gate": {
+    "fail_on_blocker": true,
+    "fail_on_major_count": 2,
+    "on_unverified": "fail"
+  },
+  "execution": {
+    "schema_version": 2,
+    "run_id": "67f97c43fb9a4224b2f38014661d104c",
+    "started_at": "2026-10-08T02:13:12.752661+00:00",
+    "status": "success",
+    "comparison_mode": "commit",
+    "dirty": true,
+    "head": "ed9f9046cca46c79b379ccdbafaa08feaa8241d6",
+    "requested_base": "HEAD",
+    "resolved_base": "ed9f9046cca46c79b379ccdbafaa08feaa8241d6",
+    "snapshot_sha256": "d04319495e7148dfca9207e3eea3ede949055e6518a55f4b5362ef6d2cb8809d",
+    "source": "local-git",
+    "untracked_skipped": [
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/docs-check.json",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/full-suite-part1.log",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/full-suite-part2.log",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/full-suite-part3.log",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/new-tests.log",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/repeat-20.log",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/ruff.log",
+      "docs/assessment/run-lifecycle-implementation-2026-10-08/self-check.json",
+      "docs/review/drift-gate-run-lifecycle-implementation-2026-10-08.md",
+      "drift_gate/adapters/github/publication.py",
+      "drift_gate/adapters/run_coordinator.py",
+      "drift_gate/adapters/run_store.py",
+      "drift_gate/core/execution/__init__.py",
+      "drift_gate/core/execution/latest.py",
+      "drift_gate/core/execution/lifecycle.py",
+      "drift_gate/core/execution/publication.py",
+      "drift_gate/tests/test_github_publication.py",
+      "drift_gate/tests/test_run_lifecycle.py"
+    ],
+    "policy_sha256": "96b21ef24a8947e3a55af4693d51539bf9748cffde5ceb70c01e4720208bc7a4",
+    "policy_digest_kind": "source",
+    "warnings": [],
+    "evaluation_context": {
+      "evaluated_on": "2026-10-08",
+      "date_basis": "UTC"
+    },
+    "input_digest_version": 3,
+    "input_sha256": "7ffa690d8de2161f78c0430a1605868ac9fb2ad0c1ee03a47bbbd7d939599238",
+    "policy_path": "/sessions/rcw-01qn17gey4busexsquasad1w/mnt/pr-convention-checker/.drift-gate.yml",
+    "untracked_skipped_count": 18,
+    "input_capture": {
+      "schema": "input-manifest-v1",
+      "digest_protocol": "python-json-observation-v1",
+      "input_sha256": "a9a55e30e6653d931c4cfd636c73c858dc4129a1acadf5f14d0dc6cbf84e7ece",
+      "collection_mode": "captured-working-tree",
+      "atomicity": "per-artifact-observation",
+      "original_bytes_certified": false,
+      "revision_certified": false,
+      "policy_authority": "unverified-caller-input",
+      "selection_complete": false,
+      "artifacts": [
+        {
+          "path": ".env.example",
+          "role": "after-source",
+          "state": "absent",
+          "reason": "adapter_declared_document_missing",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".env.example",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".env.example",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": ".env.example",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_text_bytes": 0,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "@policy",
+          "role": "policy-semantics",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "88998639d9c10f5ec591e5b90546b62529b6190bd0cae95a2b7b8e421d5c77ec",
+          "observed_text_bytes": 3039,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "@policy",
+          "role": "policy-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "96b21ef24a8947e3a55af4693d51539bf9748cffde5ceb70c01e4720208bc7a4",
+          "observed_text_bytes": 4507,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "CHANGELOG.md",
+          "role": "after-source",
+          "state": "absent",
+          "reason": "adapter_declared_document_missing",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "CHANGELOG.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "CHANGELOG.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "CHANGELOG.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_text_bytes": 0,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "README.md",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "README.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "README.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "README.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "f767c43285f430b8c955d5a5b019d7be5db747dbb7408a855be1d5c915d5a2e4",
+          "observed_text_bytes": 1495,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "action.yml",
+          "role": "after-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "action.yml",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "action.yml",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "action.yml",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "afa115f10529108bba339c217c168c80f0c686a4d09f5e622fc980737463b58a",
+          "observed_text_bytes": 1385,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "role": "after-source",
+          "state": "absent",
+          "reason": "adapter_declared_deleted",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/conversation-summary-2026-10-01.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "06cfc14388e7348dfeec7d57537c3cd994ab8fb2831bce737766d600b1db0543",
+          "observed_text_bytes": 4648,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "role": "after-source",
+          "state": "absent",
+          "reason": "adapter_declared_deleted",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/handoff-2026-10-01.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "2f9346c7b8b36e3ed1a285f97b8e861dd4da0d779f7555695e4c4d31607595af",
+          "observed_text_bytes": 10461,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/spec.md",
+          "role": "after-source",
+          "state": "absent",
+          "reason": "adapter_declared_document_missing",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/spec.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/spec.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/spec.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_text_bytes": 0,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "cc38d8c8948e5425490c42a6f6d757b64275a16fa72ff809880ef260cc1e0f34",
+          "observed_text_bytes": 76538,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "40896afdbb09b55a9f189019db89d44a138fddda06aa2fb4261c540af821db4b",
+          "observed_text_bytes": 61113,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "b9f9a57fc26077e9800ce0e5d7b36de43ae9ac2068a6f800d991d1e9649dfdc2",
+          "observed_text_bytes": 23328,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/execution.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "a07bef6e9b76f43b03dbbe3b3e1e9544abe1a4aea4bf1a0dfe16a0db91cf2859",
+          "observed_text_bytes": 1563,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/execution.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "9b1df9b8a7228f57a960c2c16b6616ee7b86bc4493abfd19f41bcf0f0e276eaf",
+          "observed_text_bytes": 1089,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/execution.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/execution.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "cde846b9ada156fed1f0b10c73a167748ac57b30b679228c4f23bd0e79496c54",
+          "observed_text_bytes": 889,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/github_action/runner.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d72bcce8c2851e6d24f712afb140263e29c917944ec6091ca3a3be1d1e9eeb11",
+          "observed_text_bytes": 14957,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/github_action/runner.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "7006a30ab8087a15d6c95aac94cac389a554ee1caabc127744a68f737d0854e5",
+          "observed_text_bytes": 9435,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "drift_gate/adapters/github_action/runner.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "drift_gate/adapters/github_action/runner.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "9091689be952d6b7f843ec028d3fee4bbb095f2cad39aa803b0e536a0c8a7339",
+          "observed_text_bytes": 10013,
+          "encoding": "utf-8-observed-text"
+        }
+      ],
+      "manifest_sha256": "45b52b5244e83b97c349c1f8dfd2a4c11d3055dc357e7accc759c368cad42e60",
+      "retention": "process-memory-only",
+      "replay_scope": "captured-inputs-current-engine"
+    }
+  }
+}

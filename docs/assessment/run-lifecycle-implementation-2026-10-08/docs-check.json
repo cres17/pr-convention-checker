@@ -1,0 +1,24 @@
+{
+  "docs_check": {
+    "docs_files": [
+      "README.md",
+      "docs/review/drift-gate-run-lifecycle-implementation-2026-10-08.md"
+    ],
+    "checked_commands": [
+      "bundle",
+      "check",
+      "demo",
+      "docs-check",
+      "init",
+      "publication",
+      "report",
+      "run"
+    ],
+    "checked_json_keys": [],
+    "checked_policy_fields": [
+      "rules"
+    ],
+    "warnings": [],
+    "warning_count": 0
+  }
+}

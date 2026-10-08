@@ -9,9 +9,9 @@ from pathlib import Path
 
 from drift_gate.adapters.inspection import inspect as run
 from drift_gate.adapters.github.client import GitHubAdapter, parse_drift_ignores
-from drift_gate.adapters.github.commenter import PrCommenter
 from drift_gate.adapters.claude.enricher import ClaudeEnricher
 from drift_gate.adapters.history.store import append_result
+from drift_gate.core.policy.loader import PolicyLoadError
 from drift_gate.reporters.markdown import MarkdownReporter
 from drift_gate.reporters.html import HtmlReporter
 
@@ -23,6 +23,32 @@ def main() -> None:
     token         = _require_env("GITHUB_TOKEN")
     repo          = _require_env("REPO")
     pr_number     = int(_require_env("PR_NUMBER"))
+    runner_temp   = os.environ.get("RUNNER_TEMP", "/tmp")
+    from drift_gate.adapters.execution import identity
+    from drift_gate.adapters.run_coordinator import RunController
+    execution = identity()
+    run_store = Path(runner_temp) / "drift-gate-runs"
+    controller = RunController(run_store, run_id=execution['run_id'])
+    post_comment = os.environ.get("POST_COMMENT", "true").lower() == "true"
+    controller.start(data={'command': 'github-action', 'mode': 'github-pr', 'repo': repo, 'pr': pr_number,
+                           'publication_target': 'pr-comment' if post_comment else None})
+    _write_github_output({"run_id": execution['run_id'],
+                          "run_record_path": str(controller.journal.path)})
+    try:
+        _main(controller, execution, token=token, repo=repo, pr_number=pr_number,
+              runner_temp=runner_temp, contract_proofs=contract_proofs, post_comment=post_comment)
+    except BaseException as exc:
+        view = controller.view()
+        from drift_gate.core.execution.lifecycle import STAGES
+        early = view is not None and view.state in STAGES and STAGES.index(view.state) < STAGES.index('analyzing')
+        state = ('cancelled' if isinstance(exc, KeyboardInterrupt) else
+                 'rejected-input' if early and isinstance(exc, (ValueError, OSError, PolicyLoadError))
+                 else 'internal-error')
+        controller.fail(state, type(exc).__name__, exc)
+        raise
+
+
+def _main(controller, execution, *, token, repo, pr_number, runner_temp, contract_proofs, post_comment):
     policy_file   = os.environ.get("POLICY_FILE", ".drift-gate.yml")
     workspace     = os.environ.get("GITHUB_WORKSPACE", os.getcwd())
     policy_path   = Path(policy_file)
@@ -30,11 +56,10 @@ def main() -> None:
         policy_path = Path(workspace) / policy_path
     model         = os.environ.get("MODEL", "claude-opus-4-6")
     anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    runner_temp   = os.environ.get("RUNNER_TEMP", "/tmp")
-    post_comment  = os.environ.get("POST_COMMENT", "true").lower() == "true"
     history_path   = Path(runner_temp) / "drift_gate_history.jsonl"
     artifact_name  = "drift-gate-report"
     is_fork_pr     = _is_fork_pr(os.environ.get("GITHUB_EVENT_PATH", ""), repo)
+    controller.advance('validated')
 
     _log(f"변경 파일 수집 중 (PR #{pr_number})...")
     gh = GitHubAdapter(token=token, repo=repo)
@@ -54,20 +79,29 @@ def main() -> None:
         from drift_gate.adapters.github.approvals import verify_ignores
         drift_ignores = verify_ignores(gh, pr_number, drift_ignores, _policy_obj, changed_files)
         changed_files = gh.attach_env_documents(pr_number, changed_files, _policy_obj)
+        head_oid = getattr(gh, '_snapshot_head', None)
+        controller.advance('captured', changed_files=len(changed_files), head_oid=head_oid,
+                           capture_scope='github-api-collection; inspection snapshot sealed inside the engine call')
         for _w in _policy_obj.load_warnings:
             print(f"::warning title=Drift Gate policy warning::{_escape_workflow_command(_w)}", file=sys.stderr)
+        controller.advance('planned', rules=len(_policy_obj.rules), contract_proofs=contract_proofs == 'true')
+        controller.advance('analyzing')
         result = run(
             changed_files=changed_files,
             drift_ignores=drift_ignores,
             policy=_policy_obj,
             policy_source=policy_source, policy_path=policy_path,
             provenance={"source": "github-pr", "repository": repo, "pr_number": pr_number},
-            contract_proofs=contract_proofs == 'true',
+            contract_proofs=contract_proofs == 'true', execution=execution,
         )
     except Exception as exc:
         _write_github_output({"result": "fail", "policy_error": str(exc)})
         print(f"::error title=Drift Gate policy error::{_escape_workflow_command(str(exc))}", file=sys.stderr)
         raise
+    controller.advance('evaluated', gate_result=result.result, input_sha256=result.execution.get('input_sha256'))
+    from drift_gate.adapters.run_coordinator import result_digest
+    base_result_sha256 = result_digest(result.to_dict())
+    controller.advance('result-validated', result_sha256=base_result_sha256, gate_result=result.result)
 
     # Claude 보강 (선택적 — 실패해도 fallback checklist 유지)
     if anthropic_key and result.violations and not result.skip:
@@ -96,6 +130,8 @@ def main() -> None:
         json.dumps(result.to_dict(), ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+    controller.advance('persisted', report_json=str(json_path),
+                       persistence='runner-temp-reports; durable only if the workflow uploads the artifact')
     _write_job_summary(md)
     _write_job_summary(
         f"\n\nArtifact: `{artifact_name}` contains Markdown, JSON, HTML, and history reports.\n"
@@ -137,16 +173,61 @@ def main() -> None:
         release=os.environ.get("GITHUB_REF_NAME", ""),
     )
 
-    # PR comment upsert (gh CLI 불필요 — urllib 기반)
     if post_comment:
-        commenter = PrCommenter(token=token, repo=repo)
-        comment_url = commenter.upsert(pr_number, md)
-        if comment_url:
-            _log(f"PR comment 게시: {comment_url}")
-            _write_github_output({"comment_url": comment_url})
+        record = _publish_comment(controller, token=token, repo=repo, pr_number=pr_number, body=md,
+                                  head_oid=head_oid, result_sha256=base_result_sha256, runner_temp=runner_temp)
+        if record.get('url') and record.get('published'):
+            _log(f"PR comment 게시: {record['url']} ({record['state']})")
+            _write_github_output({"comment_url": record['url']})
+    else:
+        from drift_gate.adapters.execution import atomic_json
+        skipped = {'schema': 'pr-comment-publication-record-v1', 'state': 'publication-skipped',
+                   'reason': 'fork-pr' if is_fork_pr else 'post-comment-disabled', 'published': False}
+        record_path = Path(runner_temp) / "drift_gate_publication.json"
+        atomic_json(record_path, skipped)
+        _write_github_output({"publication_record_path": str(record_path), "publication_state": skipped['state']})
+        controller.advance('publication-skipped', publication=skipped)
 
     # 콘솔 출력 (Actions 로그에 표시)
     print(md)
+
+
+def _publish_comment(controller, *, token, repo, pr_number, body, head_oid, result_sha256, runner_temp,
+                     api=None):
+    from drift_gate.adapters.execution import atomic_json
+    from drift_gate.adapters.github import publication
+    record_path = Path(runner_temp) / "drift_gate_publication.json"
+    _write_github_output({"publication_record_path": str(record_path)})
+    try:
+        ident = publication.identity(
+            repo=repo, pr_number=pr_number, head_oid=head_oid or '',
+            workflow_ref=os.environ.get('GITHUB_WORKFLOW_REF', ''), run_id=os.environ.get('GITHUB_RUN_ID', ''),
+            run_number=int(os.environ.get('GITHUB_RUN_NUMBER') or 0),
+            run_attempt=int(os.environ.get('GITHUB_RUN_ATTEMPT') or 0), result_sha256=result_sha256)
+    except ValueError as exc:
+        # Without a commit and run order the comment cannot be fenced; do not post.
+        record = {'schema': 'pr-comment-publication-record-v1', 'state': 'publication-rejected',
+                  'reason': f'publication-identity-unavailable: {exc}', 'published': False}
+        controller.advance('publish-pending', publication={'state': 'publish-pending', 'kind': 'pr-comment'})
+        controller.advance('publication-rejected', publication=record)
+        atomic_json(record_path, record)
+        _write_github_output({"publication_state": record['state']})
+        _log(f"WARNING: PR comment not posted ({record['reason']})")
+        return record
+    controller.advance('publish-pending', publication={'state': 'publish-pending', 'kind': 'pr-comment',
+                                                       'idempotency_key': ident['key']})
+    record = publication.publish(api or publication.CommentApi(token, repo), pr_number=pr_number,
+                                 body=body, ident=ident)
+    record.setdefault('published', False)
+    atomic_json(record_path, record)
+    summary = {k: record.get(k) for k in ('state', 'reason', 'comment_id', 'idempotency_key', 'body_sha256',
+                                          'head_before', 'head_after', 'race_window')}
+    controller.advance(record['state'], publication=summary)
+    _write_github_output({"publication_state": record['state']})
+    if record['state'] != 'published':
+        print(f"::warning title=Drift Gate publication::{_escape_workflow_command(record['state'] + ': ' + record['reason'])}",
+              file=sys.stderr)
+    return record
 
 
 def _require_env(name: str) -> str:

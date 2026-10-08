@@ -1,0 +1,52 @@
+{
+  "schema": "run-lifecycle-validation-v1",
+  "base_commit": "ed9f9046cca46c79b379ccdbafaa08feaa8241d6",
+  "working_tree": "uncommitted",
+  "environment": {
+    "os": "Linux-6.8.0-138-generic-aarch64-with-glibc2.35",
+    "python": "3.10.12",
+    "host": "cowork-linux-vm-mounting-user-folder"
+  },
+  "files": {
+    "action.yml": "7159aa32457762fc02d113152f416e0380aa78100286f4f9d2e77e5ac8437db2",
+    "README.md": "c071a33e083a364e1fe8437514f982be20570d1199e45191387eafe6980d261a",
+    "drift_gate/adapters/cli/runner.py": "cc38d8c8948e5425490c42a6f6d757b64275a16fa72ff809880ef260cc1e0f34",
+    "drift_gate/adapters/execution.py": "a07bef6e9b76f43b03dbbe3b3e1e9544abe1a4aea4bf1a0dfe16a0db91cf2859",
+    "drift_gate/adapters/github_action/runner.py": "d72bcce8c2851e6d24f712afb140263e29c917944ec6091ca3a3be1d1e9eeb11",
+    "drift_gate/adapters/github/publication.py": "cc6c45c25b6b786cd66ca1554f203e90f187a5ef9ceead7464e3671087486aec",
+    "drift_gate/adapters/run_store.py": "aaeca466d5527de79914a397d47c58cb57d1cd03e4b6471cd12866854d89d2f3",
+    "drift_gate/adapters/run_coordinator.py": "509a2b45abc57494fc13ea654a6610cdd977bd09bfd7ba2a31f2eb527ec04942",
+    "drift_gate/core/execution/__init__.py": "c18846d5410cec6520ed93c2e87e86a6994704309abb6b7ec69cac4b301982b4",
+    "drift_gate/core/execution/lifecycle.py": "121cbbd7d882c68f1e2dfaf0f9154a21394adc93de6199dbf143a0770b54820e",
+    "drift_gate/core/execution/latest.py": "9515108ba917d0ca1988a7908619d6401f0ba2223747d8b271dbd08a00db29bf",
+    "drift_gate/core/execution/publication.py": "7fb5d0e58e2e5ce51a1332d4adaf3cc3f8a7ab07d08429bc194613f2c42a54b8",
+    "drift_gate/tests/test_run_lifecycle.py": "9277cc6444bc694b180368059b04447c3039b132115d9ec3d8a78bccee93adbe",
+    "drift_gate/tests/test_github_publication.py": "67ec8196530461b5011c967245ef5b549927857083a1c91ca36b4d0acd6a4df6",
+    "docs/review/drift-gate-run-lifecycle-implementation-2026-10-08.md": "0c9aa45e99dbbb9c07d197c9c11384fb50a320d1d51ede806d5e61699d3035bc"
+  },
+  "results": {
+    "new_tests": "38 passed",
+    "new_tests_repeat": "20/20 runs, 38 passed each",
+    "full_suite": {
+      "part1": "541 passed, 8 skipped",
+      "part2": "593 passed, 4 skipped",
+      "part3": "589 passed, 1 skipped",
+      "total": "1723 passed, 13 skipped, 0 failed"
+    },
+    "ruff_E9_F": "All checks passed!",
+    "docs_check_warnings": 0,
+    "self_policy": "pass"
+  },
+  "not_performed": [
+    "macOS run",
+    "Windows run",
+    "remote CI",
+    "real GitHub publication",
+    "commit",
+    "push"
+  ],
+  "pre_existing_unrelated_changes": [
+    "docs/conversation-summary-2026-10-01.md deleted",
+    "docs/handoff-2026-10-01.md deleted"
+  ]
+}

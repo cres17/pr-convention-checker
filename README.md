@@ -213,6 +213,14 @@ drift-gate check --base HEAD --explain
 history·LLM 보강 전 기본 결과를 보관하며 조직 승인이나 인증된 엔진 재현을 뜻하지 않습니다.
 상세 보장과 한계는 [증거 묶음 구현 보고서](docs/review/drift-gate-bundle-implementation-2026-10-08.md)에 기록합니다.
 
+실행 과정을 기록하려면 `--run-store .drift-gate-runs`를 추가합니다. 입력 검증부터 결과 검증·저장·게시까지의
+단계와 실패·취소·시간 초과를 append-only journal에 남깁니다. `--timeout-seconds`로 분석 마감 시간을,
+`--retry-of <run_id>`로 종료된 실행의 새 시도를 지정합니다. 이전 실행 기록은 바꾸지 않습니다.
+`--latest-target <이름>`은 `--head`·`--evidence-store`와 함께 쓰며, HEAD·세대·승인 정보가 관찰 시점과
+같을 때만 최신 결과 pointer를 갱신합니다. `drift-gate run show|list|cancel|recover|latest|reconcile`로
+기록을 조회·취소·복구합니다. 로컬 단일 호스트 파일 시스템의 보장이며 원격 저장소의 원자적 게시가 아닙니다.
+상세 계약은 [실행 수명주기 구현 보고서](docs/review/drift-gate-run-lifecycle-implementation-2026-10-08.md)에 기록합니다.
+
 ## 정책 작성
 
 예를 들어 다음 정책은 API 계약 수준의 변경이 있을 때 API 문서를 확인합니다.

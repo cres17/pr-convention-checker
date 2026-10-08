@@ -1,0 +1,46 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-9.1.1, pluggy-1.6.0 -- /sessions/rcw-01qn17gey4busexsquasad1w/dgvenv/bin/python
+rootdir: /sessions/rcw-01qn17gey4busexsquasad1w/mnt/pr-convention-checker
+configfile: pyproject.toml
+collecting ... collected 38 items
+
+drift_gate/tests/test_run_lifecycle.py::test_semantic_completion_is_result_validated_not_publication PASSED [  2%]
+drift_gate/tests/test_run_lifecycle.py::test_reply_after_cancel_is_rejected_but_may_be_annotated PASSED [  5%]
+drift_gate/tests/test_run_lifecycle.py::test_failures_stop_at_durable_result_and_respect_controllers PASSED [  7%]
+drift_gate/tests/test_run_lifecycle.py::test_every_state_event_pair_keeps_closed_runs_closed PASSED [ 10%]
+drift_gate/tests/test_run_lifecycle.py::test_fold_rejects_gaps_rejected_events_and_bad_lineage PASSED [ 13%]
+drift_gate/tests/test_run_lifecycle.py::test_recovery_never_turns_pending_publication_into_not_sent PASSED [ 15%]
+drift_gate/tests/test_run_lifecycle.py::test_retry_requires_closed_predecessor PASSED [ 18%]
+drift_gate/tests/test_run_lifecycle.py::test_head_aba_cannot_resurrect_old_attempt PASSED [ 21%]
+drift_gate/tests/test_run_lifecycle.py::test_reverse_completion_and_authority_change PASSED [ 23%]
+drift_gate/tests/test_run_lifecycle.py::test_forged_requests_and_incomplete_runs_are_refused PASSED [ 26%]
+drift_gate/tests/test_run_lifecycle.py::test_bounded_model_of_latest_pointer_invariants PASSED [ 28%]
+drift_gate/tests/test_run_lifecycle.py::test_lost_response_reconciliation_table PASSED [ 31%]
+drift_gate/tests/test_run_lifecycle.py::test_store_appends_are_exclusive_under_contention PASSED [ 34%]
+drift_gate/tests/test_run_lifecycle.py::test_store_detects_edits_gaps_and_foreign_files PASSED [ 36%]
+drift_gate/tests/test_run_lifecycle.py::test_recover_marks_silent_owner_abandoned_once PASSED [ 39%]
+drift_gate/tests/test_run_lifecycle.py::test_operator_cancel_discards_late_reply PASSED [ 42%]
+drift_gate/tests/test_run_lifecycle.py::test_deadline_closes_run_and_late_reply_cannot_reopen_it PASSED [ 44%]
+drift_gate/tests/test_run_lifecycle.py::test_reply_racing_a_cancel_is_rejected PASSED [ 47%]
+drift_gate/tests/test_run_lifecycle.py::test_worker_error_propagates_and_is_recorded_by_owner PASSED [ 50%]
+drift_gate/tests/test_run_lifecycle.py::test_cli_journals_every_stage_and_persists_result PASSED [ 52%]
+drift_gate/tests/test_run_lifecycle.py::test_cli_timeout_retry_and_lineage PASSED [ 55%]
+drift_gate/tests/test_run_lifecycle.py::test_cli_rejects_retry_of_open_run_and_records_input_rejection PASSED [ 57%]
+drift_gate/tests/test_run_lifecycle.py::test_cli_operator_cancel_command PASSED [ 60%]
+drift_gate/tests/test_run_lifecycle.py::test_cli_latest_pointer_fences_concurrent_head_change PASSED [ 63%]
+drift_gate/tests/test_run_lifecycle.py::test_latest_target_requires_receipts_and_immutable_head PASSED [ 65%]
+drift_gate/tests/test_run_lifecycle.py::test_killed_process_is_recovered_as_abandoned PASSED [ 68%]
+drift_gate/tests/test_run_lifecycle.py::test_sigterm_is_recorded_as_cancelled PASSED [ 71%]
+drift_gate/tests/test_run_lifecycle.py::test_local_unknown_publication_is_reconciled_only_when_entry_is_found PASSED [ 73%]
+drift_gate/tests/test_github_publication.py::test_render_parse_roundtrip_and_tamper_detection PASSED [ 76%]
+drift_gate/tests/test_github_publication.py::test_create_then_idempotent_repeat_without_second_write PASSED [ 78%]
+drift_gate/tests/test_github_publication.py::test_head_change_before_or_during_write_marks_stale PASSED [ 81%]
+drift_gate/tests/test_github_publication.py::test_later_run_and_foreign_workflow_are_never_overwritten PASSED [ 84%]
+drift_gate/tests/test_github_publication.py::test_lost_create_response_is_resolved_by_key_not_by_reposting PASSED [ 86%]
+drift_gate/tests/test_github_publication.py::test_lost_update_is_retried_once_because_replace_is_idempotent PASSED [ 89%]
+drift_gate/tests/test_github_publication.py::test_provider_refusal_is_definite_rejection PASSED [ 92%]
+drift_gate/tests/test_github_publication.py::test_reconcile_command_looks_up_without_writing PASSED [ 94%]
+drift_gate/tests/test_github_publication.py::test_action_journal_records_publication_outcome PASSED [ 97%]
+drift_gate/tests/test_github_publication.py::test_action_main_journals_every_stage_through_comment_publication PASSED [100%]
+
+============================== 38 passed in 3.34s ==============================
