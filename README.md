@@ -221,6 +221,23 @@ history·LLM 보강 전 기본 결과를 보관하며 조직 승인이나 인증
 기록을 조회·취소·복구합니다. 로컬 단일 호스트 파일 시스템의 보장이며 원격 저장소의 원자적 게시가 아닙니다.
 상세 계약은 [실행 수명주기 구현 보고서](docs/review/drift-gate-run-lifecycle-implementation-2026-10-08.md)에 기록합니다.
 
+다음 명령은 기본 검사와 별도로 실행하는 검증 도구입니다. 모두 Git 객체와 SHA-256으로 pin한 정책을 입력으로 받습니다.
+
+| 필요한 작업 | 명령 | 결과의 의미 |
+|---|---|---|
+| 고정한 엔진으로 후보 변경 판정 | `drift-gate engine manifest --ref <commit>` 후 `drift-gate trusted-check ... --engine-manifest <파일> --engine-manifest-sha256 <hex>` | allow 0·block 1·review 5. 후보 엔진 결과는 참고용 |
+| 저장 묶음을 고정 엔진으로 재실행 | `drift-gate bundle replay <묶음> --engine-manifest ... --repo-root .` | 적재된 module·grammar의 manifest 일치 기록 포함 |
+| 근거 위치 확인 | `drift-gate bundle spans <묶음>` | 원본 byte 범위 재검증. 해석의 정확성 증명은 아님 |
+| 서비스·의존 범위와 무변경 인증 | `drift-gate scope ... [--isolated-workers] [--cache-dir <경로>]` | 서비스별 NoDeltaCertificate 또는 거부 사유, 예산 사용량 |
+| 판정 모델 전환 전 비교 | `drift-gate migrate proof-gate\|typed-trigger ...` | 기존 방식과 새 방식의 규칙별 차이. gate는 바꾸지 않음 |
+| 개발에 쓰지 않은 사례 평가 | `drift-gate holdout split\|freeze\|run\|packet\|adjudicate\|score` | [평가 절차](docs/ops/holdout-evaluation.md). 사람·LLM label 분리 |
+| 조직 단위 결과 보관 | `drift-gate org ...` | tenant·역할·범위 확인, quota·보존·감사·백업. 인증은 호스트 책임 |
+
+정책에는 `services`, `budget`, `gate.proof_gate`, `when.trigger`, 그룹 `direction`을 선택적으로 쓸 수 있습니다.
+쓰지 않으면 기존 정책의 identity와 결과는 바뀌지 않습니다. 각 기능의 보장과 한계는
+[남은 설계 항목 구현 보고서](docs/review/drift-gate-enterprise-remaining-implementation-2026-10-08.md)와
+[Gate와 입력 계약](docs/contracts/gate-and-inputs.md)에 기록합니다.
+
 ## 정책 작성
 
 예를 들어 다음 정책은 API 계약 수준의 변경이 있을 때 API 문서를 확인합니다.

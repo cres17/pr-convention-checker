@@ -80,8 +80,8 @@ def _isolated_facts(sources, budget):
     """Per-module Python facts from isolated worker processes (design W12 worker boundary)."""
     from drift_gate.adapters.analyzer_worker import WorkerPool
     pool = WorkerPool(max_workers=min(4, os.cpu_count() or 1), max_queue=10_000,
-                      limits={'timeout_seconds': 60})
-    facts, failures = {}, {}
+                      limits={'timeout_seconds': 60, 'max_memory_bytes': budget.limits['max_memory_bytes']})
+    facts, failures, unapplied = {}, {}, set()
     for path, text in sources.items():
         if not path.endswith(PY) or text is None:
             facts[path] = {'routes': None, 'env': None}
@@ -89,12 +89,13 @@ def _isolated_facts(sources, budget):
         routes = pool.run('python-routes', text)
         env = pool.run('python-env', text)
         budget.check_time('scope-worker')
+        unapplied.update(routes.limits_unapplied, env.limits_unapplied)
         if routes.status != 'ok' or env.status != 'ok':
             failures[path] = routes.status if routes.status != 'ok' else env.status
         facts[path] = {'routes': {tuple(row) for row in routes.value} if routes.status == 'ok' and routes.value is not None
                        else None,
                        'env': set(env.value) if env.status == 'ok' and env.value is not None else None}
-    return facts, failures
+    return facts, failures, unapplied
 
 
 def _cached(cache, text, op, compute, engine, parser):
@@ -180,10 +181,11 @@ def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256
         if cache_dir is not None:
             from drift_gate.adapters.analysis_cache import AnalysisCache
             cache = AnalysisCache(cache_dir)
-        worker_failures = {}
+        worker_failures, limits_unapplied = {}, set()
         for side, sources, graph in (('before', before_src, g_before), ('after', after_src, g_after)):
             if isolated:
-                facts, failed = _isolated_facts(sources, budget)
+                facts, failed, unapplied = _isolated_facts(sources, budget)
+                limits_unapplied |= unapplied
                 worker_failures.update({f'{side}:{path}': status for path, status in failed.items()})
             else:
                 facts = _module_facts(sources, cache)
@@ -222,6 +224,7 @@ def analyze_scope(*, root, base, head, trusted_policy_ref, trusted_policy_sha256
                 'unread_modules': sorted(unread), 'dependency': scope.to_dict(),
                 'analysis_boundary': 'isolated-worker-processes' if isolated else 'in-process',
                 'worker_failures': worker_failures,
+                'worker_limits_unapplied': sorted(limits_unapplied) if isolated else None,
                 'cache': cache.stats() if cache is not None else None,
                 'services': comparison, 'no_delta_certificates': rows,
                 'selection_vs_scope': 'certificates cover every enumerated module of a service, '

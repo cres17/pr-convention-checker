@@ -1,5 +1,27 @@
 # Drift Gate 자체 검사와 패키지 검증
 
+## S2-e~S4 신뢰 엔진 대조·설치본 증거 기능·종료 진단 (2026-10-08)
+
+CI self-check job은 `engine manifest --ref ed9f9046cca46c79b379ccdbafaa08feaa8241d6`로 manifest를 다시 만들고
+SHA-256 `88f275f568282507e71a66ad6f4e414e77dc0cdbf223c211c451eb1c1c0e37e8`과 일치할 때만 그 엔진으로
+`trusted-check`를 실행한다. block(1)·오류는 job 실패, review(5)는 경고로 남기고 계속한다. 이 저장소의 변경은
+대부분 `drift_gate/**`를 바꾸므로 review가 일반적이다. job은 후보 코드가 설치된 runner에서 실행되므로 기록된
+대조이며 격리 실행이 아니다. `build/trusted-check.json`과 manifest를 artifact로 보존한다. pin을 바꾸려면 새 commit의
+manifest를 만들고 workflow의 ref·SHA-256을 함께 바꾼다.
+
+Desktop 빌드는 `DriftGate --cli`로 패키지 안의 CLI를 실행하는 `packaging/verify_package_cli.py`를 dist 실행 파일,
+마운트한 DMG, 설치된 Windows 앱에 적용한다. 새 Git fixture에서 `--evidence-store`·`--run-store` 검사를 실행하고
+저장소를 지운 뒤 `bundle verify`, `bundle replay`(저장 결과 재현), `bundle spans`(전부 검증)를 확인한다.
+결과는 `build/offline-cli*/result.json`에 실행 파일 SHA-256, 단계별 종료 코드, run 전이 기록과 함께 남는다.
+검증 대상은 구조적 기대값이며 이 checkout의 코드와 결과를 비교하지 않는다.
+
+macOS job은 `packaging/teardown_diagnosis.py`로 package UI 검사를 5회 반복한다. 각 실행은
+`DRIFT_GATE_TEARDOWN_TRACE`로 `main-start`, `event-loop-start`, `package-check-exit-requested`,
+`event-loop-returned`, `window-close-event`, `atexit` 중 실제 도달한 event를 기록하고 faulthandler stack을 같은 파일에 남긴다.
+요약(`build/teardown-diagnosis/summary.json`)은 종료 코드 분포, 실패 실행의 마지막 event, stack 줄을 담는다.
+이 단계는 관찰만 하며 실패해도 job을 실패시키지 않는다. 기존 `verify_package.py` 단계가 gate다. 문제 없는
+반복은 이전 Intel 종료 실패가 해결되었다는 증명이 아니다.
+
 ## S2-d 실행 기록과 게시 근거 (2026-10-08)
 
 `action.yml`은 실행 journal 경로(`run_record_path`), 실행 ID, PR 댓글 게시 상태와 기록

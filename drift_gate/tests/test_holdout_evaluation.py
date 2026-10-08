@@ -131,7 +131,13 @@ def test_cli_end_to_end_without_overwrites(tmp_path, capsys):
                     '--out', str(tmp_path / 'labels.json'))
     _, metrics = cli('score', '--results', str(tmp_path / 'results.json'), '--results-sha256',
                      results['results_sha256'], '--labels', str(tmp_path / 'labels.json'),
-                     '--out', str(tmp_path / 'metrics.json'))
+                     '--labels-sha256', labels['labels_sha256'], '--out', str(tmp_path / 'metrics.json'))
     assert metrics['metrics_sha256']
+    stored = json.loads((tmp_path / 'metrics.json').read_text())
+    assert stored['labels_sha256'] == labels['labels_sha256'] and stored['labels_pinned_by_caller']
+    code, error = cli('score', '--results', str(tmp_path / 'results.json'), '--results-sha256', results['results_sha256'],
+                      '--labels', str(tmp_path / 'labels.json'), '--labels-sha256', '0' * 64,
+                      '--out', str(tmp_path / 'metrics-2.json'))
+    assert code == 2 and 'pinned SHA-256' in error['error']['message']
     code, error = cli('freeze', '--input', str(tmp_path / 'holdout.json'), '--out', str(tmp_path / 'frozen.json'))
     assert code == 2 and 'never overwritten' in error['error']['message']

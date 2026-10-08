@@ -41,10 +41,11 @@ class WorkerResult:
     value: object = None
     detail: str = ''
     elapsed_seconds: float = 0.0
+    limits_unapplied: tuple = ()   # OS limits the worker could not set (reported by the worker itself)
 
     def to_dict(self):
         return {'status': self.status, 'value': self.value, 'detail': self.detail,
-                'elapsed_seconds': round(self.elapsed_seconds, 3)}
+                'elapsed_seconds': round(self.elapsed_seconds, 3), 'limits_unapplied': list(self.limits_unapplied)}
 
 
 CHILD = r'''
@@ -53,13 +54,21 @@ request = json.loads(sys.stdin.buffer.read())
 limits = request['limits']
 try:
     import resource
-    if sys.platform.startswith('linux'):
-        resource.setrlimit(resource.RLIMIT_AS, (limits['max_memory_bytes'],) * 2)
-    resource.setrlimit(resource.RLIMIT_CPU, (limits['max_cpu_seconds'],) * 2)
-    resource.setrlimit(resource.RLIMIT_FSIZE, (0, 0))
-    resource.setrlimit(resource.RLIMIT_NOFILE, (64, 64))
-except (ImportError, ValueError, OSError):
-    pass
+except ImportError:
+    resource = None
+wanted = [('cpu', 'RLIMIT_CPU', limits['max_cpu_seconds']), ('file-size', 'RLIMIT_FSIZE', 0),
+          ('open-files', 'RLIMIT_NOFILE', 64)]
+applied, unapplied = [], []
+if sys.platform.startswith('linux'):
+    wanted.insert(0, ('memory', 'RLIMIT_AS', limits['max_memory_bytes']))
+else:
+    unapplied.append('memory')  # macOS does not enforce RLIMIT_AS for ordinary allocations
+for name, kind, value in wanted:
+    try:
+        resource.setrlimit(getattr(resource, kind), (value, value))
+        applied.append(name)
+    except (AttributeError, ValueError, OSError):
+        unapplied.append(name)  # reported to the caller, never silently assumed
 allowed = tuple(sorted({os.path.realpath(p) for p in sys.path if p} | {os.path.realpath(sys.prefix),
                 os.path.realpath(sys.base_prefix)} | set(request.get('read_roots', []))))
 def audit(event, args):
@@ -85,7 +94,8 @@ import base64, hashlib
 raw = base64.b64decode(payload['source_b64'])
 if hashlib.sha256(raw).hexdigest() != payload['sha256']:
     raise SystemExit(65)
-out = {'op': op, 'input_sha256': payload['sha256'], 'profile': request['profile']}
+out = {'op': op, 'input_sha256': payload['sha256'], 'profile': request['profile'],
+       'limits_applied': applied, 'limits_unapplied': unapplied}
 try:
     if op == 'python-routes':
         from drift_gate.core.evaluation.api_schema import extract_routes, UnsupportedContract
@@ -224,9 +234,10 @@ def run_job(op, source, *, limits=None, language='python', extra=None, cancel=No
     if (not isinstance(data, dict) or data.get('op') != op or data.get('input_sha256') != digest
             or data.get('profile') != profile):
         return WorkerResult('invalid-output', detail='worker output does not bind to the request', elapsed_seconds=elapsed)
+    unapplied = tuple(data.get('limits_unapplied') or ())
     if 'error' in data:
-        return WorkerResult('failed', detail=data['error'], elapsed_seconds=elapsed)
-    return WorkerResult('ok', data.get('value'), data.get('open', ''), elapsed)
+        return WorkerResult('failed', detail=data['error'], elapsed_seconds=elapsed, limits_unapplied=unapplied)
+    return WorkerResult('ok', data.get('value'), data.get('open', ''), elapsed, unapplied)
 
 
 def _kill(process, posix):
