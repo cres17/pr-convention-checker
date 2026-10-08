@@ -10,6 +10,9 @@ windowed 빌드는 표준 출력이 없을 수 있으므로 결과는 `--out-jso
 `window-close-event`, `package-check-exit-requested`, `atexit`을 monotonic 초·pid와 함께 기록하고 faulthandler를 그
 파일에 연결한다. 종료 순서를 바꾸지 않는다. 변수가 없으면 아무것도 기록하지 않는다.
 
+`App.test.tsx`의 vitest 제한 시간은 20초다. 화면 동작이나 bridge event는 바꾸지 않았고, macOS Intel runner에서 전체 App
+render가 기본 5초를 넘은 실행(2026-10-08 Desktop run 37741382186·37742364446)에 대한 조정이다.
+
 ## S1-e 서비스 결과 확장
 
 `scan_repository(..., contract_proofs=True)`는 CLI/MCP와 같은 `contract_diagnostics`를

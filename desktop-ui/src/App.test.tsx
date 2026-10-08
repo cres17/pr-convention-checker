@@ -11,6 +11,9 @@ import App from "./App";
 import fixture from "./preview-fixture.json";
 import type { Scan, ProgressItem, ProgressReport } from "./bridge";
 import type { DesktopEvent } from "./events";
+// Full App renders exceeded vitest's 5 s default on the macOS Intel runner
+// (Desktop app build runs 37741382186 and 37742364446, 2026-10-08) while passing elsewhere.
+vi.setConfig({ testTimeout: 20_000 });
 const api = vi.hoisted(() => ({
   setProgressDirty: vi.fn(),
   startScan: vi.fn(),
