@@ -71,7 +71,7 @@ def git(root, *args):
 def commit(root, files, message):
     for path, text in files.items():
         (root / path).parent.mkdir(parents=True, exist_ok=True)
-        (root / path).write_text(text, encoding='utf-8')
+        (root / path).write_text(text, encoding='utf-8', newline='\n')
     git(root, 'add', '-A')
     git(root, '-c', 'user.name=F', '-c', 'user.email=f@example.invalid', 'commit', '-q', '-m', message)
     return git(root, 'rev-parse', 'HEAD').decode().strip()
