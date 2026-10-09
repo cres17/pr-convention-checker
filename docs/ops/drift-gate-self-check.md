@@ -1,5 +1,21 @@
 # Drift Gate 자체 검사와 패키지 검증
 
+## 후보 코드를 실행하지 않는 신뢰 엔진 job (2026-10-09)
+
+CI의 `trusted-engine` job은 후보 checkout을 Git 객체 저장소로만 쓴다. `git archive ed9f9046cca46c79b379ccdbafaa08feaa8241d6`로
+pin한 commit의 파일을 꺼내 비 editable로 설치하고, `python -I -c`로 `drift_gate`가 site-packages에서 import되는지 확인한다.
+grammar 준비와 검사도 그 설치본으로 실행한다. 검사는 immutable Git 경로(`check --base --head --trusted-policy-ref
+--trusted-policy-sha256`)이므로 후보 commit의 파일은 Git 객체로 읽힐 뿐 import·실행되지 않는다. pass·warn은 통과, fail(1)과
+입력 오류(2)는 job 실패다. 결과는 `trusted-engine-verdict` artifact로 보존한다.
+
+self-check job의 `trusted-check`와 다른 점은 판정을 결합하는 orchestrator 자체가 후보 코드가 아니라는 것이다. 남은 경계는
+workflow 파일이다. push와 `pull_request` 이벤트는 후보 branch의 workflow를 실행하므로, 후보가 이 job을 지우거나 바꿀 수 있다.
+이를 막으려면 저장소 설정에서 기본 branch의 ruleset으로 이 job을 required status check로 지정하거나 조직의 required
+workflow를 써야 한다. 이 저장소 파일만으로는 설정할 수 없으며, 현재 설정 여부는 확인하지 않았다.
+
+자원 예산 부하 시험은 `scripts/measure_budget.py`로 합성 저장소를 만들어 `scope`를 기본 예산과 저장소 bytes보다 낮은 예산으로
+실행하고, 실행 시간·peak RSS·`resource_limit` 발생 단계를 기록한다. 한 기계·한 저장소 형태의 측정이며 용량 보장이 아니다.
+
 ## S2-e~S4 신뢰 엔진 대조·설치본 증거 기능·종료 진단 (2026-10-08)
 
 CI self-check job은 `engine manifest --ref ed9f9046cca46c79b379ccdbafaa08feaa8241d6`로 manifest를 다시 만들고

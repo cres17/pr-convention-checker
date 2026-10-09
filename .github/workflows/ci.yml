@@ -95,6 +95,63 @@ jobs:
             build/trusted-check.json
             build/trusted-engine.json
 
+  trusted-engine:
+    # The verdict comes from an engine installed from a pinned commit; the candidate's Python code is
+    # never imported or run here (its files are only read as Git objects). The workflow file itself is
+    # still the candidate's: protecting it needs a required workflow or branch rule outside this file.
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      TRUSTED_ENGINE: ed9f9046cca46c79b379ccdbafaa08feaa8241d6
+      TRUSTED_POLICY: ae0028d5edd95d5dd4819939a5801cb028639a6b
+      TRUSTED_POLICY_SHA256: 3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          path: subject
+          persist-credentials: false
+      - uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
+        with:
+          python-version: '3.11'
+      - name: Install the pinned engine from its commit, not from the candidate tree
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/trusted" build
+          git -C subject archive "$TRUSTED_ENGINE" | tar -x -C "$RUNNER_TEMP/trusted"
+          python -m pip install "$RUNNER_TEMP/trusted" zstandard==0.25.0
+          # The import must resolve to the installed copy, never to a checkout.
+          python -I -c "import drift_gate, sys; p = drift_gate.__file__; print(p); sys.exit('site-packages' not in p)"
+      - name: Restore grammar downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/driftgate-parser-cache
+          key: grammars-${{ runner.os }}-${{ runner.arch }}-language-pack-1.20.0
+      - name: Prepare checked grammars with the pinned engine
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: python "$RUNNER_TEMP/trusted/packaging/prepare_parsers.py"
+        working-directory: ${{ runner.temp }}/trusted
+      - name: Evaluate the candidate commit with the pinned engine and policy
+        env:
+          SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          SUBJECT_HEAD: ${{ github.sha }}
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        working-directory: subject
+        shell: bash
+        run: |
+          python -I -m drift_gate check --base "$SELF_CHECK_BASE" --head "$SUBJECT_HEAD" --policy .drift-gate.self.yml \
+            --trusted-policy-ref "$TRUSTED_POLICY" --trusted-policy-sha256 "$TRUSTED_POLICY_SHA256" \
+            --json --out-json ../build/trusted-engine-verdict.json > /dev/null
+      - name: Preserve the pinned engine verdict
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: trusted-engine-verdict
+          path: build/trusted-engine-verdict.json
+
   test:
     runs-on: ${{ matrix.os }}
     strategy:
