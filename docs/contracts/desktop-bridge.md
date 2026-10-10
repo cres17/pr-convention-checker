@@ -1,5 +1,12 @@
 # 데스크톱 편집·이벤트 계약
 
+## Qt signal 연결과 종료 (2026-10-10)
+
+Desktop 코드는 signal에 `self`를 잡는 lambda를 연결하지 않고 bound method를 연결한다. PySide6 6.12.0에서 자식 위젯의 signal을
+`lambda: ... self ...`에 연결한 객체를 삭제하면 interpreter가 segmentation fault로 끝나는 것을 재현했다. `ReviewDialog`의 질문
+복사 버튼과 `PackageCheck`의 45초 timeout을 bound method로 바꿨다. 화면 동작과 bridge event는 바뀌지 않는다.
+`test_qt_teardown.py`가 desktop 코드의 해당 패턴을 정적으로 금지하고, PySide6가 있는 환경에서 dialog 삭제 후 정상 종료를 확인한다.
+
 ## 패키지 안 CLI와 종료 추적 (2026-10-08)
 
 첫 인자가 `--cli`이면 `DriftGate --cli <인자>`는 Qt 창을 만들지 않고 `drift-gate <인자>`와 같은 CLI를 실행한 뒤 그 종료 코드로 끝난다.

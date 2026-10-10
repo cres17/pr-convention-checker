@@ -95,7 +95,7 @@ class ReviewDialog(QDialog):
         layout.addWidget(self.status)
         actions = QHBoxLayout()
         copy = QPushButton("질문 복사")
-        copy.clicked.connect(lambda: QApplication.clipboard().setText(self.prompt))
+        copy.clicked.connect(self._copy_prompt)  # bound method: a lambda over self crashes PySide6 on teardown
         actions.addWidget(copy)
         actions.addStretch()
         self.request = QPushButton("LLM 판정 요청")
@@ -110,6 +110,9 @@ class ReviewDialog(QDialog):
         close.clicked.connect(self.reject)
         actions.addWidget(close)
         layout.addLayout(actions)
+
+    def _copy_prompt(self):
+        QApplication.clipboard().setText(self.prompt)
 
     def _help(self):
         QMessageBox.information(self, "구독 계정 연결", (

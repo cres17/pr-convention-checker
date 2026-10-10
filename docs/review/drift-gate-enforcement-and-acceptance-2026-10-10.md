@@ -56,3 +56,24 @@
 | 전체 pytest(Linux 컨테이너, Python 3.11.17) | 1,950 통과, 12 건너뜀 |
 | 원격 CI·Desktop | push 후 실행 기록으로 확인하며 이 표에 포함하지 않음 |
 | ruff `E9,F` | 통과 |
+
+## 3. Desktop 회귀 단계의 종료 crash
+
+`5a7b2fa`를 push한 뒤 Desktop run 38035946798의 세 플랫폼이 모두 "Check desktop behavior" 단계에서 실패했다. 시험은 전부 통과했고
+(macOS 1,128 통과), 그 뒤 interpreter 종료 중 `Fatal Python error: Segmentation fault`(Windows는 `Aborted`)로 끝났다. 앞서 기록한
+Windows 종료 코드 127(run 37754952843)과 같은 위치다. 직전 커밋에서 추가한 `-X faulthandler`가 이 정보를 남겼다.
+
+컨테이너에 PySide6 6.12.0을 설치해 같은 시험 목록을 실행했다.
+
+| 조건 | 결과 |
+|---|---|
+| 수정 전, 같은 목록 5회 | 2회 segmentation fault(종료 코드 139) |
+| 수정 전, `ReviewDialog` 시험 단독 6회 | 6회 crash |
+| 최소 재현: `QDialog` 자식 버튼 signal을 `lambda: self...`에 연결 후 삭제 | 3/3 crash. bound method·`self` 없는 lambda는 0/3 |
+| 수정 후, 같은 목록 5회 | 5회 정상 종료 |
+
+`ReviewDialog`의 질문 복사 버튼과 `PackageCheck`의 timeout이 `self`를 잡는 lambda였다. 둘 다 bound method로 바꿨다.
+`PackageCheck`는 설치본의 `--verify-package` 실행에서 쓰이므로, 과거 Intel 설치본 종료 실패와 관련이 있을 수 있다. 그 실패는 이번에
+재현하지 않았으므로 원인으로 확정하지 않는다. 새 `test_qt_teardown.py`는 desktop 코드의 해당 연결 패턴을 금지하고(모든 환경),
+PySide6가 있는 환경에서 dialog를 지운 뒤 interpreter가 정상 종료하는지 3회 확인한다. 수정 전 코드에서는 4건 모두 실패했다.
+기록: [desktop-regression-runs.log](../assessment/qt-teardown-2026-10-10/desktop-regression-runs.log). macOS·Windows는 CI 실행으로 확인한다.
