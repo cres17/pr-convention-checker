@@ -22,6 +22,11 @@ RESULT_LABEL = {
 }
 
 
+
+def _enforcement(result):
+    from drift_gate.core.gating.enforcement import enforcement_outcome
+    return enforcement_outcome(result)
+
 class MarkdownReporter:
     MARKER = "<!-- drift-gate-v1 -->"
 
@@ -195,6 +200,7 @@ class MarkdownReporter:
             "<summary>Rule summary</summary>",
             "",
             f"- Gate decision: `{RESULT_LABEL.get(result.result, result.result)}`",
+            f"- Enforcement action: `{_enforcement(result)['action']}` ({_enforcement(result)['basis']})",
             f"- Violations: {len(result.violations)}",
             f"- Skipped rules: {len(result.skipped_rules)}",
             f"- Rejected ignores: {len(result.rejected_ignores)}",

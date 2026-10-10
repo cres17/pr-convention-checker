@@ -302,6 +302,8 @@ class HtmlReporter:
 </nav>"""
 
     def _side_panel(self, result: EvaluationResult) -> str:
+        from drift_gate.core.gating.enforcement import enforcement_outcome
+        enforcement = enforcement_outcome(result)
         skipped = "".join(
             f"<li><code>{html.escape(rule.rule_id)}</code>: {html.escape(rule.reason or 'no reason')}</li>"
             for rule in result.skipped_rules
@@ -313,6 +315,7 @@ class HtmlReporter:
         return f"""<section class="card">
   <h2>Rule Summary</h2>
   <p>Gate decision: <code>{html.escape(result.result)}</code></p>
+  <p>Enforcement action: <code>{html.escape(enforcement['action'])}</code> ({html.escape(enforcement['basis'])})</p>
   <h3>Applied Ignores</h3>
   <ul>{skipped}</ul>
   <h3>Rejected Ignores</h3>

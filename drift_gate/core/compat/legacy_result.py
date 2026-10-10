@@ -74,7 +74,9 @@ class ContractDiagnostics:
 
 
 def project_legacy_result(result):
+    from drift_gate.core.gating.enforcement import enforcement_outcome
     payload = result._legacy_dict()
+    payload['enforcement'] = enforcement_outcome(result)
     if result.contract_diagnostics is not None:
         if not isinstance(result.contract_diagnostics,ContractDiagnostics):
             raise ResultValidationError('invalid contract diagnostic result')

@@ -9,6 +9,7 @@ from drift_gate.adapters.ast.express_routes import attach_express_routes
 from drift_gate.adapters.execution import digest, identity
 from drift_gate.adapters.policy_loader import require_check_policy
 from drift_gate.core.engine import run as evaluate
+from drift_gate.core.gating.enforcement import execution_outcome
 from drift_gate.core.policy.validator import validate
 from drift_gate.core.models.evaluation_context import EvaluationContext
 from drift_gate.adapters.snapshot import capture_inspection, InspectionSnapshot
@@ -31,6 +32,7 @@ def execution_metadata(execution, policy_path, source, policy, files, provenance
                 "warnings": policy.load_warnings,
                 "evaluation_context": context.to_dict(),
                 "input_digest_version": INPUT_DIGEST_VERSION,
+                "outcome": execution_outcome("success"),
                 "input_sha256": digest(json.dumps({'files': inputs, 'evaluation_context': context.to_dict()},
                                                   sort_keys=True, allow_nan=False))}
     if policy_path is not None:

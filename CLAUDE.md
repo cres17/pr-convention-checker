@@ -140,9 +140,14 @@ reason: <이유>
   }],
   "skipped_rules": [{"rule_id": "...", "severity": "...", "reason": "...", "message": "..."}],
   "rejected_ignores": [{"rule_id": "...", "severity": "...", "message": "..."}],
-  "gate": {"fail_on_blocker": true, "fail_on_major_count": 2}
+  "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+  "enforcement": {"action": "allow | review | block", "basis": "...",
+                  "confirmed_violation_rule_ids": [], "unresolved_rule_ids": [],
+                  "partially_verified_rule_ids": [], "waived_rule_ids": []}
 }
 ```
+
+`enforcement`는 규칙 판정의 projection이며 `result`·종료 코드를 바꾸지 않는다(gate fail→block, 남은 위반·미결정·부분 검증→review).
 
 ---
 

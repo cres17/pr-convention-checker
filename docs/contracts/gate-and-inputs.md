@@ -1,5 +1,23 @@
 # Gate와 입력 계약
 
+## 조직 조치와 실행 결과의 분리 (2026-10-10, 설계 7장)
+
+검사 JSON에 `enforcement`(`enforcement-outcome-v1`)를 추가한다. 규칙 판정을 다시 내리지 않는 projection이다.
+
+- `confirmed_violation_rule_ids`: decision이 violated인 규칙. `unresolved_rule_ids`: undetermined.
+  `partially_verified_rule_ids`: satisfied지만 verification이 partial. `waived_rule_ids`: drift-ignore로 생략.
+- `action`: gate가 fail이면 `block`. 아니면 위 세 목록 중 하나라도 있으면 `review`, 모두 비면 `allow`. docs-only·test-only 생략은
+  `allow`(`basis`에 생략 사유). gate가 warn을 허용한 위반이나 `on_unverified: warn`이 통과시킨 unknown은 `review`이며 `allow`가 아니다.
+- 기존 `result`·`summary.gate_decision`·종료 코드는 바뀌지 않는다. CLI JSON, MCP(full·compact), Markdown·HTML 보고서는 같은 함수의
+  결과를 그대로 싣는다. Desktop 화면은 아직 표시하지 않는다.
+- 결과가 없는 실행(입력 오류 등)에는 `enforcement`가 없다. 결과 없음은 어떤 경우에도 `allow`가 아니다.
+- 저장 묶음 재실행의 의미 비교에서 `enforcement`는 제외한다. 다른 비교 필드의 순수 함수이며, 이 필드가 생기기 전에 기록한 결과도
+  재실행할 수 있어야 하기 때문이다.
+
+`execution.outcome`(`execution-outcome-v1`)은 실행 상태를 `completed`·`rejected-input`·`aborted`·`internal-error`로 나눈다.
+입력 오류는 `rejected-input`, 자원 예산 초과·취소·시간 초과·복구 종료는 `aborted`, 결과 검증 실패는 `internal-error`다.
+`--run-store`가 있으면 게시 단계 상태(`publication-*`, `published`)를 `publication_state`로 함께 기록한다.
+
 ## S2-e~S4 신뢰 경계·판정 모델·범위 분석·평가·조직 기능 (2026-10-08)
 
 ### 신뢰 엔진과 후보 엔진 (W09)
