@@ -1,5 +1,10 @@
 # MCP 입력·출력 계약
 
+## enforcement 필드 (2026-10-10)
+
+`drift_gate_check_local/pr/git`의 full 응답은 검사 JSON의 `enforcement`를 그대로 포함한다. compact 응답도 `enforcement`를
+`summary` 옆에 싣는다. MCP가 action을 따로 계산하지 않는다. 의미는 [Gate와 입력 계약](gate-and-inputs.md)의 같은 날짜 절에 있다.
+
 ## 면제 승인 envelope 전달 (2026-10-08)
 
 `drift_gate_check_pr`은 drift-ignore 승인 확인에 정책 원문의 SHA-256을 전달한다. `require_codeowners_approval`

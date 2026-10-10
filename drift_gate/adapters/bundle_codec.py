@@ -101,5 +101,8 @@ def semantic_result(data):
     """Compare full policy/proof output, excluding attempt identity and timing."""
     value = deepcopy(data)
     value.pop('execution', None)
+    # ``enforcement`` is a pure projection of the fields compared here; results recorded before it
+    # existed must still replay, so it is left out of the comparison.
+    value.pop('enforcement', None)
     value.get('scan_metrics', {}).pop('runtime_seconds', None)
     return value

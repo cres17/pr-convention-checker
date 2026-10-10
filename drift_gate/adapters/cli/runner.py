@@ -360,13 +360,16 @@ def run_cli(argv=None):
             code = (exc.state.replace('-', '_') if terminated else
                     'resource_limit' if isinstance(exc, ResourceLimit) else
                     'result_validation_error' if isinstance(exc, ResultValidationError) else 'input_error')
-            error = {'execution': {**args.execution, 'status': code},
+            from drift_gate.core.gating.enforcement import execution_outcome
+            error = {'execution': {**args.execution, 'status': code, 'outcome': execution_outcome(code)},
                      'error': {'code': code, 'message': str(exc),
                                **({'resource': exc.to_dict()} if isinstance(exc, ResourceLimit) else {})}}
             controller = getattr(args, 'run_controller', None)
             if controller is not None:
                 try:
                     error['execution']['run'] = controller.view().to_dict()
+                    state = error['execution']['run'].get('state') or ''
+                    error['execution']['outcome']['publication_state'] = state if state.startswith('publi') else None
                 except (RunStoreError, OSError):
                     error['execution']['run'] = {'state': 'unreadable'}
             # holdout and engine --out name write-once artifacts; an error is never written in their place.
@@ -1040,6 +1043,9 @@ def _check_body(args, controller) -> None:
         else:
             _publish_latest(args, controller, observation, bundle, base_result)
         result.execution['run'] = controller.view().to_dict()
+        if 'outcome' in result.execution:
+            state = result.execution['run'].get('state') or ''
+            result.execution['outcome']['publication_state'] = state if state.startswith('publi') else None
     policy = policy_for_run
     if args.temporal_gate:
         threshold = (

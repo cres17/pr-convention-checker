@@ -268,6 +268,7 @@ def _compact_result(result, changed_files, *, token_budget: int) -> dict:
         "result": result.result,
         "execution": execution,
         "summary": result.to_dict()["summary"],
+        "enforcement": result.to_dict()["enforcement"],
         "change_types": result.change_types,
         "scan_metrics": {
             "scanned_files": result.scan_metrics.scanned_files,
