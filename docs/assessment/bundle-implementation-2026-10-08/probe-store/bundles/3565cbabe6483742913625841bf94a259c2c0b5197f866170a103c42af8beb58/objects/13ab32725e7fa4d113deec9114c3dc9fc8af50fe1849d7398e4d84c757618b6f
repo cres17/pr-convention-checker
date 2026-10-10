@@ -1,0 +1,10 @@
+diff --git a/src/api.py b/src/api.py
+index 17c0111..a275b2e 100644
+--- a/src/api.py
++++ b/src/api.py
+@@ -1,4 +1,4 @@
+ from fastapi import FastAPI
+ app = FastAPI()
+-@app.get('/old')
++@app.get('/new')
+ def api(): return {}

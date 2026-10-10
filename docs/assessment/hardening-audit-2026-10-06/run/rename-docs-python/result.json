@@ -1,0 +1,49 @@
+{
+  "requested_base": "52c4f493f5301c1b66a4fc95ba3e9cf0f19e03e8",
+  "evaluation": {
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass"
+    },
+    "scan_metrics": {
+      "scanned_files": 1,
+      "skipped_ignored_files": 0,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 6,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": "docs/audit_subject.py",
+          "method": "heuristic",
+          "reason": "No changed code lines to parse"
+        }
+      ]
+    },
+    "result": "pass",
+    "change_types": [
+      "docs-only"
+    ],
+    "violations": [],
+    "rule_decisions": [],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {},
+    "unmatched": [
+      "docs/audit_subject.py"
+    ],
+    "ignored": []
+  }
+}

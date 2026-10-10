@@ -1,0 +1,688 @@
+........................................................................ [ 39%]
+.............................................................FFFFFFFFFF. [ 78%]
+........................................                                 [100%]
+=================================== FAILURES ===================================
+_ test_type_only_express_import_semantics_survive_trivia[typescript-import type express from 'express';] _
+
+header = "import type express from 'express';", language = 'typescript'
+
+    @pytest.mark.parametrize('header', [
+        "import type express from 'express';", "import /* note */ type express from 'express';",
+        "import\ttype\texpress from 'express';", "import\ntype\nexpress from 'express';",
+        "import // note\n type express from 'express';",
+    ])
+    @pytest.mark.parametrize('language', ['typescript', 'tsx'])
+    def test_type_only_express_import_semantics_survive_trivia(header, language):
+        code = fixture().replace("import express from 'express';", header)
+        with pytest.raises(UnsupportedContract, match='type-only'):
+            extract_express_routes(code, language)
+        file = replace(changed(before='', after=code, status='added'), path='src/api.ts' if language == 'typescript' else 'src/api.tsx')
+>       result = inspect(changed_files=[file, document()], policy=policy(mode='api-routes', action='warn'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_enterprise_correctness.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/inspection.py:46: in inspect
+    snapshot = capture_inspection(changed_files=changed_files, policy=policy,
+drift_gate/adapters/snapshot.py:173: in capture_inspection
+    manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), mode)
+                             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {'collection_mode': 'captured-adapter-input', 'context': {'date_basis': 'UTC', 'evaluated_on': '2026-10-07'}, 'contract_proofs': False, 'drift_ignores': [], ...}
+
+    def _artifacts(data):
+        entries = []
+        paths = set()
+        for file in data['files']:
+            path = relative_path(file['path'])
+            if path in paths:
+                raise ValueError('duplicate snapshot path')
+            paths.add(path)
+            status = file['status']
+            if status not in {'added', 'modified', 'deleted', 'renamed', 'copied', 'unchanged'}:
+                raise ValueError('unknown snapshot file status')
+            previous = file['previous_path']
+            if previous is not None:
+                relative_path(previous)
+            for role, key in [('patch', 'patch'), ('before-source', 'before_source'),
+                              ('after-source', 'after_source'), ('document-json', 'document_json')]:
+                text = file[key]
+                observed_path = (previous or path) if role == 'before-source' else path
+                state, reason = ArtifactState.NOT_COLLECTED, 'not_collected'
+                if role == 'before-source' and status == 'added':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_added'
+                elif role == 'after-source' and status == 'deleted':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_deleted'
+                elif role == 'after-source' and file['document_input_state'] in {'missing', 'unavailable'}:
+                    state = ArtifactState.ABSENT if file['document_input_state'] == 'missing' else ArtifactState.UNAVAILABLE
+                    reason = 'adapter_declared_document_' + file['document_input_state']
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[large file skipped]'):
+                    state, reason = ArtifactState.LIMITED, 'patch_size_limit'
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[binary file skipped]'):
+                    state, reason = ArtifactState.UNSUPPORTED, 'binary_not_analyzed'
+                if text is not None:
+                    if not isinstance(text, str):
+                        raise ValueError('snapshot text must be a string or None')
+                    if role != 'patch' and state in {ArtifactState.ABSENT, ArtifactState.UNAVAILABLE}:
+>                       raise ValueError('source contradicts declared absence/unavailability')
+E                       ValueError: source contradicts declared absence/unavailability
+
+drift_gate/adapters/snapshot.py:96: ValueError
+_ test_type_only_express_import_semantics_survive_trivia[typescript-import /* note */ type express from 'express';] _
+
+header = "import /* note */ type express from 'express';"
+language = 'typescript'
+
+    @pytest.mark.parametrize('header', [
+        "import type express from 'express';", "import /* note */ type express from 'express';",
+        "import\ttype\texpress from 'express';", "import\ntype\nexpress from 'express';",
+        "import // note\n type express from 'express';",
+    ])
+    @pytest.mark.parametrize('language', ['typescript', 'tsx'])
+    def test_type_only_express_import_semantics_survive_trivia(header, language):
+        code = fixture().replace("import express from 'express';", header)
+        with pytest.raises(UnsupportedContract, match='type-only'):
+            extract_express_routes(code, language)
+        file = replace(changed(before='', after=code, status='added'), path='src/api.ts' if language == 'typescript' else 'src/api.tsx')
+>       result = inspect(changed_files=[file, document()], policy=policy(mode='api-routes', action='warn'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_enterprise_correctness.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/inspection.py:46: in inspect
+    snapshot = capture_inspection(changed_files=changed_files, policy=policy,
+drift_gate/adapters/snapshot.py:173: in capture_inspection
+    manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), mode)
+                             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {'collection_mode': 'captured-adapter-input', 'context': {'date_basis': 'UTC', 'evaluated_on': '2026-10-07'}, 'contract_proofs': False, 'drift_ignores': [], ...}
+
+    def _artifacts(data):
+        entries = []
+        paths = set()
+        for file in data['files']:
+            path = relative_path(file['path'])
+            if path in paths:
+                raise ValueError('duplicate snapshot path')
+            paths.add(path)
+            status = file['status']
+            if status not in {'added', 'modified', 'deleted', 'renamed', 'copied', 'unchanged'}:
+                raise ValueError('unknown snapshot file status')
+            previous = file['previous_path']
+            if previous is not None:
+                relative_path(previous)
+            for role, key in [('patch', 'patch'), ('before-source', 'before_source'),
+                              ('after-source', 'after_source'), ('document-json', 'document_json')]:
+                text = file[key]
+                observed_path = (previous or path) if role == 'before-source' else path
+                state, reason = ArtifactState.NOT_COLLECTED, 'not_collected'
+                if role == 'before-source' and status == 'added':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_added'
+                elif role == 'after-source' and status == 'deleted':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_deleted'
+                elif role == 'after-source' and file['document_input_state'] in {'missing', 'unavailable'}:
+                    state = ArtifactState.ABSENT if file['document_input_state'] == 'missing' else ArtifactState.UNAVAILABLE
+                    reason = 'adapter_declared_document_' + file['document_input_state']
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[large file skipped]'):
+                    state, reason = ArtifactState.LIMITED, 'patch_size_limit'
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[binary file skipped]'):
+                    state, reason = ArtifactState.UNSUPPORTED, 'binary_not_analyzed'
+                if text is not None:
+                    if not isinstance(text, str):
+                        raise ValueError('snapshot text must be a string or None')
+                    if role != 'patch' and state in {ArtifactState.ABSENT, ArtifactState.UNAVAILABLE}:
+>                       raise ValueError('source contradicts declared absence/unavailability')
+E                       ValueError: source contradicts declared absence/unavailability
+
+drift_gate/adapters/snapshot.py:96: ValueError
+_ test_type_only_express_import_semantics_survive_trivia[typescript-import\ttype\texpress from 'express';] _
+
+header = "import\ttype\texpress from 'express';", language = 'typescript'
+
+    @pytest.mark.parametrize('header', [
+        "import type express from 'express';", "import /* note */ type express from 'express';",
+        "import\ttype\texpress from 'express';", "import\ntype\nexpress from 'express';",
+        "import // note\n type express from 'express';",
+    ])
+    @pytest.mark.parametrize('language', ['typescript', 'tsx'])
+    def test_type_only_express_import_semantics_survive_trivia(header, language):
+        code = fixture().replace("import express from 'express';", header)
+        with pytest.raises(UnsupportedContract, match='type-only'):
+            extract_express_routes(code, language)
+        file = replace(changed(before='', after=code, status='added'), path='src/api.ts' if language == 'typescript' else 'src/api.tsx')
+>       result = inspect(changed_files=[file, document()], policy=policy(mode='api-routes', action='warn'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_enterprise_correctness.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/inspection.py:46: in inspect
+    snapshot = capture_inspection(changed_files=changed_files, policy=policy,
+drift_gate/adapters/snapshot.py:173: in capture_inspection
+    manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), mode)
+                             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {'collection_mode': 'captured-adapter-input', 'context': {'date_basis': 'UTC', 'evaluated_on': '2026-10-07'}, 'contract_proofs': False, 'drift_ignores': [], ...}
+
+    def _artifacts(data):
+        entries = []
+        paths = set()
+        for file in data['files']:
+            path = relative_path(file['path'])
+            if path in paths:
+                raise ValueError('duplicate snapshot path')
+            paths.add(path)
+            status = file['status']
+            if status not in {'added', 'modified', 'deleted', 'renamed', 'copied', 'unchanged'}:
+                raise ValueError('unknown snapshot file status')
+            previous = file['previous_path']
+            if previous is not None:
+                relative_path(previous)
+            for role, key in [('patch', 'patch'), ('before-source', 'before_source'),
+                              ('after-source', 'after_source'), ('document-json', 'document_json')]:
+                text = file[key]
+                observed_path = (previous or path) if role == 'before-source' else path
+                state, reason = ArtifactState.NOT_COLLECTED, 'not_collected'
+                if role == 'before-source' and status == 'added':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_added'
+                elif role == 'after-source' and status == 'deleted':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_deleted'
+                elif role == 'after-source' and file['document_input_state'] in {'missing', 'unavailable'}:
+                    state = ArtifactState.ABSENT if file['document_input_state'] == 'missing' else ArtifactState.UNAVAILABLE
+                    reason = 'adapter_declared_document_' + file['document_input_state']
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[large file skipped]'):
+                    state, reason = ArtifactState.LIMITED, 'patch_size_limit'
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[binary file skipped]'):
+                    state, reason = ArtifactState.UNSUPPORTED, 'binary_not_analyzed'
+                if text is not None:
+                    if not isinstance(text, str):
+                        raise ValueError('snapshot text must be a string or None')
+                    if role != 'patch' and state in {ArtifactState.ABSENT, ArtifactState.UNAVAILABLE}:
+>                       raise ValueError('source contradicts declared absence/unavailability')
+E                       ValueError: source contradicts declared absence/unavailability
+
+drift_gate/adapters/snapshot.py:96: ValueError
+_ test_type_only_express_import_semantics_survive_trivia[typescript-import\ntype\nexpress from 'express';] _
+
+header = "import\ntype\nexpress from 'express';", language = 'typescript'
+
+    @pytest.mark.parametrize('header', [
+        "import type express from 'express';", "import /* note */ type express from 'express';",
+        "import\ttype\texpress from 'express';", "import\ntype\nexpress from 'express';",
+        "import // note\n type express from 'express';",
+    ])
+    @pytest.mark.parametrize('language', ['typescript', 'tsx'])
+    def test_type_only_express_import_semantics_survive_trivia(header, language):
+        code = fixture().replace("import express from 'express';", header)
+        with pytest.raises(UnsupportedContract, match='type-only'):
+            extract_express_routes(code, language)
+        file = replace(changed(before='', after=code, status='added'), path='src/api.ts' if language == 'typescript' else 'src/api.tsx')
+>       result = inspect(changed_files=[file, document()], policy=policy(mode='api-routes', action='warn'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_enterprise_correctness.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/inspection.py:46: in inspect
+    snapshot = capture_inspection(changed_files=changed_files, policy=policy,
+drift_gate/adapters/snapshot.py:173: in capture_inspection
+    manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), mode)
+                             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {'collection_mode': 'captured-adapter-input', 'context': {'date_basis': 'UTC', 'evaluated_on': '2026-10-07'}, 'contract_proofs': False, 'drift_ignores': [], ...}
+
+    def _artifacts(data):
+        entries = []
+        paths = set()
+        for file in data['files']:
+            path = relative_path(file['path'])
+            if path in paths:
+                raise ValueError('duplicate snapshot path')
+            paths.add(path)
+            status = file['status']
+            if status not in {'added', 'modified', 'deleted', 'renamed', 'copied', 'unchanged'}:
+                raise ValueError('unknown snapshot file status')
+            previous = file['previous_path']
+            if previous is not None:
+                relative_path(previous)
+            for role, key in [('patch', 'patch'), ('before-source', 'before_source'),
+                              ('after-source', 'after_source'), ('document-json', 'document_json')]:
+                text = file[key]
+                observed_path = (previous or path) if role == 'before-source' else path
+                state, reason = ArtifactState.NOT_COLLECTED, 'not_collected'
+                if role == 'before-source' and status == 'added':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_added'
+                elif role == 'after-source' and status == 'deleted':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_deleted'
+                elif role == 'after-source' and file['document_input_state'] in {'missing', 'unavailable'}:
+                    state = ArtifactState.ABSENT if file['document_input_state'] == 'missing' else ArtifactState.UNAVAILABLE
+                    reason = 'adapter_declared_document_' + file['document_input_state']
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[large file skipped]'):
+                    state, reason = ArtifactState.LIMITED, 'patch_size_limit'
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[binary file skipped]'):
+                    state, reason = ArtifactState.UNSUPPORTED, 'binary_not_analyzed'
+                if text is not None:
+                    if not isinstance(text, str):
+                        raise ValueError('snapshot text must be a string or None')
+                    if role != 'patch' and state in {ArtifactState.ABSENT, ArtifactState.UNAVAILABLE}:
+>                       raise ValueError('source contradicts declared absence/unavailability')
+E                       ValueError: source contradicts declared absence/unavailability
+
+drift_gate/adapters/snapshot.py:96: ValueError
+_ test_type_only_express_import_semantics_survive_trivia[typescript-import // note\n type express from 'express';] _
+
+header = "import // note\n type express from 'express';"
+language = 'typescript'
+
+    @pytest.mark.parametrize('header', [
+        "import type express from 'express';", "import /* note */ type express from 'express';",
+        "import\ttype\texpress from 'express';", "import\ntype\nexpress from 'express';",
+        "import // note\n type express from 'express';",
+    ])
+    @pytest.mark.parametrize('language', ['typescript', 'tsx'])
+    def test_type_only_express_import_semantics_survive_trivia(header, language):
+        code = fixture().replace("import express from 'express';", header)
+        with pytest.raises(UnsupportedContract, match='type-only'):
+            extract_express_routes(code, language)
+        file = replace(changed(before='', after=code, status='added'), path='src/api.ts' if language == 'typescript' else 'src/api.tsx')
+>       result = inspect(changed_files=[file, document()], policy=policy(mode='api-routes', action='warn'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_enterprise_correctness.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/inspection.py:46: in inspect
+    snapshot = capture_inspection(changed_files=changed_files, policy=policy,
+drift_gate/adapters/snapshot.py:173: in capture_inspection
+    manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), mode)
+                             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {'collection_mode': 'captured-adapter-input', 'context': {'date_basis': 'UTC', 'evaluated_on': '2026-10-07'}, 'contract_proofs': False, 'drift_ignores': [], ...}
+
+    def _artifacts(data):
+        entries = []
+        paths = set()
+        for file in data['files']:
+            path = relative_path(file['path'])
+            if path in paths:
+                raise ValueError('duplicate snapshot path')
+            paths.add(path)
+            status = file['status']
+            if status not in {'added', 'modified', 'deleted', 'renamed', 'copied', 'unchanged'}:
+                raise ValueError('unknown snapshot file status')
+            previous = file['previous_path']
+            if previous is not None:
+                relative_path(previous)
+            for role, key in [('patch', 'patch'), ('before-source', 'before_source'),
+                              ('after-source', 'after_source'), ('document-json', 'document_json')]:
+                text = file[key]
+                observed_path = (previous or path) if role == 'before-source' else path
+                state, reason = ArtifactState.NOT_COLLECTED, 'not_collected'
+                if role == 'before-source' and status == 'added':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_added'
+                elif role == 'after-source' and status == 'deleted':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_deleted'
+                elif role == 'after-source' and file['document_input_state'] in {'missing', 'unavailable'}:
+                    state = ArtifactState.ABSENT if file['document_input_state'] == 'missing' else ArtifactState.UNAVAILABLE
+                    reason = 'adapter_declared_document_' + file['document_input_state']
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[large file skipped]'):
+                    state, reason = ArtifactState.LIMITED, 'patch_size_limit'
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[binary file skipped]'):
+                    state, reason = ArtifactState.UNSUPPORTED, 'binary_not_analyzed'
+                if text is not None:
+                    if not isinstance(text, str):
+                        raise ValueError('snapshot text must be a string or None')
+                    if role != 'patch' and state in {ArtifactState.ABSENT, ArtifactState.UNAVAILABLE}:
+>                       raise ValueError('source contradicts declared absence/unavailability')
+E                       ValueError: source contradicts declared absence/unavailability
+
+drift_gate/adapters/snapshot.py:96: ValueError
+_ test_type_only_express_import_semantics_survive_trivia[tsx-import type express from 'express';] _
+
+header = "import type express from 'express';", language = 'tsx'
+
+    @pytest.mark.parametrize('header', [
+        "import type express from 'express';", "import /* note */ type express from 'express';",
+        "import\ttype\texpress from 'express';", "import\ntype\nexpress from 'express';",
+        "import // note\n type express from 'express';",
+    ])
+    @pytest.mark.parametrize('language', ['typescript', 'tsx'])
+    def test_type_only_express_import_semantics_survive_trivia(header, language):
+        code = fixture().replace("import express from 'express';", header)
+        with pytest.raises(UnsupportedContract, match='type-only'):
+            extract_express_routes(code, language)
+        file = replace(changed(before='', after=code, status='added'), path='src/api.ts' if language == 'typescript' else 'src/api.tsx')
+>       result = inspect(changed_files=[file, document()], policy=policy(mode='api-routes', action='warn'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_enterprise_correctness.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/inspection.py:46: in inspect
+    snapshot = capture_inspection(changed_files=changed_files, policy=policy,
+drift_gate/adapters/snapshot.py:173: in capture_inspection
+    manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), mode)
+                             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {'collection_mode': 'captured-adapter-input', 'context': {'date_basis': 'UTC', 'evaluated_on': '2026-10-07'}, 'contract_proofs': False, 'drift_ignores': [], ...}
+
+    def _artifacts(data):
+        entries = []
+        paths = set()
+        for file in data['files']:
+            path = relative_path(file['path'])
+            if path in paths:
+                raise ValueError('duplicate snapshot path')
+            paths.add(path)
+            status = file['status']
+            if status not in {'added', 'modified', 'deleted', 'renamed', 'copied', 'unchanged'}:
+                raise ValueError('unknown snapshot file status')
+            previous = file['previous_path']
+            if previous is not None:
+                relative_path(previous)
+            for role, key in [('patch', 'patch'), ('before-source', 'before_source'),
+                              ('after-source', 'after_source'), ('document-json', 'document_json')]:
+                text = file[key]
+                observed_path = (previous or path) if role == 'before-source' else path
+                state, reason = ArtifactState.NOT_COLLECTED, 'not_collected'
+                if role == 'before-source' and status == 'added':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_added'
+                elif role == 'after-source' and status == 'deleted':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_deleted'
+                elif role == 'after-source' and file['document_input_state'] in {'missing', 'unavailable'}:
+                    state = ArtifactState.ABSENT if file['document_input_state'] == 'missing' else ArtifactState.UNAVAILABLE
+                    reason = 'adapter_declared_document_' + file['document_input_state']
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[large file skipped]'):
+                    state, reason = ArtifactState.LIMITED, 'patch_size_limit'
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[binary file skipped]'):
+                    state, reason = ArtifactState.UNSUPPORTED, 'binary_not_analyzed'
+                if text is not None:
+                    if not isinstance(text, str):
+                        raise ValueError('snapshot text must be a string or None')
+                    if role != 'patch' and state in {ArtifactState.ABSENT, ArtifactState.UNAVAILABLE}:
+>                       raise ValueError('source contradicts declared absence/unavailability')
+E                       ValueError: source contradicts declared absence/unavailability
+
+drift_gate/adapters/snapshot.py:96: ValueError
+_ test_type_only_express_import_semantics_survive_trivia[tsx-import /* note */ type express from 'express';] _
+
+header = "import /* note */ type express from 'express';", language = 'tsx'
+
+    @pytest.mark.parametrize('header', [
+        "import type express from 'express';", "import /* note */ type express from 'express';",
+        "import\ttype\texpress from 'express';", "import\ntype\nexpress from 'express';",
+        "import // note\n type express from 'express';",
+    ])
+    @pytest.mark.parametrize('language', ['typescript', 'tsx'])
+    def test_type_only_express_import_semantics_survive_trivia(header, language):
+        code = fixture().replace("import express from 'express';", header)
+        with pytest.raises(UnsupportedContract, match='type-only'):
+            extract_express_routes(code, language)
+        file = replace(changed(before='', after=code, status='added'), path='src/api.ts' if language == 'typescript' else 'src/api.tsx')
+>       result = inspect(changed_files=[file, document()], policy=policy(mode='api-routes', action='warn'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_enterprise_correctness.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/inspection.py:46: in inspect
+    snapshot = capture_inspection(changed_files=changed_files, policy=policy,
+drift_gate/adapters/snapshot.py:173: in capture_inspection
+    manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), mode)
+                             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {'collection_mode': 'captured-adapter-input', 'context': {'date_basis': 'UTC', 'evaluated_on': '2026-10-07'}, 'contract_proofs': False, 'drift_ignores': [], ...}
+
+    def _artifacts(data):
+        entries = []
+        paths = set()
+        for file in data['files']:
+            path = relative_path(file['path'])
+            if path in paths:
+                raise ValueError('duplicate snapshot path')
+            paths.add(path)
+            status = file['status']
+            if status not in {'added', 'modified', 'deleted', 'renamed', 'copied', 'unchanged'}:
+                raise ValueError('unknown snapshot file status')
+            previous = file['previous_path']
+            if previous is not None:
+                relative_path(previous)
+            for role, key in [('patch', 'patch'), ('before-source', 'before_source'),
+                              ('after-source', 'after_source'), ('document-json', 'document_json')]:
+                text = file[key]
+                observed_path = (previous or path) if role == 'before-source' else path
+                state, reason = ArtifactState.NOT_COLLECTED, 'not_collected'
+                if role == 'before-source' and status == 'added':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_added'
+                elif role == 'after-source' and status == 'deleted':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_deleted'
+                elif role == 'after-source' and file['document_input_state'] in {'missing', 'unavailable'}:
+                    state = ArtifactState.ABSENT if file['document_input_state'] == 'missing' else ArtifactState.UNAVAILABLE
+                    reason = 'adapter_declared_document_' + file['document_input_state']
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[large file skipped]'):
+                    state, reason = ArtifactState.LIMITED, 'patch_size_limit'
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[binary file skipped]'):
+                    state, reason = ArtifactState.UNSUPPORTED, 'binary_not_analyzed'
+                if text is not None:
+                    if not isinstance(text, str):
+                        raise ValueError('snapshot text must be a string or None')
+                    if role != 'patch' and state in {ArtifactState.ABSENT, ArtifactState.UNAVAILABLE}:
+>                       raise ValueError('source contradicts declared absence/unavailability')
+E                       ValueError: source contradicts declared absence/unavailability
+
+drift_gate/adapters/snapshot.py:96: ValueError
+_ test_type_only_express_import_semantics_survive_trivia[tsx-import\ttype\texpress from 'express';] _
+
+header = "import\ttype\texpress from 'express';", language = 'tsx'
+
+    @pytest.mark.parametrize('header', [
+        "import type express from 'express';", "import /* note */ type express from 'express';",
+        "import\ttype\texpress from 'express';", "import\ntype\nexpress from 'express';",
+        "import // note\n type express from 'express';",
+    ])
+    @pytest.mark.parametrize('language', ['typescript', 'tsx'])
+    def test_type_only_express_import_semantics_survive_trivia(header, language):
+        code = fixture().replace("import express from 'express';", header)
+        with pytest.raises(UnsupportedContract, match='type-only'):
+            extract_express_routes(code, language)
+        file = replace(changed(before='', after=code, status='added'), path='src/api.ts' if language == 'typescript' else 'src/api.tsx')
+>       result = inspect(changed_files=[file, document()], policy=policy(mode='api-routes', action='warn'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_enterprise_correctness.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/inspection.py:46: in inspect
+    snapshot = capture_inspection(changed_files=changed_files, policy=policy,
+drift_gate/adapters/snapshot.py:173: in capture_inspection
+    manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), mode)
+                             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {'collection_mode': 'captured-adapter-input', 'context': {'date_basis': 'UTC', 'evaluated_on': '2026-10-07'}, 'contract_proofs': False, 'drift_ignores': [], ...}
+
+    def _artifacts(data):
+        entries = []
+        paths = set()
+        for file in data['files']:
+            path = relative_path(file['path'])
+            if path in paths:
+                raise ValueError('duplicate snapshot path')
+            paths.add(path)
+            status = file['status']
+            if status not in {'added', 'modified', 'deleted', 'renamed', 'copied', 'unchanged'}:
+                raise ValueError('unknown snapshot file status')
+            previous = file['previous_path']
+            if previous is not None:
+                relative_path(previous)
+            for role, key in [('patch', 'patch'), ('before-source', 'before_source'),
+                              ('after-source', 'after_source'), ('document-json', 'document_json')]:
+                text = file[key]
+                observed_path = (previous or path) if role == 'before-source' else path
+                state, reason = ArtifactState.NOT_COLLECTED, 'not_collected'
+                if role == 'before-source' and status == 'added':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_added'
+                elif role == 'after-source' and status == 'deleted':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_deleted'
+                elif role == 'after-source' and file['document_input_state'] in {'missing', 'unavailable'}:
+                    state = ArtifactState.ABSENT if file['document_input_state'] == 'missing' else ArtifactState.UNAVAILABLE
+                    reason = 'adapter_declared_document_' + file['document_input_state']
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[large file skipped]'):
+                    state, reason = ArtifactState.LIMITED, 'patch_size_limit'
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[binary file skipped]'):
+                    state, reason = ArtifactState.UNSUPPORTED, 'binary_not_analyzed'
+                if text is not None:
+                    if not isinstance(text, str):
+                        raise ValueError('snapshot text must be a string or None')
+                    if role != 'patch' and state in {ArtifactState.ABSENT, ArtifactState.UNAVAILABLE}:
+>                       raise ValueError('source contradicts declared absence/unavailability')
+E                       ValueError: source contradicts declared absence/unavailability
+
+drift_gate/adapters/snapshot.py:96: ValueError
+_ test_type_only_express_import_semantics_survive_trivia[tsx-import\ntype\nexpress from 'express';] _
+
+header = "import\ntype\nexpress from 'express';", language = 'tsx'
+
+    @pytest.mark.parametrize('header', [
+        "import type express from 'express';", "import /* note */ type express from 'express';",
+        "import\ttype\texpress from 'express';", "import\ntype\nexpress from 'express';",
+        "import // note\n type express from 'express';",
+    ])
+    @pytest.mark.parametrize('language', ['typescript', 'tsx'])
+    def test_type_only_express_import_semantics_survive_trivia(header, language):
+        code = fixture().replace("import express from 'express';", header)
+        with pytest.raises(UnsupportedContract, match='type-only'):
+            extract_express_routes(code, language)
+        file = replace(changed(before='', after=code, status='added'), path='src/api.ts' if language == 'typescript' else 'src/api.tsx')
+>       result = inspect(changed_files=[file, document()], policy=policy(mode='api-routes', action='warn'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_enterprise_correctness.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/inspection.py:46: in inspect
+    snapshot = capture_inspection(changed_files=changed_files, policy=policy,
+drift_gate/adapters/snapshot.py:173: in capture_inspection
+    manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), mode)
+                             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {'collection_mode': 'captured-adapter-input', 'context': {'date_basis': 'UTC', 'evaluated_on': '2026-10-07'}, 'contract_proofs': False, 'drift_ignores': [], ...}
+
+    def _artifacts(data):
+        entries = []
+        paths = set()
+        for file in data['files']:
+            path = relative_path(file['path'])
+            if path in paths:
+                raise ValueError('duplicate snapshot path')
+            paths.add(path)
+            status = file['status']
+            if status not in {'added', 'modified', 'deleted', 'renamed', 'copied', 'unchanged'}:
+                raise ValueError('unknown snapshot file status')
+            previous = file['previous_path']
+            if previous is not None:
+                relative_path(previous)
+            for role, key in [('patch', 'patch'), ('before-source', 'before_source'),
+                              ('after-source', 'after_source'), ('document-json', 'document_json')]:
+                text = file[key]
+                observed_path = (previous or path) if role == 'before-source' else path
+                state, reason = ArtifactState.NOT_COLLECTED, 'not_collected'
+                if role == 'before-source' and status == 'added':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_added'
+                elif role == 'after-source' and status == 'deleted':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_deleted'
+                elif role == 'after-source' and file['document_input_state'] in {'missing', 'unavailable'}:
+                    state = ArtifactState.ABSENT if file['document_input_state'] == 'missing' else ArtifactState.UNAVAILABLE
+                    reason = 'adapter_declared_document_' + file['document_input_state']
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[large file skipped]'):
+                    state, reason = ArtifactState.LIMITED, 'patch_size_limit'
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[binary file skipped]'):
+                    state, reason = ArtifactState.UNSUPPORTED, 'binary_not_analyzed'
+                if text is not None:
+                    if not isinstance(text, str):
+                        raise ValueError('snapshot text must be a string or None')
+                    if role != 'patch' and state in {ArtifactState.ABSENT, ArtifactState.UNAVAILABLE}:
+>                       raise ValueError('source contradicts declared absence/unavailability')
+E                       ValueError: source contradicts declared absence/unavailability
+
+drift_gate/adapters/snapshot.py:96: ValueError
+_ test_type_only_express_import_semantics_survive_trivia[tsx-import // note\n type express from 'express';] _
+
+header = "import // note\n type express from 'express';", language = 'tsx'
+
+    @pytest.mark.parametrize('header', [
+        "import type express from 'express';", "import /* note */ type express from 'express';",
+        "import\ttype\texpress from 'express';", "import\ntype\nexpress from 'express';",
+        "import // note\n type express from 'express';",
+    ])
+    @pytest.mark.parametrize('language', ['typescript', 'tsx'])
+    def test_type_only_express_import_semantics_survive_trivia(header, language):
+        code = fixture().replace("import express from 'express';", header)
+        with pytest.raises(UnsupportedContract, match='type-only'):
+            extract_express_routes(code, language)
+        file = replace(changed(before='', after=code, status='added'), path='src/api.ts' if language == 'typescript' else 'src/api.tsx')
+>       result = inspect(changed_files=[file, document()], policy=policy(mode='api-routes', action='warn'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_enterprise_correctness.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+drift_gate/adapters/inspection.py:46: in inspect
+    snapshot = capture_inspection(changed_files=changed_files, policy=policy,
+drift_gate/adapters/snapshot.py:173: in capture_inspection
+    manifest = InputManifest(_artifacts(data), sha256(payload).hexdigest(), mode)
+                             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = {'collection_mode': 'captured-adapter-input', 'context': {'date_basis': 'UTC', 'evaluated_on': '2026-10-07'}, 'contract_proofs': False, 'drift_ignores': [], ...}
+
+    def _artifacts(data):
+        entries = []
+        paths = set()
+        for file in data['files']:
+            path = relative_path(file['path'])
+            if path in paths:
+                raise ValueError('duplicate snapshot path')
+            paths.add(path)
+            status = file['status']
+            if status not in {'added', 'modified', 'deleted', 'renamed', 'copied', 'unchanged'}:
+                raise ValueError('unknown snapshot file status')
+            previous = file['previous_path']
+            if previous is not None:
+                relative_path(previous)
+            for role, key in [('patch', 'patch'), ('before-source', 'before_source'),
+                              ('after-source', 'after_source'), ('document-json', 'document_json')]:
+                text = file[key]
+                observed_path = (previous or path) if role == 'before-source' else path
+                state, reason = ArtifactState.NOT_COLLECTED, 'not_collected'
+                if role == 'before-source' and status == 'added':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_added'
+                elif role == 'after-source' and status == 'deleted':
+                    state, reason = ArtifactState.ABSENT, 'adapter_declared_deleted'
+                elif role == 'after-source' and file['document_input_state'] in {'missing', 'unavailable'}:
+                    state = ArtifactState.ABSENT if file['document_input_state'] == 'missing' else ArtifactState.UNAVAILABLE
+                    reason = 'adapter_declared_document_' + file['document_input_state']
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[large file skipped]'):
+                    state, reason = ArtifactState.LIMITED, 'patch_size_limit'
+                elif role in {'patch', 'before-source', 'after-source'} and file['patch'].startswith('[binary file skipped]'):
+                    state, reason = ArtifactState.UNSUPPORTED, 'binary_not_analyzed'
+                if text is not None:
+                    if not isinstance(text, str):
+                        raise ValueError('snapshot text must be a string or None')
+                    if role != 'patch' and state in {ArtifactState.ABSENT, ArtifactState.UNAVAILABLE}:
+>                       raise ValueError('source contradicts declared absence/unavailability')
+E                       ValueError: source contradicts declared absence/unavailability
+
+drift_gate/adapters/snapshot.py:96: ValueError
+=========================== short test summary info ============================
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[typescript-import type express from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[typescript-import /* note */ type express from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[typescript-import\ttype\texpress from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[typescript-import\ntype\nexpress from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[typescript-import // note\n type express from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[tsx-import type express from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[tsx-import /* note */ type express from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[tsx-import\ttype\texpress from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[tsx-import\ntype\nexpress from 'express';]
+FAILED drift_gate/tests/test_enterprise_correctness.py::test_type_only_express_import_semantics_survive_trivia[tsx-import // note\n type express from 'express';]
+10 failed, 174 passed in 10.32s

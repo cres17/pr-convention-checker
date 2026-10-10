@@ -1,0 +1,12 @@
+
+> drift-gate-desktop-ui@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.11 /source/desktop-ui
+
+
+ Test Files  7 passed (7)
+      Tests  71 passed (71)
+   Start at  16:01:37
+   Duration  3.61s (transform 515ms, setup 0ms, import 1.05s, tests 4.40s, environment 1.00s)

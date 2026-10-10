@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-vx98bnid/repo/scripts/check_self.py", line 51, in <module>
+    main()
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-vx98bnid/repo/scripts/check_self.py", line 39, in main
+    result = inspect_repository(args.repo.resolve(), args.base)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-vx98bnid/repo/scripts/check_self.py", line 21, in inspect_repository
+    evaluation = run(enrich_semantic_signals(files), policy=policy)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-vx98bnid/repo/drift_gate/core/engine.py", line 106, in run
+    decide_gate(result)
+  File "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-hardening-audit-vx98bnid/repo/drift_gate/core/gating/gate.py", line 24, in decide_gate
+    elif major >= gate.fail_on_major_count:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: '>=' not supported between instances of 'int' and 'str'

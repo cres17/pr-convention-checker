@@ -2,13 +2,156 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, ver2]
   pull_request:
     branches: [main, develop]
   release:
     types: [published]
 
 jobs:
+  self-check:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
+        with:
+          python-version: '3.11'
+      - name: Install local checker
+        run: pip install -e . zstandard==0.25.0
+      - name: Restore grammar downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/driftgate-parser-cache
+          key: grammars-${{ runner.os }}-${{ runner.arch }}-language-pack-1.20.0
+      - name: Prepare checked grammars
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: python packaging/prepare_parsers.py
+      - name: Check the actual change with repository policy
+        env:
+          SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: python scripts/check_self.py --base "$SELF_CHECK_BASE" --trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b --out build/self-check.json
+      - name: Check immutable objects with a pinned policy
+        env:
+          SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: >
+          python -m drift_gate check --base "$SELF_CHECK_BASE" --head "$GITHUB_SHA"
+          --policy .drift-gate.self.yml
+          --trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b
+          --trusted-policy-sha256 3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb
+          --evidence-store build/object-evidence
+          --json --out-json build/object-self-check.json > build/object-self-check-stdout.json
+      - name: Verify persisted inputs and replay without collecting Git again
+        run: |
+          python packaging/check_evidence_bundle.py --report build/object-self-check.json --out build/bundle-replay.json
+      - name: Evaluate the candidate with a pinned trusted engine
+        env:
+          SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        shell: bash
+        run: |
+          # The engine pin is a commit plus the SHA-256 of its manifest. The manifest is rebuilt from Git
+          # objects here; this job still runs candidate code, so it is a recorded comparison, not a sandbox.
+          python -m drift_gate engine manifest --ref ed9f9046cca46c79b379ccdbafaa08feaa8241d6 --out build/trusted-engine.json > /dev/null
+          set +e
+          python -m drift_gate trusted-check --base "$SELF_CHECK_BASE" --head "$GITHUB_SHA" --policy .drift-gate.self.yml \
+            --trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b \
+            --trusted-policy-sha256 3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb \
+            --engine-manifest build/trusted-engine.json \
+            --engine-manifest-sha256 88f275f568282507e71a66ad6f4e414e77dc0cdbf223c211c451eb1c1c0e37e8 \
+            --out-json build/trusted-check.json > /dev/null
+          code=$?
+          set -e
+          if [ "$code" = "5" ]; then
+            # review with the trusted engine as merge basis: its verdict stands, the checker change needs a reviewer.
+            # review without a merge basis (trusted engine failed or was not attested) fails the job.
+            basis=$(python -c "import json; print(json.load(open('build/trusted-check.json'))['decision']['merge_basis'])")
+            reasons=$(python -c "import json; print(', '.join(json.load(open('build/trusted-check.json'))['decision']['reasons']))")
+            if [ "$basis" != "trusted-engine" ]; then
+              echo "::error title=Trusted validation::no trusted verdict: $reasons"
+              exit 1
+            fi
+            echo "::warning title=Trusted validation::pinned engine verdict needs review: $reasons"
+            exit 0
+          fi
+          exit "$code"
+      - name: Preserve policy coverage and gate evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: drift-gate-self-check
+          path: |
+            build/self-check.json
+            build/object-self-check.json
+            build/bundle-replay.json
+            build/object-evidence/bundles/
+            build/trusted-check.json
+            build/trusted-engine.json
+
+  trusted-engine:
+    # The verdict comes from an engine installed from a pinned commit; the candidate's Python code is
+    # never imported or run here (its files are only read as Git objects). The workflow file itself is
+    # still the candidate's: protecting it needs a required workflow or branch rule outside this file.
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      TRUSTED_ENGINE: ed9f9046cca46c79b379ccdbafaa08feaa8241d6
+      TRUSTED_POLICY: ae0028d5edd95d5dd4819939a5801cb028639a6b
+      TRUSTED_POLICY_SHA256: 3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          path: subject
+          persist-credentials: false
+      - uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
+        with:
+          python-version: '3.11'
+      - name: Install the pinned engine from its commit, not from the candidate tree
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/trusted" build
+          git -C subject archive "$TRUSTED_ENGINE" | tar -x -C "$RUNNER_TEMP/trusted"
+          python -m pip install "$RUNNER_TEMP/trusted" zstandard==0.25.0
+          # The import must resolve to the installed copy, never to a checkout.
+          python -I -c "import drift_gate, sys; p = drift_gate.__file__; print(p); sys.exit('site-packages' not in p)"
+      - name: Restore grammar downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/driftgate-parser-cache
+          key: grammars-${{ runner.os }}-${{ runner.arch }}-language-pack-1.20.0
+      - name: Prepare checked grammars with the pinned engine
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: python "$RUNNER_TEMP/trusted/packaging/prepare_parsers.py"
+        working-directory: ${{ runner.temp }}/trusted
+      - name: Evaluate the candidate commit with the pinned engine and policy
+        env:
+          SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          SUBJECT_HEAD: ${{ github.sha }}
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        working-directory: subject
+        shell: bash
+        run: |
+          python -I -m drift_gate check --base "$SELF_CHECK_BASE" --head "$SUBJECT_HEAD" --policy .drift-gate.self.yml \
+            --trusted-policy-ref "$TRUSTED_POLICY" --trusted-policy-sha256 "$TRUSTED_POLICY_SHA256" \
+            --json --out-json ../build/trusted-engine-verdict.json > /dev/null
+      - name: Preserve the pinned engine verdict
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: trusted-engine-verdict
+          path: build/trusted-engine-verdict.json
+
   test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -18,10 +161,10 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -29,18 +172,56 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          pip install -e ".[dev]"
+          pip install -e ".[dev,oracle]" zstandard==0.25.0
+
+      - name: Restore grammar downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/driftgate-parser-cache
+          key: grammars-${{ runner.os }}-${{ runner.arch }}-language-pack-1.20.0
+
+      - name: Prepare grammars before semantic tests
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: python packaging/prepare_parsers.py
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Install fixed Express HTTP oracle
+        run: npm install --prefix "${{ runner.temp }}/express-oracle" --no-audit --no-fund express@4.21.2
 
       - name: Run pytest
-        run: pytest drift_gate/tests/ -v --tb=short
+        timeout-minutes: 10
+        shell: bash
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+          DRIFT_GATE_EXPRESS_ORACLE_DIR: ${{ runner.temp }}/express-oracle
+        run: |
+          python docs/assessment/git-trust-implementation-2026-10-07/handle-consistency/probe.py --out build/read-metadata.json
+          pytest drift_gate/tests/ -v --tb=short -o faulthandler_timeout=120 2>&1 | tee build/pytest.log
+
+      - name: Preserve regression diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: regression-${{ matrix.os }}-${{ matrix.python-version }}
+          path: |
+            build/pytest.log
+            build/read-metadata.json
+
+      - name: Verify frozen semantic evaluation axes
+        run: |
+          python scripts/audit_auto_contracts.py --out build/auto-contracts-v2.json
+          python scripts/audit_auto_contracts.py --suite drift_gate/tests/contracts/express-contracts-v1.json --out build/express-contracts-v1.json
 
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
         with:
           python-version: "3.11"
           cache: pip
@@ -50,8 +231,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]" ruff mypy
 
-      - name: Lint critical Python errors with ruff
-        run: ruff check drift_gate/ --select=E9,F63,F7,F82
+      - name: Lint Python errors and unused code with ruff
+        run: ruff check drift_gate/ --select=E9,F
 
       - name: Type check with mypy (optional)
         run: mypy drift_gate/core --ignore-missing-imports || true
@@ -59,10 +240,10 @@ jobs:
   benchmark:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
         with:
           python-version: "3.11"
           cache: pip
@@ -70,11 +251,11 @@ jobs:
       - name: Install package
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+          pip install -e ".[dev]" zstandard==0.25.0
 
       - name: Run deterministic benchmark
         run: |
-          drift-gate-eval --compare-baseline \
+          drift-gate-eval --recursive --compare-baseline \
             --max-fp 0 \
             --max-fn 0 \
             --min-f1 1.0 \
@@ -85,13 +266,14 @@ jobs:
       - name: Run multi-engine benchmark
         run: |
           drift-gate-eval \
-            --engines path-only,patch-aware,semantic-aware,llm-enriched \
+            --recursive \
+            --engines path-only,patch-aware,semantic-aware \
             --out benchmark-engines.md \
             --html-out benchmark-engines.html \
             --case-report-dir benchmark-engine-reports
 
       - name: Upload benchmark artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: drift-gate-benchmark
           path: |

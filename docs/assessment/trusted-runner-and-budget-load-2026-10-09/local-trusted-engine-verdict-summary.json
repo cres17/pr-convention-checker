@@ -1,0 +1,20 @@
+{
+  "schema": "trusted-engine-verdict-summary",
+  "source": "local dry run of the CI trusted-engine steps (container, Python 3.11.17)",
+  "engine_install": "git archive ed9f904 | pip install (non-editable); drift_gate imported from site-packages",
+  "result": "pass",
+  "summary": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 0,
+    "nit": 0,
+    "gate_decision": "pass",
+    "undetermined_rules": 0,
+    "unverified_rules": 3
+  },
+  "head": "a4b021952162c57b5c7eba63c127800606f5a1e7",
+  "resolved_base": "791565fd88e109645379b2a2efcd6601840e4191",
+  "policy_revision": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+  "policy_sha256": "3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb",
+  "input_sha256": "130841fe38a9b27754f211c6183281110d91b5c8b5496655b65e7d3a84fe5faa"
+}

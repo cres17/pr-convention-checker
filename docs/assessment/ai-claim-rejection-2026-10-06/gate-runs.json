@@ -1,0 +1,126 @@
+{
+  "revision": "f43cada2ea177b63cb0ac4a79be37071113a5191",
+  "main_base": "bffc6550fd0b7da0509fe9ae8838efcf5fe9bc8c",
+  "runs": {
+    "self-push": {
+      "policy": ".drift-gate.self.yml",
+      "base": "7244969",
+      "result": "pass",
+      "summary": {
+        "blocker": 0,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "pass"
+      },
+      "scanned_files": 248,
+      "ignored_files": 16,
+      "rules": {
+        "self-engine-contract": "pass",
+        "self-cli-contract": "pass",
+        "self-mcp-contract": "pass",
+        "self-progress-contract": "pass",
+        "self-ui-bridge-contract": "pass",
+        "self-package-operations": "pass"
+      },
+      "matched_paths": 39,
+      "unmatched_paths": 193,
+      "unmatched_non_docs": []
+    },
+    "self-pr": {
+      "policy": ".drift-gate.self.yml",
+      "base": "main (bffc655)",
+      "result": "pass",
+      "summary": {
+        "blocker": 0,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "pass"
+      },
+      "scanned_files": 649,
+      "ignored_files": 42,
+      "rules": {
+        "self-engine-contract": "pass",
+        "self-cli-contract": "pass",
+        "self-mcp-contract": "pass",
+        "self-progress-contract": "pass",
+        "self-ui-bridge-contract": "pass",
+        "self-package-operations": "pass"
+      },
+      "matched_paths": 127,
+      "unmatched_paths": 480,
+      "unmatched_non_docs": [
+        ".claude/commands/CC-AI-TOOLKIT-LICENSE",
+        ".claude/commands/figma-to-code.md",
+        ".claude/commands/sync-design-tokens.md",
+        ".gitignore",
+        "CLAUDE.md",
+        "README.md",
+        "action.yml",
+        "desktop-ui/TOOL-UI-LICENSE.md",
+        "desktop-ui/index.html",
+        "desktop-ui/package-lock.json",
+        "desktop-ui/package.json",
+        "desktop-ui/preview.html",
+        "desktop-ui/public/TOOL-UI-LICENSE.txt",
+        "desktop-ui/tool-ui-provenance.json",
+        "desktop-ui/tsconfig.json",
+        "desktop-ui/vite.config.ts",
+        "drift_gate/adapters/eval/runner.py",
+        "drift_gate/adapters/grammar_resources.py",
+        "drift_gate/adapters/parser_hashes.json",
+        "drift_gate/adapters/report_naming.py",
+        "drift_gate/desktop/__init__.py",
+        "drift_gate/desktop/app.py",
+        "drift_gate/desktop/doc_links.py",
+        "drift_gate/desktop/package_check.py",
+        "drift_gate/desktop/policy_setup.py",
+        "drift_gate/desktop/resources.py",
+        "drift_gate/desktop/review_dialog.py",
+        "drift_gate/desktop/service.py",
+        "drift_gate/desktop/subscription_review.py",
+        "scripts/audit_generalization.py",
+        "scripts/compare_v1_ver2.py",
+        "scripts/compare_v1_ver2_postfix.py",
+        "scripts/measure_development.py",
+        "scripts/measure_env_contract.py",
+        "scripts/smoke_subscription_review.py",
+        "계획.md"
+      ]
+    },
+    "root-push": {
+      "policy": ".drift-gate.yml",
+      "base": "7244969",
+      "result": "pass",
+      "summary": {
+        "blocker": 0,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "pass"
+      },
+      "violations": []
+    },
+    "root-pr": {
+      "policy": ".drift-gate.yml",
+      "base": "main (bffc655)",
+      "result": "pass",
+      "summary": {
+        "blocker": 0,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "pass"
+      },
+      "violations": []
+    }
+  },
+  "docs_check": "No docs-consistency issues found.",
+  "local_tests": {
+    "python": "871 passed, 3 skipped (zstandard missing in this environment; 874 total)",
+    "react": "122 passed (11 files)",
+    "tsc": "exit 0",
+    "ruff": "E9,F: all checks passed"
+  }
+}

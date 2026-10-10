@@ -1,0 +1,52 @@
+{
+  "source_commit": "6d33001b1fafa8b6b40b6346ee6c30fbf498ce0b",
+  "ci_run_id": 37653098779,
+  "windows": {
+    "3.10": {
+      "pytest_passed": 1696,
+      "skipped": 9,
+      "failed_step": "Verify frozen semantic evaluation axes",
+      "reason": "UnicodeEncodeError writing report with cp1252"
+    },
+    "3.11": {
+      "pytest_passed": 1696,
+      "skipped": 9,
+      "failed_step": "Verify frozen semantic evaluation axes",
+      "reason": "UnicodeEncodeError writing report with cp1252"
+    },
+    "3.12": {
+      "pytest_failed": 30,
+      "pytest_passed": 1666,
+      "skipped": 9,
+      "reason": "snapshot_unstable during local bounded file read"
+    }
+  },
+  "fixes": [
+    "Compare first and reopened handle fstat identity/size/mtime/ctime; never compare heterogeneous stat/fstat ctime semantics",
+    "explicit UTF-8/LF suite and output JSON; preserve frozen expectations"
+  ],
+  "related_primary_source": "https://github.com/python/cpython/issues/157671",
+  "causal_limit": "The old failure logs do not record the mismatched metadata field; the exact field must be checked in the new native metadata probe, not inferred solely from this upstream report.",
+  "files": [
+    {
+      "path": "windows-310-pytest.log.gz",
+      "raw_bytes": 210421,
+      "raw_sha256": "a6f4da78ef1d390533c1e3ed16610cec0db2cbd71b7c47091074ed46586aed0b"
+    },
+    {
+      "path": "windows-311-pytest.log.gz",
+      "raw_bytes": 210419,
+      "raw_sha256": "ee7c59d5cb2658db2f4435ecca40f748d088c7ccc246c53cb4c13608f5d1827e"
+    },
+    {
+      "path": "windows-312-pytest.log.gz",
+      "raw_bytes": 240618,
+      "raw_sha256": "f34e4e1f24482b313398eb3a3b5317830197e916ba9b7ffa2cf969572a1d95d8"
+    },
+    {
+      "path": "failed-jobs.log.gz",
+      "raw_bytes": 399451,
+      "raw_sha256": "9325ebccc90f6aa7429c0b25b4cb1af76a44e3c060d8399cda67f4ac720d316e"
+    }
+  ]
+}

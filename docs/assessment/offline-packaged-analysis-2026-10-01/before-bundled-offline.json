@@ -1,0 +1,44 @@
+{
+  "interpreter": "3.11.15 (main, Mar  3 2026, 00:52:57) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "package_version": "1.20.0",
+  "pack_file": "/private/tmp/driftgate-parser-audit-20261001/Applications/DriftGate.app/Contents/Resources/tree_sitter_language_pack/__init__.py",
+  "tree_sitter_file": "/private/tmp/driftgate-parser-audit-20261001/extracted-python/tree_sitter/__init__.pyc",
+  "cache_dir": "/private/tmp/driftgate-parser-audit-20261001/bundled-offline-cache/tree-sitter-language-pack/v1.20.0/libs",
+  "cache_before": [],
+  "probes": [
+    {
+      "language": "python",
+      "exception": "DownloadError",
+      "message": "Download error: Failed to fetch manifest from https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.20.0/parsers.json: io: failed to lookup address information: nodename nor servname provided, or not known"
+    },
+    {
+      "language": "typescript",
+      "exception": "DownloadError",
+      "message": "Download error: Failed to fetch manifest from https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.20.0/parsers.json: io: failed to lookup address information: nodename nor servname provided, or not known"
+    },
+    {
+      "language": "go",
+      "exception": "DownloadError",
+      "message": "Download error: Failed to fetch manifest from https://github.com/xberg-io/tree-sitter-language-pack/releases/download/v1.20.0/parsers.json: io: failed to lookup address information: nodename nor servname provided, or not known"
+    }
+  ],
+  "service_file": "/private/tmp/driftgate-parser-audit-20261001/extracted-python/drift_gate/desktop/service.pyc",
+  "analysis_notes": [
+    {
+      "path": "src/main.go",
+      "method": "heuristic",
+      "reason": "Tree-sitter unavailable; using patch heuristics"
+    },
+    {
+      "path": "src/python_api.py",
+      "method": "heuristic",
+      "reason": "Tree-sitter unavailable; using patch heuristics"
+    },
+    {
+      "path": "src/typescript_api.ts",
+      "method": "heuristic",
+      "reason": "Tree-sitter unavailable; using patch heuristics"
+    }
+  ],
+  "cache_after": []
+}

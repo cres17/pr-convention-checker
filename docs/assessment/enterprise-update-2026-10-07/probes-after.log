@@ -1,0 +1,123 @@
+{
+  "prior_receipt_comparison": {
+    "source_hashes": {
+      "total": 115,
+      "mismatches": [
+        "drift_gate/adapters/ast/express_routes.py",
+        "drift_gate/adapters/inspection.py",
+        "drift_gate/core/engine.py",
+        "drift_gate/core/evaluation/evaluator.py",
+        "drift_gate/core/evaluation/openapi_document.py",
+        "drift_gate/core/evaluation/routes.py",
+        ".github/workflows/desktop-build.yml",
+        "scripts/audit_auto_contracts.py"
+      ]
+    },
+    "input_hashes": {
+      "total": 5,
+      "mismatches": []
+    },
+    "test_hashes": {
+      "total": 44,
+      "mismatches": [
+        "drift_gate/tests/test_engine.py"
+      ]
+    },
+    "evidence_hashes": {
+      "total": 38,
+      "mismatches": []
+    }
+  },
+  "mixed_contract_dispatch": [
+    {
+      "id": "auto-strict-env-True",
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "fail"
+      }
+    },
+    {
+      "id": "api-routes-env-True",
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      }
+    },
+    {
+      "id": "auto-strict-env-False",
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      }
+    }
+  ],
+  "express_type_imports": [
+    {
+      "outcome": "unknown",
+      "reason": "type-only Express imports have no runtime binding"
+    },
+    {
+      "outcome": "unknown",
+      "reason": "type-only Express imports have no runtime binding"
+    },
+    {
+      "outcome": "accepted",
+      "routes": [
+        [
+          "GET",
+          "/catalog"
+        ]
+      ]
+    }
+  ],
+  "json_numeric_domain": [
+    {
+      "input": "{\"openapi\":\"3.1.0\",\"paths\":{},\"x-number\":1}",
+      "observed": {
+        "outcome": "accepted",
+        "finite": true
+      }
+    },
+    {
+      "input": "{\"openapi\":\"3.1.0\",\"paths\":{},\"x-number\":NaN}",
+      "observed": {
+        "outcome": "unknown",
+        "reason": "unsupported_numeric_range: OpenAPI values must be finite"
+      }
+    },
+    {
+      "input": "{\"openapi\":\"3.1.0\",\"paths\":{},\"x-number\":1e999}",
+      "observed": {
+        "outcome": "unknown",
+        "reason": "unsupported_numeric_range: OpenAPI values must be finite"
+      }
+    }
+  ]
+}

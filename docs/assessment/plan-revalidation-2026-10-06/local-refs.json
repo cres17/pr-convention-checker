@@ -1,0 +1,16 @@
+{
+  "kind": "local remote-tracking ref; no fetch in this turn",
+  "ref": "bffc6550fd0b7da0509fe9ae8838efcf5fe9bc8c",
+  "checks": [
+    {
+      "path": "scripts/check_self.py",
+      "exit_code": 128,
+      "stderr": "fatal: path 'scripts/check_self.py' exists on disk, but not in 'bffc6550fd0b7da0509fe9ae8838efcf5fe9bc8c'"
+    },
+    {
+      "path": ".drift-gate.self.yml",
+      "exit_code": 128,
+      "stderr": "fatal: path '.drift-gate.self.yml' exists on disk, but not in 'bffc6550fd0b7da0509fe9ae8838efcf5fe9bc8c'"
+    }
+  ]
+}

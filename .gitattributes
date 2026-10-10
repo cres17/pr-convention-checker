@@ -1,0 +1,4 @@
+# Preserve downloaded verification bytes, including Windows CRLF JSON/logs.
+# Use -text rather than binary so textual review diffs remain available.
+docs/assessment/git-trust-implementation-2026-10-07/remote-final/** -text whitespace=cr-at-eol
+docs/assessment/bundle-implementation-2026-10-08/probe-store/** -text whitespace=cr-at-eol

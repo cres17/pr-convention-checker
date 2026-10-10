@@ -5,14 +5,20 @@ tools: ``initialize``, ``tools/list``, and ``tools/call``. It also accepts the
 legacy ``{"tool": "...", "args": {...}}`` JSON-line shape used by tests.
 """
 import json
+import inspect
 import os
 import sys
 from pathlib import Path
 
 from drift_gate.adapters.mcp import tools
 
+MAX_REQUEST_BYTES = 1_000_000
+MAX_RESPONSE_BYTES = 2_000_000
+ALLOWED_ROOT = None  # fixed when the server starts; requests cannot widen it
+
 
 TOOL_MAP = {
+    "drift_gate_check_git": tools.drift_gate_check_git,
     "drift_gate_check_local": tools.drift_gate_check_local,
     "drift_gate_check_pr": tools.drift_gate_check_pr,
     "drift_gate_get_evidence": tools.drift_gate_get_evidence,
@@ -25,6 +31,7 @@ TOOL_MAP = {
 
 
 TOOL_DESCRIPTIONS = {
+    "drift_gate_check_git": "Evaluate immutable Git objects using an explicit pinned policy; ignores working-tree edits.",
     "drift_gate_check_local": "Evaluate the current repository diff against .drift-gate.yml.",
     "drift_gate_check_pr": "Evaluate a GitHub pull request against .drift-gate.yml.",
     "drift_gate_get_evidence": "Fetch bounded diff evidence for one Drift Gate rule.",
@@ -37,15 +44,23 @@ TOOL_DESCRIPTIONS = {
 
 
 def handle_request(request: dict) -> dict:
+    if not isinstance(request, dict):
+        return _jsonrpc_error(None, -32600, "request must be an object; batches are unsupported")
     if "method" in request:
-        return _handle_jsonrpc(request)
+        response = _handle_jsonrpc(request)
+        if ('id' not in request and request.get('jsonrpc') == '2.0'
+            and isinstance(request.get('method'), str) and isinstance(request.get('params', {}), dict)):
+            return {}
+        return response
 
     tool_name = request.get("tool", "")
     args = request.get("args", {})
+    if not isinstance(tool_name, str) or not isinstance(args, dict):
+        return {"ok": False, "error": "tool must be a string and args an object"}
     if tool_name not in TOOL_MAP:
         return {"ok": False, "error": f"unknown tool: {tool_name}"}
     try:
-        return {"ok": True, "result": TOOL_MAP[tool_name](**args)}
+        return {"ok": True, "result": _call_tool(tool_name, args)}
     except Exception as exc:
         return {"ok": False, "error": str(exc)}
 
@@ -53,7 +68,11 @@ def handle_request(request: dict) -> dict:
 def _handle_jsonrpc(request: dict) -> dict:
     request_id = request.get("id")
     method = request.get("method", "")
-    params = request.get("params") or {}
+    params = request.get("params", {})
+    if (request.get("jsonrpc") != "2.0" or not isinstance(method, str)
+            or (request_id is not None and (type(request_id) not in (str, int)))
+            or not isinstance(params, dict)):
+        return _jsonrpc_error(None, -32600, "invalid JSON-RPC envelope")
 
     try:
         if method == "initialize":
@@ -66,14 +85,19 @@ def _handle_jsonrpc(request: dict) -> dict:
             result = {"tools": [_tool_schema(name) for name in sorted(TOOL_MAP)]}
         elif method == "tools/call":
             name = params.get("name", "")
-            args = params.get("arguments") or {}
+            args = params.get("arguments", {})
+            if not isinstance(name, str) or not isinstance(args, dict):
+                return _jsonrpc_error(request_id, -32602, "name must be a string and arguments an object")
             if name not in TOOL_MAP:
                 raise KeyError(f"unknown tool: {name}")
-            tool_result = TOOL_MAP[name](**args)
+            try:
+                tool_result = _call_tool(name, args)
+            except (TypeError, ValueError) as exc:
+                return _jsonrpc_error(request_id, -32602, str(exc))
             result = {
                 "content": [{
                     "type": "text",
-                    "text": json.dumps(tool_result, ensure_ascii=False, indent=2),
+                    "text": json.dumps(tool_result, ensure_ascii=False, indent=2, allow_nan=False),
                 }]
             }
         elif method.startswith("notifications/"):
@@ -93,32 +117,83 @@ def _jsonrpc_error(request_id, code: int, message: str) -> dict:
     }
 
 
+def _call_tool(name: str, arguments: dict):
+    function = TOOL_MAP[name]
+    bound = inspect.signature(function).bind(**arguments)
+    bound.apply_defaults()
+    for key, value in bound.arguments.items():
+        annotation = inspect.signature(function).parameters[key].annotation
+        if annotation in (str, int, bool) and type(value) is not annotation:
+            raise TypeError(f'{key} must be {annotation.__name__}')
+        if ALLOWED_ROOT is not None and key in ('path', 'policy_path', 'repo_root'):
+            if name == 'drift_gate_check_git' and key == 'policy_path':
+                from drift_gate.core.models.input_manifest import relative_path
+                relative_path(value)
+                continue
+            target = Path(value).expanduser().resolve()
+            if not target.is_relative_to(ALLOWED_ROOT):
+                raise ValueError(f'{key} is outside the server repository')
+            if target.is_file() and target.stat().st_size > MAX_REQUEST_BYTES:
+                raise ValueError(f'{key} exceeds the server file size limit')
+    return function(**arguments)
+
+
 def _tool_schema(name: str) -> dict:
+    parameters = inspect.signature(TOOL_MAP[name]).parameters
+    properties = {}
+    required = []
+    for key, parameter in parameters.items():
+        kind = {str: "string", int: "integer", bool: "boolean"}.get(parameter.annotation, "string")
+        properties[key] = {"type": kind}
+        if parameter.default is inspect.Parameter.empty:
+            required.append(key)
     return {
         "name": name,
         "description": TOOL_DESCRIPTIONS.get(name, name),
         "inputSchema": {
             "type": "object",
-            "additionalProperties": True,
-            "properties": {},
+            "additionalProperties": False,
+            "properties": properties,
+            "required": required,
         },
     }
 
 
 def main(argv=None) -> None:
+    global ALLOWED_ROOT
     repo = _parse_repo_arg(sys.argv[1:] if argv is None else argv)
     if repo:
         os.chdir(repo)
-    for line in sys.stdin:
+    ALLOWED_ROOT = Path.cwd().resolve()
+    while True:
+        line = sys.stdin.buffer.readline(MAX_REQUEST_BYTES + 1)
+        if not line:
+            break
+        if len(line) > MAX_REQUEST_BYTES:
+            while line and not line.endswith(b'\n'):
+                line = sys.stdin.buffer.readline(MAX_REQUEST_BYTES + 1)
+            print(json.dumps(_jsonrpc_error(None, -32600, 'request exceeds size limit')), flush=True)
+            continue
         if not line.strip():
             continue
+        request = None
         try:
-            request = json.loads(line)
+            request = json.loads(line.decode('utf-8'), parse_constant=lambda value: (_ for _ in ()).throw(ValueError(f'non-finite JSON number: {value}')))
             response = handle_request(request)
-        except json.JSONDecodeError as exc:
-            response = {"ok": False, "error": f"invalid json: {exc}"}
+        except (UnicodeDecodeError, json.JSONDecodeError, RecursionError, ValueError) as exc:
+            response = _jsonrpc_error(None, -32700, f'invalid json: {exc}')
+        except Exception as exc:
+            # A bad frame or tool must not terminate the remaining stdio session.
+            response = _jsonrpc_error(None, -32603, str(exc))
         if response:
-            print(json.dumps(response, ensure_ascii=False), flush=True)
+            try:
+                encoded = json.dumps(response, ensure_ascii=False, allow_nan=False)
+                if len(encoded.encode('utf-8')) > MAX_RESPONSE_BYTES:
+                    raise ValueError('response exceeds size limit')
+            except (ValueError, TypeError, RecursionError) as exc:
+                encoded = json.dumps(_jsonrpc_error(request.get('id') if isinstance(request, dict) else None,
+                                                    -32603, str(exc)))
+            print(encoded, flush=True)
 
 
 def _parse_repo_arg(argv) -> str:

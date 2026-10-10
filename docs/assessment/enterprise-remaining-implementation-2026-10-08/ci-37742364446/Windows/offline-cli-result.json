@@ -1,0 +1,76 @@
+{
+  "schema": "packaged-cli-check-v1",
+  "executable": "D:\\a\\pr-convention-checker\\pr-convention-checker\\dist\\DriftGate\\DriftGate.exe",
+  "executable_sha256": "ac8a0bf69872b4e5b2977f2ecfe063b71aeedb6ad149b48b0a628ee9576a078a",
+  "steps": [
+    {
+      "step": "check-with-evidence-and-journal",
+      "exit_code": 1,
+      "expected": [
+        1
+      ],
+      "stderr_tail": "",
+      "ok": true
+    },
+    {
+      "step": "bundle-verify",
+      "exit_code": 0,
+      "expected": [
+        0
+      ],
+      "stderr_tail": "",
+      "ok": true
+    },
+    {
+      "step": "bundle-replay",
+      "exit_code": 1,
+      "expected": [
+        1
+      ],
+      "stderr_tail": "",
+      "ok": true
+    },
+    {
+      "step": "bundle-spans",
+      "exit_code": 0,
+      "expected": [
+        0
+      ],
+      "stderr_tail": "",
+      "ok": true
+    }
+  ],
+  "gate_result": "fail",
+  "run_history": [
+    "requested",
+    "validated",
+    "captured",
+    "planned",
+    "analyzing",
+    "evaluated",
+    "result-validated",
+    "persisted",
+    "publication-skipped"
+  ],
+  "receipt_sha256": "2c3d3fee0a96abc3df69767cfe01cae37f00fa6b8e947d4f26462ce867221776",
+  "replay_matches": true,
+  "spans_verified": 3,
+  "producer": {
+    "authenticated": false,
+    "loaded_code_attested": false,
+    "packages": {
+      "PyYAML": null,
+      "drift-gate": null,
+      "tree-sitter": null,
+      "tree-sitter-language-pack": "1.20.0"
+    },
+    "parser_binary_attested": false,
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "schema": "observed-producer-v1",
+    "source_files": 0,
+    "source_scope": "available-core-adapters-utils-python-files",
+    "source_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "repository_deleted_before_replay": true,
+  "platform": "win32"
+}

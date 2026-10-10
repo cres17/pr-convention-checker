@@ -1,0 +1,400 @@
+{
+  "schema": "w15-live-publication-check-v1",
+  "repo": "cres17/pr-convention-checker",
+  "pr": 1,
+  "pr_head": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "executed_at": "2026-10-08T02:47:14.321522+00:00",
+  "code_commit": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "executor": "claude-session-direct-call-not-github-action",
+  "steps": [
+    {
+      "step": "A-create",
+      "expected": [
+        "published",
+        "provider-confirmed-write"
+      ],
+      "state": "published",
+      "reason": "provider-confirmed-write",
+      "writes": [
+        "create:sent"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "outcome": "response"
+        }
+      ],
+      "reconciliation": null,
+      "comments_before": [],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:46:50Z",
+          "key": "121522a82c973f00bcf3fe702b1a0afcab12bb8b9601023e19f772baf9710ce0",
+          "order": [
+            1,
+            1
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "121522a82c973f00bcf3fe702b1a0afcab12bb8b9601023e19f772baf9710ce0",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": "create",
+        "comment_id": 6051129812,
+        "url": "https://github.com/cres17/pr-convention-checker/pull/1#issuecomment-6051129812",
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "response"
+          }
+        ],
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "head_after": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "published",
+        "reason": "provider-confirmed-write",
+        "published": true
+      },
+      "matched_expectation": true
+    },
+    {
+      "step": "B-same-attempt-repeat",
+      "expected": [
+        "published",
+        "already-published-by-this-attempt"
+      ],
+      "state": "published",
+      "reason": "provider-confirmed-write",
+      "writes": [
+        "update:sent"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "outcome": "response"
+        }
+      ],
+      "reconciliation": null,
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:46:50Z",
+          "key": "121522a82c973f00bcf3fe702b1a0afcab12bb8b9601023e19f772baf9710ce0",
+          "order": [
+            1,
+            1
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:46:54Z",
+          "key": "121522a82c973f00bcf3fe702b1a0afcab12bb8b9601023e19f772baf9710ce0",
+          "order": [
+            1,
+            1
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "121522a82c973f00bcf3fe702b1a0afcab12bb8b9601023e19f772baf9710ce0",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": "update",
+        "comment_id": 6051129812,
+        "url": "https://github.com/cres17/pr-convention-checker/pull/1#issuecomment-6051129812",
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "response"
+          }
+        ],
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "head_after": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "published",
+        "reason": "provider-confirmed-write",
+        "published": true
+      },
+      "matched_expectation": false
+    },
+    {
+      "step": "C-update-response-lost-after-send",
+      "expected": [
+        "published",
+        "lost-response-reconciled-by-key"
+      ],
+      "state": "publication-rejected",
+      "reason": "idempotency-key-with-different-digest",
+      "writes": [
+        "update:sent"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "outcome": "lost-response",
+          "detail": "simulated: response lost after provider applied it"
+        }
+      ],
+      "reconciliation": {
+        "state": "publication-rejected",
+        "reason": "idempotency-key-with-different-digest",
+        "retry_safe": false,
+        "comment_id": 6051129812,
+        "duplicates": 0
+      },
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:46:54Z",
+          "key": "121522a82c973f00bcf3fe702b1a0afcab12bb8b9601023e19f772baf9710ce0",
+          "order": [
+            1,
+            1
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:46:59Z",
+          "key": "c391b149e2cfea2f6f35a58a10128e1ac2bdc1dbfba87a61859be610d5749756",
+          "order": [
+            1,
+            2
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "c391b149e2cfea2f6f35a58a10128e1ac2bdc1dbfba87a61859be610d5749756",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": "update",
+        "comment_id": 6051129812,
+        "url": null,
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "lost-response",
+            "detail": "simulated: response lost after provider applied it"
+          }
+        ],
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "reconciliation": {
+          "state": "publication-rejected",
+          "reason": "idempotency-key-with-different-digest",
+          "retry_safe": false,
+          "comment_id": 6051129812,
+          "duplicates": 0
+        },
+        "state": "publication-rejected",
+        "reason": "idempotency-key-with-different-digest"
+      },
+      "matched_expectation": false
+    },
+    {
+      "step": "D-update-dropped-before-send-retried",
+      "expected": [
+        "published",
+        "provider-confirmed-write"
+      ],
+      "state": "published",
+      "reason": "provider-confirmed-write",
+      "writes": [
+        "update:dropped-before-send",
+        "update:sent"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "outcome": "lost-response",
+          "detail": "simulated: request never sent"
+        },
+        {
+          "attempt": 2,
+          "outcome": "response"
+        }
+      ],
+      "reconciliation": {
+        "state": "publication-unknown",
+        "reason": "update-not-applied",
+        "retry_safe": true,
+        "comment_id": 6051129812,
+        "duplicates": 0
+      },
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:46:59Z",
+          "key": "c391b149e2cfea2f6f35a58a10128e1ac2bdc1dbfba87a61859be610d5749756",
+          "order": [
+            1,
+            2
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:47:04Z",
+          "key": "9e92193acdd3eda567444e0f6791275a6cfdc4e5b043525b48140d165438923a",
+          "order": [
+            1,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "9e92193acdd3eda567444e0f6791275a6cfdc4e5b043525b48140d165438923a",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": "update",
+        "comment_id": 6051129812,
+        "url": "https://github.com/cres17/pr-convention-checker/pull/1#issuecomment-6051129812",
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "lost-response",
+            "detail": "simulated: request never sent"
+          },
+          {
+            "attempt": 2,
+            "outcome": "response"
+          }
+        ],
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "reconciliation": {
+          "state": "publication-unknown",
+          "reason": "update-not-applied",
+          "retry_safe": true,
+          "comment_id": 6051129812,
+          "duplicates": 0
+        },
+        "head_after": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "published",
+        "reason": "provider-confirmed-write",
+        "published": true
+      },
+      "matched_expectation": true
+    },
+    {
+      "step": "E-older-attempt-after-newer",
+      "expected": [
+        "publication-stale",
+        "later-run-already-published"
+      ],
+      "state": "publication-stale",
+      "reason": "later-run-already-published",
+      "writes": [],
+      "attempts": [],
+      "reconciliation": null,
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:47:04Z",
+          "key": "9e92193acdd3eda567444e0f6791275a6cfdc4e5b043525b48140d165438923a",
+          "order": [
+            1,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:47:04Z",
+          "key": "9e92193acdd3eda567444e0f6791275a6cfdc4e5b043525b48140d165438923a",
+          "order": [
+            1,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "c391b149e2cfea2f6f35a58a10128e1ac2bdc1dbfba87a61859be610d5749756",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": null,
+        "comment_id": 6051129812,
+        "url": null,
+        "attempts": [],
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "publication-stale",
+        "reason": "later-run-already-published"
+      },
+      "matched_expectation": true
+    },
+    {
+      "step": "F-evaluated-head-not-current",
+      "expected": [
+        "publication-stale",
+        "head-changed-before-write"
+      ],
+      "state": "publication-stale",
+      "reason": "head-changed-before-write",
+      "writes": [],
+      "attempts": [],
+      "reconciliation": null,
+      "comments_before": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:47:04Z",
+          "key": "9e92193acdd3eda567444e0f6791275a6cfdc4e5b043525b48140d165438923a",
+          "order": [
+            1,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "comments_after": [
+        {
+          "id": 6051129812,
+          "updated_at": "2026-10-08T02:47:04Z",
+          "key": "9e92193acdd3eda567444e0f6791275a6cfdc4e5b043525b48140d165438923a",
+          "order": [
+            1,
+            3
+          ],
+          "body_intact": false
+        }
+      ],
+      "record": {
+        "schema": "pr-comment-publication-record-v1",
+        "idempotency_key": "e71556d49fb9d9642370d76c0dd7a7ce93791d1b6ecc65d47c6b31557cdf273f",
+        "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+        "expected_head_oid": "ed9f9046cca46c79b379ccdbafaa08feaa8241d6",
+        "race_window": "read-check-write-not-atomic-on-provider",
+        "operation": null,
+        "comment_id": null,
+        "url": null,
+        "attempts": [],
+        "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+        "state": "publication-stale",
+        "reason": "head-changed-before-write"
+      },
+      "matched_expectation": true
+    }
+  ],
+  "all_matched": false
+}

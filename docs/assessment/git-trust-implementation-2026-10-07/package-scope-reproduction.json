@@ -1,0 +1,279 @@
+{
+  "old_source_commit": "92f9ae7020217425e0fc199ea833da16202310d2",
+  "old_validator_rejected": "Unexpected changed files for package signature fixture",
+  "new_validator_accepted": true,
+  "scanned_observations": 2,
+  "actual_source_changes": 1,
+  "result": {
+    "schema_version": 3,
+    "verification": "unverified",
+    "summary": {
+      "blocker": 0,
+      "major": 1,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "warn",
+      "undetermined_rules": 0,
+      "unverified_rules": 1
+    },
+    "scan_metrics": {
+      "scanned_files": 2,
+      "skipped_ignored_files": 0,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 1,
+      "runtime_seconds": 0.061633457953576,
+      "analysis_notes": [
+        {
+          "path": "src/api.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "docs/api.md",
+          "method": "unavailable",
+          "reason": "Patch unavailable; intensity cannot exclude a contract change"
+        }
+      ]
+    },
+    "result": "warn",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "other"
+    ],
+    "violations": [
+      {
+        "rule_id": "offline-api-docs",
+        "severity": "MAJOR",
+        "confidence": "low",
+        "confidence_basis": "path-specificity; not a probability of correctness",
+        "change_types": [
+          "other"
+        ],
+        "change_type": "other",
+        "message": "API changes require documentation",
+        "trigger_files": [
+          {
+            "path": "src/api.py",
+            "status": "modified",
+            "previous_path": null,
+            "patch": "diff --git a/src/api.py b/src/api.py\nindex 1721f4d..41427ad 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -1,4 +1,6 @@\n def api(a,\n+        *extra,\n         b=1,\n+        **options,\n ):\n     return a\n",
+            "semantic_signals": [],
+            "semantic_evidence": [
+              "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+            ],
+            "analysis_method": "heuristic",
+            "analysis_reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used",
+            "documented_env_keys": null,
+            "document_input_state": ""
+          }
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "API documentation",
+            "required": [
+              "docs/api.md"
+            ],
+            "type": "any_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "violated",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "checklist": [
+          "API documentation \uc5c5\ub370\uc774\ud2b8"
+        ],
+        "ignored": false,
+        "change_intensity": "impl-only",
+        "change_intensities": [
+          "impl-only"
+        ],
+        "trigger_patterns": [
+          "src/**"
+        ],
+        "blast_radius": [
+          "missing requirement group: API documentation"
+        ],
+        "missing_docs_explanation": "",
+        "changed_contract_summary": "",
+        "docs_update_draft": "",
+        "false_positive_note": "",
+        "cross_file_relations": []
+      }
+    ],
+    "rule_decisions": [
+      {
+        "rule_id": "offline-api-docs",
+        "severity": "MAJOR",
+        "status": "fail",
+        "decision": "violated",
+        "verification": "unverified",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "src/**"
+        ],
+        "trigger_files": [
+          "src/api.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "API documentation",
+            "required": [
+              "docs/api.md"
+            ],
+            "type": "any_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "violated",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ]
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 2,
+      "on_unverified": "fail"
+    },
+    "execution": {
+      "schema_version": 2,
+      "run_id": "44f187728282460a8256722a57904890",
+      "started_at": "2026-10-07T14:35:13.475235+00:00",
+      "status": "success",
+      "comparison_mode": "commit",
+      "dirty": true,
+      "head": "1463b311dd7cc3dac28d0b607bf175cb56b37fb6",
+      "requested_base": "HEAD",
+      "resolved_base": "1463b311dd7cc3dac28d0b607bf175cb56b37fb6",
+      "snapshot_sha256": "28ffa519c877665b08c9c0072a9bb24cdfc9320282d328d1108759197f678dc0",
+      "source": "local-git",
+      "untracked_skipped": [],
+      "policy_sha256": "2666df5595177d82b1ce24dc9af67c9333d18485dd154350257acd3369103069",
+      "policy_digest_kind": "source",
+      "warnings": [],
+      "evaluation_context": {
+        "evaluated_on": "2026-10-07",
+        "date_basis": "UTC"
+      },
+      "input_digest_version": 3,
+      "input_sha256": "147ba6385ab9455349e6b7b7f9a3a4b7d244f54ce43f73c5df73d180698a25ce",
+      "policy_path": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/tmp3j3cowo1/.drift-gate.yml",
+      "untracked_skipped_count": 0,
+      "input_capture": {
+        "schema": "input-manifest-v1",
+        "digest_protocol": "python-json-observation-v1",
+        "input_sha256": "377fb3293e8d88c9a872d0a5fedc1a8083916acd16bb4b1690c18a0db1340448",
+        "collection_mode": "captured-working-tree",
+        "atomicity": "per-artifact-observation",
+        "original_bytes_certified": false,
+        "revision_certified": false,
+        "policy_authority": "unverified-caller-input",
+        "selection_complete": false,
+        "artifacts": [
+          {
+            "path": "@policy",
+            "role": "policy-semantics",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "423142f86e257fe275dda236a6a41e9bc72f5923f5cd04a2845079fffda4cadd",
+            "observed_text_bytes": 628,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "@policy",
+            "role": "policy-source",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "2666df5595177d82b1ce24dc9af67c9333d18485dd154350257acd3369103069",
+            "observed_text_bytes": 277,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "docs/api.md",
+            "role": "after-source",
+            "state": "absent",
+            "reason": "adapter_declared_document_missing",
+            "observed_text_sha256": null,
+            "observed_text_bytes": null,
+            "encoding": null
+          },
+          {
+            "path": "docs/api.md",
+            "role": "before-source",
+            "state": "not-collected",
+            "reason": "not_collected",
+            "observed_text_sha256": null,
+            "observed_text_bytes": null,
+            "encoding": null
+          },
+          {
+            "path": "docs/api.md",
+            "role": "document-json",
+            "state": "not-collected",
+            "reason": "not_collected",
+            "observed_text_sha256": null,
+            "observed_text_bytes": null,
+            "encoding": null
+          },
+          {
+            "path": "docs/api.md",
+            "role": "patch",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "observed_text_bytes": 0,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "src/api.py",
+            "role": "after-source",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "ff4983720d6f0dccb3032d88c526a966657264a823e7da20d2f39617363bbce7",
+            "observed_text_bytes": 75,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "src/api.py",
+            "role": "before-source",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "bc98ee4441a6590876dd11fc2a08fd97ff0d88d4e830fb25986e1ddd8565d374",
+            "observed_text_bytes": 40,
+            "encoding": "utf-8-observed-text"
+          },
+          {
+            "path": "src/api.py",
+            "role": "document-json",
+            "state": "not-collected",
+            "reason": "not_collected",
+            "observed_text_sha256": null,
+            "observed_text_bytes": null,
+            "encoding": null
+          },
+          {
+            "path": "src/api.py",
+            "role": "patch",
+            "state": "present",
+            "reason": "",
+            "observed_text_sha256": "28ffa519c877665b08c9c0072a9bb24cdfc9320282d328d1108759197f678dc0",
+            "observed_text_bytes": 198,
+            "encoding": "utf-8-observed-text"
+          }
+        ],
+        "manifest_sha256": "0c53744ae55912c38ee5f6e2e035bcad7e0d6fd2e2053a83714f4c9d16a8fcb2",
+        "retention": "process-memory-only",
+        "replay_scope": "captured-inputs-current-engine"
+      }
+    }
+  }
+}

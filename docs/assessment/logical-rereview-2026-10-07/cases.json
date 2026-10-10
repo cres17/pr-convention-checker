@@ -1,0 +1,596 @@
+[
+  {
+    "id": "R1-relative-framework-import",
+    "policy": {
+      "rules": [
+        {
+          "id": "response-contract",
+          "severity": "blocker",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "any_changed": [
+                  "openapi.json"
+                ],
+                "content": "api-schema"
+              }
+            ]
+          }
+        }
+      ],
+      "gate": {
+        "on_unverified": "warn"
+      }
+    },
+    "files": [
+      {
+        "path": "src/api.py",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "-from fastapi import FastAPI\n-from pydantic import BaseModel\n-app = FastAPI()\n-class Order(BaseModel):\n-    id: int\n-    label: str\n-@app.get('/orders', response_model=Order)\n-def orders():\n-    return {}\n-\n+from .fastapi import FastAPI\n+from pydantic import BaseModel\n+app = FastAPI()\n+class Order(BaseModel):\n+    id: int\n+@app.get('/orders', response_model=Order)\n+def orders():\n+    return {}\n+",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n    label: str\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n",
+        "after_source": "from .fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n"
+      },
+      {
+        "path": "openapi.json",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "+contract updated\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": null,
+        "after_source": "{\"openapi\": \"3.1.0\", \"paths\": {\"/orders\": {\"get\": {\"responses\": {\"200\": {\"content\": {\"application/json\": {\"schema\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}}, \"required\": [\"id\"]}}}}}}}}}"
+      }
+    ],
+    "expected": {
+      "gate": "warn",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "violations": 0
+    }
+  },
+  {
+    "id": "R1-relative-model-import",
+    "policy": {
+      "rules": [
+        {
+          "id": "response-contract",
+          "severity": "blocker",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "any_changed": [
+                  "openapi.json"
+                ],
+                "content": "api-schema"
+              }
+            ]
+          }
+        }
+      ],
+      "gate": {
+        "on_unverified": "warn"
+      }
+    },
+    "files": [
+      {
+        "path": "src/api.py",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "-from fastapi import FastAPI\n-from pydantic import BaseModel\n-app = FastAPI()\n-class Order(BaseModel):\n-    id: int\n-    label: str\n-@app.get('/orders', response_model=Order)\n-def orders():\n-    return {}\n-\n+from fastapi import FastAPI\n+from .pydantic import BaseModel\n+app = FastAPI()\n+class Order(BaseModel):\n+    id: int\n+@app.get('/orders', response_model=Order)\n+def orders():\n+    return {}\n+",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n    label: str\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n",
+        "after_source": "from fastapi import FastAPI\nfrom .pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n"
+      },
+      {
+        "path": "openapi.json",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "+contract updated\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": null,
+        "after_source": "{\"openapi\": \"3.1.0\", \"paths\": {\"/orders\": {\"get\": {\"responses\": {\"200\": {\"content\": {\"application/json\": {\"schema\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}}, \"required\": [\"id\"]}}}}}}}}}"
+      }
+    ],
+    "expected": {
+      "gate": "warn",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "violations": 0
+    }
+  },
+  {
+    "id": "R1-conditional-primitive-shadow",
+    "policy": {
+      "rules": [
+        {
+          "id": "response-contract",
+          "severity": "blocker",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "any_changed": [
+                  "openapi.json"
+                ],
+                "content": "api-schema"
+              }
+            ]
+          }
+        }
+      ],
+      "gate": {
+        "on_unverified": "warn"
+      }
+    },
+    "files": [
+      {
+        "path": "src/api.py",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "-from fastapi import FastAPI\n-from pydantic import BaseModel\n-app = FastAPI()\n-class Order(BaseModel):\n-    id: int\n-    label: str\n-@app.get('/orders', response_model=Order)\n-def orders():\n-    return {}\n-\n+from fastapi import FastAPI\n+from pydantic import BaseModel\n+app = FastAPI()\n+if True:\n+    int = str\n+class Order(BaseModel):\n+    id: int\n+@app.get('/orders', response_model=Order)\n+def orders():\n+    return {}\n+",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n    label: str\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n",
+        "after_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nif True:\n    int = str\nclass Order(BaseModel):\n    id: int\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n"
+      },
+      {
+        "path": "openapi.json",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "+contract updated\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": null,
+        "after_source": "{\"openapi\": \"3.1.0\", \"paths\": {\"/orders\": {\"get\": {\"responses\": {\"200\": {\"content\": {\"application/json\": {\"schema\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}}, \"required\": [\"id\"]}}}}}}}}}"
+      }
+    ],
+    "expected": {
+      "gate": "warn",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "violations": 0
+    }
+  },
+  {
+    "id": "R1-unresolved-decorator",
+    "policy": {
+      "rules": [
+        {
+          "id": "response-contract",
+          "severity": "blocker",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "any_changed": [
+                  "openapi.json"
+                ],
+                "content": "api-schema"
+              }
+            ]
+          }
+        }
+      ],
+      "gate": {
+        "on_unverified": "warn"
+      }
+    },
+    "files": [
+      {
+        "path": "src/api.py",
+        "status": "added",
+        "previous_path": null,
+        "patch": "-\n+from my_routes import get\n+@get('/orders', response_model=Order)\n+def orders():\n+    return {}\n+",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": "",
+        "after_source": "from my_routes import get\n@get('/orders', response_model=Order)\ndef orders():\n    return {}\n"
+      },
+      {
+        "path": "openapi.json",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "+contract updated\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": null,
+        "after_source": "{\"openapi\": \"3.1.0\", \"paths\": {\"/orders\": {\"get\": {\"responses\": {\"200\": {\"content\": {\"application/json\": {\"schema\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}}, \"required\": [\"id\"]}}}}}}}}}"
+      }
+    ],
+    "expected": {
+      "gate": "warn",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "violations": 0
+    }
+  },
+  {
+    "id": "R2-deleted-route-ref",
+    "policy": {
+      "rules": [
+        {
+          "id": "response-contract",
+          "severity": "blocker",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "any_changed": [
+                  "openapi.json"
+                ],
+                "content": "api-schema"
+              }
+            ]
+          }
+        }
+      ],
+      "gate": {
+        "on_unverified": "warn"
+      }
+    },
+    "files": [
+      {
+        "path": "src/api.py",
+        "status": "deleted",
+        "previous_path": null,
+        "patch": "-from fastapi import FastAPI\n-from pydantic import BaseModel\n-app = FastAPI()\n-class Order(BaseModel):\n-    id: int\n-    label: str\n-@app.get('/orders', response_model=Order)\n-def orders():\n-    return {}\n-\n+",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n    label: str\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n",
+        "after_source": ""
+      },
+      {
+        "path": "openapi.json",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "+contract updated\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": null,
+        "after_source": "{\"openapi\": \"3.1.0\", \"paths\": {\"/orders\": {\"$ref\": \"./legacy.json#/orders\"}}}"
+      }
+    ],
+    "expected": {
+      "gate": "warn",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "violations": 0
+    }
+  },
+  {
+    "id": "R2-null-operation",
+    "policy": {
+      "rules": [
+        {
+          "id": "response-contract",
+          "severity": "blocker",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "any_changed": [
+                  "openapi.json"
+                ],
+                "content": "api-schema"
+              }
+            ]
+          }
+        }
+      ],
+      "gate": {
+        "on_unverified": "warn"
+      }
+    },
+    "files": [
+      {
+        "path": "src/api.py",
+        "status": "deleted",
+        "previous_path": null,
+        "patch": "-from fastapi import FastAPI\n-from pydantic import BaseModel\n-app = FastAPI()\n-class Order(BaseModel):\n-    id: int\n-    label: str\n-@app.get('/orders', response_model=Order)\n-def orders():\n-    return {}\n-\n+",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n    label: str\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n",
+        "after_source": ""
+      },
+      {
+        "path": "openapi.json",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "+contract updated\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": null,
+        "after_source": "{\"openapi\": \"3.1.0\", \"paths\": {\"/orders\": {\"get\": null}}}"
+      }
+    ],
+    "expected": {
+      "gate": "warn",
+      "decision": "undetermined",
+      "verification": "unverified",
+      "violations": 0
+    }
+  },
+  {
+    "id": "R3-known-and-unknown-contracts",
+    "policy": {
+      "rules": [
+        {
+          "id": "response-contract",
+          "severity": "blocker",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "any_changed": [
+                  "openapi.json"
+                ],
+                "content": "api-schema"
+              }
+            ]
+          }
+        }
+      ],
+      "gate": {
+        "on_unverified": "warn"
+      }
+    },
+    "files": [
+      {
+        "path": "src/api.py",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "-from fastapi import FastAPI\n-from pydantic import BaseModel\n-app = FastAPI()\n-class Order(BaseModel):\n-    id: int\n-    label: str\n-@app.get('/orders', response_model=Order)\n-def orders():\n-    return {}\n-@app.get('/billing', response_model=Order)\n-def billing():\n-    return {}\n-\n+from fastapi import FastAPI\n+from pydantic import BaseModel\n+app = FastAPI()\n+class Order(BaseModel):\n+    id: int\n+@app.get('/orders', response_model=Order)\n+def orders():\n+    return {}\n+@app.get('/billing', response_model=Order)\n+def billing():\n+    return {}\n+",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n    label: str\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n@app.get('/billing', response_model=Order)\ndef billing():\n    return {}\n",
+        "after_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n@app.get('/billing', response_model=Order)\ndef billing():\n    return {}\n"
+      },
+      {
+        "path": "openapi.json",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "+contract updated\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": null,
+        "after_source": "{\"openapi\": \"3.1.0\", \"paths\": {\"/orders\": {\"get\": {\"responses\": {\"200\": {\"content\": {\"application/json\": {\"schema\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"string\"}}, \"required\": [\"id\"]}}}}}}}, \"/billing\": {\"get\": {\"responses\": {\"200\": {\"content\": {\"application/json\": {\"schema\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}}}}}}}}"
+      }
+    ],
+    "expected": {
+      "gate": "fail",
+      "decision": "violated",
+      "verification": "partial",
+      "violations": 1
+    }
+  },
+  {
+    "id": "control-matching",
+    "policy": {
+      "rules": [
+        {
+          "id": "response-contract",
+          "severity": "blocker",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "any_changed": [
+                  "openapi.json"
+                ],
+                "content": "api-schema"
+              }
+            ]
+          }
+        }
+      ],
+      "gate": {
+        "on_unverified": "warn"
+      }
+    },
+    "files": [
+      {
+        "path": "src/api.py",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "-from fastapi import FastAPI\n-from pydantic import BaseModel\n-app = FastAPI()\n-class Order(BaseModel):\n-    id: int\n-    label: str\n-@app.get('/orders', response_model=Order)\n-def orders():\n-    return {}\n-\n+from fastapi import FastAPI\n+from pydantic import BaseModel\n+app = FastAPI()\n+class Order(BaseModel):\n+    id: int\n+@app.get('/orders', response_model=Order)\n+def orders():\n+    return {}\n+",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n    label: str\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n",
+        "after_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n"
+      },
+      {
+        "path": "openapi.json",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "+contract updated\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": null,
+        "after_source": "{\"openapi\": \"3.1.0\", \"paths\": {\"/orders\": {\"get\": {\"responses\": {\"200\": {\"content\": {\"application/json\": {\"schema\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"integer\"}}, \"required\": [\"id\"]}}}}}}}}}"
+      }
+    ],
+    "expected": {
+      "gate": "pass",
+      "decision": "satisfied",
+      "verification": "verified",
+      "violations": 0
+    }
+  },
+  {
+    "id": "control-deleted-absent",
+    "policy": {
+      "rules": [
+        {
+          "id": "response-contract",
+          "severity": "blocker",
+          "when": {
+            "any_changed": [
+              "src/**"
+            ]
+          },
+          "require": {
+            "groups": [
+              {
+                "name": "API",
+                "any_changed": [
+                  "openapi.json"
+                ],
+                "content": "api-schema"
+              }
+            ]
+          }
+        }
+      ],
+      "gate": {
+        "on_unverified": "warn"
+      }
+    },
+    "files": [
+      {
+        "path": "src/api.py",
+        "status": "deleted",
+        "previous_path": null,
+        "patch": "-from fastapi import FastAPI\n-from pydantic import BaseModel\n-app = FastAPI()\n-class Order(BaseModel):\n-    id: int\n-    label: str\n-@app.get('/orders', response_model=Order)\n-def orders():\n-    return {}\n-\n+",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Order(BaseModel):\n    id: int\n    label: str\n@app.get('/orders', response_model=Order)\ndef orders():\n    return {}\n",
+        "after_source": ""
+      },
+      {
+        "path": "openapi.json",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "+contract updated\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "not-analyzed",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "document_input_state": "",
+        "before_source": null,
+        "after_source": "{\"openapi\": \"3.1.0\", \"paths\": {}}"
+      }
+    ],
+    "expected": {
+      "gate": "pass",
+      "decision": "satisfied",
+      "verification": "verified",
+      "violations": 0
+    }
+  }
+]

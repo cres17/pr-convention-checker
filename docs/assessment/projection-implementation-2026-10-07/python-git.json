@@ -1,0 +1,1888 @@
+{
+  "protocol": {
+    "version": 2,
+    "input": "real Git before/after snapshots and bounded current documents",
+    "axes": [
+      "facts",
+      "decision",
+      "verification",
+      "gate"
+    ],
+    "authorship": "author-created, non-blind; regression controls, not real PR accuracy",
+    "freeze": "expected values written before first harness run; suite v1 remains unchanged"
+  },
+  "suite_sha256": "b5c66c01a9f07c794563c1b99d07971527a8b258b937549a0d60dc296c98830d",
+  "counts": {
+    "facts": {
+      "correct": 14,
+      "total": 14
+    },
+    "decision": {
+      "correct": 14,
+      "total": 14
+    },
+    "verification": {
+      "correct": 14,
+      "total": 14
+    },
+    "gate": {
+      "correct": 14,
+      "total": 14
+    }
+  },
+  "false_verified": [],
+  "missed_known_violations": [],
+  "cases": [
+    {
+      "id": "multiline-current",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.01153916702605784,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; Complete document route coverage; add GET /new; remove GET /old",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "dec5ae19c33043a58f0c0098780469dc",
+          "started_at": "2026-10-07T12:47:25.668057+00:00",
+          "status": "success",
+          "policy_sha256": "e3f2dd51976c8a773f3080a9dc44625a57c08eae41c0b9a03adf2370e85c7fb3",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "35d13fa53492b0ea4cee331e2357c1dd6591bc512ece8d85a1f9c90382fc6693"
+        }
+      },
+      "input_sha256": "35d13fa53492b0ea4cee331e2357c1dd6591bc512ece8d85a1f9c90382fc6693"
+    },
+    {
+      "id": "multiline-stale",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0024058329872787,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "confidence": "low",
+            "confidence_basis": "path-specificity; not a probability of correctness",
+            "change_types": [
+              "other"
+            ],
+            "change_type": "other",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/api.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "diff --git a/src/api.py b/src/api.py\nindex 4c396a2..ce040b9 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -1,7 +1,7 @@\n from fastapi import FastAPI\n app = FastAPI()\n @app.get(\n-    '/old'\n+    '/new'\n )\n def read():\n     return {}\n",
+                "semantic_signals": [],
+                "semantic_evidence": [],
+                "analysis_method": "grammar+heuristic",
+                "analysis_reason": "",
+                "documented_env_keys": null,
+                "document_input_state": ""
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; Complete document route coverage; add GET /new; remove GET /old",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "checklist": [
+              "document 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "impl-only",
+            "change_intensities": [
+              "impl-only"
+            ],
+            "trigger_patterns": [
+              "src/**"
+            ],
+            "blast_radius": [
+              "missing requirement group: document"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "decision": "violated",
+            "verification": "verified",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; Complete document route coverage; add GET /new; remove GET /old",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "06e41557f0154c9da656021425342521",
+          "started_at": "2026-10-07T12:47:25.786856+00:00",
+          "status": "success",
+          "policy_sha256": "d73cef636f3fd07af45bc84142fa57445e630763ad747250c9e7deb337936327",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "04f9863f30b9f5e1dc040f9af920dbabe1b0fba29ac2ecc1664036ce5f14dece"
+        }
+      },
+      "input_sha256": "04f9863f30b9f5e1dc040f9af920dbabe1b0fba29ac2ecc1664036ce5f14dece"
+    },
+    {
+      "id": "prefix-yaml-current",
+      "expected": {
+        "facts": {
+          "added": [
+            "POST /api/new/item"
+          ],
+          "removed": [
+            "POST /api/old/item"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "POST /api/new/item"
+          ],
+          "removed": [
+            "POST /api/old/item"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.003875333000905812,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "openapi.yaml",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.yaml"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; Complete document route coverage; add POST /api/new/item; remove POST /api/old/item",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "7e1c7c7755f447f590f6454abb8ec167",
+          "started_at": "2026-10-07T12:47:25.949776+00:00",
+          "status": "success",
+          "policy_sha256": "95af6338629b5f83819674778aeed2943c007b56db4c1ad1257cdf724d443366",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "e1c77ee6fd4ee241d9eb5152a824e9e450513f28cfbee07ce30cbaa9432c2977"
+        }
+      },
+      "input_sha256": "e1c77ee6fd4ee241d9eb5152a824e9e450513f28cfbee07ce30cbaa9432c2977"
+    },
+    {
+      "id": "unmounted-router-no-delta",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": []
+        },
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [],
+          "removed": []
+        },
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "not-applicable",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.006801292009186,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "openapi.json",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "not-applicable",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete source establishes no route delta",
+                "decision": "satisfied",
+                "verification": "not-applicable",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "7961f1179d044dd498ba9639afb2d007",
+          "started_at": "2026-10-07T12:47:26.151185+00:00",
+          "status": "success",
+          "policy_sha256": "a357e6f20ec7625647679489f87084fb54aad9407d618aa7d3bb283c18b4d3e7",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "22f959d5fc9bfbdd48e49bc5e20bcde009583641c70af2c6f22fd15393625ed4"
+        }
+      },
+      "input_sha256": "22f959d5fc9bfbdd48e49bc5e20bcde009583641c70af2c6f22fd15393625ed4"
+    },
+    {
+      "id": "response-field-deleted",
+      "expected": {
+        "facts": {
+          "PUT /items": {
+            "sku": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "PUT /items": {
+            "sku": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0038719589938409626,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "openapi.json",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-schema; PUT /items: response schema matches; changed response contracts: PUT /items",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "bf49ad809f6144348a0f974e13851cc2",
+          "started_at": "2026-10-07T12:47:26.355245+00:00",
+          "status": "success",
+          "policy_sha256": "a357e6f20ec7625647679489f87084fb54aad9407d618aa7d3bb283c18b4d3e7",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "87ae648bc0bcdb27162659da1acd97d867bfa51b5f3096c41450ed0e8efaf2e3"
+        }
+      },
+      "input_sha256": "87ae648bc0bcdb27162659da1acd97d867bfa51b5f3096c41450ed0e8efaf2e3"
+    },
+    {
+      "id": "response-name-only",
+      "expected": {
+        "facts": {},
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {},
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "not-applicable",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.00479579099919647,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "heuristic",
+              "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+            },
+            {
+              "path": "openapi.json",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "not-applicable",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-schema; No response contract delta in the supported static subset",
+                "decision": "satisfied",
+                "verification": "not-applicable",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "f6eb9097e7394eff8ccf48b6a9341d14",
+          "started_at": "2026-10-07T12:47:26.509083+00:00",
+          "status": "success",
+          "policy_sha256": "a357e6f20ec7625647679489f87084fb54aad9407d618aa7d3bb283c18b4d3e7",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "19e68f12bda0cc5d8ea9d6aaa1df88c1ad01192de1d5dafafcdeadea609cac32"
+        }
+      },
+      "input_sha256": "19e68f12bda0cc5d8ea9d6aaa1df88c1ad01192de1d5dafafcdeadea609cac32"
+    },
+    {
+      "id": "alias-preexisting-document",
+      "expected": {
+        "facts": [
+          "RETRY_DELAY"
+        ],
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": [
+          "RETRY_DELAY"
+        ],
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0010769590153358877,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": ".env.example",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "Required environment keys: RETRY_DELAY; Required environment keys: RETRY_DELAY",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "env-keys"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "bab9ec3b6d9f416499f7cc4b926194a1",
+          "started_at": "2026-10-07T12:47:26.679425+00:00",
+          "status": "success",
+          "policy_sha256": "ae64bd325f2efb1ec6816fc5c39619d88bf521902f19326ec12cfdd10078ca2f",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "f827f07e57bf401b40333eeada542d11c49bd98bb969da81fa8261110d28ff53"
+        }
+      },
+      "input_sha256": "f827f07e57bf401b40333eeada542d11c49bd98bb969da81fa8261110d28ff53"
+    },
+    {
+      "id": "alias-missing-document",
+      "expected": {
+        "facts": [
+          "RETRY_DELAY"
+        ],
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "actual": {
+        "facts": [
+          "RETRY_DELAY"
+        ],
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0010429579997435212,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": ".env.example",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config",
+          "other"
+        ],
+        "violations": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "confidence": "low",
+            "confidence_basis": "path-specificity; not a probability of correctness",
+            "change_types": [
+              "other"
+            ],
+            "change_type": "other",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/api.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "diff --git a/src/api.py b/src/api.py\nindex e69de29..cb2fd4f 100644\n--- a/src/api.py\n+++ b/src/api.py\n@@ -0,0 +1,2 @@\n+from os import getenv as lookup\n+value = lookup('RETRY_DELAY')\n",
+                "semantic_signals": [
+                  "env-key-added"
+                ],
+                "semantic_evidence": [],
+                "analysis_method": "grammar+heuristic",
+                "analysis_reason": "",
+                "documented_env_keys": null,
+                "document_input_state": ""
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "Required environment keys: RETRY_DELAY; Required environment keys: RETRY_DELAY",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "env-keys"
+              }
+            ],
+            "checklist": [
+              "document 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "config-key-added",
+            "change_intensities": [
+              "config-key-added"
+            ],
+            "trigger_patterns": [
+              "src/**"
+            ],
+            "blast_radius": [
+              ".env.example consumers",
+              "deployment configuration",
+              "missing requirement group: document",
+              "runtime operators"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "decision": "violated",
+            "verification": "verified",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "Required environment keys: RETRY_DELAY; Required environment keys: RETRY_DELAY",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "env-keys"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "c94740e81ad04d58aa8b4ebe8fa6f660",
+          "started_at": "2026-10-07T12:47:26.835427+00:00",
+          "status": "success",
+          "policy_sha256": "ae64bd325f2efb1ec6816fc5c39619d88bf521902f19326ec12cfdd10078ca2f",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "44b35c00cfcd4d85fe80d4247bc8b73f174da3f34c4f8737ccf5631f7caa460d"
+        }
+      },
+      "input_sha256": "44b35c00cfcd4d85fe80d4247bc8b73f174da3f34c4f8737ccf5631f7caa460d"
+    },
+    {
+      "id": "dynamic-key-unknown",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.00048520800191909075,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": ".env.example",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "No static new environment keys could be established from this change; configured trigger threshold is unverified",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "env-keys"
+              },
+              {
+                "name": "Analysis evidence unavailable",
+                "required": [
+                  "src/api.py"
+                ],
+                "type": "analysis",
+                "evidence": "Cannot establish the configured change threshold; provide analyzable input or a valid exception",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "paths"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "9332c1b2996b428eb966dc0ca0c85593",
+          "started_at": "2026-10-07T12:47:26.971498+00:00",
+          "status": "success",
+          "policy_sha256": "ae64bd325f2efb1ec6816fc5c39619d88bf521902f19326ec12cfdd10078ca2f",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "006bf92a2446270de471dc85fe5347c6f9daaa6cc9f5551b74387a6a5eb55c31"
+        }
+      },
+      "input_sha256": "006bf92a2446270de471dc85fe5347c6f9daaa6cc9f5551b74387a6a5eb55c31"
+    },
+    {
+      "id": "shadowed-getter-unknown",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0003356669913046062,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": ".env.example",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "No static new environment keys could be established from this change",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "env-keys"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "ead01912f87046548a529fdc92ca600f",
+          "started_at": "2026-10-07T12:47:27.103460+00:00",
+          "status": "success",
+          "policy_sha256": "22623c7c522fac7087286c929edb815ff26d9f10b130601a0a4e5b1836432e69",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "385a300defaf0fa4988e97f25cfb692d3bd3b25f9843f690deda95ea8cd894ba"
+        }
+      },
+      "input_sha256": "385a300defaf0fa4988e97f25cfb692d3bd3b25f9843f690deda95ea8cd894ba"
+    },
+    {
+      "id": "yaml-duplicate-unknown",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.002978875010740012,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "openapi.yaml",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.yaml"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; Document could not be read or safely decoded; add GET /new; remove GET /old",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "auto-strict"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "1a889f6fc1a24360a0c7b004940350f1",
+          "started_at": "2026-10-07T12:47:27.246078+00:00",
+          "status": "success",
+          "policy_sha256": "ae6b355c94777a1a29563755bc782847187aecbafa263a8cbf3f3a2e8159aae4",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "f4150cfbdb9d32fdafad59f9116ba8c8b3fbc4bbc5de9c687afdff3cd4856328"
+        }
+      },
+      "input_sha256": "f4150cfbdb9d32fdafad59f9116ba8c8b3fbc4bbc5de9c687afdff3cd4856328"
+    },
+    {
+      "id": "module-control-unknown",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0017322080093435943,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "openapi.json",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  "openapi.json"
+                ],
+                "type": "all_changed",
+                "evidence": "auto-strict selected api-routes; conditional module declarations are unsupported",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "auto-strict"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "7bbde25cea3e42dfade07dff416615b4",
+          "started_at": "2026-10-07T12:47:27.382021+00:00",
+          "status": "success",
+          "policy_sha256": "a357e6f20ec7625647679489f87084fb54aad9407d618aa7d3bb283c18b4d3e7",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "be85caf8337a0cc0c1a64b48253a23442c1a181e8cabbdb430df98a26658a5cb"
+        }
+      },
+      "input_sha256": "be85caf8337a0cc0c1a64b48253a23442c1a181e8cabbdb430df98a26658a5cb"
+    },
+    {
+      "id": "comment-no-contract",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": []
+        },
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [],
+          "removed": []
+        },
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "not-applicable",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 0,
+          "runtime_seconds": 0.0018353330087848008,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "heuristic",
+              "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+            },
+            {
+              "path": "openapi.json",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "decision": "not-applicable",
+            "verification": "not-applicable",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "dabe8907cd91427ca8deb9b6db94761a",
+          "started_at": "2026-10-07T12:47:27.512901+00:00",
+          "status": "success",
+          "policy_sha256": "3670e93b5b858e1ce36247b8f0beb6689e62aaa7d48fa83870da02508bd6d517",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "30f17e981d277c21ec96497d20d8b4ec2aca2ca45bbbd0d33136d6b7977cf6e2"
+        }
+      },
+      "input_sha256": "30f17e981d277c21ec96497d20d8b4ec2aca2ca45bbbd0d33136d6b7977cf6e2"
+    },
+    {
+      "id": "missing-getter-import",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0003255000337958336,
+          "analysis_notes": [
+            {
+              "path": "src/api.py",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": ".env.example",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "env-config",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "document",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed",
+                "evidence": "No static new environment keys could be established from this change",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "env-keys"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "34f8057c31fd406da314cf28de9d9ec4",
+          "started_at": "2026-10-07T12:47:27.618732+00:00",
+          "status": "success",
+          "policy_sha256": "22623c7c522fac7087286c929edb815ff26d9f10b130601a0a4e5b1836432e69",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "fb6c957a257fed45b8061dd353a54d22621cedea0a665b90097d46ce54c438ad"
+        }
+      },
+      "input_sha256": "fb6c957a257fed45b8061dd353a54d22621cedea0a665b90097d46ce54c438ad"
+    }
+  ]
+}

@@ -211,3 +211,88 @@ rules:
     assert "rule_decisions" not in compact
     assert compact["violations"][0]["trigger_files"] == ["src/routes/users.ts"]
     assert "router.get" in evidence["evidence"][0]["files"][0]["diff_snippet"]
+
+
+@pytest.mark.parametrize('frame', [[], None, 3, 'bad', {'jsonrpc':'2.0', 'method':[]},
+    {'jsonrpc':'2.0', 'method':'tools/list', 'params':[]},
+    {'jsonrpc':'2.0', 'id':1, 'method':'tools/call', 'params':{'name':[], 'arguments':{}}},
+    {'jsonrpc':'2.0', 'id':1, 'method':'tools/call', 'params':{'name':'drift_gate_history', 'arguments':[]}},
+    {'tool':[], 'args':{}}, {'tool':'drift_gate_history', 'args':[]}])
+def test_mcp_rejects_bad_shapes_without_raising(frame):
+    response = handle_request(frame)
+    assert 'error' in response
+
+
+def test_mcp_stdio_survives_bad_frames_and_advertises_real_arguments():
+    import json
+    import subprocess
+    import sys
+    frames = [[], None, {'jsonrpc':'2.0','id':1,'method':'tools/list','params':[]},
+              {'jsonrpc':'2.0','id':2,'method':'tools/list'}]
+    value = subprocess.run([sys.executable, '-m', 'drift_gate.adapters.mcp.server'],
+        input='\n'.join(json.dumps(frame) for frame in frames) + '\n', capture_output=True, text=True, timeout=20)
+    assert value.returncode == 0, value.stderr
+    responses = [json.loads(line) for line in value.stdout.splitlines()]
+    assert len(responses) == 4 and all('error' in row for row in responses[:3])
+    tool = next(row for row in responses[-1]['result']['tools'] if row['name'] == 'drift_gate_check_pr')
+    assert set(tool['inputSchema']['required']) == {'pr_number', 'repo', 'token'}
+    assert tool['inputSchema']['properties']['pr_number']['type'] == 'integer'
+    assert not tool['inputSchema']['additionalProperties']
+
+
+@pytest.mark.parametrize('arguments', [{'days':'30'}, {'days':True}, {'unknown':1}])
+def test_mcp_rejects_arguments_before_calling_the_tool(arguments, monkeypatch):
+    from drift_gate.adapters.mcp import tools
+    monkeypatch.setattr(tools, 'load_records', lambda *a, **k: pytest.fail('tool should not run'))
+    response = handle_request({'jsonrpc':'2.0','id':1,'method':'tools/call',
+        'params':{'name':'drift_gate_history', 'arguments':arguments}})
+    assert response['error']['code'] == -32602
+
+
+def test_mcp_oversized_frame_is_drained_without_losing_the_next_request():
+    import json
+    import subprocess
+    import sys
+    from drift_gate.adapters.mcp.server import MAX_REQUEST_BYTES
+    valid = {'jsonrpc':'2.0', 'id':7, 'method':'tools/list'}
+    result = subprocess.run([sys.executable, '-m', 'drift_gate.adapters.mcp.server'],
+        input='x' * (MAX_REQUEST_BYTES + 200) + '\n' + json.dumps(valid) + '\n',
+        capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0
+    rows = [json.loads(line) for line in result.stdout.splitlines()]
+    assert len(rows) == 2 and rows[0]['error']['code'] == -32600
+    assert rows[1]['id'] == 7 and 'result' in rows[1]
+
+
+@pytest.mark.parametrize('broken', [b'\xff\n', b'\xe2\x82\n', b'{"id":"\xff"}\n'])
+def test_mcp_invalid_utf8_does_not_lose_surrounding_requests(broken):
+    import json
+    import subprocess
+    import sys
+    valid = b'{"jsonrpc":"2.0","id":7,"method":"tools/list"}\n'
+    result = subprocess.run([sys.executable, '-m', 'drift_gate.adapters.mcp.server'],
+        input=valid + broken + valid, capture_output=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    rows = [json.loads(line) for line in result.stdout.splitlines()]
+    assert len(rows) == 3 and 'error' in rows[1]
+    assert all(row['id'] == 7 and 'result' in row for row in (rows[0], rows[2]))
+
+
+@pytest.mark.parametrize('extra_byte', [False, True])
+def test_mcp_limit_counts_utf8_bytes_and_recovers_at_boundary(extra_byte):
+    import json
+    import subprocess
+    import sys
+    from drift_gate.adapters.mcp.server import MAX_REQUEST_BYTES
+    prefix = '{"jsonrpc":"2.0","id":9,"method":"tools/list","padding":"'.encode()
+    suffix = b'"}\n'
+    remaining = MAX_REQUEST_BYTES - len(prefix) - len(suffix)
+    body = ('가' * (remaining // 3)).encode() + b' ' * (remaining % 3 + int(extra_byte))
+    valid = b'{"jsonrpc":"2.0","id":7,"method":"tools/list"}\n'
+    result = subprocess.run([sys.executable, '-m', 'drift_gate.adapters.mcp.server'],
+        input=prefix + body + suffix + valid, capture_output=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    rows = [json.loads(line) for line in result.stdout.splitlines()]
+    assert len(rows) == 2
+    assert ('error' in rows[0]) == extra_byte
+    assert rows[1]['id'] == 7 and 'result' in rows[1]

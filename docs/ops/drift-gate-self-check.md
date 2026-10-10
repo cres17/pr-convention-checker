@@ -1,0 +1,217 @@
+# Drift Gate 자체 검사와 패키지 검증
+
+## 후보 코드를 실행하지 않는 신뢰 엔진 job (2026-10-09)
+
+CI의 `trusted-engine` job은 후보 checkout을 Git 객체 저장소로만 쓴다. `git archive ed9f9046cca46c79b379ccdbafaa08feaa8241d6`로
+pin한 commit의 파일을 꺼내 비 editable로 설치하고, `python -I -c`로 `drift_gate`가 site-packages에서 import되는지 확인한다.
+grammar 준비와 검사도 그 설치본으로 실행한다. 검사는 immutable Git 경로(`check --base --head --trusted-policy-ref
+--trusted-policy-sha256`)이므로 후보 commit의 파일은 Git 객체로 읽힐 뿐 import·실행되지 않는다. pass·warn은 통과, fail(1)과
+입력 오류(2)는 job 실패다. 결과는 `trusted-engine-verdict` artifact로 보존한다.
+
+self-check job의 `trusted-check`와 다른 점은 판정을 결합하는 orchestrator 자체가 후보 코드가 아니라는 것이다. 남은 경계는
+workflow 파일이다. push와 `pull_request` 이벤트는 후보 branch의 workflow를 실행하므로, 후보가 이 job을 지우거나 바꿀 수 있다.
+이를 막으려면 저장소 설정에서 기본 branch의 ruleset으로 이 job을 required status check로 지정하거나 조직의 required
+workflow를 써야 한다. 이 저장소 파일만으로는 설정할 수 없으며, 현재 설정 여부는 확인하지 않았다.
+
+자원 예산 부하 시험은 `scripts/measure_budget.py`로 합성 저장소를 만들어 `scope`를 기본 예산과 저장소 bytes보다 낮은 예산으로
+실행하고, 실행 시간·peak RSS·`resource_limit` 발생 단계를 기록한다. 한 기계·한 저장소 형태의 측정이며 용량 보장이 아니다.
+
+## S2-e~S4 신뢰 엔진 대조·설치본 증거 기능·종료 진단 (2026-10-08)
+
+CI self-check job은 `engine manifest --ref ed9f9046cca46c79b379ccdbafaa08feaa8241d6`로 manifest를 다시 만들고
+SHA-256 `88f275f568282507e71a66ad6f4e414e77dc0cdbf223c211c451eb1c1c0e37e8`과 일치할 때만 그 엔진으로
+`trusted-check`를 실행한다. block(1)·오류(2·3)는 job 실패다. review(5)는 `merge_basis=trusted-engine`일 때만
+경고로 남기고 계속하며, 신뢰 판정이 없거나 attestation이 맞지 않는 review는 실패시킨다. 이 저장소의 변경은
+대부분 `drift_gate/**`를 바꾸므로 review가 일반적이다. job은 후보 코드가 설치된 runner에서 실행되므로 기록된
+대조이며 격리 실행이 아니다. `build/trusted-check.json`과 manifest를 artifact로 보존한다. pin을 바꾸려면 새 commit의
+manifest를 만들고 workflow의 ref·SHA-256을 함께 바꾼다.
+
+Desktop 빌드는 `DriftGate --cli`로 패키지 안의 CLI를 실행하는 `packaging/verify_package_cli.py`를 dist 실행 파일,
+마운트한 DMG, 설치된 Windows 앱에 적용한다. 새 Git fixture에서 `--evidence-store`·`--run-store` 검사를 실행하고
+저장소를 지운 뒤 `bundle verify`, `bundle replay`(저장 결과 재현), `bundle spans`(전부 검증)를 확인한다.
+결과는 `build/offline-cli*/result.json`에 실행 파일 SHA-256, 단계별 종료 코드, run 전이 기록과 함께 남는다.
+검증 대상은 구조적 기대값이며 이 checkout의 코드와 결과를 비교하지 않는다.
+
+macOS job은 `packaging/teardown_diagnosis.py`로 package UI 검사를 5회 반복한다. 각 실행은
+`DRIFT_GATE_TEARDOWN_TRACE`로 `main-start`, `event-loop-start`, `package-check-exit-requested`,
+`event-loop-returned`, `window-close-event`, `atexit` 중 실제 도달한 event를 기록하고 faulthandler stack을 같은 파일에 남긴다.
+요약(`build/teardown-diagnosis/summary.json`)은 종료 코드 분포, 실패 실행의 마지막 event, stack 줄을 담는다.
+앱의 종료 코드는 기록만 하고 job 결과에 반영하지 않는다. fixture 생성·network 차단 준비 등 script 자체의 오류는
+job을 실패시킨다. 기존 `verify_package.py` 단계가 gate다. 문제 없는
+반복은 이전 Intel 종료 실패가 해결되었다는 증명이 아니다.
+
+첫 원격 실행(2026-10-08)에서 확인하고 고친 문제는 다음과 같다. Windows는 fixture를 `write_text`로 써서 CRLF가 된
+정책 bytes가 pin과 달라 `verify_package_cli.py`가 실패했다(LF로 고정). macOS의 종료 진단은 상대 출력 경로 때문에
+sandbox profile을 찾지 못해 5회 모두 앱 시작 전 65로 끝났다(절대 경로로 고정, 앱에 도달하지 못한 실행은
+`runs_without_trace`로 표시). 수정 후 run 37742364446에서 arm64 dist·DMG와 Windows dist·설치본의 CLI 검증이 통과했고,
+arm64 종료 진단은 5회 모두 0으로 `event-loop-returned`·`atexit`까지 기록됐다. 같은 날 Intel runner의 React 테스트가
+기본 5초 제한을 넘겨 두 번 실패해 이후 단계가 실행되지 않았으므로 `App.test.tsx` 제한을 20초로 늘렸다.
+PR 전체(`main`→`ver2`) immutable 검사는 `snapshot.json`이 64,439,924 bytes로 묶음 파일당 한도를 넘어 실패했으며
+한도를 조정했다([Gate와 입력 계약](../contracts/gate-and-inputs.md)).
+
+설치본 CLI 검증 결과에는 `producer_sources_observed`와 `certified_engine_replay=false`를 함께 기록한다. 설치 앱에는
+Python 소스가 없어 producer digest가 빈 파일 집합을 가리키므로, 이 검증은 결과 재현이며 같은 엔진으로 인증한
+재실행이 아니다(791565f 검토).
+
+`25d7518`의 Desktop run 37754952843에서 Windows의 desktop 회귀 단계가 `1123 passed, 5 skipped` 요약을 출력한 뒤
+종료 코드 127로 실패했다. 같은 commit의 CI Windows 단위 테스트(3.10~3.12)와 macOS 두 package job은 통과했다.
+원인은 확인하지 못했다. 이 단계는 `python -X faulthandler`로 실행해 interpreter 종료 중 crash의 stack을 남기고
+`build/desktop-pytest.xml`(JUnit)을 함께 보존한다. 실패를 통과로 바꾸지 않는다.
+
+`5a7b2fa`의 Desktop run 38035946798에서 세 플랫폼 모두 같은 단계가 전부 통과 출력 뒤 `Fatal Python error: Segmentation fault`
+(Windows는 `Aborted`, Python frame 없음)로 끝났다. 컨테이너에 PySide6 6.12.0을 설치해 같은 시험 목록을 실행하면 수정 전 5회 중
+2회가 같은 방식으로 종료했고, 단독으로는 `ReviewDialog` 시험이 6회 모두 종료 시 crash했다. 원인은 signal에 연결한 `self` 캡처 lambda였고
+bound method로 바꾼 뒤 같은 목록 5회가 모두 정상 종료했다([기록](../assessment/qt-teardown-2026-10-10/desktop-regression-runs.log)).
+`test_qt_teardown.py`를 desktop 회귀 단계 목록에 추가했다. 컨테이너 재현은 Linux에서의 결과이며 macOS·Windows 확인은 CI 실행으로 한다.
+
+## S2-d 실행 기록과 게시 근거 (2026-10-08)
+
+`action.yml`은 실행 journal 경로(`run_record_path`), 실행 ID, PR 댓글 게시 상태와 기록
+(`publication_state`, `publication_record_path`)을 출력하고 report artifact에 함께 올린다.
+journal은 `RUNNER_TEMP/drift-gate-runs`에 있으므로 artifact 업로드로만 보존된다.
+`publication-unknown`은 기록의 idempotency key로 `drift-gate publication reconcile`을 실행해
+조회하며, 이 명령은 댓글을 쓰거나 원본 기록을 덮어쓰지 않는다.
+
+일반 OS/Python matrix는 `test_run_lifecycle.py`와 `test_github_publication.py`를 실행한다.
+전이 전수표, latest 유한 모델, 8 writer 경쟁, 실제 child process 강제 종료·SIGTERM,
+취소·마감 후 응답 폐기, fake provider의 응답 유실을 포함한다. fake provider 통과는
+실제 GitHub의 일관성이나 동시성 검증이 아니다. SIGTERM 시험은 Windows에서 건너뛴다.
+
+## S2-c 저장 근거 대조 (2026-10-08)
+
+immutable Git 자체 검사에 `--evidence-store build/object-evidence`를 적용한다.
+`packaging/check_evidence_bundle.py`가 출력에 기록된 receipt hash를 pin하여 디스크 원본을
+다시 읽고, Git을 다시 수집하지 않은 현재 엔진 재실행 결과를 대조한다. 결과가 다르면
+job을 실패시킨다. 공개된 묶음과 대조 JSON을 CI artifact로 보존한다. CI의 원문은
+선택한 commit의 소스·문서이며 환경변수나 작업 폴더의 미저장 값은 수집하지 않는다.
+원문 artifact는 보관 대상과 접근권한을 확인한 workflow에서만 명시적으로 사용한다.
+
+일반 OS/Python matrix는 `test_evidence_bundle.py`의 파일 변조, 저장 실패, directory
+공개 전후 강제 종료, thread·별도 process 동시 저장과 replay 시험을 포함한다.
+POSIX mode bit과 Windows directory fsync의 한계는 서로 다르다. 로컬 Mac 통과를
+Windows 검증으로 승계하지 않는다. 네이티브 설치본의 S2-b 대조와 새 CLI 저장 기능의
+검증도 별도 범위이며 이번 변경으로 설치본을 다시 검증했다고 자동 표시하지 않는다.
+
+## S1-e 진입점 일치 검사
+
+`test_contract_projection.py`를 Desktop CI 명시 목록에 포함한다. 임시 Git의 동일한
+소스·문서를 CLI, local/PR MCP, Desktop 서비스, Action에 전달하고 JSON·HTML·Markdown
+projection을 비교한다. GitHub는 이 검사에서 transport만 대체하며 원격 실행 결과가 아니다.
+기본 출력 회귀, opt-in diagnostics, compact 생략 표시, no-shadow 입력, invalid proof 실패를
+검사한다. Action 입력은 `contract_proofs`이며 기본 false이고 true/false 외 값은 거부한다.
+
+## S1-d 증명 검증
+
+`test_proof_evaluation.py`를 일반 CI와 Desktop의 명시 목록에 포함한다. 세 값 논리의
+전수표와 중첩 식, 미사용 leaf의 모든 이진 보완에 대한 근거 충분성, 공유 원자,
+범위 유지, 잘못된 참조·진리값·증거 범위·profile·순환·노드/간선/깊이 상한을 검사한다.
+같은 경로의 새 내용에 이전 계획을 적용하는 반례, 삭제 env 문서의 잔존 키,
+비활성 검사 종류의 직렬화 구별도 회귀로 고정한다. 자체 정책의 pass/unverified를
+증명 검증 통과나 parser 건전성으로 해석하지 않는다.
+
+## 논리 검사 회귀 기준
+
+test_logical_contracts.py는 정책 순서·미지원 입력·응답 구조·문서 연결·미결정 집계를 확인한다. test_logical_entrypoints.py는 실제 임시 Git 저장소에서 CLI/MCP/Desktop을 실행하고 GitHub 수집만 대체한 Action과 판정을 비교한다. 두 파일은 데스크톱 빌드의 명시적 검사 목록에도 포함한다. 로컬 통과를 원격 CI나 실기기 설치 검증으로 대신 기록하지 않는다.
+
+## 자체 정책
+
+`.drift-gate.yml`은 웹 프로젝트용 예시로 유지하고 Drift Gate 자체 변경은 `.drift-gate.self.yml`로 검사한다.
+
+```bash
+python scripts/check_self.py --base BASE_COMMIT --out build/self-check.json
+```
+
+base는 실제 비교할 commit이다. 새 파일을 포함하려면 먼저 Git index에 추가한다. CI는 PR base SHA 또는 push 이전 SHA를 명시적으로 사용한다. 기준이 없거나 유효하지 않으면 오류로 종료하고 다른 기준으로 대체하지 않는다. 소스가 바뀌는 검사와 docs-only 정책 변경은 통제 테스트를 통해 구분한다.
+
+정책은 코드 경로별 계약 문서 갱신을 요구한다. 테스트 파일은 이 요구에서 제외한다. 코멘트 전용 변경을 제외하는 강도 기준을 사용하지만 모든 의미 없는 포맷 변경을 정확하게 구별하지는 못한다. 초기 정책은 보수적인 경로 검사이며 실제 작업에서 불필요한 문서 갱신 요구를 관찰해 조정해야 한다. 관련 없는 리뷰 문서·평가 로그를 계약 문서 대신 인정하지 않는다.
+
+결과에는 gate와 함께 정책 트리거가 일치한 경로와 일치하지 않은 경로를 기록한다. 경로 일치는 의미 검증 완료율이나 버그 탐지율이 아니다. `pass`만 보고 이 목록을 생략하지 않는다. 알려진 자체 운영 경로는 정책 통제 테스트로 지킨다.
+
+## 설치본
+
+desktop-build는 고정 해시와 비교한 파서를 번들링하고, 패키징 후 바이트를 봉인한다. ARM Mac·Intel Mac·Windows에서 패키지 자체를 실행하고 DMG 또는 설치 후 위치에서 다시 실행한다. Windows는 임시 방화벽 규칙을 finally 및 종료 정리에서 제거한다.
+
+오프라인 검사는 빈 파서 캐시와 OS 네트워크 차단에서 화면 렌더링, QWebChannel, 정책 위반, 8개 언어 문법 분석을 확인한다. 프로세스 생존이나 CI 초록색만으로 통과를 대신하지 않는다. `test_git_collection.py`도 패키지 준비 단계의 테스트 목록에 포함돼 있다.
+
+Mac 임시 서명은 Developer ID 서명·공증과 다르다. 로컬 소스 검사·로컬 설치본·원격 CI·공개 릴리스의 완료 상태를 별도로 보고한다. 이번 소스 변경 후 새 설치본·원격 CI를 실행하지 않았다면 그 사실을 명시한다.
+
+## 2026-10-06 자체 검사 보완
+
+`scripts/check_self.py`는 빈 정책·미분류 운영 경로·없는/빈 필수 계약 문서를 입력 오류로 거부한다. 운영 범위는 `source_scope.product_path`에 명시하며 임의 위치의 모든 운영 파일을 자동 식별한다는 보장은 없다. coverage와 evaluator가 rename 경로 역할을 공유한다. 오류 산출물도 실행 ID와 원자적 교체를 사용한다. 내부 예외는 진단 traceback 및 execution_error/종료3으로 남긴다.
+
+CI의 `--trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b`는 초기 의무를 고정한다. 기존 규칙 삭제·심각도 감소·실패 개수 증가·ignore 추가·필수 그룹 완화·trigger 축소·강도 기준 상향을 거부하며 trigger 확장과 신규 규칙 추가는 허용한다. 마이그레이션은 이 참조를 검토해 갱신해야 한다. **이는 후보 브랜치의 실행기/workflow까지 신뢰하는 현재 CI의 한계를 없애는 외부 보안 경계는 아니다.** 분리된 신뢰 실행기와 GitHub 필수 검사 발행 통제는 후속 운영 설정이며 이번 커밋으로 완료됐다고 표시하지 않는다.
+
+최종 desktop build는 package/DMG 또는 installer 각각에서8언어 오프라인 파서 분석에 더해 실제 브리지의 signature/rename 반례 검사를 수행한다. 공개 릴리스 게시 없이 같은 커밋의 CI 산출물을 사용한다. 설치본은 ad-hoc 서명이며 공증을 대체하지 않는다.
+
+## 다자 검토 후 재실행 안전성
+
+`verify_package.py --output`은 이미 존재하는 폴더를 거부한다. 과거 JSON·PNG를 덮어쓰지 말고 새 출력 경로를 사용한다. 실행기의 challenge 및 fixture 경로와 일치하는 새 앱 응답만 채택하고, 단계별 실행 ID·순서·시그니처 diff·rename 경로를 확인한다. 무동작 실행 파일과 오래된 성공 보고서, 다른 검사 단계의 결과를 넣는 대조군을 회귀 테스트로 유지한다.
+
+Desktop CI는 다자 검토에서 추가한 core·adapter·CLI 회귀 테스트도 세 플랫폼에서 실행한다. 로컬에서 만든 새 설치본의 검사 결과와 이전에 다운로드한 설치본의 결과, 원격 CI의 실행 상태는 별도 증거로 기록한다.
+
+2026-10-07 auto 개선 회귀와 Express 등록 검사도 Desktop 목록에 포함한다. 일반 CI는 실제 Git 기반의 auto-contracts-v2/express-contracts-v1을 실행하며 네 축(사실·판정·검증 상태·게이트)을 독립 비교한다. Express4.21.2는 테스트 전용 임시 설치이며 설치본 런타임 의존성으로 추가하지 않는다. 네 HTTP oracle은 고정된 테스트 앱만 실행한다. 로컬 실행 성공을 원격 CI 성공으로 표현하지 않는다.
+
+심화 설계의 `test_enterprise_correctness.py`도 Desktop 목록에 포함한다. 혼합 계약의 검사 누락, TypeScript type-only의 주석·공백 변형, JSON 지수 오버플로, 명시적 만료 날짜와 입력 digest, 평가 실행기 입력 오류를 확인한다. `audit_auto_contracts.py`는 비어 있는 suite, 중복 ID, 빠진 기대 축, 잘못된 protocol·결과 값, `.git` 또는 저장소 밖 경로를 실행 전에 종료2로 거부하며 성공 보고서를 쓰지 않는다. 기존 v1/v2 고정 입력과 과거 결과는 바꾸지 않는다.
+
+## 내부 typed facts 검증
+
+S1-a의 `test_typed_facts.py`를 일반 CI 및 Desktop 검사에 포함한다.
+unknown과 빈 Exact의 구분, 불변 생성자, 범위/프로필 불일치, 세 사실 universe의 모든
+구체 전후 변화, patch 분석의 확정 승격 금지, route API 오류 호환과 env 키 이동을 검사한다.
+고정 Git 평가 입력은 유지하며 기존 네 축 결과와 대조한다.
+새 타입 도입을 서비스 전체 완전성 증명이나 실제 PR 정확도 개선으로 보고하지 않는다.
+
+## 내부 profile discovery 검증
+
+S1-b의 `test_profile_discovery.py`를 일반 CI와 Desktop 명시 목록에 포함한다.
+혼합 계약·미사용 import·설명 문자열·동적 getter·외부 등록·응답의 국소 미지원,
+언어/profile 미지원·요청 domain 누락·중복 source·cache의 파일 범위 분리를 검사한다.
+신규 metadata 선언만으로 분석기 지원을 가장할 수 없게 통제한다.
+고정 Git 평가의 facts/decision/verification/gate를 기존 결과와 비교한다.
+discovery의 completeness는 요청한 모듈/profile 부분집합이며 실제 PR 정확도나 서비스
+전체 discovery 완전성이 아니다. 기존 auto-strict 호환 결과와 새 domain coverage를 분리한다.
+
+## 내부 obligation planner 검증
+
+S1-c의 `test_obligation_planner.py`를 일반 CI와 Desktop 명시 목록에 포함한다.
+설계의 혼합 env/API 6행, unmapped 의무, 문서 수집 누락과 명시 missing의 구분,
+다른 모듈의 unknown old getter, 파일 간 키 이동, route/response 동시 의무,
+open guard 제거 거부, relation source scope, 실제 legacy shadow 연결을 검사한다.
+새 truth와 completeness를 기존 gate와 따로 기록한다. 고정 Git 평가의 기대값과 입력은
+유지하며 전 단계 actual과 비교한다. shadow trace의 상한은 진단 보관 상한이며 전체
+정책 의무의 처리/인증 상한으로 해석하지 않는다.
+## S2-b 원격·설치본 검사
+
+CI는 기존 변경 검사와 함께 immutable `--head "$GITHUB_SHA"` 검사를 실행한다.
+기존에 선택한 `ae0028d5edd95d5dd4819939a5801cb028639a6b`의 `.drift-gate.self.yml`을
+raw SHA-256 `3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb`로 확인한다.
+정책 pin은 caller 기준이며 조직 승인이나 checker binary 인증은 아니다.
+출력 `object-self-check.json`에는 고정 subject와 원본 해시 근거가 남는다.
+native build의 package 및 DMG/Windows 설치 후 검사는 모두 새 Git 객체 대조도 수행한다.
+원격 결과와 다운로드한 artifact의 해시·오프라인 JSON은 별도 실행 문서에 기록한다.
+
+native 검증기의 grammar 관찰은 source 8개와 configured 문서 부재 1개다. 문법 적용
+확인은 source 8개에 한정하고, 문서 부재는 input capture로 따로 검증한다. signature와
+rename도 source 1개·문서 부재 1개를 공통 범위 검사로 확인한다. 통과 boolean이나 총
+관찰 수를 언어 분석 수로 오인하지 않으며, 예상 밖 patch 관찰은 실패 처리한다.
+
+원격 회귀 정체를 성공으로 처리하지 않는다. 일반 pytest 단계는 10분, desktop 회귀는
+15분으로 제한하고, 각 테스트가 120초 이상 걸리면 Python 스택을 기록한다. Bash의
+pipefail로 pytest 종료 코드를 유지하며, tee가 기록한 로그를 성공·실패 모두 별도
+artifact로 보관한다. timeout은 실패이며 부분 통과를 전체 통과로 보고하지 않는다.
+
+고정 Git 평가 harness의 입력·결과 JSON은 명시 UTF-8을 사용한다. 결과의 한글 진단도
+Windows 기본 cp1252에 맡기지 않고 UTF-8/LF로 보관한다. Windows Python 버전별로
+pytest와 그 뒤 네 축 평가의 종료 상태를 따로 확인한다. pytest 통과만으로 workflow가
+통과했다고 보고하지 않는다. 고정 suite의 기대값은 인코딩 수정으로 바꾸지 않는다.
+
+같은 pytest 단계에서 임시 고정 CRLF 파일의 path stat·첫 handle·재개방 handle metadata를
+기록해 `read-metadata.json`으로 보관한다. 새 bounded read는 같은 API의 identity·size·
+mtime·ctime을 비교하고 안정적인 파일을 받아들여야 한다. 기존 path/handle 혼합 비교가
+달라지는 필드는 원격 native 관찰로 확인한다. 이 probe는 입력 파일 내용을 한 번 읽는
+제품 계약을 바꾸지 않으며 사용자 저장소 대신 임시 fixture만 사용한다.
+
+다운로드한 최종 원격 근거 폴더는 Git의 텍스트 줄바꿈 변환 대상에서 제외한다.
+Windows JSON·로그의 CRLF도 원본 SHA-256과 같게 보관하며, 작업 폴더 해시만이 아니라
+staged/committed Git blob bytes를 영수증과 대조한다. 이 속성은 해당 근거 폴더에만
+적용하고 일반 소스 파일의 줄바꿈 규칙이나 immutable raw diff 계약은 바꾸지 않는다.

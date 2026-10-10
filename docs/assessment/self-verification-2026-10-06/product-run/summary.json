@@ -1,0 +1,199 @@
+{
+  "gate": "warn",
+  "summary": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 1,
+    "nit": 0,
+    "gate_decision": "warn"
+  },
+  "scanned_files": 103,
+  "analysis_methods": {
+    "heuristic": 71,
+    "grammar+heuristic": 27,
+    "unavailable": 5
+  },
+  "analysis_reasons": {
+    "No grammar-backed detector for this file type": 53,
+    "Partial or invalid diff fragment; grammar recovery and patch heuristics used": 17,
+    "No changed code lines to parse": 1,
+    "Patch unavailable; intensity cannot exclude a contract change": 5
+  },
+  "rule_decisions": [
+    {
+      "rule_id": "api-contract-sync",
+      "severity": "BLOCKER",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "schema-migration-proof",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "env-config-sync",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    },
+    {
+      "rule_id": "workflow-ops-doc",
+      "severity": "MINOR",
+      "status": "fail",
+      "reason": "required groups are missing",
+      "matched_patterns": [
+        ".github/workflows/**"
+      ],
+      "trigger_files": [
+        ".github/workflows/desktop-build.yml"
+      ],
+      "satisfied_groups": [],
+      "unsatisfied_groups": [
+        {
+          "name": "운영 문서",
+          "required": [
+            "docs/ops/**",
+            "docs/runbook/**"
+          ],
+          "type": "any_changed",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "rule_id": "auth-security-doc",
+      "severity": "MAJOR",
+      "status": "unmatched",
+      "reason": "no changed files matched this rule after ignore paths and intensity filters",
+      "matched_patterns": [],
+      "trigger_files": [],
+      "satisfied_groups": [],
+      "unsatisfied_groups": []
+    }
+  ],
+  "violations": [
+    {
+      "id": "workflow-ops-doc",
+      "groups": [
+        {
+          "name": "운영 문서",
+          "required": [
+            "docs/ops/**",
+            "docs/runbook/**"
+          ],
+          "type": "any_changed",
+          "evidence": ""
+        }
+      ]
+    }
+  ],
+  "review_files": 28,
+  "review_findings": 0,
+  "test_gap_candidates": 31,
+  "audit_counts": {
+    "supported": {
+      "total": 24,
+      "matched": 21,
+      "tp": 11,
+      "tn": 10,
+      "fp": 2,
+      "fn": 1,
+      "errors": 0
+    },
+    "boundary": {
+      "total": 8,
+      "matched": 1,
+      "tp": 0,
+      "tn": 1,
+      "fp": 1,
+      "fn": 6,
+      "errors": 0
+    }
+  },
+  "audit_mismatches": [
+    {
+      "id": "A09-stale-route-retained",
+      "scope": "supported",
+      "expected": "fail",
+      "actual": "pass",
+      "reason": "The old route is removed then re-added in docs, so its net removal is not documented."
+    },
+    {
+      "id": "E04-existing-token-key",
+      "scope": "supported",
+      "expected": "pass",
+      "actual": "fail",
+      "reason": "The same static key exists before and after; only whitespace handling changes."
+    },
+    {
+      "id": "E05-env-access-in-string",
+      "scope": "supported",
+      "expected": "pass",
+      "actual": "fail",
+      "reason": "A string describing an access does not read an environment variable."
+    },
+    {
+      "id": "B01-multiline-route",
+      "scope": "boundary",
+      "expected": "fail",
+      "actual": "pass",
+      "reason": "A multiline route changes but unrelated docs are edited; unsupported syntax stress test."
+    },
+    {
+      "id": "B03-openapi-yaml",
+      "scope": "boundary",
+      "expected": "pass",
+      "actual": "fail",
+      "reason": "The nested OpenAPI path is updated correctly; documented unsupported structured format."
+    },
+    {
+      "id": "B04-router-prefix",
+      "scope": "boundary",
+      "expected": "fail",
+      "actual": "pass",
+      "reason": "Changing the router prefix changes URLs even though method declarations are untouched."
+    },
+    {
+      "id": "B05-dynamic-environment-key",
+      "scope": "boundary",
+      "expected": "fail",
+      "actual": "pass",
+      "reason": "Dynamic key cannot be validated against a static sample; conservative desired behavior."
+    },
+    {
+      "id": "B06-aliased-environment-getter",
+      "scope": "boundary",
+      "expected": "fail",
+      "actual": "pass",
+      "reason": "An aliased getter reads a new key but is outside current recognition."
+    },
+    {
+      "id": "B07-response-schema",
+      "scope": "boundary",
+      "expected": "fail",
+      "actual": "pass",
+      "reason": "Response schema changes with the same route; unrelated docs do not describe it."
+    },
+    {
+      "id": "B08-chained-router",
+      "scope": "boundary",
+      "expected": "fail",
+      "actual": "pass",
+      "reason": "A chained Express route adds a public endpoint outside current literal matcher."
+    }
+  ]
+}

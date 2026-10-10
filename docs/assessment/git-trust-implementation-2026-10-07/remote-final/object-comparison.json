@@ -1,0 +1,14 @@
+{
+  "source_commit": "2a78160b78b110532a69c3f5a073cc04329b8cdc",
+  "base_commit": "6d33001b1fafa8b6b40b6346ee6c30fbf498ce0b",
+  "ci_run_id": 37654786178,
+  "matching_fields": {
+    "input_sha256": true,
+    "policy_sha256": true,
+    "input_capture": true
+  },
+  "gate_result": "pass",
+  "content_verification": "unverified",
+  "policy_integrity_verified": true,
+  "organization_approval_verified": false
+}

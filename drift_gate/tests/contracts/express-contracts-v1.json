@@ -1,0 +1,413 @@
+{
+  "protocol": {
+    "version": 1,
+    "input": "real Git snapshots; authored nonblind Express cases frozen before first run",
+    "axes": [
+      "facts",
+      "decision",
+      "verification",
+      "gate"
+    ],
+    "scope": "default ESM import, direct const app/router, literal method/path/mount, ordinary handlers"
+  },
+  "cases": [
+    {
+      "id": "chain-current",
+      "before": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v1', router);\n",
+        "docs/api.md": "GET /v1/products\n"
+      },
+      "after": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/products').get(handler);\napp.use('/v1', router);\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "docs",
+                  "all_changed": [
+                    "docs/api.md"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /v1/products"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "chain-stale",
+      "before": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v1', router);\n",
+        "docs/api.md": "GET /v1/catalog\n"
+      },
+      "after": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/products').get(handler);\napp.use('/v1', router);\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "docs",
+                  "all_changed": [
+                    "docs/api.md"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /v1/products"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      }
+    },
+    {
+      "id": "mount-prefix",
+      "before": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v1', router);\n",
+        "docs/api.md": "GET /v2/catalog\n"
+      },
+      "after": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v2', router);\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "docs",
+                  "all_changed": [
+                    "docs/api.md"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /v2/catalog"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "method-replaced",
+      "before": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v1', router);\n",
+        "docs/api.md": "POST /v1/catalog\n"
+      },
+      "after": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').post(handler);\napp.use('/v1', router);\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "docs",
+                  "all_changed": [
+                    "docs/api.md"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [
+            "POST /v1/catalog"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "router-unmounted",
+      "before": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v1', router);\n",
+        "docs/api.md": ""
+      },
+      "after": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\n\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "docs",
+                  "all_changed": [
+                    "docs/api.md"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "chain-deleted",
+      "before": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v1', router);\n",
+        "docs/api.md": ""
+      },
+      "after": {
+        "src/api.js": ""
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "docs",
+                  "all_changed": [
+                    "docs/api.md"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "fake-framework",
+      "before": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v1', router);\n",
+        "docs/api.md": "GET /v1/catalog\n"
+      },
+      "after": {
+        "src/api.js": "import express from 'custom';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v1', router);\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "docs",
+                  "all_changed": [
+                    "docs/api.md"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      }
+    },
+    {
+      "id": "shadowed-router",
+      "before": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v1', router);\n",
+        "docs/api.md": "GET /v1/catalog\n"
+      },
+      "after": {
+        "src/api.js": "import express from 'express';\nconst app = express();\nconst router = express.Router();\nfunction handler(req, res) { res.send('ok'); }\nrouter.route('/catalog').get(handler);\napp.use('/v1', router);\n\nfunction other(router) { router.get(\"/fake\", handler); }"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "docs",
+                  "all_changed": [
+                    "docs/api.md"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      }
+    }
+  ]
+}

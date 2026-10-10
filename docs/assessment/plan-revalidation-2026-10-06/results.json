@@ -1,0 +1,94 @@
+{
+  "revision": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+  "python": "3.11.15 (main, Mar  3 2026, 00:52:57) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "probe_sha256": "8156269a055106bcb874f463124c4917177517d26be4b4eb3f1be5a3690154e8",
+  "scope": "Pure engine, YAML loader, tokenizer examples and local source inventory; no live GitHub or package run",
+  "cases": [
+    {
+      "name": "duplicate-root-rules",
+      "observed": "pass",
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "unknown-root-rule-key",
+      "observed": "pass",
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "duplicate-required",
+      "observed": "pass",
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "negative-threshold",
+      "observed": {
+        "result": "fail",
+        "violations": 0
+      },
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "boolean-threshold",
+      "observed": {
+        "result": "fail",
+        "violations": 0
+      },
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "explicit-doc-rule",
+      "observed": {
+        "engine": "pass",
+        "skip": "docs-only",
+        "direct_violations": 1
+      },
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "explicit-test-rule",
+      "observed": {
+        "engine": "pass",
+        "skip": "test-only",
+        "direct_violations": 1
+      },
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "runtime-string-is-code",
+      "observed": "impl-only",
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "same-line-different-context",
+      "observed": {
+        "comment": [
+          "COMMENT"
+        ],
+        "string": [
+          "STRING"
+        ]
+      },
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "inventory:new-runtime/worker.py",
+      "observed": false,
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "inventory:drift_gate/core/new.py",
+      "observed": true,
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "inventory:desktop-ui/src/worker.js",
+      "observed": false,
+      "assertion": "Current behavior matched independently stated expectation"
+    },
+    {
+      "name": "remote-mode-before-local-git",
+      "observed": true,
+      "assertion": "Current behavior matched independently stated expectation"
+    }
+  ]
+}

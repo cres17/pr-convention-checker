@@ -1,0 +1,23 @@
+{
+  "recorded_at": "2026-10-07T15:25:17.630425+00:00",
+  "mirror_source_commit": "7bf680db2cf9e417cb424e10c2a7bb2866d60939",
+  "mirror_kind": "local macOS shallow remote checkout, dev/oracle without desktop dependencies",
+  "mirror_passed": 1690,
+  "mirror_skipped": 4,
+  "mirror_log_sha256": "2d404e84a330a4c5286ffb339114c91be7149b1626b9766feead1b0d18d9fc9b",
+  "mirror_did_not_reproduce_hang": true,
+  "bash_pipefail_preserves_pytest_style_failure_code": 7,
+  "ci_timeout_minutes": 10,
+  "desktop_test_timeout_minutes": 15,
+  "per_test_stack_dump_seconds": 120,
+  "limits": [
+    "mirror is not Linux or Windows execution",
+    "remote CI/Windows regression still running at this receipt time",
+    "missing GitHub log blob is not proof of infrastructure root cause"
+  ],
+  "mirror_log_file": "ci-mirror-tests.log.gz",
+  "mirror_log_encoding": "gzip; original bytes preserved",
+  "mirror_log_original_bytes": 1207220,
+  "mirror_log_archive_sha256": "0c33e381e04ba91d3c55db85b26b6f74942cce5907f3174824c7c7291c2f290a",
+  "mirror_log_archive_bytes": 29004
+}

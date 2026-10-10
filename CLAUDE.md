@@ -32,14 +32,31 @@ drift_gate/
 │   ├── github_action/ ← GitHub Actions 전용 ($GITHUB_OUTPUT 기록)
 │   ├── git/           ← local git diff
 │   ├── cli/           ← argparse CLI
+│   ├── eval/          ← 고정 합성 사례와 엔진 비교
+│   ├── ast/           ← 언어별 문법 신호 분석
+│   ├── mcp/           ← MCP 도구 제공
 │   └── claude/        ← 선택적 LLM 보강 (실패 시 fallback)
 │
-├── reporters/         ← MarkdownReporter, JsonReporter (I/O 없음)
-├── tests/
-│   ├── fixtures/      ← PR 시나리오 JSON (api/db/docs-only)
-│   └── test_engine.py ← 21개 테스트
+├── desktop/           ← Qt 호스트, 로컬 저장·보고서·구독 CLI 연결
+├── reporters/         ← Markdown·JSON·HTML 렌더링
+├── tests/             ← 엔진·CLI·문법·데스크톱·현황 회귀 검증
 └── utils/
     └── glob_matcher.py ← fnmatch 불사용, ** 직접 처리
+
+desktop-ui/src/
+├── components/tool-ui/ ← 재사용한 UI 요소
+├── features/review/    ← 규칙·수정 안내·현황 영향
+└── features/project-progress/
+    ├── ProjectProgress.tsx  ← 현황 화면 구성
+    ├── useProjectProgress.ts← Qt 명령·이벤트·포커스 연결
+    ├── progressState.ts     ← 순수 상태 전이·화면용 조회
+    ├── requirement.ts       ← 출처·편집·재확인 규칙
+    ├── RequirementList.tsx  ← 범위·상태에 따른 기능 목록
+    ├── ReferenceChecks.tsx  ← 테스트 결과·문서 링크 점검 표시
+    ├── DocumentSetup.tsx    ← 문서 선택·종류 지정
+    ├── ProgressOverview.tsx ← 요약·안내·필터 진입점
+    ├── RequirementDetail.tsx← 요구사항·근거·검증 편집
+    └── status.ts            ← 범위·실효 상태·목록 필터
 ```
 
 ---
@@ -123,9 +140,14 @@ reason: <이유>
   }],
   "skipped_rules": [{"rule_id": "...", "severity": "...", "reason": "...", "message": "..."}],
   "rejected_ignores": [{"rule_id": "...", "severity": "...", "message": "..."}],
-  "gate": {"fail_on_blocker": true, "fail_on_major_count": 2}
+  "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+  "enforcement": {"action": "allow | review | block", "basis": "...",
+                  "confirmed_violation_rule_ids": [], "unresolved_rule_ids": [],
+                  "partially_verified_rule_ids": [], "waived_rule_ids": []}
 }
 ```
+
+`enforcement`는 규칙 판정의 projection이며 `result`·종료 코드를 바꾸지 않는다(gate fail→block, 남은 위반·미결정·부분 검증→review).
 
 ---
 
@@ -144,7 +166,12 @@ MAJOR ≥ 1 또는 MINOR ≥ 1       → warn
 ## 개발 원칙
 
 - core 내부에서 GitHub API, subprocess, print, sys.exit 사용 금지
-- 모든 외부 I/O는 adapters에서만
+- core 밖에서 I/O를 수행한다. CLI·GitHub 연결은 adapters, 데스크톱의 파일·프로세스·Qt 연결은 desktop에서 담당한다.
 - LLM 없이 core gate 판정 완전 동작
 - false positive 줄이기가 기능 추가보다 중요
 - 새 규칙은 코드가 아닌 .drift-gate.yml로만
+- 현황의 0/5는 근거가 기록되지 않은 항목 수이며 실제 개발률이 아니다.
+- 현재 목표의 포함 항목만 집계하며 종류 변경으로 기존 근거를 삭제하지 않는다.
+- 고정 평가 입력과 과거 결과를 덮어쓰지 않는다. 새 결과는 별도 경로에 기록한다.
+- UI 변경 후 Python·React 테스트와 UI 빌드를 확인한다. native 배포는 세 플랫폼의 desktop-release 워크플로를 사용한다.
+- 버전·테스트 수는 실행 결과와 확인한 커밋을 기준으로 기록하며, 오래된 문서의 숫자를 현재 상태로 승계하지 않는다.

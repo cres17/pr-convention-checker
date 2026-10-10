@@ -1,0 +1,13 @@
+
+> drift-gate-desktop-ui@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.11 /Users/moon/Documents/pr-convention-checker/desktop-ui
+
+
+ Test Files  7 passed (7)
+      Tests  77 passed (77)
+   Start at  19:18:56
+   Duration  3.57s (transform 515ms, setup 0ms, import 1.01s, tests 4.48s, environment 1.04s)
+

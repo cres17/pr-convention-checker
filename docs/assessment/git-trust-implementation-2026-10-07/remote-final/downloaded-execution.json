@@ -1,0 +1,79 @@
+{
+  "schema": "downloaded-native-execution-v2",
+  "source_commit": "2a78160b78b110532a69c3f5a073cc04329b8cdc",
+  "ci_run_id": 37654786181,
+  "artifact_id": 11498611004,
+  "archive_sha256": "c8944e34b587f6069587491955f241318b730a5750145c1eb61b8a463b31c311",
+  "archive_matches_remote_digest": true,
+  "dmg_sha256": "f8986cb28618f2bfce28bd3ba052cf9e198ccf2a26b708c9aacf9c9c7e2937a2",
+  "dmg_bytes": 237431634,
+  "executable_sha256": "5cde53c6beb26bab91fba42e09169c1cdbe0999dccac6deadb1ee2666f183317",
+  "executable_bytes": 2606976,
+  "installer_method": "read-only DMG mount, copied app into temporary installation directory, codesign integrity check, DMG detached, copied executable run with OS network block",
+  "successful_fresh_executions": 3,
+  "cases": [
+    {
+      "run": 1,
+      "result_json_sha256": "75072fa5017b74ff1d0f6b356a5c7a94483454ad6dff32bd60f6ed453361938c",
+      "identity": {
+        "run_id": "d4f044f96c1748619f680210f4042d5f",
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-offline-check-8t0biu88/fixture"
+      },
+      "git_controls": {
+        "stale_document_rejected": true,
+        "current_document_accepted": true,
+        "wrong_pin_rejected": true,
+        "weakening_rejected": true,
+        "working_tree_ignored": true,
+        "original_crlf_bytes_bound": true
+      },
+      "grammar_analyses": 8,
+      "cache_files": [],
+      "network_isolation": "macOS sandbox-exec outbound deny"
+    },
+    {
+      "run": 2,
+      "result_json_sha256": "4d1363ee6930357eed28ea4aced3d298f18f290c8fa1cae11a71fe9076324d1b",
+      "identity": {
+        "run_id": "4a9c01fab8a2488090341f8b7cf5905b",
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-offline-check-s17_osi7/fixture"
+      },
+      "git_controls": {
+        "stale_document_rejected": true,
+        "current_document_accepted": true,
+        "wrong_pin_rejected": true,
+        "weakening_rejected": true,
+        "working_tree_ignored": true,
+        "original_crlf_bytes_bound": true
+      },
+      "grammar_analyses": 8,
+      "cache_files": [],
+      "network_isolation": "macOS sandbox-exec outbound deny"
+    },
+    {
+      "run": 3,
+      "result_json_sha256": "44c67933c07efd42560f3f7ac2778beed21818b5f232a1421b446e08debd27ec",
+      "identity": {
+        "run_id": "2537f7402b544ba7879566a727dc0ba1",
+        "repository": "/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-offline-check-4pkanauw/fixture"
+      },
+      "git_controls": {
+        "stale_document_rejected": true,
+        "current_document_accepted": true,
+        "wrong_pin_rejected": true,
+        "weakening_rejected": true,
+        "working_tree_ignored": true,
+        "original_crlf_bytes_bound": true
+      },
+      "grammar_analyses": 8,
+      "cache_files": [],
+      "network_isolation": "macOS sandbox-exec outbound deny"
+    }
+  ],
+  "not_verified": [
+    "interactive human acceptance",
+    "local Intel or Windows physical machine execution",
+    "publisher signing/notarization",
+    "previous Intel Qt crash root cause"
+  ]
+}

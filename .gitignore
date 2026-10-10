@@ -15,6 +15,7 @@ build/
 htmlcov/
 
 # Env
+.venv/
 .env
 .env.local
 .env.production
@@ -30,9 +31,23 @@ benchmark.md
 benchmark.html
 benchmark-reports/
 .drift-gate-history.jsonl
+.drift-gate-evidence/
 trend.html
 
 # IDE
+.DS_Store
+.local-archives/
 .vscode/
 .idea/
 *.swp
+
+# Desktop web build
+node_modules/
+drift_gate/desktop/web/
+
+# Native packages belong in GitHub Releases, not Git history.
+/DriftGate.spec
+/DriftGate-*.dmg
+/DriftGate-Windows-Setup.exe
+/DriftGate-Windows-portable.zip
+/SHA256SUMS.txt

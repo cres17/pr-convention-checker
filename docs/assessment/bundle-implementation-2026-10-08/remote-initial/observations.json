@@ -1,0 +1,16 @@
+{
+  "source_commit": "74a6e4713c7cea887dbe9b283a8296d337a1470b",
+  "push_ci": 37707468366,
+  "pr_ci": 37707475009,
+  "windows_job": 113085156453,
+  "pr_self_job": 113085176226,
+  "measured_pr_capture": {
+    "total_input_bytes": 125172523,
+    "max_file_bytes": 61752569,
+    "input_files": 3688
+  },
+  "failures": [
+    "bundle capacity too small for full PR",
+    "Windows readonly Git fixture deletion"
+  ]
+}

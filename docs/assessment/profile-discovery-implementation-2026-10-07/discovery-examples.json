@@ -1,0 +1,921 @@
+{
+  "schema": "discovery-examples-v1",
+  "scope": "Authored nonblind module/profile regression examples; not PR accuracy or service closure",
+  "cases": [
+    {
+      "id": "mixed-python",
+      "files": [
+        {
+          "path": "src/api.py",
+          "status": "modified",
+          "previous_path": null,
+          "patch": "",
+          "semantic_signals": [],
+          "semantic_evidence": [],
+          "analysis_method": "not-analyzed",
+          "analysis_reason": "",
+          "documented_env_keys": null,
+          "document_input_state": "",
+          "before_source": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\"/old\")\ndef endpoint(): return {}\nimport os\nvalue = os.getenv(\"KNOWN\")\n",
+          "after_source": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\"/old\")\ndef endpoint(): return {}\nimport os\nvalue = os.getenv(\"KNOWN\")\n",
+          "document_json": null,
+          "document_error": "",
+          "before_routes": null,
+          "after_routes": null,
+          "route_analysis_error": ""
+        }
+      ],
+      "requested_families": "default-all",
+      "expected": {
+        "complete_within_selection": true,
+        "candidate_families": [
+          "api-route",
+          "env-key"
+        ],
+        "open_families": []
+      },
+      "actual": {
+        "complete_within_selection": true,
+        "candidate_families": [
+          "api-route",
+          "env-key"
+        ],
+        "open_families": []
+      },
+      "matched": true,
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-response",
+          "api-route",
+          "env-key"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": true,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-response",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "state": "closed",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          },
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "state": "closed",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          },
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "state": "closed",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          }
+        ],
+        "legacy_modes": [
+          "api-routes",
+          "env-keys"
+        ],
+        "legacy_python_error": ""
+      }
+    },
+    {
+      "id": "primitive-response",
+      "files": [
+        {
+          "path": "src/api.py",
+          "status": "modified",
+          "previous_path": null,
+          "patch": "",
+          "semantic_signals": [],
+          "semantic_evidence": [],
+          "analysis_method": "not-analyzed",
+          "analysis_reason": "",
+          "documented_env_keys": null,
+          "document_input_state": "",
+          "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Item(BaseModel):\n    id: int\n@app.get(\"/items\", response_model=Item)\ndef endpoint(): return {}\n",
+          "after_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Item(BaseModel):\n    id: int\n@app.get(\"/items\", response_model=Item)\ndef endpoint(): return {}\n",
+          "document_json": null,
+          "document_error": "",
+          "before_routes": null,
+          "after_routes": null,
+          "route_analysis_error": ""
+        }
+      ],
+      "requested_families": "default-all",
+      "expected": {
+        "complete_within_selection": true,
+        "candidate_families": [
+          "api-response",
+          "api-route"
+        ],
+        "open_families": []
+      },
+      "actual": {
+        "complete_within_selection": true,
+        "candidate_families": [
+          "api-response",
+          "api-route"
+        ],
+        "open_families": []
+      },
+      "matched": true,
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-response",
+          "api-route",
+          "env-key"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": true,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-response",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "state": "closed",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          },
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "state": "closed",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          },
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "state": "closed",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          }
+        ],
+        "legacy_modes": [
+          "api-routes",
+          "api-schema"
+        ],
+        "legacy_python_error": ""
+      }
+    },
+    {
+      "id": "opaque-response",
+      "files": [
+        {
+          "path": "src/api.py",
+          "status": "modified",
+          "previous_path": null,
+          "patch": "",
+          "semantic_signals": [],
+          "semantic_evidence": [],
+          "analysis_method": "not-analyzed",
+          "analysis_reason": "",
+          "documented_env_keys": null,
+          "document_input_state": "",
+          "before_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Item(BaseModel):\n    id: list[int]\n@app.get(\"/items\", response_model=Item)\ndef endpoint(): return {}\n",
+          "after_source": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Item(BaseModel):\n    id: list[int]\n@app.get(\"/items\", response_model=Item)\ndef endpoint(): return {}\n",
+          "document_json": null,
+          "document_error": "",
+          "before_routes": null,
+          "after_routes": null,
+          "route_analysis_error": ""
+        }
+      ],
+      "requested_families": "default-all",
+      "expected": {
+        "complete_within_selection": false,
+        "candidate_families": [
+          "api-response",
+          "api-route"
+        ],
+        "open_families": [
+          "api-response"
+        ]
+      },
+      "actual": {
+        "complete_within_selection": false,
+        "candidate_families": [
+          "api-response",
+          "api-route"
+        ],
+        "open_families": [
+          "api-response"
+        ]
+      },
+      "matched": true,
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-response",
+          "api-route",
+          "env-key"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": false,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-response",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "state": "open",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "unsupported_binding"
+            ]
+          },
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "state": "closed",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          },
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "state": "closed",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          }
+        ],
+        "legacy_modes": [
+          "api-routes",
+          "api-schema"
+        ],
+        "legacy_python_error": ""
+      }
+    },
+    {
+      "id": "dynamic-env",
+      "files": [
+        {
+          "path": "src/api.py",
+          "status": "modified",
+          "previous_path": null,
+          "patch": "",
+          "semantic_signals": [],
+          "semantic_evidence": [],
+          "analysis_method": "not-analyzed",
+          "analysis_reason": "",
+          "documented_env_keys": null,
+          "document_input_state": "",
+          "before_source": "import os\nvalue = os.getenv(name)\n",
+          "after_source": "import os\nvalue = os.getenv(name)\n",
+          "document_json": null,
+          "document_error": "",
+          "before_routes": null,
+          "after_routes": null,
+          "route_analysis_error": ""
+        }
+      ],
+      "requested_families": "default-all",
+      "expected": {
+        "complete_within_selection": false,
+        "candidate_families": [
+          "env-key"
+        ],
+        "open_families": [
+          "env-key"
+        ]
+      },
+      "actual": {
+        "complete_within_selection": false,
+        "candidate_families": [
+          "env-key"
+        ],
+        "open_families": [
+          "env-key"
+        ]
+      },
+      "matched": true,
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-response",
+          "api-route",
+          "env-key"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": false,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-response",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "state": "closed",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          },
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "state": "closed",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          },
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "state": "open",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "unsupported_binding"
+            ]
+          }
+        ],
+        "legacy_modes": [
+          "env-keys"
+        ],
+        "legacy_python_error": ""
+      }
+    },
+    {
+      "id": "external-registration",
+      "files": [
+        {
+          "path": "src/api.py",
+          "status": "modified",
+          "previous_path": null,
+          "patch": "",
+          "semantic_signals": [],
+          "semantic_evidence": [],
+          "analysis_method": "not-analyzed",
+          "analysis_reason": "",
+          "documented_env_keys": null,
+          "document_input_state": "",
+          "before_source": "from external import app\n@app.get(\"/outside\")\ndef endpoint(): return {}\n",
+          "after_source": "from external import app\n@app.get(\"/outside\")\ndef endpoint(): return {}\n",
+          "document_json": null,
+          "document_error": "",
+          "before_routes": null,
+          "after_routes": null,
+          "route_analysis_error": ""
+        }
+      ],
+      "requested_families": "default-all",
+      "expected": {
+        "complete_within_selection": false,
+        "candidate_families": [
+          "api-route"
+        ],
+        "open_families": [
+          "api-response",
+          "api-route"
+        ]
+      },
+      "actual": {
+        "complete_within_selection": false,
+        "candidate_families": [
+          "api-route"
+        ],
+        "open_families": [
+          "api-response",
+          "api-route"
+        ]
+      },
+      "matched": true,
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-response",
+          "api-route",
+          "env-key"
+        ],
+        "source_paths": [
+          "src/api.py"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": false,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-response",
+            "profile_ref": [
+              "python-response-primitives",
+              "2"
+            ],
+            "state": "open",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "unsupported_binding"
+            ]
+          },
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "api-route",
+            "profile_ref": [
+              "python-fastapi-routes",
+              "1"
+            ],
+            "state": "open",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "unsupported_binding"
+            ]
+          },
+          {
+            "scope_id": "selected-module:src/api.py",
+            "source_path": "src/api.py",
+            "family": "env-key",
+            "profile_ref": [
+              "python-env-literals",
+              "1"
+            ],
+            "state": "closed",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.py:legacy-selected-input",
+              "before:src/api.py:legacy-selected-input"
+            ],
+            "reason_codes": []
+          }
+        ],
+        "legacy_modes": [
+          "api-routes"
+        ],
+        "legacy_python_error": ""
+      }
+    },
+    {
+      "id": "unsupported-go",
+      "files": [
+        {
+          "path": "src/api.go",
+          "status": "modified",
+          "previous_path": null,
+          "patch": "",
+          "semantic_signals": [],
+          "semantic_evidence": [],
+          "analysis_method": "not-analyzed",
+          "analysis_reason": "",
+          "documented_env_keys": null,
+          "document_input_state": "",
+          "before_source": "",
+          "after_source": "package api",
+          "document_json": null,
+          "document_error": "",
+          "before_routes": null,
+          "after_routes": null,
+          "route_analysis_error": ""
+        }
+      ],
+      "requested_families": "default-all",
+      "expected": {
+        "complete_within_selection": false,
+        "candidate_families": [],
+        "open_families": [
+          "api-response",
+          "api-route",
+          "env-key"
+        ]
+      },
+      "actual": {
+        "complete_within_selection": false,
+        "candidate_families": [],
+        "open_families": [
+          "api-response",
+          "api-route",
+          "env-key"
+        ]
+      },
+      "matched": true,
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-response",
+          "api-route",
+          "env-key"
+        ],
+        "source_paths": [
+          "src/api.go"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": false,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.go",
+            "source_path": "src/api.go",
+            "family": "api-response",
+            "profile_ref": null,
+            "state": "open",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.go:legacy-selected-input",
+              "before:src/api.go:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "profile_not_supported"
+            ]
+          },
+          {
+            "scope_id": "selected-module:src/api.go",
+            "source_path": "src/api.go",
+            "family": "api-route",
+            "profile_ref": null,
+            "state": "open",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.go:legacy-selected-input",
+              "before:src/api.go:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "profile_not_supported"
+            ]
+          },
+          {
+            "scope_id": "selected-module:src/api.go",
+            "source_path": "src/api.go",
+            "family": "env-key",
+            "profile_ref": null,
+            "state": "open",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.go:legacy-selected-input",
+              "before:src/api.go:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "profile_not_supported"
+            ]
+          }
+        ],
+        "legacy_modes": [],
+        "legacy_python_error": ""
+      }
+    },
+    {
+      "id": "express-all-families",
+      "files": [
+        {
+          "path": "src/api.ts",
+          "status": "modified",
+          "previous_path": null,
+          "patch": "",
+          "semantic_signals": [],
+          "semantic_evidence": [],
+          "analysis_method": "not-analyzed",
+          "analysis_reason": "",
+          "documented_env_keys": null,
+          "document_input_state": "",
+          "before_source": null,
+          "after_source": null,
+          "document_json": null,
+          "document_error": "",
+          "before_routes": [
+            [
+              "GET",
+              "/old"
+            ]
+          ],
+          "after_routes": [
+            [
+              "GET",
+              "/new"
+            ]
+          ],
+          "route_analysis_error": ""
+        }
+      ],
+      "requested_families": "default-all",
+      "expected": {
+        "complete_within_selection": false,
+        "candidate_families": [
+          "api-route"
+        ],
+        "open_families": [
+          "api-response",
+          "env-key"
+        ]
+      },
+      "actual": {
+        "complete_within_selection": false,
+        "candidate_families": [
+          "api-route"
+        ],
+        "open_families": [
+          "api-response",
+          "env-key"
+        ]
+      },
+      "matched": true,
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-response",
+          "api-route",
+          "env-key"
+        ],
+        "source_paths": [
+          "src/api.ts"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": false,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.ts",
+            "source_path": "src/api.ts",
+            "family": "api-response",
+            "profile_ref": null,
+            "state": "open",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.ts:legacy-selected-input",
+              "before:src/api.ts:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "profile_not_supported"
+            ]
+          },
+          {
+            "scope_id": "selected-module:src/api.ts",
+            "source_path": "src/api.ts",
+            "family": "api-route",
+            "profile_ref": [
+              "express-registered-routes",
+              "1"
+            ],
+            "state": "closed",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.ts:legacy-selected-input",
+              "before:src/api.ts:legacy-selected-input"
+            ],
+            "reason_codes": []
+          },
+          {
+            "scope_id": "selected-module:src/api.ts",
+            "source_path": "src/api.ts",
+            "family": "env-key",
+            "profile_ref": null,
+            "state": "open",
+            "activated": false,
+            "evidence_refs": [
+              "after:src/api.ts:legacy-selected-input",
+              "before:src/api.ts:legacy-selected-input"
+            ],
+            "reason_codes": [
+              "profile_not_supported"
+            ]
+          }
+        ],
+        "legacy_modes": [],
+        "legacy_python_error": ""
+      }
+    },
+    {
+      "id": "express-route-only",
+      "files": [
+        {
+          "path": "src/api.ts",
+          "status": "modified",
+          "previous_path": null,
+          "patch": "",
+          "semantic_signals": [],
+          "semantic_evidence": [],
+          "analysis_method": "not-analyzed",
+          "analysis_reason": "",
+          "documented_env_keys": null,
+          "document_input_state": "",
+          "before_source": null,
+          "after_source": null,
+          "document_json": null,
+          "document_error": "",
+          "before_routes": [
+            [
+              "GET",
+              "/old"
+            ]
+          ],
+          "after_routes": [
+            [
+              "GET",
+              "/new"
+            ]
+          ],
+          "route_analysis_error": ""
+        }
+      ],
+      "requested_families": [
+        "api-route"
+      ],
+      "expected": {
+        "complete_within_selection": true,
+        "candidate_families": [
+          "api-route"
+        ],
+        "open_families": []
+      },
+      "actual": {
+        "complete_within_selection": true,
+        "candidate_families": [
+          "api-route"
+        ],
+        "open_families": []
+      },
+      "matched": true,
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-route"
+        ],
+        "source_paths": [
+          "src/api.ts"
+        ],
+        "service_scope_certified": false,
+        "complete_within_selection": true,
+        "domains": [
+          {
+            "scope_id": "selected-module:src/api.ts",
+            "source_path": "src/api.ts",
+            "family": "api-route",
+            "profile_ref": [
+              "express-registered-routes",
+              "1"
+            ],
+            "state": "closed",
+            "activated": true,
+            "evidence_refs": [
+              "after:src/api.ts:legacy-selected-input",
+              "before:src/api.ts:legacy-selected-input"
+            ],
+            "reason_codes": []
+          }
+        ],
+        "legacy_modes": [],
+        "legacy_python_error": ""
+      }
+    },
+    {
+      "id": "empty-selection",
+      "files": [],
+      "requested_families": "default-all",
+      "expected": {
+        "complete_within_selection": false,
+        "candidate_families": [],
+        "open_families": []
+      },
+      "actual": {
+        "complete_within_selection": false,
+        "candidate_families": [],
+        "open_families": []
+      },
+      "matched": true,
+      "discovery": {
+        "schema": "contract-discovery-v1",
+        "analysis_boundary": "selected-modules/profile-subsets",
+        "requested_families": [
+          "api-response",
+          "api-route",
+          "env-key"
+        ],
+        "source_paths": [],
+        "service_scope_certified": false,
+        "complete_within_selection": false,
+        "domains": [],
+        "legacy_modes": [],
+        "legacy_python_error": ""
+      }
+    }
+  ],
+  "matched": 9,
+  "total": 9
+}

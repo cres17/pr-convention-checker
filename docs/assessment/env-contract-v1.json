@@ -1,0 +1,15 @@
+{
+  "version": "env-contract-v1",
+  "description": "Fixed synthetic engine-level cases. Both revisions receive the same changed files and projected sample key names; the old engine ignores the new content mode and key evidence. Values are synthetic. Not a live PR or end-to-end accuracy benchmark.",
+  "policy": {"rules": [{"id": "env-sync", "when": {"any_changed": ["src/config/**"], "min_change_intensity": "config-key-added"}, "require": {"groups": [{"name": "sample", "all_changed": [".env.example"], "content": "env-keys"}]}, "severity": "blocker"}]},
+  "cases": [
+    {"id": "E01-missing-sample", "expected": "fail", "changed_files": [{"path": "src/config/pay.py", "status": "modified", "patch": "+timeout = os.getenv('PAYMENT_TIMEOUT')\n"}]},
+    {"id": "E02-unrelated-key", "expected": "fail", "changed_files": [{"path": "src/config/pay.py", "status": "modified", "patch": "+timeout = os.getenv('PAYMENT_TIMEOUT')\n"}, {"path": ".env.example", "status": "modified", "patch": "+OTHER_KEY=example\n", "documented_env_keys": ["OTHER_KEY"]}]},
+    {"id": "E03-correct-key", "expected": "pass", "changed_files": [{"path": "src/config/pay.py", "status": "modified", "patch": "+timeout = os.getenv('PAYMENT_TIMEOUT')\n"}, {"path": ".env.example", "status": "modified", "patch": "+PAYMENT_TIMEOUT=example\n", "documented_env_keys": ["PAYMENT_TIMEOUT"]}]},
+    {"id": "E04-unchanged-sample-already-has-key", "expected": "pass", "changed_files": [{"path": "src/config/pay.py", "status": "modified", "patch": "+timeout = os.getenv('PAYMENT_TIMEOUT')\n"}, {"path": ".env.example", "status": "unchanged", "patch": "", "documented_env_keys": ["PAYMENT_TIMEOUT"]}]},
+    {"id": "E05-comment-only-sample", "expected": "fail", "changed_files": [{"path": "src/config/pay.py", "status": "modified", "patch": "+timeout = os.getenv('PAYMENT_TIMEOUT')\n"}, {"path": ".env.example", "status": "modified", "patch": "+# add settings below\n", "documented_env_keys": []}]},
+    {"id": "E06-code-comment-only", "expected": "pass", "changed_files": [{"path": "src/config/pay.py", "status": "modified", "patch": "+# payment timeout documentation\n"}]},
+    {"id": "E07-existing-key-implementation-change", "expected": "pass", "changed_files": [{"path": "src/config/pay.py", "status": "modified", "patch": "-timeout = float(os.getenv('PAYMENT_TIMEOUT'))\n+timeout = int(os.getenv('PAYMENT_TIMEOUT'))\n"}]},
+    {"id": "E08-document-content-unavailable", "expected": "fail", "changed_files": [{"path": "src/config/pay.py", "status": "modified", "patch": "+timeout = os.getenv('PAYMENT_TIMEOUT')\n"}, {"path": ".env.example", "status": "modified", "patch": "", "documented_env_keys": null}]}
+  ]
+}

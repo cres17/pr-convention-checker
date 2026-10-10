@@ -2,10 +2,14 @@
 규칙 평가 엔진 — 순수 함수. I/O 없음.
 """
 from datetime import date
+from dataclasses import replace
 from typing import List, Tuple
 
 from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.change_paths import is_ignored, triggers
+from drift_gate.utils.glob_matcher import matches_any
 from drift_gate.core.models.policy import Policy, Group, CrossFileRelation
+from drift_gate.core.models.evaluation_context import EvaluationContext
 from drift_gate.core.models.result import (
     Violation, UnsatisfiedGroup, SatisfiedGroup, RuleDecision,
     SkippedRule, RejectedIgnore, IgnoreAuditEntry,
@@ -16,25 +20,89 @@ from drift_gate.core.classification.intensity import (
     classify_file_intensity,
     max_intensity,
     meets_min_intensity,
+    analysis_unavailable,
 )
 from drift_gate.core.reasoning.checklist import build_fallback_checklist
-from drift_gate.utils.glob_matcher import matches_any, match_glob, pattern_confidence
+from drift_gate.utils.glob_matcher import match_glob, pattern_confidence
+from drift_gate.core.evaluation.contracts import content_requirement, possible_route_change
+from drift_gate.core.evaluation.environment import environment_delta
+from drift_gate.core.evaluation.api_schema import response_changes, UnknownResponse, UnsupportedContract
+from drift_gate.core.evaluation.analysis_session import AnalysisSession
+
+
+def _threshold_candidates(files, rule, session=None):
+    """Use bounded contract evidence before a heuristic can skip its checker."""
+    minimum = rule.when.min_change_intensity
+    if not minimum or minimum == "any":
+        return files, set()
+    schema_contract = any(g.content == "api-schema" for g in rule.require.groups)
+    strict = next((g for g in rule.require.groups if g.content == 'auto-strict' and g.required), None)
+    env_contract = any(g.content == 'env-keys' and g.required for g in rule.require.groups)
+    route_contract = any(g.content in {'auto', 'api-routes', 'auto-strict'} and g.required for g in rule.require.groups)
+    accepted, uncertain = [], set()
+    for file in files:
+        unavailable = analysis_unavailable(file)
+        meets = meets_min_intensity(classify_file_intensity(file), minimum)
+        if strict:
+            content = content_requirement(strict, [file], [], session)
+            if content.verification == 'not-applicable':
+                meets, unavailable = False, False
+            elif content.decision == 'undetermined':
+                unavailable = True
+            else:
+                intensity = ('config-key-added' if environment_delta([file]).keys else 'route-contract-change')
+                meets = meets_min_intensity(intensity, minimum)
+                unavailable = False
+        elif env_contract:
+            facts = environment_delta([file])
+            if facts.keys:
+                file = replace(file, semantic_signals=sorted(set(file.semantic_signals) | {'env-key-added'}))
+                meets = meets_min_intensity(classify_file_intensity(file), minimum)
+            if facts.uncertain and not (facts.keys and meets):
+                unavailable = True
+        elif route_contract and not meets and possible_route_change([file]):
+            unavailable = True
+        if schema_contract:
+            try:
+                delta = response_changes([file], session)
+            except UnsupportedContract:
+                # A small-looking patch is not proof that an unsupported
+                # contract did not change. An independent known trigger still
+                # establishes the duty, while content remains unverified.
+                unavailable = unavailable or not meets
+            else:
+                if any(not isinstance(shape, UnknownResponse) for shape in delta.values()):
+                    file = replace(file,
+                        semantic_signals=sorted(set(file.semantic_signals) | {"route-contract-change"}),
+                        semantic_evidence=[*file.semantic_evidence, "Complete source snapshots establish a response contract change"])
+                    meets = meets_min_intensity(classify_file_intensity(file), minimum)
+                    unavailable = False
+                elif delta:
+                    unavailable = unavailable or not meets
+        if meets or unavailable:
+            accepted.append(file)
+            if unavailable:
+                uncertain.add(file.path)
+    return accepted, uncertain
 
 
 def evaluate(
     policy: Policy,
     changed_files: List[ChangedFile],
     drift_ignores: List[DriftIgnoreDirective],
+    context: EvaluationContext | None = None,
+    session: AnalysisSession | None = None,
 ) -> Tuple[List[Violation], List[SkippedRule], List[RejectedIgnore], List[RuleDecision], List[IgnoreAuditEntry]]:
     """
     모든 정책 규칙을 평가.
     반환: (violations, skipped_rules, rejected_ignores)
     """
+    session = session or AnalysisSession()
     ignore_map = {d.rule_id: d for d in drift_ignores}
 
     relevant_files = [
         f for f in changed_files
-        if not matches_any(f.path, policy.ignore_paths)
+        if not is_ignored(f, policy.ignore_paths)
     ]
 
     violations: List[Violation] = []
@@ -50,7 +118,10 @@ def evaluate(
         # drift-ignore 처리
         if rule_id in ignore_map:
             directive = ignore_map[rule_id]
-            rejection_reason = _ignore_rejection_reason(directive, rule, policy)
+            trigger_paths = sorted({path for f in relevant_files for path in (f.path, f.previous_path)
+                                    if path and matches_any(path, rule.when.any_changed)
+                                    and not matches_any(path, policy.ignore_paths)})
+            rejection_reason = _ignore_rejection_reason(directive, rule, policy, context, trigger_paths)
             if rejection_reason:
                 rejected_ignores.append(RejectedIgnore(
                     rule_id=rule_id,
@@ -61,6 +132,9 @@ def evaluate(
                 ignore_audit.append(IgnoreAuditEntry(
                     rule_id=rule_id,
                     action="rejected",
+                    approval_verified=directive.approval_verified,
+                    approval_commit=directive.approval_commit,
+                    approval_envelope_sha256=_envelope_sha(directive),
                     reason=rejection_reason,
                     approved_by=directive.approved_by,
                     expires=directive.expires,
@@ -74,6 +148,9 @@ def evaluate(
                 ignore_audit.append(IgnoreAuditEntry(
                     rule_id=rule_id,
                     action="accepted",
+                    approval_verified=directive.approval_verified,
+                    approval_commit=directive.approval_commit,
+                    approval_envelope_sha256=_envelope_sha(directive),
                     reason=directive.reason or "",
                     approved_by=directive.approved_by,
                     expires=directive.expires,
@@ -90,15 +167,23 @@ def evaluate(
 
         trigger_files = [
             f for f in relevant_files
-            if matches_any(f.path, when_patterns)
-            or (f.previous_path and matches_any(f.previous_path, when_patterns))
+            if triggers(f, when_patterns)
         ]
         min_intensity = rule.when.min_change_intensity
-        if min_intensity and min_intensity != "any":
-            trigger_files = [
-                f for f in trigger_files
-                if meets_min_intensity(classify_file_intensity(f), min_intensity)
-            ]
+        trigger_files, uncertain_thresholds = _threshold_candidates(trigger_files, rule, session)
+        typed_open, typed_note = False, ""
+        if rule.when.trigger is not None and trigger_files:
+            from drift_gate.core.classification.triggers import evaluate_trigger, resolve_unknown
+            from drift_gate.core.contracts.planner import Truth
+            outcome = evaluate_trigger(rule.when.trigger, trigger_files, session)
+            applicability, typed_note = resolve_unknown(outcome, rule.when.trigger.on_unknown)
+            if applicability == Truth.FALSE:
+                rule_decisions.append(RuleDecision(
+                    rule_id=rule_id, severity=severity, status="unmatched",
+                    reason="typed trigger predicate is false" + (f"; {typed_note}" if typed_note else ""),
+                ))
+                continue
+            typed_open = applicability == Truth.UNKNOWN
 
         if not trigger_files:
             rule_decisions.append(RuleDecision(
@@ -112,19 +197,44 @@ def evaluate(
         satisfied, unsatisfied = _evaluate_groups(
             [group for group in rule.require.groups if group.required],
             relevant_files,
+            trigger_files,
+            session,
         )
         relation_satisfied, relation_unsatisfied, relation_names = (
             _evaluate_cross_file_relations(
                 rule.require.cross_file,
                 rule.require.groups,
                 relevant_files,
+                session,
             )
         )
         satisfied.extend(relation_satisfied)
         unsatisfied.extend(relation_unsatisfied)
+        unavailable = sorted(uncertain_thresholds)
+        if unavailable and min_intensity and min_intensity != "any":
+            if all(f.path in uncertain_thresholds for f in trigger_files):
+                # A missing document is observable, but the conditional duty
+                # itself is not established when no trigger meets the threshold.
+                unsatisfied = [replace(g, decision="undetermined", verification="unverified",
+                    evidence=g.evidence + "; configured trigger threshold is unverified") for g in unsatisfied]
+            unsatisfied.append(UnsatisfiedGroup(
+                name="Analysis evidence unavailable", required=unavailable, type="analysis",
+                evidence="Cannot establish the configured change threshold; provide analyzable input or a valid exception",
+                decision="undetermined", verification="unverified",
+            ))
+        if typed_open and unsatisfied:
+            # Conditional ¬A ∨ R with A=U: a missing document is not a confirmed violation.
+            unsatisfied = [replace(g, decision="undetermined", verification="unverified",
+                evidence=g.evidence + "; typed trigger is unresolved") if g.decision == "violated" else g
+                for g in unsatisfied]
+            unsatisfied.append(UnsatisfiedGroup(
+                name="Typed trigger unresolved", required=[f.path for f in trigger_files], type="analysis",
+                evidence=typed_note, decision="undetermined", verification="unverified",
+            ))
         matched_patterns = _matched_patterns(trigger_files, when_patterns)
 
-        if unsatisfied:
+        known_missing = [g for g in unsatisfied if g.decision == "violated"]
+        if known_missing:
             change_types = sorted(set(
                 ct
                 for f in trigger_files
@@ -143,8 +253,8 @@ def evaluate(
                 change_type=change_type,
                 message=rule.message,
                 trigger_files=trigger_files,
-                unsatisfied_groups=unsatisfied,
-                checklist=build_fallback_checklist(unsatisfied),
+                unsatisfied_groups=known_missing,
+                checklist=build_fallback_checklist(known_missing),
                 ignored=False,
                 change_intensity=max_intensity(trigger_files),
                 change_intensities=change_intensities,
@@ -169,6 +279,14 @@ def evaluate(
                 satisfied_groups=satisfied,
                 unsatisfied_groups=unsatisfied,
             ))
+        elif unsatisfied:
+            rule_decisions.append(RuleDecision(
+                rule_id=rule_id, severity=severity, status="undetermined",
+                reason="Required content or change threshold could not be verified",
+                matched_patterns=matched_patterns,
+                trigger_files=[f.path for f in trigger_files],
+                satisfied_groups=satisfied, unsatisfied_groups=unsatisfied,
+            ))
         else:
             rule_decisions.append(RuleDecision(
                 rule_id=rule_id,
@@ -186,23 +304,32 @@ def evaluate(
 def _evaluate_groups(
     groups: List[Group],
     changed_files: List[ChangedFile],
+    trigger_files: Tuple[ChangedFile, ...] | List[ChangedFile] = (),
+    session=None,
 ) -> Tuple[List[SatisfiedGroup], List[UnsatisfiedGroup]]:
     satisfied: List[SatisfiedGroup] = []
     unsatisfied: List[UnsatisfiedGroup] = []
     for group in groups:
         required = group.any_changed or group.all_changed
         group_type = "any_changed" if group.any_changed else "all_changed"
-        if _evaluate_group(group, changed_files):
+        content = content_requirement(group, trigger_files, changed_files, session)
+        group_satisfied = _evaluate_group(group, changed_files) if content.decision == "paths" else content.decision == "satisfied"
+        decision = ("satisfied" if group_satisfied else "violated") if content.decision == "paths" else content.decision
+        if group_satisfied:
             satisfied.append(SatisfiedGroup(
                 name=group.name,
                 required=required,
                 type=group_type,
+                evidence=content.reason, decision=decision,
+                verification=content.verification, content_mode=content.mode,
             ))
         else:
             unsatisfied.append(UnsatisfiedGroup(
                 name=group.name,
                 required=required,
                 type=group_type,
+                evidence=content.reason, decision=decision,
+                verification=content.verification, content_mode=content.mode,
             ))
     return satisfied, unsatisfied
 
@@ -212,12 +339,10 @@ def _evaluate_group(group: Group, changed_files: List[ChangedFile]) -> bool:
     path_status = {}
     for f in changed_files:
         path_status[f.path] = f.status
-        if f.previous_path:
-            path_status[f.previous_path] = f.status
 
     def satisfied(pattern: str) -> bool:
         return any(
-            match_glob(p, pattern) and s != "deleted"
+            match_glob(p, pattern) and s not in ("deleted", "unchanged")
             for p, s in path_status.items()
         )
 
@@ -232,6 +357,7 @@ def _evaluate_cross_file_relations(
     relations: List[CrossFileRelation],
     groups: List[Group],
     changed_files: List[ChangedFile],
+    session=None,
 ) -> Tuple[List[SatisfiedGroup], List[UnsatisfiedGroup], List[str]]:
     group_by_name = {group.name: group for group in groups}
     satisfied: List[SatisfiedGroup] = []
@@ -241,15 +367,11 @@ def _evaluate_cross_file_relations(
     for relation in relations:
         if not relation.when_any_changed:
             continue
-        triggered = any(
-            matches_any(file.path, relation.when_any_changed)
-            or (
-                file.previous_path
-                and matches_any(file.previous_path, relation.when_any_changed)
-            )
-            for file in changed_files
-        )
-        if not triggered:
+        # The parent establishes applicability, not the relation's content
+        # scope. Use the same rename/unchanged contract as the parent selector.
+        relation_files = [file for file in changed_files
+                          if triggers(file, relation.when_any_changed)]
+        if not relation_files:
             continue
 
         triggered_names.append(relation.name)
@@ -257,21 +379,13 @@ def _evaluate_cross_file_relations(
             group = group_by_name.get(group_name)
             if group is None:
                 continue
-            required = group.any_changed or group.all_changed
-            group_type = "any_changed" if group.any_changed else "all_changed"
             relation_group_name = f"{relation.name}: {group.name}"
-            if _evaluate_group(group, changed_files):
-                satisfied.append(SatisfiedGroup(
-                    name=relation_group_name,
-                    required=required,
-                    type=group_type,
-                ))
-            else:
-                unsatisfied.append(UnsatisfiedGroup(
-                    name=relation_group_name,
-                    required=required,
-                    type=group_type,
-                ))
+            yes, no = _evaluate_groups([group], changed_files, relation_files, session)
+            scope = sorted(file.path for file in relation_files)
+            satisfied.extend(replace(item, name=relation_group_name,
+                                     source_files=scope, relation=relation.name) for item in yes)
+            unsatisfied.extend(replace(item, name=relation_group_name,
+                                       source_files=scope, relation=relation.name) for item in no)
 
     return satisfied, unsatisfied, sorted(triggered_names)
 
@@ -367,10 +481,37 @@ def _blast_radius(
     return sorted(radius)
 
 
+def _envelope_sha(directive):
+    if directive.approval_envelope is None:
+        return ""
+    from drift_gate.core.models.result import _envelope_digest
+    return _envelope_digest(directive.approval_envelope)
+
+
+def _approval_binding_error(directive, rule, context, trigger_paths):
+    from drift_gate.core.trust.approvals import ApprovalEnvelope, binding_errors
+    if directive.approval_envelope is None:
+        return "approval envelope bound to rule, head, policy and dates is required"
+    try:
+        envelope = ApprovalEnvelope.from_dict(directive.approval_envelope)
+    except ValueError as exc:
+        return f"invalid approval envelope: {exc}"
+    if envelope.subject_head_oid != directive.approval_commit:
+        return "approval envelope and verified commit differ"
+    errors = binding_errors(envelope, rule_id=rule.id, trigger_paths=trigger_paths,
+                            head_oid=context.subject_head_oid if context else None,
+                            policy_sha256=context.policy_sha256 if context else None,
+                            evaluated_on=context.evaluated_on if context else None,
+                            reason=directive.reason)
+    return "; ".join(errors)
+
+
 def _ignore_rejection_reason(
     directive: DriftIgnoreDirective,
     rule,
     policy: Policy,
+    context: EvaluationContext | None = None,
+    trigger_paths=(),
 ) -> str:
     severity = rule.severity.upper()
     suppression = policy.suppression
@@ -380,8 +521,14 @@ def _ignore_rejection_reason(
         return "this rule does not allow drift-ignore"
     if suppression.allowed_rules and directive.rule_id not in suppression.allowed_rules:
         return "rule is not listed in suppression.allowed_rules"
-    if suppression.require_codeowners_approval and not directive.approved_by:
-        return "CODEOWNERS approval is required"
+    if suppression.require_codeowners_approval:
+        if not directive.approved_by:
+            return "CODEOWNERS approval is required"
+        if not directive.approval_verified or not directive.approval_commit:
+            return directive.approval_error or "verified CODEOWNERS approval for the current commit is required"
+        binding_error = _approval_binding_error(directive, rule, context, trigger_paths)
+        if binding_error:
+            return binding_error
     if severity in ("BLOCKER", "MAJOR") and not directive.reason:
         return "reason is required"
     if not directive.expires:
@@ -390,6 +537,8 @@ def _ignore_rejection_reason(
         expires = date.fromisoformat(directive.expires)
     except ValueError:
         return f"invalid expires date: {directive.expires}"
-    if expires < date.today():
+    if context is None:
+        return 'explicit evaluation date is required for an expiring ignore'
+    if expires < context.evaluated_on:
         return f"ignore expired on {directive.expires}"
     return ""

@@ -3,11 +3,13 @@ GitHub API adapter — PR 변경 파일 수집 (페이지네이션 포함).
 core에서 사용 금지.
 """
 import json
+import base64
 import re
 import urllib.request
 import urllib.error
 from pathlib import PurePosixPath
 from typing import List, Optional, Tuple
+from urllib.parse import quote
 
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.result import DriftIgnoreDirective
@@ -88,7 +90,7 @@ class GitHubAdapter:
             safe_prev = _sanitize_path(prev_raw) if prev_raw else None
             result.append(ChangedFile(
                 path=safe_path,
-                status=f["status"],
+                status="deleted" if f["status"] == "removed" else f["status"],
                 previous_path=safe_prev,
                 patch=f.get("patch", ""),
             ))
@@ -104,9 +106,66 @@ class GitHubAdapter:
         self, pr_number: int
     ) -> Tuple[List[ChangedFile], str]:
         """변경 파일 + PR description 동시 반환."""
-        return self.get_pr_files(pr_number), self.get_pr_body(pr_number)
+        url = f"{self._base}/repos/{self._repo}/pulls/{pr_number}"
+        before = self._get(url)
+        files = self.get_pr_files(pr_number)
+        after = self._get(url)
+        if before["head"]["sha"] != after["head"]["sha"] or before["base"]["sha"] != after["base"]["sha"]:
+            raise RuntimeError("PR changed while collecting files; retry against a stable revision")
+        self._snapshot_head = after["head"]["sha"]
+        self._snapshot_base = after["base"]["sha"]
+        return files, after.get("body") or ""
+
+    def attach_env_documents(self, pr_number, files, policy):
+        from drift_gate.adapters.docs.content import attach_env_documents
+        from drift_gate.utils.glob_matcher import matches_any
+        groups = [group for rule in policy.rules for group in rule.require.groups]
+        explicit = any(group.content in {'env-keys', 'api-schema', 'api-routes', 'auto-strict'} for group in groups)
+        structured_legacy = any(group.content == 'auto' and any(
+            file.path.lower().endswith(('.json', '.yaml', '.yml'))
+            and matches_any(file.path, group.any_changed or group.all_changed) for file in files) for group in groups)
+        if not (explicit or structured_legacy):
+            return files
+        head = getattr(self, "_snapshot_head", None)
+        if not head:
+            head = self._get(f"{self._base}/repos/{self._repo}/pulls/{pr_number}")["head"]["sha"]
+        if any(group.content in {"api-schema", "env-keys", "auto-strict", "api-routes"} for rule in policy.rules for group in rule.require.groups):
+            from dataclasses import replace
+            base = getattr(self, "_snapshot_base", None)
+            if base:
+                try:
+                    comparison = self._get(f"{self._base}/repos/{self._repo}/compare/{quote(base, safe='')}...{quote(head, safe='')}")
+                    base = comparison["merge_base_commit"]["sha"]
+                except (OSError, ValueError, RuntimeError, KeyError, TypeError):
+                    base = None
+            snapshots = []
+            for file in files:
+                if file.path.endswith(('.py', '.js', '.jsx', '.ts', '.tsx')):
+                    try:
+                        before = self.get_file_text(file.previous_path or file.path, base) if base and file.status != "added" else None
+                        after = self.get_file_text(file.path, head) if file.status != "deleted" else None
+                    except (OSError, ValueError, RuntimeError):
+                        before = after = None
+                    file = replace(file, before_source=before, after_source=after)
+                snapshots.append(file)
+            files = snapshots
+        return attach_env_documents(files, policy, lambda path: self.get_file_text(path, head))
 
     # ── Internal ──────────────────────────────────────────────────────────
+
+    def get_file_text(self, path: str, ref: str) -> Optional[str]:
+        """Read a bounded text blob at an explicit revision; never use a download URL."""
+        if _sanitize_path(path) is None:
+            raise ValueError("unsafe repository path")
+        try:
+            data = self._get(f"{self._base}/repos/{self._repo}/contents/{quote(path)}?ref={quote(ref, safe='')}")
+        except GitHubAPIError as exc:
+            if exc.status == 404:
+                return None
+            raise
+        if data.get("type") != "file" or data.get("encoding") != "base64" or data.get("size", 0) > 1_000_000:
+            raise ValueError("unsupported or oversized repository file")
+        return base64.b64decode(data["content"]).decode("utf-8")
 
     def _get(self, url: str):
         req = urllib.request.Request(
@@ -136,6 +195,12 @@ _HTTP_HINTS: dict = {
 }
 
 
+class GitHubAPIError(RuntimeError):
+    def __init__(self, message, status):
+        super().__init__(message)
+        self.status = status
+
+
 def _github_api_error(e: "urllib.error.HTTPError", url: str) -> RuntimeError:
     hint = _HTTP_HINTS.get(e.code, "")
     try:
@@ -148,7 +213,7 @@ def _github_api_error(e: "urllib.error.HTTPError", url: str) -> RuntimeError:
         parts.append(f"  GitHub 메시지: {gh_msg}")
     if hint:
         parts.append(f"  힌트: {hint}")
-    return RuntimeError("\n".join(parts))
+    return GitHubAPIError("\n".join(parts), e.code)
 
 
 def parse_drift_ignores(pr_body: str) -> List[DriftIgnoreDirective]:
@@ -160,14 +225,16 @@ def parse_drift_ignores(pr_body: str) -> List[DriftIgnoreDirective]:
     approved-by: <CODEOWNER>   (선택)
     """
     ignores: List[DriftIgnoreDirective] = []
-    for m in re.finditer(r"drift-ignore:\s*(\S+)", pr_body):
+    matches = list(re.finditer(r"(?m)^\s*drift-ignore:[ \t]*(\S+)[ \t]*$", pr_body))
+    for index, m in enumerate(matches):
         rule_id = m.group(1)
-        window = pr_body[m.start(): m.start() + 300]
-        reason_m = re.search(r"reason\s*:\s*(.+)", window)
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(pr_body)
+        window = pr_body[m.end():end]
+        reason_m = re.search(r"(?m)^[ \t]*reason[ \t]*:[ \t]*(\S[^\r\n]*)", window)
         reason = reason_m.group(1).strip() if reason_m else None
-        expires_m = re.search(r"expires\s*:\s*(\d{4}-\d{2}-\d{2})", window)
+        expires_m = re.search(r"(?m)^[ \t]*expires[ \t]*:[ \t]*(\S[^\r\n]*)", window)
         expires = expires_m.group(1).strip() if expires_m else None
-        approved_m = re.search(r"approved-by\s*:\s*(.+)", window, re.IGNORECASE)
+        approved_m = re.search(r"(?mi)^[ \t]*approved-by[ \t]*:[ \t]*(\S[^\r\n]*)", window)
         approved_by = approved_m.group(1).strip() if approved_m else None
         ignores.append(
             DriftIgnoreDirective(

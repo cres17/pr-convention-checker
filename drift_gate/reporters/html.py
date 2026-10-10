@@ -8,6 +8,8 @@ from drift_gate.core.models.result import EvaluationResult, Violation
 
 class HtmlReporter:
     def render(self, result: EvaluationResult, *, policy_source: str = "") -> str:
+        from drift_gate.core.compat.legacy_result import diagnostic_lines
+        diagnostics = ''.join('<p>' + html.escape(line) + '</p>' for line in diagnostic_lines(result))
         violations = "\n".join(
             self._violation_card(violation) for violation in result.violations
         )
@@ -202,6 +204,7 @@ class HtmlReporter:
   </section>
 
   {walkthrough}
+  {diagnostics}
   {self._temporal_warnings(result)}
   {rule_table}
 
@@ -252,6 +255,8 @@ class HtmlReporter:
         diff_snippet = self._diff_snippet(violation)
         semantic_evidence = self._semantic_evidence(violation)
         enrichment = self._enrichment(violation)
+        contract_evidence = "".join(f"<li>{html.escape(group.evidence)}</li>"
+                                    for group in violation.unsatisfied_groups if group.evidence)
 
         return f"""<article class="card" id="{anchor}">
   <header>
@@ -270,6 +275,7 @@ class HtmlReporter:
     <tr><th>Confidence</th><td><code>{html.escape(violation.confidence)}</code></td></tr>
   </table>
   {semantic_evidence}
+  <ul>{contract_evidence}</ul>
   {enrichment}
   {diff_snippet}
   <h3>Suggested Fix</h3>
@@ -296,6 +302,8 @@ class HtmlReporter:
 </nav>"""
 
     def _side_panel(self, result: EvaluationResult) -> str:
+        from drift_gate.core.gating.enforcement import enforcement_outcome
+        enforcement = enforcement_outcome(result)
         skipped = "".join(
             f"<li><code>{html.escape(rule.rule_id)}</code>: {html.escape(rule.reason or 'no reason')}</li>"
             for rule in result.skipped_rules
@@ -307,6 +315,7 @@ class HtmlReporter:
         return f"""<section class="card">
   <h2>Rule Summary</h2>
   <p>Gate decision: <code>{html.escape(result.result)}</code></p>
+  <p>Enforcement action: <code>{html.escape(enforcement['action'])}</code> ({html.escape(enforcement['basis'])})</p>
   <h3>Applied Ignores</h3>
   <ul>{skipped}</ul>
   <h3>Rejected Ignores</h3>
@@ -341,12 +350,14 @@ class HtmlReporter:
                 else html.escape(decision.rule_id)
             )
             matched = ", ".join(decision.matched_patterns) or "-"
+            reason = decision.reason + " | " + decision.decision + " / " + decision.verification
+            reason += " | " + "; ".join(g.evidence for g in decision.satisfied_groups + decision.unsatisfied_groups if g.verification in {"partial", "unverified"})
             rows.append(
                 "<tr>"
                 f"<td>{link}</td>"
                 f"<td><span class=\"rule-status {status_class}\">{html.escape(decision.status)}</span></td>"
                 f"<td>{html.escape(decision.severity)}</td>"
-                f"<td>{html.escape(decision.reason)}</td>"
+                f"<td>{html.escape(reason)}</td>"
                 f"<td>{html.escape(matched)}</td>"
                 "</tr>"
             )

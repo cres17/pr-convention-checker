@@ -1,0 +1,460 @@
+{
+  "header_prefix_bypass": {
+    "result": {
+      "summary": {
+        "blocker": 0,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "pass"
+      },
+      "scan_metrics": {
+        "scanned_files": 1,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 0,
+        "runtime_seconds": 0.0,
+        "analysis_notes": [
+          {
+            "path": "src/a.py",
+            "method": "heuristic",
+            "reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+          }
+        ]
+      },
+      "result": "pass",
+      "skip": false,
+      "skip_reason": "",
+      "no_policy": false,
+      "change_types": [
+        "other"
+      ],
+      "violations": [],
+      "rule_decisions": [
+        {
+          "rule_id": "contract",
+          "severity": "MAJOR",
+          "status": "unmatched",
+          "reason": "no changed files matched this rule after ignore paths and intensity filters",
+          "matched_patterns": [],
+          "trigger_files": [],
+          "satisfied_groups": [],
+          "unsatisfied_groups": []
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": true,
+        "fail_on_major_count": 1
+      }
+    },
+    "provenance": {
+      "requested_base": "HEAD",
+      "resolved_base": "a756175ace57e935f463679ec45ece0fdc3d6d64",
+      "comparison_mode": "commit",
+      "head": "a756175ace57e935f463679ec45ece0fdc3d6d64",
+      "dirty": true,
+      "untracked_skipped": [],
+      "snapshot_sha256": "3822d34bbea3bc733e1c3fba7cafa8c92925e0fe4fab3a6505bbd1f1c4c56aa4"
+    },
+    "files": [
+      {
+        "path": "src/a.py",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "diff --git a/src/a.py b/src/a.py\nindex 2f922d7..0b9bc1d 100644\n--- a/src/a.py\n+++ b/src/a.py\n@@ -2,4 +2,5 @@ def record():\n     print(\"called\")\n     return 1\n \n-# before\n+# after\n+++record()\n",
+        "semantic_signals": [],
+        "semantic_evidence": [
+          "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable"
+        ],
+        "analysis_method": "heuristic",
+        "analysis_reason": "No changed code lines to parse; diff-only comment classification is heuristic when full snapshots are unavailable",
+        "documented_env_keys": null,
+        "raw_lines": [
+          [
+            "-",
+            "# before"
+          ],
+          [
+            "+",
+            "# after"
+          ]
+        ],
+        "code_lines": [],
+        "intensity": "comment-only"
+      }
+    ],
+    "runtime_stdout": "called\n"
+  },
+  "header_prefix_control": {
+    "result": {
+      "summary": {
+        "blocker": 0,
+        "major": 1,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "fail"
+      },
+      "scan_metrics": {
+        "scanned_files": 1,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 1,
+        "runtime_seconds": 0.0,
+        "analysis_notes": [
+          {
+            "path": "src/a.py",
+            "method": "grammar+heuristic",
+            "reason": ""
+          }
+        ]
+      },
+      "result": "fail",
+      "skip": false,
+      "skip_reason": "",
+      "no_policy": false,
+      "change_types": [
+        "other"
+      ],
+      "violations": [
+        {
+          "rule_id": "contract",
+          "severity": "MAJOR",
+          "confidence": "low",
+          "change_types": [
+            "other"
+          ],
+          "change_type": "other",
+          "message": "",
+          "trigger_files": [
+            {
+              "path": "src/a.py",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/a.py b/src/a.py\nindex 2f922d7..f160a33 100644\n--- a/src/a.py\n+++ b/src/a.py\n@@ -2,4 +2,5 @@ def record():\n     print(\"called\")\n     return 1\n \n-# before\n+# after\n++record()\n",
+              "semantic_signals": [],
+              "semantic_evidence": [],
+              "analysis_method": "grammar+heuristic",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            }
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "docs",
+              "required": [
+                "spec.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ],
+          "checklist": [
+            "docs \uc5c5\ub370\uc774\ud2b8"
+          ],
+          "ignored": false,
+          "change_intensity": "impl-only",
+          "change_intensities": [
+            "impl-only"
+          ],
+          "trigger_patterns": [
+            "src/**"
+          ],
+          "blast_radius": [
+            "missing requirement group: docs"
+          ],
+          "missing_docs_explanation": "",
+          "changed_contract_summary": "",
+          "docs_update_draft": "",
+          "false_positive_note": "",
+          "cross_file_relations": []
+        }
+      ],
+      "rule_decisions": [
+        {
+          "rule_id": "contract",
+          "severity": "MAJOR",
+          "status": "fail",
+          "reason": "required groups are missing",
+          "matched_patterns": [
+            "src/**"
+          ],
+          "trigger_files": [
+            "src/a.py"
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "docs",
+              "required": [
+                "spec.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ]
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": true,
+        "fail_on_major_count": 1
+      }
+    },
+    "provenance": {
+      "requested_base": "HEAD",
+      "resolved_base": "a756175ace57e935f463679ec45ece0fdc3d6d64",
+      "comparison_mode": "commit",
+      "head": "a756175ace57e935f463679ec45ece0fdc3d6d64",
+      "dirty": true,
+      "untracked_skipped": [],
+      "snapshot_sha256": "a3c013d4d98948e45e4cdb11159ff10d53b4c24204c72b5e0c4e0feeb372a765"
+    },
+    "files": [
+      {
+        "path": "src/a.py",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "diff --git a/src/a.py b/src/a.py\nindex 2f922d7..f160a33 100644\n--- a/src/a.py\n+++ b/src/a.py\n@@ -2,4 +2,5 @@ def record():\n     print(\"called\")\n     return 1\n \n-# before\n+# after\n++record()\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "grammar+heuristic",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "raw_lines": [
+          [
+            "-",
+            "# before"
+          ],
+          [
+            "+",
+            "# after"
+          ],
+          [
+            "+",
+            "+record()"
+          ]
+        ],
+        "code_lines": [
+          [
+            "+",
+            "+record()"
+          ]
+        ],
+        "intensity": "impl-only"
+      }
+    ]
+  },
+  "snapshot_race": {
+    "result": {
+      "summary": {
+        "blocker": 0,
+        "major": 0,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "pass"
+      },
+      "scan_metrics": {
+        "scanned_files": 0,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 0,
+        "runtime_seconds": 0.0,
+        "analysis_notes": []
+      },
+      "result": "pass",
+      "skip": true,
+      "skip_reason": "no-changes",
+      "no_policy": false,
+      "change_types": [],
+      "violations": [],
+      "rule_decisions": [],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": true,
+        "fail_on_major_count": 1
+      }
+    },
+    "provenance": {
+      "requested_base": "HEAD",
+      "resolved_base": "52117594da7ae86684239cadb447d6b127824dcc",
+      "comparison_mode": "commit",
+      "head": "52117594da7ae86684239cadb447d6b127824dcc",
+      "dirty": false,
+      "untracked_skipped": [],
+      "snapshot_sha256": "c945f5454ebdcbd529cee6fe5fa029f2f10e41f11727ace205b665c40ad66cf1"
+    },
+    "files": [],
+    "actual_patch": "diff --git a/src/a.py b/src/a.py\nindex 2f922d7..56cb6a5 100644\n--- a/src/a.py\n+++ b/src/a.py\n@@ -3,3 +3,4 @@ def record():\n     return 1\n \n # before\n+record()\n",
+    "actual_snapshot_sha256": "c945f5454ebdcbd529cee6fe5fa029f2f10e41f11727ace205b665c40ad66cf1"
+  },
+  "snapshot_race_control": {
+    "result": {
+      "summary": {
+        "blocker": 0,
+        "major": 1,
+        "minor": 0,
+        "nit": 0,
+        "gate_decision": "fail"
+      },
+      "scan_metrics": {
+        "scanned_files": 1,
+        "skipped_ignored_files": 0,
+        "skipped_binary_files": 0,
+        "skipped_large_files": 0,
+        "evaluated_rules": 1,
+        "runtime_seconds": 0.0,
+        "analysis_notes": [
+          {
+            "path": "src/a.py",
+            "method": "grammar+heuristic",
+            "reason": ""
+          }
+        ]
+      },
+      "result": "fail",
+      "skip": false,
+      "skip_reason": "",
+      "no_policy": false,
+      "change_types": [
+        "other"
+      ],
+      "violations": [
+        {
+          "rule_id": "contract",
+          "severity": "MAJOR",
+          "confidence": "low",
+          "change_types": [
+            "other"
+          ],
+          "change_type": "other",
+          "message": "",
+          "trigger_files": [
+            {
+              "path": "src/a.py",
+              "status": "modified",
+              "previous_path": null,
+              "patch": "diff --git a/src/a.py b/src/a.py\nindex 2f922d7..56cb6a5 100644\n--- a/src/a.py\n+++ b/src/a.py\n@@ -3,3 +3,4 @@ def record():\n     return 1\n \n # before\n+record()\n",
+              "semantic_signals": [],
+              "semantic_evidence": [],
+              "analysis_method": "grammar+heuristic",
+              "analysis_reason": "",
+              "documented_env_keys": null
+            }
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "docs",
+              "required": [
+                "spec.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ],
+          "checklist": [
+            "docs \uc5c5\ub370\uc774\ud2b8"
+          ],
+          "ignored": false,
+          "change_intensity": "impl-only",
+          "change_intensities": [
+            "impl-only"
+          ],
+          "trigger_patterns": [
+            "src/**"
+          ],
+          "blast_radius": [
+            "missing requirement group: docs"
+          ],
+          "missing_docs_explanation": "",
+          "changed_contract_summary": "",
+          "docs_update_draft": "",
+          "false_positive_note": "",
+          "cross_file_relations": []
+        }
+      ],
+      "rule_decisions": [
+        {
+          "rule_id": "contract",
+          "severity": "MAJOR",
+          "status": "fail",
+          "reason": "required groups are missing",
+          "matched_patterns": [
+            "src/**"
+          ],
+          "trigger_files": [
+            "src/a.py"
+          ],
+          "satisfied_groups": [],
+          "unsatisfied_groups": [
+            {
+              "name": "docs",
+              "required": [
+                "spec.md"
+              ],
+              "type": "all_changed",
+              "evidence": ""
+            }
+          ]
+        }
+      ],
+      "skipped_rules": [],
+      "rejected_ignores": [],
+      "ignore_audit": [],
+      "temporal_warnings": [],
+      "gate": {
+        "fail_on_blocker": true,
+        "fail_on_major_count": 1
+      }
+    },
+    "provenance": {
+      "requested_base": "HEAD",
+      "resolved_base": "52117594da7ae86684239cadb447d6b127824dcc",
+      "comparison_mode": "commit",
+      "head": "52117594da7ae86684239cadb447d6b127824dcc",
+      "dirty": true,
+      "untracked_skipped": [],
+      "snapshot_sha256": "c945f5454ebdcbd529cee6fe5fa029f2f10e41f11727ace205b665c40ad66cf1"
+    },
+    "files": [
+      {
+        "path": "src/a.py",
+        "status": "modified",
+        "previous_path": null,
+        "patch": "diff --git a/src/a.py b/src/a.py\nindex 2f922d7..56cb6a5 100644\n--- a/src/a.py\n+++ b/src/a.py\n@@ -3,3 +3,4 @@ def record():\n     return 1\n \n # before\n+record()\n",
+        "semantic_signals": [],
+        "semantic_evidence": [],
+        "analysis_method": "grammar+heuristic",
+        "analysis_reason": "",
+        "documented_env_keys": null,
+        "raw_lines": [
+          [
+            "+",
+            "record()"
+          ]
+        ],
+        "code_lines": [
+          [
+            "+",
+            "record()"
+          ]
+        ],
+        "intensity": "impl-only"
+      }
+    ]
+  }
+}

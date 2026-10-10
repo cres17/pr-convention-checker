@@ -1,0 +1,43 @@
+{
+  "quoted_filename": {
+    "gate": "pass",
+    "paths": [
+      "\"src/routes/\\352\\262\\260\\354\\240\\234.py\""
+    ],
+    "patch_bytes": [
+      0
+    ],
+    "control_gate": "fail"
+  },
+  "invalid_base": {
+    "gate": "pass",
+    "skip_reason": "no-changes",
+    "real_changes": 1,
+    "cli_exit": 0,
+    "cli_result": "pass",
+    "valid_base_cli_exit": 1
+  },
+  "manual_121_backend": {
+    "save": "기능 목록을 확인해 주세요.",
+    "cache": "편집 초안의 형식이 올바르지 않습니다.",
+    "export": "편집 초안의 형식이 올바르지 않습니다."
+  },
+  "same_clone_roundtrip": {
+    "error": "초안과 원래 편집 기준의 프로젝트가 일치하지 않습니다.",
+    "wrapper_matches_current_repo": true,
+    "draft_repository_is_original_clone": true
+  },
+  "malformed_test_results": {
+    "exception": "TypeError",
+    "message": "'int' object is not iterable"
+  },
+  "export_import_size": {
+    "saved": true,
+    "export_bytes": 2001142,
+    "import_error": "초안 파일이 불러오기 상한(2MB)을 넘었습니다."
+  },
+  "wire_contract_gap": {
+    "backend_import_accepted": true,
+    "edit_base_repository": "missing; UI rejection is in ui-audit.tsx.fixture"
+  }
+}

@@ -1,0 +1,255 @@
+{
+  "review": {
+    "files_reviewed": [
+      "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+      "docs/assessment/architecture-review-2026-10-06/bridge_audit.py",
+      "docs/assessment/architecture-review-2026-10-06/reproduce.py",
+      "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+      "docs/assessment/architecture-second-review-2026-10-06/bridge_probe.py",
+      "docs/assessment/architecture-second-review-2026-10-06/reproduce.py",
+      "drift_gate/adapters/cli/runner.py",
+      "drift_gate/adapters/git/client.py",
+      "drift_gate/adapters/mcp/server.py",
+      "drift_gate/core/engine.py",
+      "drift_gate/desktop/json_store.py",
+      "drift_gate/desktop/progress_context.py",
+      "drift_gate/desktop/progress_documents.py",
+      "drift_gate/desktop/progress_drafts.py",
+      "drift_gate/desktop/progress_history.py",
+      "drift_gate/desktop/progress_limits.py",
+      "drift_gate/desktop/progress_service.py",
+      "drift_gate/desktop/verification_records.py",
+      "drift_gate/desktop/web_app.py",
+      "drift_gate/tests/test_desktop_web.py",
+      "drift_gate/tests/test_engine.py",
+      "drift_gate/tests/test_git_collection.py",
+      "drift_gate/tests/test_mcp_tools.py",
+      "drift_gate/tests/test_progress_drafts.py",
+      "drift_gate/tests/test_progress_history.py",
+      "drift_gate/tests/test_progress_service.py",
+      "drift_gate/tests/test_validator.py",
+      "drift_gate/utils/glob_matcher.py"
+    ],
+    "finding_count": 0,
+    "findings": [],
+    "test_gaps": [
+      {
+        "source_file": "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+        "function_name": "finish",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+        "function_name": "script",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+        "function_name": "click",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+        "function_name": "verify_recovered",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+        "function_name": "capture_and_save",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+        "function_name": "event",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+        "function_name": "capture_imported",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-fixes-2026-10-06/native_harness.py",
+        "function_name": "verify_no_revival",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-review-2026-10-06/bridge_audit.py",
+        "function_name": "concurrent_save_then_inspect",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-review-2026-10-06/reproduce.py",
+        "function_name": "make_repo",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+        "function_name": "finish",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+        "function_name": "script",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+        "function_name": "click",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+        "function_name": "select_new",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+        "function_name": "verify_ui",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+        "function_name": "verified",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py",
+        "function_name": "event",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_context.py",
+        "function_name": "baseline_id",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_context.py",
+        "function_name": "inspection_context",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_documents.py",
+        "function_name": "archived_documents",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_drafts.py",
+        "function_name": "cache_draft",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_history.py",
+        "function_name": "timestamp",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_history.py",
+        "function_name": "validate_snapshots",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_history.py",
+        "function_name": "make_snapshot",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_service.py",
+        "function_name": "capture_progress_history",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_service.py",
+        "function_name": "progress_history_view",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_service.py",
+        "function_name": "inspect_progress",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_service.py",
+        "function_name": "check_references",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/progress_service.py",
+        "function_name": "link_test_results",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/web_app.py",
+        "function_name": "work",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      },
+      {
+        "source_file": "drift_gate/desktop/web_app.py",
+        "function_name": "work",
+        "gap_type": "function",
+        "expected_test_file": "",
+        "message": ""
+      }
+    ]
+  }
+}

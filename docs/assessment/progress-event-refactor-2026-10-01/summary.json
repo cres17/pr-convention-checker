@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-01",
+  "scope": "Project progress state/event separation; typed desktop event contract; prior recommendations verified",
+  "baseline": "/private/tmp/driftgate-e6-baseline-20261001 (includes prior local fixes)",
+  "source_metrics": {
+    "desktop-ui/src/App.tsx": {
+      "lines_before": 1082,
+      "lines_after": 1084,
+      "explicit_any_before": 2,
+      "explicit_any_after": 0,
+      "before_sha256": "a73eb2c0cb6e4a7b46c9b894c2a64c71f9b8c0ccc46049f955cdf2e5a168249c",
+      "after_sha256": "26a9dd02cdb6a19864fc725828e652f80b8e4104f26a29779a0b971fee24f86d"
+    },
+    "desktop-ui/src/bridge.ts": {
+      "lines_before": 206,
+      "lines_after": 210,
+      "explicit_any_before": 1,
+      "explicit_any_after": 0,
+      "before_sha256": "cca2a026002bb91492710f3da936022061a7fbdc55b9c40f1b6d32cd99a537da",
+      "after_sha256": "542c904e305470164a52c82096d6a595e2cd4e0fef642d7f48eaf5f4c144210a"
+    },
+    "desktop-ui/src/features/project-progress/ProjectProgress.tsx": {
+      "lines_before": 695,
+      "lines_after": 186,
+      "explicit_any_before": 1,
+      "explicit_any_after": 0,
+      "before_sha256": "c2a603e752a4f89b9c443a75b9b51e20c3b4d5f3dd031f1f8078bd7c43bd3a66",
+      "after_sha256": "93b7e016687a293eebaffe123dc2d42853ce1f11f9b9534fc742a60572e8b50c"
+    }
+  },
+  "same_runtime_test_inputs": [
+    {
+      "file": "App.test.tsx",
+      "identical_runtime_input": true,
+      "sha256": "d7d592568ff97ae20c2b94d87f68c60b225114eac824387f6c6a7245382466eb"
+    },
+    {
+      "file": "features/project-progress/ProjectProgress.test.tsx",
+      "identical_runtime_input": true,
+      "sha256": "e2041852e729e980beed64d919a9dcf011fcff9d48c92bf05ff196abf9408e9d"
+    },
+    {
+      "file": "features/project-progress/ProgressOverview.test.tsx",
+      "identical_runtime_input": true,
+      "sha256": "4d42c75a6282cf3089c84f7fb6e4b93a8902b80cdb1628e18a6bc3fefddb9ecd"
+    },
+    {
+      "file": "features/project-progress/merge.test.ts",
+      "identical_runtime_input": true,
+      "sha256": "a462b63d80c42b3b18c60fe814931a2be8968d47aa50e58671e8a0b15a4c4371"
+    },
+    {
+      "file": "features/project-progress/presentation.test.ts",
+      "identical_runtime_input": true,
+      "sha256": "d3cdade42c0c034b6266c0066dfa3d8a8306414778326e1fccd63e8ceff790fe"
+    }
+  ],
+  "validation": {
+    "react_before": 47,
+    "react_after": 47,
+    "python_after": 677,
+    "typescript": "passed",
+    "ui_build": "passed",
+    "git_diff_check": "passed"
+  },
+  "qt": {
+    "passed": true,
+    "cards_toggled": 4,
+    "restored_current_items": 3,
+    "excluded_item": "과거 기능",
+    "excluded_links": false,
+    "excluded_hints": false,
+    "excluded_next_action": "다음 할 일 현재 목표 집계에서 제외 (기존 근거 유지)",
+    "test_patterns_retained": [
+      "test_past_typo"
+    ]
+  },
+  "logs": {
+    "before-ui": "/private/tmp/driftgate-e6-before-ui.log",
+    "after-ui": "/private/tmp/driftgate-e6-after-ui.log",
+    "python": "/private/tmp/driftgate-e6-python.log",
+    "build": "/private/tmp/driftgate-e6-build.log",
+    "native": "/private/tmp/driftgate-e6-native.log"
+  },
+  "limits": [
+    "TypeScript event contract, not runtime payload validation",
+    "Existing synthetic regression cases, not accuracy evaluation",
+    "App.tsx other screen separation remains",
+    "No commit, push, CI or package release"
+  ]
+}

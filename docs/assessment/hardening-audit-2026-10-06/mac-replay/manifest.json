@@ -1,0 +1,66 @@
+{
+  "revision": "ae0028d5edd95d5dd4819939a5801cb028639a6b",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "python": "3.11.15 (main, Mar  3 2026, 00:52:57) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "harness_sha256": "4ac930a20bcf85f50c034d4c7951dc2a12e5dc82153967e1b600e9448b64e3c6",
+  "source_changes_since_f43cada": [
+    "docs/assessment/ai-claim-rejection-2026-10-06/claims-as-asserted.md",
+    "docs/assessment/ai-claim-rejection-2026-10-06/gate-runs.json",
+    "docs/assessment/ai-claim-rejection-2026-10-06/generalization.json",
+    "docs/assessment/ai-claim-rejection-2026-10-06/reproduce.py",
+    "docs/assessment/ai-claim-rejection-2026-10-06/results.json",
+    "docs/assessment/ai-claim-rejection-2026-10-06/self-audit.json",
+    "docs/review/drift-gate-claim-verification-2026-10-06.md"
+  ],
+  "claim_verdicts": {
+    "C01": {
+      "linux": "accepted",
+      "mac": "accepted"
+    },
+    "C02": {
+      "linux": "partially accepted",
+      "mac": "partially accepted"
+    },
+    "C03": {
+      "linux": "accepted",
+      "mac": "accepted"
+    },
+    "C04": {
+      "linux": "accepted with caveat",
+      "mac": "accepted with caveat"
+    },
+    "C05": {
+      "linux": "rejected",
+      "mac": "rejected"
+    },
+    "C06": {
+      "linux": "accepted",
+      "mac": "accepted"
+    },
+    "C07": {
+      "linux": "accepted",
+      "mac": "accepted"
+    },
+    "C08": {
+      "linux": "partially accepted",
+      "mac": "partially accepted"
+    },
+    "C09": {
+      "linux": "rejected",
+      "mac": "rejected"
+    },
+    "C10": {
+      "linux": "accepted",
+      "mac": "accepted"
+    },
+    "C11": {
+      "linux": "partially accepted",
+      "mac": "partially accepted"
+    },
+    "C12": {
+      "linux": "rejected",
+      "mac": "rejected"
+    }
+  },
+  "same_verdicts": true
+}

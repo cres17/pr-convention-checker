@@ -1,0 +1,62 @@
+{
+  "limits": {
+    "confirmed": 120,
+    "recovery": 240
+  },
+  "recovery": {
+    "repository": "/fixture",
+    "version": 1,
+    "documents": {
+      "README.md": "hash"
+    },
+    "requirements": [
+      {
+        "id": "goal",
+        "title": "기능",
+        "criterion": "동작 확인",
+        "area": "",
+        "included": true,
+        "source": {
+          "path": "README.md",
+          "line": 0,
+          "excerpt": "기능",
+          "sha256": "hash"
+        },
+        "implementation_status": "unknown",
+        "evidence": {
+          "path": "src/main.py",
+          "line": 1.5,
+          "note": "입력 중"
+        },
+        "verification_status": "unverified",
+        "verification_note": ""
+      }
+    ],
+    "edit_base": {
+      "repository": "/fixture",
+      "version": 1,
+      "documents": {
+        "README.md": "hash"
+      },
+      "requirements": [
+        {
+          "id": "goal",
+          "title": "기능",
+          "criterion": "동작 확인",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 0,
+            "excerpt": "기능",
+            "sha256": "hash"
+          },
+          "implementation_status": "unknown",
+          "evidence": null,
+          "verification_status": "unverified",
+          "verification_note": ""
+        }
+      ]
+    }
+  }
+}

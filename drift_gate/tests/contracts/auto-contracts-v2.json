@@ -1,0 +1,684 @@
+{
+  "protocol": {
+    "version": 2,
+    "input": "real Git before/after snapshots and bounded current documents",
+    "axes": [
+      "facts",
+      "decision",
+      "verification",
+      "gate"
+    ],
+    "authorship": "author-created, non-blind; regression controls, not real PR accuracy",
+    "freeze": "expected values written before first harness run; suite v1 remains unchanged"
+  },
+  "cases": [
+    {
+      "id": "multiline-current",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\n    '/old'\n)\ndef read():\n    return {}\n",
+        "docs/api.md": "| GET | /new |\n"
+      },
+      "after": {
+        "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\n    '/new'\n)\ndef read():\n    return {}\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    "docs/api.md"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "multiline-stale",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\n    '/old'\n)\ndef read():\n    return {}\n",
+        "docs/api.md": "| GET | /old |\n"
+      },
+      "after": {
+        "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\n    '/new'\n)\ndef read():\n    return {}\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "any"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    "docs/api.md"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      }
+    },
+    {
+      "id": "prefix-yaml-current",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI, APIRouter\napp = FastAPI()\nrouter = APIRouter(prefix='/old')\n@router.post('/item')\ndef read():\n    return {}\napp.include_router(router, prefix='/api')\n",
+        "openapi.yaml": "openapi: 3.0.3\npaths:\n  /api/new/item:\n    post:\n      responses: {}\n"
+      },
+      "after": {
+        "src/api.py": "from fastapi import FastAPI, APIRouter\napp = FastAPI()\nrouter = APIRouter(prefix='/new')\n@router.post('/item')\ndef read():\n    return {}\napp.include_router(router, prefix='/api')\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    "openapi.yaml"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [
+            "POST /api/new/item"
+          ],
+          "removed": [
+            "POST /api/old/item"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "unmounted-router-no-delta",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI, APIRouter\napp = FastAPI()\nrouter = APIRouter(prefix='/old')\n@router.post('/item')\ndef read():\n    return {}\n"
+      },
+      "after": {
+        "src/api.py": "from fastapi import FastAPI, APIRouter\napp = FastAPI()\nrouter = APIRouter(prefix='/new')\n@router.post('/item')\ndef read():\n    return {}\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "any"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    "openapi.json"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": []
+        },
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "response-field-deleted",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Item(BaseModel):\n    sku: str\n    available: bool = True\n@app.put('/items', response_model=Item)\ndef read():\n    return {}\n",
+        "openapi.json": "{\"openapi\": \"3.1.0\", \"paths\": {\"/items\": {\"put\": {\"responses\": {\"200\": {\"content\": {\"application/json\": {\"schema\": {\"type\": \"object\", \"properties\": {\"sku\": {\"type\": \"string\"}}, \"required\": [\"sku\"]}}}}}}}}}"
+      },
+      "after": {
+        "src/api.py": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Item(BaseModel):\n    sku: str\n@app.put('/items', response_model=Item)\ndef read():\n    return {}\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "any"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    "openapi.json"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "schema",
+      "expected": {
+        "facts": {
+          "PUT /items": {
+            "sku": {
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "response-name-only",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Item(BaseModel):\n    sku: str\n    available: bool = True\n@app.put('/items', response_model=Item)\ndef read():\n    return {}\n"
+      },
+      "after": {
+        "src/api.py": "from fastapi import FastAPI\nfrom pydantic import BaseModel\napp = FastAPI()\nclass Renamed(BaseModel):\n    sku: str\n    available: bool = True\n@app.put('/items', response_model=Renamed)\ndef read():\n    return {}\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "any"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    "openapi.json"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "schema",
+      "expected": {
+        "facts": {},
+        "decision": "satisfied",
+        "verification": "not-applicable",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "alias-preexisting-document",
+      "before": {
+        "src/api.py": "",
+        ".env.example": "RETRY_DELAY=example\n"
+      },
+      "after": {
+        "src/api.py": "from os import getenv as lookup\nvalue = lookup('RETRY_DELAY')\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "config-key-added"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    ".env.example"
+                  ],
+                  "content": "env-keys"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "env",
+      "expected": {
+        "facts": [
+          "RETRY_DELAY"
+        ],
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "alias-missing-document",
+      "before": {
+        "src/api.py": ""
+      },
+      "after": {
+        "src/api.py": "from os import getenv as lookup\nvalue = lookup('RETRY_DELAY')\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "config-key-added"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    ".env.example"
+                  ],
+                  "content": "env-keys"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "env",
+      "expected": {
+        "facts": [
+          "RETRY_DELAY"
+        ],
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      }
+    },
+    {
+      "id": "dynamic-key-unknown",
+      "before": {
+        "src/api.py": ""
+      },
+      "after": {
+        "src/api.py": "import os\nvalue = os.getenv(name)\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "config-key-added"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    ".env.example"
+                  ],
+                  "content": "env-keys"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "env",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      }
+    },
+    {
+      "id": "shadowed-getter-unknown",
+      "before": {
+        "src/api.py": ""
+      },
+      "after": {
+        "src/api.py": "from os import getenv as lookup\nlookup = custom\nvalue = lookup('RETRY_DELAY')\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "any"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    ".env.example"
+                  ],
+                  "content": "env-keys"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "env",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      }
+    },
+    {
+      "id": "yaml-duplicate-unknown",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\n    '/old'\n)\ndef read():\n    return {}\n",
+        "openapi.yaml": "openapi: 3.0.3\npaths: {}\npaths: {}\n"
+      },
+      "after": {
+        "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\n    '/new'\n)\ndef read():\n    return {}\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "any"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    "openapi.yaml"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /new"
+          ],
+          "removed": [
+            "GET /old"
+          ]
+        },
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      }
+    },
+    {
+      "id": "module-control-unknown",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\n    '/old'\n)\ndef read():\n    return {}\n"
+      },
+      "after": {
+        "src/api.py": "from fastapi import FastAPI\nif FLAG:\n    app = FastAPI()\n@app.get(\n    '/new'\n)\ndef read():\n    return {}\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "any"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    "openapi.json"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      }
+    },
+    {
+      "id": "comment-no-contract",
+      "before": {
+        "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\n    '/old'\n)\ndef read():\n    return {}\n"
+      },
+      "after": {
+        "src/api.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.get(\n    '/old'\n)\ndef read():\n    return {}\n# APIRouter(prefix=\"fake\")\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "route-contract-change"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    "openapi.json"
+                  ],
+                  "content": "auto-strict"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "routes",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": []
+        },
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "gate": "pass"
+      }
+    },
+    {
+      "id": "missing-getter-import",
+      "before": {
+        "src/api.py": "",
+        ".env.example": "KEY=example\n"
+      },
+      "after": {
+        "src/api.py": "v = os.getenv('KEY')\n"
+      },
+      "policy": {
+        "rules": [
+          {
+            "id": "contract",
+            "severity": "blocker",
+            "when": {
+              "any_changed": [
+                "src/**"
+              ],
+              "min_change_intensity": "any"
+            },
+            "require": {
+              "groups": [
+                {
+                  "name": "document",
+                  "all_changed": [
+                    ".env.example"
+                  ],
+                  "content": "env-keys"
+                }
+              ]
+            }
+          }
+        ],
+        "gate": {
+          "on_unverified": "warn"
+        }
+      },
+      "facts_kind": "env",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      }
+    }
+  ]
+}

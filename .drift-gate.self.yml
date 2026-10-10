@@ -1,0 +1,64 @@
+# Repository-specific contract checks. The root .drift-gate.yml stays an example
+# for web projects; use --policy .drift-gate.self.yml when reviewing Drift Gate.
+rules:
+  - id: self-engine-contract
+    when:
+      any_changed: ['drift_gate/core/**', 'drift_gate/adapters/ast/**', 'drift_gate/adapters/docs/**', 'drift_gate/utils/**', 'drift_gate/reporters/**', 'drift_gate/adapters/*.py', 'drift_gate/adapters/claude/**', 'drift_gate/adapters/eval/**', 'drift_gate/adapters/history/**', 'drift_gate/__init__.py', 'drift_gate/__main__.py']
+      min_change_intensity: impl-only
+    require:
+      groups:
+        - name: Gate and analysis contract
+          all_changed: ['docs/contracts/gate-and-inputs.md']
+    severity: major
+  - id: self-cli-contract
+    when:
+      any_changed: ['drift_gate/adapters/cli/**', 'drift_gate/adapters/git/**', 'drift_gate/adapters/github/**', 'drift_gate/adapters/github_action/**', 'main.py', 'pyproject.toml']
+      min_change_intensity: impl-only
+    require:
+      groups:
+        - name: Input and CLI contract
+          all_changed: ['docs/contracts/gate-and-inputs.md']
+    severity: major
+  - id: self-mcp-contract
+    when:
+      any_changed: ['drift_gate/adapters/mcp/**']
+      min_change_intensity: impl-only
+    require:
+      groups:
+        - name: MCP transport contract
+          all_changed: ['docs/contracts/mcp-transport.md']
+    severity: major
+  - id: self-progress-contract
+    when:
+      any_changed: ['drift_gate/desktop/progress*', 'drift_gate/desktop/json_store.py', 'drift_gate/desktop/store_lock.py', 'drift_gate/desktop/verification_records.py']
+      min_change_intensity: impl-only
+    require:
+      groups:
+        - name: Progress persistence contract
+          all_changed: ['docs/contracts/progress-storage.md']
+    severity: major
+  - id: self-ui-bridge-contract
+    when:
+      any_changed: ['desktop-ui/src/**', 'drift_gate/desktop/web_app.py', 'drift_gate/desktop/app.py', 'drift_gate/desktop/service.py', 'drift_gate/desktop/resources.py', 'drift_gate/desktop/package_check.py', 'drift_gate/desktop/package_check_contract.py', 'drift_gate/desktop/package_git_check.py', 'drift_gate/desktop/policy_setup.py', 'drift_gate/desktop/review_dialog.py', 'drift_gate/desktop/subscription_review.py', 'drift_gate/desktop/doc_links.py', 'drift_gate/desktop/cli_entry.py', 'drift_gate/desktop/__init__.py', 'desktop-ui/package.json', 'desktop-ui/package-lock.json', 'desktop-ui/vite.config.ts']
+      min_change_intensity: impl-only
+    require:
+      groups:
+        - name: Desktop event and editing contract
+          all_changed: ['docs/contracts/desktop-bridge.md']
+    severity: major
+  - id: self-package-operations
+    when:
+      any_changed: ['packaging/**', '.github/workflows/**', '.drift-gate.self.yml', 'scripts/check_self.py', 'action.yml', 'drift_gate/adapters/parser_hashes.json']
+      min_change_intensity: impl-only
+    require:
+      groups:
+        - name: Self-check and package operations
+          all_changed: ['docs/ops/drift-gate-self-check.md']
+    severity: major
+gate:
+  fail_on_blocker: true
+  fail_on_major_count: 1
+ignore_paths:
+  - 'drift_gate/tests/**'
+  - '**/*.test.ts'
+  - '**/*.test.tsx'

@@ -1,0 +1,470 @@
+{
+  "schema": "snapshot-local-controls-v1",
+  "scope": "Authored nonblind local Git controls; no remote CI, installer or input authenticity certification",
+  "checks": {
+    "local_entrypoint_manifests_equal": true,
+    "captured_source_digest_matches_control": true,
+    "stale_then_updated_gate": true,
+    "replay_after_repository_deleted": true,
+    "replay_capture_identity_unchanged": true,
+    "new_attempt_identity": true,
+    "new_checkout_input_digest_changed": true,
+    "no_authenticity_or_selection_claim": true
+  },
+  "passed": 8,
+  "total": 8,
+  "control_sources": {
+    "before": "from fastapi import FastAPI\napp = FastAPI()\n@app.get('/old')\ndef endpoint(): return {}\n",
+    "captured": "from fastapi import FastAPI\napp = FastAPI()\n@app.get('/new')\ndef endpoint(): return {}\n",
+    "later": "from fastapi import FastAPI\napp = FastAPI()\n@app.get('/later')\ndef endpoint(): return {}\n"
+  },
+  "captures": {
+    "cli": {
+      "schema": "input-manifest-v1",
+      "digest_protocol": "python-json-observation-v1",
+      "input_sha256": "7b6542d9f85e5d85e82d983d532544ad476c164a37346eb6b03886362d62c004",
+      "collection_mode": "captured-working-tree",
+      "atomicity": "per-artifact-observation",
+      "original_bytes_certified": false,
+      "revision_certified": false,
+      "policy_authority": "unverified-caller-input",
+      "selection_complete": false,
+      "artifacts": [
+        {
+          "path": "@policy",
+          "role": "policy-semantics",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "3d90716aae73b3d7d370e88a6f0418ee6de29d4634b488cb7b33c43f8bfce87e",
+          "observed_text_bytes": 575,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "@policy",
+          "role": "policy-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d7b660fa2a02eed1fcedf5f99cfdfbbd61cdd877f9b31922ab72ddad47172b66",
+          "observed_text_bytes": 198,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/api.md",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c52d10107668ed9360f4374f7278022e213aaa50f9c87fbfaee5b088cf0a9ba5",
+          "observed_text_bytes": 9,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/api.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/api.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/api.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_text_bytes": 0,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "src/api.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "9ec128b3d94ffe71a6cf6454ecc8a4f92860ce2193829d0b999522254f28616a",
+          "observed_text_bytes": 87,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "src/api.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "89b1f2f5a9d2395d7f5debcdd15c3ec7c3f8ec0ed717ae6526013d47e9b8a55a",
+          "observed_text_bytes": 87,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "src/api.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "src/api.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "8ae3e54792efa50dad9c2a389b84323d7e26c6162d9b9506dc977239f89cbd4e",
+          "observed_text_bytes": 226,
+          "encoding": "utf-8-observed-text"
+        }
+      ],
+      "manifest_sha256": "66ef4bb8c954b1e87ec5d984465c601e37e083fc86258162ce60e8f45396f27b",
+      "retention": "process-memory-only",
+      "replay_scope": "captured-inputs-current-engine"
+    },
+    "mcp": {
+      "schema": "input-manifest-v1",
+      "digest_protocol": "python-json-observation-v1",
+      "input_sha256": "7b6542d9f85e5d85e82d983d532544ad476c164a37346eb6b03886362d62c004",
+      "collection_mode": "captured-working-tree",
+      "atomicity": "per-artifact-observation",
+      "original_bytes_certified": false,
+      "revision_certified": false,
+      "policy_authority": "unverified-caller-input",
+      "selection_complete": false,
+      "artifacts": [
+        {
+          "path": "@policy",
+          "role": "policy-semantics",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "3d90716aae73b3d7d370e88a6f0418ee6de29d4634b488cb7b33c43f8bfce87e",
+          "observed_text_bytes": 575,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "@policy",
+          "role": "policy-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d7b660fa2a02eed1fcedf5f99cfdfbbd61cdd877f9b31922ab72ddad47172b66",
+          "observed_text_bytes": 198,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/api.md",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c52d10107668ed9360f4374f7278022e213aaa50f9c87fbfaee5b088cf0a9ba5",
+          "observed_text_bytes": 9,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/api.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/api.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/api.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_text_bytes": 0,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "src/api.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "9ec128b3d94ffe71a6cf6454ecc8a4f92860ce2193829d0b999522254f28616a",
+          "observed_text_bytes": 87,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "src/api.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "89b1f2f5a9d2395d7f5debcdd15c3ec7c3f8ec0ed717ae6526013d47e9b8a55a",
+          "observed_text_bytes": 87,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "src/api.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "src/api.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "8ae3e54792efa50dad9c2a389b84323d7e26c6162d9b9506dc977239f89cbd4e",
+          "observed_text_bytes": 226,
+          "encoding": "utf-8-observed-text"
+        }
+      ],
+      "manifest_sha256": "66ef4bb8c954b1e87ec5d984465c601e37e083fc86258162ce60e8f45396f27b",
+      "retention": "process-memory-only",
+      "replay_scope": "captured-inputs-current-engine"
+    },
+    "desktop": {
+      "schema": "input-manifest-v1",
+      "digest_protocol": "python-json-observation-v1",
+      "input_sha256": "7b6542d9f85e5d85e82d983d532544ad476c164a37346eb6b03886362d62c004",
+      "collection_mode": "captured-working-tree",
+      "atomicity": "per-artifact-observation",
+      "original_bytes_certified": false,
+      "revision_certified": false,
+      "policy_authority": "unverified-caller-input",
+      "selection_complete": false,
+      "artifacts": [
+        {
+          "path": "@policy",
+          "role": "policy-semantics",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "3d90716aae73b3d7d370e88a6f0418ee6de29d4634b488cb7b33c43f8bfce87e",
+          "observed_text_bytes": 575,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "@policy",
+          "role": "policy-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "d7b660fa2a02eed1fcedf5f99cfdfbbd61cdd877f9b31922ab72ddad47172b66",
+          "observed_text_bytes": 198,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/api.md",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "c52d10107668ed9360f4374f7278022e213aaa50f9c87fbfaee5b088cf0a9ba5",
+          "observed_text_bytes": 9,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "docs/api.md",
+          "role": "before-source",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/api.md",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "docs/api.md",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "observed_text_bytes": 0,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "src/api.py",
+          "role": "after-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "9ec128b3d94ffe71a6cf6454ecc8a4f92860ce2193829d0b999522254f28616a",
+          "observed_text_bytes": 87,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "src/api.py",
+          "role": "before-source",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "89b1f2f5a9d2395d7f5debcdd15c3ec7c3f8ec0ed717ae6526013d47e9b8a55a",
+          "observed_text_bytes": 87,
+          "encoding": "utf-8-observed-text"
+        },
+        {
+          "path": "src/api.py",
+          "role": "document-json",
+          "state": "not-collected",
+          "reason": "not_collected",
+          "observed_text_sha256": null,
+          "observed_text_bytes": null,
+          "encoding": null
+        },
+        {
+          "path": "src/api.py",
+          "role": "patch",
+          "state": "present",
+          "reason": "",
+          "observed_text_sha256": "8ae3e54792efa50dad9c2a389b84323d7e26c6162d9b9506dc977239f89cbd4e",
+          "observed_text_bytes": 226,
+          "encoding": "utf-8-observed-text"
+        }
+      ],
+      "manifest_sha256": "66ef4bb8c954b1e87ec5d984465c601e37e083fc86258162ce60e8f45396f27b",
+      "retention": "process-memory-only",
+      "replay_scope": "captured-inputs-current-engine"
+    }
+  },
+  "first": {
+    "result": "fail",
+    "verification": "verified",
+    "rule_decisions": [
+      {
+        "rule_id": "api",
+        "severity": "BLOCKER",
+        "status": "fail",
+        "decision": "violated",
+        "verification": "verified",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "src/**"
+        ],
+        "trigger_files": [
+          "src/api.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "contract",
+            "required": [
+              "docs/api.md"
+            ],
+            "type": "any_changed",
+            "evidence": "Complete document route coverage; add GET /new; remove GET /old",
+            "decision": "violated",
+            "verification": "verified",
+            "content_mode": "api-routes"
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "blocker": 1,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "fail",
+      "undetermined_rules": 0,
+      "unverified_rules": 0
+    }
+  },
+  "later": {
+    "result": "pass",
+    "verification": "verified",
+    "rule_decisions": [
+      {
+        "rule_id": "api",
+        "severity": "BLOCKER",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "verified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "src/**"
+        ],
+        "trigger_files": [
+          "src/api.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "contract",
+            "required": [
+              "docs/api.md"
+            ],
+            "type": "any_changed",
+            "evidence": "Complete document route coverage; add GET /later; remove GET /old",
+            "decision": "satisfied",
+            "verification": "verified",
+            "content_mode": "api-routes"
+          }
+        ],
+        "unsatisfied_groups": []
+      }
+    ],
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass",
+      "undetermined_rules": 0,
+      "unverified_rules": 0
+    }
+  },
+  "replay": {
+    "result": "fail",
+    "verification": "verified",
+    "rule_decisions": [
+      {
+        "rule_id": "api",
+        "severity": "BLOCKER",
+        "status": "fail",
+        "decision": "violated",
+        "verification": "verified",
+        "reason": "required groups are missing",
+        "matched_patterns": [
+          "src/**"
+        ],
+        "trigger_files": [
+          "src/api.py"
+        ],
+        "satisfied_groups": [],
+        "unsatisfied_groups": [
+          {
+            "name": "contract",
+            "required": [
+              "docs/api.md"
+            ],
+            "type": "any_changed",
+            "evidence": "Complete document route coverage; add GET /new; remove GET /old",
+            "decision": "violated",
+            "verification": "verified",
+            "content_mode": "api-routes"
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "blocker": 1,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "fail",
+      "undetermined_rules": 0,
+      "unverified_rules": 0
+    }
+  }
+}

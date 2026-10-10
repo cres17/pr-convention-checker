@@ -1,0 +1,61 @@
+........................................................................ [  3%]
+........................................................................ [  7%]
+........................................................................ [ 11%]
+........................................................................ [ 15%]
+........................................................................ [ 19%]
+........................................................................ [ 23%]
+........................................................................ [ 27%]
+.............................................................FFFF....... [ 31%]
+........................................................................ [ 35%]
+........................................................................ [ 39%]
+........................................................................ [ 43%]
+........................................................................ [ 47%]
+........................................................................ [ 51%]
+........................................................................ [ 55%]
+........................................................................ [ 59%]
+........................................................................ [ 63%]
+........................................................................ [ 67%]
+........................................................................ [ 71%]
+........................................................................ [ 75%]
+........................................................................ [ 79%]
+........................................................................ [ 83%]
+........................................................................ [ 87%]
+........................................................................ [ 91%]
+........................................................................ [ 95%]
+........................................................................ [ 99%]
+....                                                                     [100%]
+=================================== FAILURES ===================================
+_________ test_real_express_http_agrees_with_static_chained_paths[get] _________
+drift_gate/tests/test_express_contracts.py:108: in test_real_express_http_agrees_with_static_chained_paths
+    result = subprocess.run(['node', str(script)], check=True, capture_output=True, encoding='utf-8', timeout=15)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py:571: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-222/test_real_express_http_agrees_0/oracle.mjs']' returned non-zero exit status 1.
+________ test_real_express_http_agrees_with_static_chained_paths[post] _________
+drift_gate/tests/test_express_contracts.py:108: in test_real_express_http_agrees_with_static_chained_paths
+    result = subprocess.run(['node', str(script)], check=True, capture_output=True, encoding='utf-8', timeout=15)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py:571: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-222/test_real_express_http_agrees_1/oracle.mjs']' returned non-zero exit status 1.
+_________ test_real_express_http_agrees_with_static_chained_paths[put] _________
+drift_gate/tests/test_express_contracts.py:108: in test_real_express_http_agrees_with_static_chained_paths
+    result = subprocess.run(['node', str(script)], check=True, capture_output=True, encoding='utf-8', timeout=15)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py:571: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-222/test_real_express_http_agrees_2/oracle.mjs']' returned non-zero exit status 1.
+_______ test_real_express_http_agrees_with_static_chained_paths[delete] ________
+drift_gate/tests/test_express_contracts.py:108: in test_real_express_http_agrees_with_static_chained_paths
+    result = subprocess.run(['node', str(script)], check=True, capture_output=True, encoding='utf-8', timeout=15)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.11/3.11.15_4/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py:571: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['node', '/private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/pytest-of-moon/pytest-222/test_real_express_http_agrees_3/oracle.mjs']' returned non-zero exit status 1.
+=========================== short test summary info ============================
+FAILED drift_gate/tests/test_express_contracts.py::test_real_express_http_agrees_with_static_chained_paths[get]
+FAILED drift_gate/tests/test_express_contracts.py::test_real_express_http_agrees_with_static_chained_paths[post]
+FAILED drift_gate/tests/test_express_contracts.py::test_real_express_http_agrees_with_static_chained_paths[put]
+FAILED drift_gate/tests/test_express_contracts.py::test_real_express_http_agrees_with_static_chained_paths[delete]
+4 failed, 1800 passed in 51.73s

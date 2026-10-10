@@ -1,0 +1,464 @@
+{
+  "revision": "f43cada2ea177b63cb0ac4a79be37071113a5191",
+  "fixture_baseline": "52c4f493f5301c1b66a4fc95ba3e9cf0f19e03e8",
+  "at_utc": "2026-10-06T06:37:16.508809+00:00",
+  "harness_sha256": "931b425d8f51068e99d64c75bc2b8c6fc6eacae9772b04cfad059567b679c54c",
+  "cases": [
+    {
+      "name": "source-only",
+      "category": "control",
+      "expectation": "fail",
+      "exit_code": 1,
+      "actual": "fail",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 1,
+      "violations": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "name": "source-and-correct-document",
+      "category": "control",
+      "expectation": "pass",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 2,
+      "violations": []
+    },
+    {
+      "name": "comment-only",
+      "category": "control",
+      "expectation": "pass",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 1,
+      "violations": []
+    },
+    {
+      "name": "invalid-base",
+      "category": "control",
+      "expectation": "input_error",
+      "exit_code": 2,
+      "actual": "input_error",
+      "stale_output": false,
+      "rules": null,
+      "scanned": null,
+      "violations": []
+    },
+    {
+      "name": "missing-policy",
+      "category": "control",
+      "expectation": "input_error",
+      "exit_code": 2,
+      "actual": "input_error",
+      "stale_output": false,
+      "rules": null,
+      "scanned": null,
+      "violations": []
+    },
+    {
+      "name": "empty-rules",
+      "category": "policy-trust",
+      "expectation": "Candidate policy must not weaken trusted obligations",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 0,
+      "scanned": 3,
+      "violations": []
+    },
+    {
+      "name": "remove-engine-rule",
+      "category": "policy-trust",
+      "expectation": "Candidate policy must not weaken trusted obligations",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 5,
+      "scanned": 3,
+      "violations": []
+    },
+    {
+      "name": "downgrade-to-nit",
+      "category": "policy-trust",
+      "expectation": "Candidate policy must not weaken trusted obligations",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 3,
+      "violations": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "name": "raise-failure-threshold",
+      "category": "policy-trust",
+      "expectation": "Candidate policy must not weaken trusted obligations",
+      "exit_code": 0,
+      "actual": "warn",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 3,
+      "violations": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "name": "ignore-core",
+      "category": "policy-trust",
+      "expectation": "Candidate policy must not weaken trusted obligations",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 3,
+      "violations": []
+    },
+    {
+      "name": "make-contract-optional",
+      "category": "policy-trust",
+      "expectation": "Candidate policy must not weaken trusted obligations",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 3,
+      "violations": []
+    },
+    {
+      "name": "narrow-trigger",
+      "category": "policy-trust",
+      "expectation": "Candidate policy must not weaken trusted obligations",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 3,
+      "violations": []
+    },
+    {
+      "name": "raise-intensity",
+      "category": "policy-trust",
+      "expectation": "Candidate policy must not weaken trusted obligations",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 3,
+      "violations": []
+    },
+    {
+      "name": "schema-empty-file",
+      "category": "input-contract",
+      "expectation": "input_error with fresh artifact, exit 2",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 0,
+      "scanned": 2,
+      "violations": []
+    },
+    {
+      "name": "schema-yaml-null",
+      "category": "input-contract",
+      "expectation": "input_error with fresh artifact, exit 2",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 0,
+      "scanned": 2,
+      "violations": []
+    },
+    {
+      "name": "schema-empty-root-list",
+      "category": "input-contract",
+      "expectation": "input_error with fresh artifact, exit 2",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 0,
+      "scanned": 2,
+      "violations": []
+    },
+    {
+      "name": "schema-null-rules",
+      "category": "input-contract",
+      "expectation": "input_error with fresh artifact, exit 2",
+      "exit_code": 1,
+      "actual": "pass",
+      "stale_output": true,
+      "rules": null,
+      "scanned": null,
+      "violations": []
+    },
+    {
+      "name": "schema-missing-rule-id",
+      "category": "input-contract",
+      "expectation": "input_error with fresh artifact, exit 2",
+      "exit_code": 1,
+      "actual": "pass",
+      "stale_output": true,
+      "rules": null,
+      "scanned": null,
+      "violations": []
+    },
+    {
+      "name": "schema-null-rule-entry",
+      "category": "input-contract",
+      "expectation": "input_error with fresh artifact, exit 2",
+      "exit_code": 1,
+      "actual": "pass",
+      "stale_output": true,
+      "rules": null,
+      "scanned": null,
+      "violations": []
+    },
+    {
+      "name": "schema-boolean-severity",
+      "category": "input-contract",
+      "expectation": "input_error with fresh artifact, exit 2",
+      "exit_code": 1,
+      "actual": "pass",
+      "stale_output": true,
+      "rules": null,
+      "scanned": null,
+      "violations": []
+    },
+    {
+      "name": "schema-wrong-root",
+      "category": "input-contract",
+      "expectation": "input_error with fresh artifact, exit 2",
+      "exit_code": 2,
+      "actual": "input_error",
+      "stale_output": false,
+      "rules": null,
+      "scanned": null,
+      "violations": []
+    },
+    {
+      "name": "schema-broken-yaml",
+      "category": "input-contract",
+      "expectation": "input_error with fresh artifact, exit 2",
+      "exit_code": 2,
+      "actual": "input_error",
+      "stale_output": false,
+      "rules": null,
+      "scanned": null,
+      "violations": []
+    },
+    {
+      "name": "schema-string-threshold",
+      "category": "input-contract",
+      "expectation": "input_error with fresh artifact, exit 2",
+      "exit_code": 1,
+      "actual": "pass",
+      "stale_output": true,
+      "rules": null,
+      "scanned": null,
+      "violations": []
+    },
+    {
+      "name": "document-whitespace",
+      "category": "document-semantics",
+      "expectation": "Cannot certify meaningful contract synchronization",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 2,
+      "violations": []
+    },
+    {
+      "name": "document-comment",
+      "category": "document-semantics",
+      "expectation": "Cannot certify meaningful contract synchronization",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 2,
+      "violations": []
+    },
+    {
+      "name": "document-unrelated-text",
+      "category": "document-semantics",
+      "expectation": "Cannot certify meaningful contract synchronization",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 2,
+      "violations": []
+    },
+    {
+      "name": "document-truncated-empty",
+      "category": "document-semantics",
+      "expectation": "fail if contract integrity is required",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 2,
+      "violations": []
+    },
+    {
+      "name": "document-deleted-with-source",
+      "category": "control",
+      "expectation": "fail",
+      "exit_code": 1,
+      "actual": "fail",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 2,
+      "violations": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "name": "document-deleted-alone",
+      "category": "document-integrity",
+      "expectation": "Critical contract deletion should be reviewed",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 1,
+      "violations": []
+    },
+    {
+      "name": "rename-uncovered-python",
+      "category": "rename-scope",
+      "expectation": "fail; protected source removed",
+      "exit_code": 1,
+      "actual": "fail",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 1,
+      "violations": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "name": "rename-ignored-test",
+      "category": "rename-scope",
+      "expectation": "fail; protected source removed",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 1,
+      "violations": []
+    },
+    {
+      "name": "rename-docs-python",
+      "category": "rename-scope",
+      "expectation": "fail; protected source removed",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 1,
+      "violations": []
+    },
+    {
+      "name": "rename-test-root",
+      "category": "rename-scope",
+      "expectation": "fail; protected source removed",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 1,
+      "violations": []
+    },
+    {
+      "name": "source-deletion",
+      "category": "control",
+      "expectation": "fail",
+      "exit_code": 1,
+      "actual": "fail",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 1,
+      "violations": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "name": "new-file-untracked",
+      "category": "collection-scope",
+      "expectation": "Only staged file is currently in scope",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 0,
+      "violations": []
+    },
+    {
+      "name": "new-file-staged",
+      "category": "collection-scope",
+      "expectation": "Only staged file is currently in scope",
+      "exit_code": 1,
+      "actual": "fail",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 1,
+      "violations": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "name": "oversize-patch",
+      "category": "analysis-boundary",
+      "expectation": "fail, unavailable analysis must not be treated as checked",
+      "exit_code": 1,
+      "actual": "fail",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 2,
+      "violations": [
+        "self-engine-contract"
+      ]
+    },
+    {
+      "name": "syntax-error-with-document",
+      "category": "analysis-boundary",
+      "expectation": "Gate is not a syntax checker; disclose heuristic fallback",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 2,
+      "violations": []
+    },
+    {
+      "name": "empty-diff",
+      "category": "report-scope",
+      "expectation": "pass is valid; preserve no-changes reason",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 0,
+      "violations": []
+    },
+    {
+      "name": "docs-only",
+      "category": "report-scope",
+      "expectation": "pass is valid; preserve docs-only reason",
+      "exit_code": 0,
+      "actual": "pass",
+      "stale_output": false,
+      "rules": 6,
+      "scanned": 1,
+      "violations": []
+    }
+  ]
+}

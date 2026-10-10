@@ -6,6 +6,10 @@ branding:
   color: purple
 
 inputs:
+  contract_proofs:
+    description: Include validated shadow proofs without changing the policy gate
+    required: false
+    default: "false"
   anthropic_api_key:
     description: Anthropic API key (optional — used for Claude checklist enrichment)
     required: false
@@ -72,13 +76,25 @@ outputs:
   policy_error:
     description: Policy load or validation error, when evaluation cannot run
     value: ${{ steps.check.outputs.policy_error }}
+  run_id:
+    description: Journaled run ID of this inspection attempt
+    value: ${{ steps.check.outputs.run_id }}
+  run_record_path:
+    description: Directory holding the run journal (stages, termination, publication outcome)
+    value: ${{ steps.check.outputs.run_record_path }}
+  publication_state:
+    description: PR comment outcome (published / publication-stale / publication-rejected / publication-unknown)
+    value: ${{ steps.check.outputs.publication_state }}
+  publication_record_path:
+    description: JSON record of the PR comment attempt, idempotency key and head checks
+    value: ${{ steps.check.outputs.publication_record_path }}
 
 runs:
   using: composite
   steps:
     - name: Install dependencies
       shell: bash
-      run: pip install pyyaml --quiet
+      run: python3 -m pip install "${{ github.action_path }}" --quiet
 
     - name: Run drift gate evaluation
       id: check
@@ -91,6 +107,7 @@ runs:
         POLICY_FILE: ${{ inputs.policy_file }}
         MODEL: ${{ inputs.model }}
         POST_COMMENT: ${{ inputs.post_comment }}
+        CONTRACT_PROOFS: ${{ inputs.contract_proofs }}
       run: |
         cd "${{ github.action_path }}"
         python3 -m drift_gate.adapters.github_action.runner
@@ -105,6 +122,8 @@ runs:
           ${{ steps.check.outputs.json_report_path }}
           ${{ steps.check.outputs.html_report_path }}
           ${{ steps.check.outputs.history_path }}
+          ${{ steps.check.outputs.run_record_path }}
+          ${{ steps.check.outputs.publication_record_path }}
 
     - name: Fail on blocker
       if: inputs.fail_on_blocker == 'true' && steps.check.outputs.result == 'fail'

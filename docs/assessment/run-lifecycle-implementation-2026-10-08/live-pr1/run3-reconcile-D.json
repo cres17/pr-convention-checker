@@ -1,0 +1,42 @@
+{
+  "schema": "pr-comment-publication-record-v1",
+  "idempotency_key": "aee1f018be9adbf3a175faded601c65af8151c759eaa8a3699bf478902ca207d",
+  "body_sha256": "4c15084551b5a6fa0e2d63bf2780f43d0a296253768763a37a65ea49e46a2ac4",
+  "expected_head_oid": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "race_window": "read-check-write-not-atomic-on-provider",
+  "operation": "update",
+  "comment_id": 6051129812,
+  "url": "https://github.com/cres17/pr-convention-checker/pull/1#issuecomment-6051129812",
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "lost-response",
+      "detail": "simulated: request never sent"
+    },
+    {
+      "attempt": 2,
+      "outcome": "response"
+    }
+  ],
+  "body_match": "unverified",
+  "content_verified": false,
+  "order": {
+    "workflow_sha256": "33807b39dcb779e0d9111fc3ea72f62d9777c7900647f9a7d4e9e720b92f23fb",
+    "run_number": 3,
+    "run_attempt": 3
+  },
+  "head_before": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "reconciliation": {
+    "state": "published",
+    "reason": "idempotency-key-found-body-unverified",
+    "retry_safe": false,
+    "comment_id": 6051129812,
+    "duplicates": 0,
+    "body_match": "unverified",
+    "content_verified": false
+  },
+  "head_after": "b5c52ab281ed550b1e645bf000834f7c012f050f",
+  "state": "published",
+  "reason": "idempotency-key-found-body-unverified",
+  "published": true
+}

@@ -22,6 +22,11 @@ RESULT_LABEL = {
 }
 
 
+
+def _enforcement(result):
+    from drift_gate.core.gating.enforcement import enforcement_outcome
+    return enforcement_outcome(result)
+
 class MarkdownReporter:
     MARKER = "<!-- drift-gate-v1 -->"
 
@@ -40,6 +45,16 @@ class MarkdownReporter:
             "## Drift Gate Report",
             "",
         ]
+        lines += [f"**No policy:** `{result.no_policy}`",
+                  f"**Schema version:** `{result.to_dict()['schema_version']}`",
+                  f"**Skip reason:** `{result.skip_reason or 'none'}`", ""]
+        from drift_gate.core.compat.legacy_result import diagnostic_lines
+        import html
+        lines.extend(re.sub(r'([\\`*_\[\]()])', r'\\\1', html.escape(line)) + '\n'
+                     for line in diagnostic_lines(result))
+        if result.execution:
+            lines += [f"**Execution:** `{result.execution.get('run_id', '')}`",
+                      ""]
 
         if result.no_policy:
             lines += self._no_policy_section()
@@ -54,11 +69,25 @@ class MarkdownReporter:
             return "\n".join(lines)
 
         lines += self._status_section(result)
+        lines += ["", f"**Verification:** `{result.verification}`"]
+        limited = [d for d in result.rule_decisions if d.verification in {"partial", "unverified"}]
+        if limited:
+            lines += ["", "### Verification limits", "",
+                      "A gate PASS is not proof that contract content was verified. Legacy auto may check paths only."]
+            for decision in limited:
+                lines.append(f"- `{decision.rule_id}`: {decision.decision} / {decision.verification}")
+                lines.extend(f"  - {g.evidence}" for g in decision.satisfied_groups + decision.unsatisfied_groups if g.verification in {"partial", "unverified"})
+        if result.scan_metrics.analysis_notes:
+            methods = sorted({note["method"] for note in result.scan_metrics.analysis_notes})
+            lines += ["", "**Analysis methods:** " + ", ".join(f"`{method}`" for method in methods),
+                      "Fallback and unavailable-input reasons are recorded in the JSON analysis_notes."]
 
-        if not result.violations:
+        if not result.violations and limited:
+            lines += ["", "**No verified violation recorded; some contract content remains unverified.**"]
+        elif not result.violations:
             lines += [
                 "",
-                "**No contract drift found.** All configured policy rules passed.",
+                "**No contract drift found.** No applied rule has an unsatisfied contract.",
             ]
         else:
             lines += ["", "### Required Action", ""]
@@ -130,6 +159,9 @@ class MarkdownReporter:
             "",
         ]
         if violation.checklist:
+            evidence = [group.evidence for group in violation.unsatisfied_groups if group.evidence]
+            if evidence:
+                lines += ["**Verification evidence**", ""] + [f"- {item}" for item in evidence] + [""]
             lines += ["**Checklist**", ""]
             lines.extend(f"- [ ] {item}" for item in violation.checklist)
             lines.append("")
@@ -168,6 +200,7 @@ class MarkdownReporter:
             "<summary>Rule summary</summary>",
             "",
             f"- Gate decision: `{RESULT_LABEL.get(result.result, result.result)}`",
+            f"- Enforcement action: `{_enforcement(result)['action']}` ({_enforcement(result)['basis']})",
             f"- Violations: {len(result.violations)}",
             f"- Skipped rules: {len(result.skipped_rules)}",
             f"- Rejected ignores: {len(result.rejected_ignores)}",

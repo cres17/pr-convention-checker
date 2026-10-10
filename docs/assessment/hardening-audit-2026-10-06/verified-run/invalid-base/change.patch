@@ -1,0 +1,8 @@
+diff --git a/drift_gate/core/audit_subject.py b/drift_gate/core/audit_subject.py
+index 5b76021..2ff874f 100644
+--- a/drift_gate/core/audit_subject.py
++++ b/drift_gate/core/audit_subject.py
+@@ -1,2 +1,2 @@
+ def calculate():
+-    return 1
++    return 2

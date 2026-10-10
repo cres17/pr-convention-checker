@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "input_error",
+    "message": "policy file not found: /private/var/folders/2d/h0vh4j9s3fd1x6tq026j1frh0000gn/T/driftgate-meta-verification-k10uu1z0/repo/.drift-gate.self.yml"
+  }
+}

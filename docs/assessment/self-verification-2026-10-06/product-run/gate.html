@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drift Gate Report</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5f6b7a;
+      --line: #d8dee8;
+      --soft: #f5f7fb;
+      --panel: #ffffff;
+      --good: #0f8a5f;
+      --warn: #9a6700;
+      --bad: #b42318;
+      --accent: #2457d6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--soft);
+      font: 14px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 32px 20px 48px; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-end;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    h1 { margin: 0 0 4px; font-size: 30px; letter-spacing: 0; }
+    h2 { margin: 0 0 10px; font-size: 18px; }
+    h3 { margin: 0 0 8px; font-size: 16px; }
+    p { margin: 0; }
+    .muted { color: var(--muted); }
+    .status {
+      min-width: 88px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #fff;
+      text-align: center;
+      font-weight: 700;
+    }
+    .status-pass { background: var(--good); }
+    .status-warn { background: var(--warn); }
+    .status-fail { background: var(--bad); }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin: 22px 0;
+    }
+    .metric, .card, .empty, details {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .metric span { display: block; color: var(--muted); font-size: 12px; }
+    .metric b { display: block; margin-top: 4px; font-size: 24px; }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 16px;
+      align-items: start;
+    }
+    .cards { display: grid; gap: 12px; }
+    .card header {
+      display: block;
+      padding: 0;
+      border: 0;
+    }
+    .badge {
+      display: inline-block;
+      margin-right: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eaf0ff;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .notice {
+      border-left: 4px solid var(--warn);
+      background: #fff8e6;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { padding: 8px 0; border-top: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { width: 150px; color: var(--muted); font-weight: 600; }
+    code {
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: #edf1f7;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+    }
+    ul { margin: 8px 0 0 18px; padding: 0; }
+    .side { display: grid; gap: 12px; }
+    .walkthrough ol { margin: 8px 0 0 20px; padding: 0; }
+    .walkthrough li { margin: 6px 0; }
+    .rule-status {
+      display: inline-block;
+      min-width: 76px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      color: white;
+      font-size: 12px;
+      text-align: center;
+      font-weight: 700;
+    }
+    .rule-pass { background: var(--good); }
+    .rule-fail, .rule-rejected-ignore { background: var(--bad); }
+    .rule-skipped, .rule-unmatched { background: var(--muted); }
+    .diff-line { display: block; padding: 1px 6px; border-radius: 4px; }
+    .diff-add { background: #e8f6ef; color: #075e3d; }
+    .diff-del { background: #fdeceb; color: #8a1f17; }
+    .diff-hunk { background: #edf1f7; color: var(--muted); }
+    .diff-context { color: var(--muted); }
+    summary { cursor: pointer; font-weight: 700; }
+    pre {
+      max-height: 440px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 12px 0 0;
+    }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 8px;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 11px;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: background 0.15s, color 0.15s;
+    }
+    .copy-btn:hover { background: var(--soft); color: var(--accent); border-color: var(--accent); }
+    .copy-btn.copied { background: #e8f6ef; color: var(--good); border-color: var(--good); }
+    @media (max-width: 820px) {
+      header { align-items: flex-start; flex-direction: column; }
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>Drift Gate Report</h1>
+      <p class="muted">Deterministic contract drift review for the current change set.</p>
+    </div>
+    <div class="status status-warn">WARN</div>
+  </header>
+
+  <section class="metrics">
+    <div class="metric"><span>Change Types</span><b>cli-public-interface, other, workflow-ci</b></div>
+    <div class="metric"><span>Blockers</span><b>0</b></div>
+    <div class="metric"><span>Major</span><b>0</b></div>
+    <div class="metric"><span>Skipped Rules</span><b>0</b></div>
+    <div class="metric"><span>Scanned Files</span><b>103</b></div>
+    <div class="metric"><span>Runtime</span><b>0.017s</b></div>
+  </section>
+
+  <section class="card walkthrough">
+  <h2>Review Walkthrough</h2>
+  <ol>
+    <li>Start with <a href="#rule-workflow-ops-doc"><code>workflow-ops-doc</code></a>, the highest-priority triggered rule in this report.</li>
+    <li>Check the matched glob and diff snippet to confirm the changed contract boundary.</li>
+    <li>Review blast radius: CI/CD pipeline, missing requirement group: 운영 문서, ops/runbook owners.</li>
+    <li>Update 운영 문서 or add a justified <code>drift-ignore</code>.</li>
+  </ol>
+</section>
+  
+  <section class="card">
+  <h2>Rule Pass/Fail</h2>
+  <table>
+    <thead><tr><th>Rule</th><th>Status</th><th>Severity</th><th>Reason</th><th>Matched glob</th></tr></thead>
+    <tbody><tr><td>api-contract-sync</td><td><span class="rule-status rule-unmatched">unmatched</span></td><td>BLOCKER</td><td>no changed files matched this rule after ignore paths and intensity filters</td><td>-</td></tr><tr><td>schema-migration-proof</td><td><span class="rule-status rule-unmatched">unmatched</span></td><td>MAJOR</td><td>no changed files matched this rule after ignore paths and intensity filters</td><td>-</td></tr><tr><td>env-config-sync</td><td><span class="rule-status rule-unmatched">unmatched</span></td><td>MAJOR</td><td>no changed files matched this rule after ignore paths and intensity filters</td><td>-</td></tr><tr><td><a href="#rule-workflow-ops-doc">workflow-ops-doc</a></td><td><span class="rule-status rule-fail">fail</span></td><td>MINOR</td><td>required groups are missing</td><td>.github/workflows/**</td></tr><tr><td>auth-security-doc</td><td><span class="rule-status rule-unmatched">unmatched</span></td><td>MAJOR</td><td>no changed files matched this rule after ignore paths and intensity filters</td><td>-</td></tr></tbody>
+  </table>
+</section>
+
+  <section class="layout">
+    <div class="cards">
+      <article class="card" id="rule-workflow-ops-doc">
+  <header>
+    <span class="badge">MINOR</span>
+    <span class="badge">impl-only</span>
+    <h2>workflow-ops-doc</h2>
+    <p>CI/infra changed without ops documentation update</p>
+  </header>
+  <table>
+    <tr><th>Trigger files</th><td><code>.github/workflows/desktop-build.yml</code> (modified)</td></tr>
+    <tr><th>Matched patterns</th><td><code>.github/workflows/**</code></td></tr>
+    <tr><th>Missing docs</th><td><strong>운영 문서</strong>: <code>docs/ops/**</code>, <code>docs/runbook/**</code></td></tr>
+    <tr><th>Cross-file relation</th><td>-</td></tr>
+    <tr><th>Blast radius</th><td><ul><li>CI/CD pipeline</li><li>missing requirement group: 운영 문서</li><li>ops/runbook owners</li><li>repository secrets</li></ul></td></tr>
+    <tr><th>Change type</th><td><code>workflow-ci</code></td></tr>
+    <tr><th>Confidence</th><td><code>high</code></td></tr>
+  </table>
+  <details>
+    <summary>Semantic Evidence</summary>
+    <ul><li>.github/workflows/desktop-build.yml: No grammar-backed detector for this file type</li></ul>
+  </details>
+  <ul></ul>
+  
+  <details>
+    <summary>Diff Snippet</summary>
+    <pre><span class="diff-line diff-hunk">@@ -71,6 +71,7 @@ jobs:</span>
+<span class="diff-line diff-context">           drift_gate/tests/test_desktop_service.py</span>
+<span class="diff-line diff-context">           drift_gate/tests/test_desktop_ui.py</span>
+<span class="diff-line diff-context">           drift_gate/tests/test_desktop_web.py</span>
+<span class="diff-line diff-add">+          drift_gate/tests/test_git_collection.py</span>
+<span class="diff-line diff-context">           drift_gate/tests/test_subscription_review.py</span>
+<span class="diff-line diff-context">           drift_gate/tests/test_progress_service.py</span>
+<span class="diff-line diff-context">           drift_gate/tests/test_progress_drafts.py</span></pre>
+  </details>
+  <h3>Suggested Fix</h3>
+  <ul><li>관련 runbook 또는 운영 문서 업데이트<button class="copy-btn" onclick="copyText(this,&quot;\uad00\ub828 runbook \ub610\ub294 \uc6b4\uc601 \ubb38\uc11c \uc5c5\ub370\uc774\ud2b8&quot;)">&#x29c9; Copy</button></li></ul>
+  <h3>Override</h3>
+  <p class="muted">Only if intentional, add the following to your PR description:<button class="copy-btn" onclick="copyText(this,&quot;drift-ignore: workflow-ops-doc\nreason: &lt;explain why&gt;&quot;)">&#x29c9; Copy</button></p><pre>drift-ignore: workflow-ops-doc
+reason: &lt;explain why&gt;</pre>
+</article>
+    </div>
+    <aside class="side">
+      <nav class="card">
+  <h2>Violation Navigation</h2>
+  <ul><li><a href="#rule-workflow-ops-doc">workflow-ops-doc</a> <span class="muted">MINOR</span></li></ul>
+</nav>
+      <section class="card">
+  <h2>Rule Summary</h2>
+  <p>Gate decision: <code>warn</code></p>
+  <h3>Applied Ignores</h3>
+  <ul><li>None</li></ul>
+  <h3>Rejected Ignores</h3>
+  <ul><li>None</li></ul>
+</section>
+      
+      <details>
+        <summary>Raw JSON</summary>
+        <pre>{
+  &quot;summary&quot;: {
+    &quot;blocker&quot;: 0,
+    &quot;major&quot;: 0,
+    &quot;minor&quot;: 1,
+    &quot;nit&quot;: 0,
+    &quot;gate_decision&quot;: &quot;warn&quot;
+  },
+  &quot;scan_metrics&quot;: {
+    &quot;scanned_files&quot;: 103,
+    &quot;skipped_ignored_files&quot;: 0,
+    &quot;skipped_binary_files&quot;: 7,
+    &quot;skipped_large_files&quot;: 2,
+    &quot;evaluated_rules&quot;: 5,
+    &quot;runtime_seconds&quot;: 0.01692741599981673,
+    &quot;analysis_notes&quot;: [
+      {
+        &quot;path&quot;: &quot;.github/workflows/desktop-build.yml&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/bridge.ts&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/eventSchema.ts&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/events.ts&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/DocumentSetup.tsx&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/History.tsx&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/ProjectProgress.test.tsx&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/ProjectProgress.tsx&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/documents.ts&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/limits.ts&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/merge.ts&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/progressContracts.test.ts&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/progressState.ts&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/rebase.ts&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/requirement.ts&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/status.ts&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;desktop-ui/src/features/project-progress/useProjectProgress.ts&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/architecture/target-architecture-2026-10-06.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/architecture/target-architecture-v2-2026-10-06.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/README.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/native-run.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No changed code lines to parse&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/native/finished.png&quot;,
+        &quot;method&quot;: &quot;unavailable&quot;,
+        &quot;reason&quot;: &quot;Patch unavailable; intensity cannot exclude a contract change&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/native/imported-copy.png&quot;,
+        &quot;method&quot;: &quot;unavailable&quot;,
+        &quot;reason&quot;: &quot;Patch unavailable; intensity cannot exclude a contract change&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/native/recovered.png&quot;,
+        &quot;method&quot;: &quot;unavailable&quot;,
+        &quot;reason&quot;: &quot;Patch unavailable; intensity cannot exclude a contract change&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/native/result.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/native_harness.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/python-tests.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/react-tests.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/ruff.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/ui-build.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-fixes-2026-10-06/validation.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/README.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/bridge-results.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/bridge-stderr.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/bridge_audit.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/python-tests.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/react-tests.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/reproduce.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/results.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/ui-audit.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/ui-audit.tsx.fixture&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-review-2026-10-06/validation.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-fixes-2026-10-06/README.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-fixes-2026-10-06/native-run.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-fixes-2026-10-06/native/finished.png&quot;,
+        &quot;method&quot;: &quot;unavailable&quot;,
+        &quot;reason&quot;: &quot;Patch unavailable; intensity cannot exclude a contract change&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-fixes-2026-10-06/native/result.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-fixes-2026-10-06/native_harness.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-fixes-2026-10-06/python-tests.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-fixes-2026-10-06/react-tests.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-fixes-2026-10-06/ruff.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-fixes-2026-10-06/ui-build.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-fixes-2026-10-06/validation.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/README.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/bridge-results.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/bridge-run.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/bridge_probe.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/python-tests.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/react-tests.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/reproduce.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/results.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/ruff.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/ui-build.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/ui-probe.log&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/ui-probe.ts.fixture&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/architecture-second-review-2026-10-06/validation.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/package-verification-2026-10-06/README.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/package-verification-2026-10-06/ci-corrections.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/package-verification-2026-10-06/local-validation.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/package-verification-2026-10-06/offline-dmg/bundled-grammars.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/package-verification-2026-10-06/offline-dmg/result.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/package-verification-2026-10-06/offline-installed/bundled-grammars.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/package-verification-2026-10-06/offline-installed/result.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/package-verification-2026-10-06/offline-installed/result.png&quot;,
+        &quot;method&quot;: &quot;unavailable&quot;,
+        &quot;reason&quot;: &quot;Patch unavailable; intensity cannot exclude a contract change&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/package-verification-2026-10-06/offline-package/bundled-grammars.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/assessment/package-verification-2026-10-06/offline-package/result.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/review/architecture-audit-2026-10-06.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/review/architecture-fixes-2026-10-06.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/review/architecture-second-audit-2026-10-06.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;docs/review/architecture-second-fixes-2026-10-06.md&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/adapters/cli/runner.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/adapters/git/client.py&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/adapters/mcp/server.py&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/core/engine.py&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/desktop/json_store.py&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/desktop/progress_context.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/desktop/progress_documents.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/desktop/progress_drafts.py&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/desktop/progress_history.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/desktop/progress_limits.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/desktop/progress_service.py&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/desktop/verification_records.py&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/desktop/web_app.py&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;Partial or invalid diff fragment; grammar recovery and patch heuristics used&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/tests/contracts/progress.json&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/tests/test_desktop_web.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/tests/test_engine.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/tests/test_git_collection.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/tests/test_mcp_tools.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/tests/test_progress_drafts.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/tests/test_progress_history.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/tests/test_progress_service.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/tests/test_validator.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;drift_gate/utils/glob_matcher.py&quot;,
+        &quot;method&quot;: &quot;grammar+heuristic&quot;,
+        &quot;reason&quot;: &quot;&quot;
+      },
+      {
+        &quot;path&quot;: &quot;pyproject.toml&quot;,
+        &quot;method&quot;: &quot;heuristic&quot;,
+        &quot;reason&quot;: &quot;No grammar-backed detector for this file type&quot;
+      }
+    ]
+  },
+  &quot;result&quot;: &quot;warn&quot;,
+  &quot;change_types&quot;: [
+    &quot;cli-public-interface&quot;,
+    &quot;other&quot;,
+    &quot;workflow-ci&quot;
+  ],
+  &quot;violations&quot;: [
+    {
+      &quot;rule_id&quot;: &quot;workflow-ops-doc&quot;,
+      &quot;severity&quot;: &quot;MINOR&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;change_types&quot;: [
+        &quot;workflow-ci&quot;
+      ],
+      &quot;change_type&quot;: &quot;workflow-ci&quot;,
+      &quot;message&quot;: &quot;CI/infra changed without ops documentation update&quot;,
+      &quot;trigger_files&quot;: [
+        {
+          &quot;path&quot;: &quot;.github/workflows/desktop-build.yml&quot;,
+          &quot;status&quot;: &quot;modified&quot;,
+          &quot;previous_path&quot;: null,
+          &quot;patch&quot;: &quot;diff --git a/.github/workflows/desktop-build.yml b/.github/workflows/desktop-build.yml\nindex 22cde30..c74c9cb 100644\n--- a/.github/workflows/desktop-build.yml\n+++ b/.github/workflows/desktop-build.yml\n@@ -71,6 +71,7 @@ jobs:\n           drift_gate/tests/test_desktop_service.py\n           drift_gate/tests/test_desktop_ui.py\n           drift_gate/tests/test_desktop_web.py\n+          drift_gate/tests/test_git_collection.py\n           drift_gate/tests/test_subscription_review.py\n           drift_gate/tests/test_progress_service.py\n           drift_gate/tests/test_progress_drafts.py\n&quot;,
+          &quot;semantic_signals&quot;: [],
+          &quot;semantic_evidence&quot;: [
+            &quot;No grammar-backed detector for this file type&quot;
+          ],
+          &quot;analysis_method&quot;: &quot;heuristic&quot;,
+          &quot;analysis_reason&quot;: &quot;No grammar-backed detector for this file type&quot;,
+          &quot;documented_env_keys&quot;: null
+        }
+      ],
+      &quot;satisfied_groups&quot;: [],
+      &quot;unsatisfied_groups&quot;: [
+        {
+          &quot;name&quot;: &quot;운영 문서&quot;,
+          &quot;required&quot;: [
+            &quot;docs/ops/**&quot;,
+            &quot;docs/runbook/**&quot;
+          ],
+          &quot;type&quot;: &quot;any_changed&quot;,
+          &quot;evidence&quot;: &quot;&quot;
+        }
+      ],
+      &quot;checklist&quot;: [
+        &quot;관련 runbook 또는 운영 문서 업데이트&quot;
+      ],
+      &quot;ignored&quot;: false,
+      &quot;change_intensity&quot;: &quot;impl-only&quot;,
+      &quot;change_intensities&quot;: [
+        &quot;impl-only&quot;
+      ],
+      &quot;trigger_patterns&quot;: [
+        &quot;.github/workflows/**&quot;
+      ],
+      &quot;blast_radius&quot;: [
+        &quot;CI/CD pipeline&quot;,
+        &quot;missing requirement group: 운영 문서&quot;,
+        &quot;ops/runbook owners&quot;,
+        &quot;repository secrets&quot;
+      ],
+      &quot;missing_docs_explanation&quot;: &quot;&quot;,
+      &quot;changed_contract_summary&quot;: &quot;&quot;,
+      &quot;docs_update_draft&quot;: &quot;&quot;,
+      &quot;false_positive_note&quot;: &quot;&quot;,
+      &quot;cross_file_relations&quot;: []
+    }
+  ],
+  &quot;rule_decisions&quot;: [
+    {
+      &quot;rule_id&quot;: &quot;api-contract-sync&quot;,
+      &quot;severity&quot;: &quot;BLOCKER&quot;,
+      &quot;status&quot;: &quot;unmatched&quot;,
+      &quot;reason&quot;: &quot;no changed files matched this rule after ignore paths and intensity filters&quot;,
+      &quot;matched_patterns&quot;: [],
+      &quot;trigger_files&quot;: [],
+      &quot;satisfied_groups&quot;: [],
+      &quot;unsatisfied_groups&quot;: []
+    },
+    {
+      &quot;rule_id&quot;: &quot;schema-migration-proof&quot;,
+      &quot;severity&quot;: &quot;MAJOR&quot;,
+      &quot;status&quot;: &quot;unmatched&quot;,
+      &quot;reason&quot;: &quot;no changed files matched this rule after ignore paths and intensity filters&quot;,
+      &quot;matched_patterns&quot;: [],
+      &quot;trigger_files&quot;: [],
+      &quot;satisfied_groups&quot;: [],
+      &quot;unsatisfied_groups&quot;: []
+    },
+    {
+      &quot;rule_id&quot;: &quot;env-config-sync&quot;,
+      &quot;severity&quot;: &quot;MAJOR&quot;,
+      &quot;status&quot;: &quot;unmatched&quot;,
+      &quot;reason&quot;: &quot;no changed files matched this rule after ignore paths and intensity filters&quot;,
+      &quot;matched_patterns&quot;: [],
+      &quot;trigger_files&quot;: [],
+      &quot;satisfied_groups&quot;: [],
+      &quot;unsatisfied_groups&quot;: []
+    },
+    {
+      &quot;rule_id&quot;: &quot;workflow-ops-doc&quot;,
+      &quot;severity&quot;: &quot;MINOR&quot;,
+      &quot;status&quot;: &quot;fail&quot;,
+      &quot;reason&quot;: &quot;required groups are missing&quot;,
+      &quot;matched_patterns&quot;: [
+        &quot;.github/workflows/**&quot;
+      ],
+      &quot;trigger_files&quot;: [
+        &quot;.github/workflows/desktop-build.yml&quot;
+      ],
+      &quot;satisfied_groups&quot;: [],
+      &quot;unsatisfied_groups&quot;: [
+        {
+          &quot;name&quot;: &quot;운영 문서&quot;,
+          &quot;required&quot;: [
+            &quot;docs/ops/**&quot;,
+            &quot;docs/runbook/**&quot;
+          ],
+          &quot;type&quot;: &quot;any_changed&quot;,
+          &quot;evidence&quot;: &quot;&quot;
+        }
+      ]
+    },
+    {
+      &quot;rule_id&quot;: &quot;auth-security-doc&quot;,
+      &quot;severity&quot;: &quot;MAJOR&quot;,
+      &quot;status&quot;: &quot;unmatched&quot;,
+      &quot;reason&quot;: &quot;no changed files matched this rule after ignore paths and intensity filters&quot;,
+      &quot;matched_patterns&quot;: [],
+      &quot;trigger_files&quot;: [],
+      &quot;satisfied_groups&quot;: [],
+      &quot;unsatisfied_groups&quot;: []
+    }
+  ],
+  &quot;skipped_rules&quot;: [],
+  &quot;rejected_ignores&quot;: [],
+  &quot;ignore_audit&quot;: [],
+  &quot;temporal_warnings&quot;: [],
+  &quot;gate&quot;: {
+    &quot;fail_on_blocker&quot;: true,
+    &quot;fail_on_major_count&quot;: 2
+  }
+}</pre>
+      </details>
+      <details>
+  <summary>Policy Source</summary>
+  <pre># .drift-gate.yml — Spec/Contract Drift Gate 정책 파일
+#
+# when 조건이 충족되면 규칙 활성화.
+# require.groups의 모든 묶음을 만족해야 통과.
+# 묶음 하나라도 불충족 → 위반.
+
+rules:
+
+  # ─── API surface 변경 → 계약 문서 + 릴리즈 공지 ─────────────────────────────
+  - id: api-contract-sync
+    when:
+      any_changed:
+        - &quot;src/routes/**&quot;
+        - &quot;openapi/**&quot;
+        - &quot;proto/**&quot;
+        - &quot;src/controllers/**&quot;
+        - &quot;app/controllers/**&quot;
+    require:
+      groups:
+        - name: &quot;API 계약 문서&quot;
+          any_changed:
+            - &quot;docs/spec.md&quot;
+            - &quot;docs/api/**&quot;
+        - name: &quot;릴리즈 공지&quot;
+          all_changed:
+            - &quot;CHANGELOG.md&quot;
+    severity: blocker
+    message: &quot;API surface changed without synced contract/docs&quot;
+
+  # ─── DB 스키마 변경 → 운영 문서 + 검증 흔적 ──────────────────────────────────
+  - id: schema-migration-proof
+    when:
+      any_changed:
+        - &quot;db/migrations/**&quot;
+        - &quot;prisma/schema.prisma&quot;
+        - &quot;sql/**&quot;
+        - &quot;**/schema.sql&quot;
+        - &quot;alembic/versions/**&quot;
+    require:
+      groups:
+        - name: &quot;운영 문서&quot;
+          any_changed:
+            - &quot;docs/runbook/**&quot;
+            - &quot;docs/migration-notes/**&quot;
+        - name: &quot;검증 흔적&quot;
+          any_changed:
+            - &quot;tests/integration/**&quot;
+            - &quot;tests/e2e/**&quot;
+    severity: major
+    message: &quot;DB schema changed without runbook or integration test&quot;
+
+  # ─── env/config 변경 → .env.example + 배포 문서 ──────────────────────────────
+  - id: env-config-sync
+    when:
+      any_changed:
+        - &quot;.env&quot;
+        - &quot;.env.*&quot;
+        - &quot;.env.local&quot;
+        - &quot;.env.production&quot;
+        - &quot;.env.staging&quot;
+        - &quot;config/**&quot;
+        - &quot;src/config/**&quot;
+        - &quot;**/settings.py&quot;
+    require:
+      groups:
+        - name: &quot;샘플 환경변수&quot;
+          all_changed:
+            - &quot;.env.example&quot;
+        - name: &quot;배포 문서&quot;
+          any_changed:
+            - &quot;docs/deployment/**&quot;
+            - &quot;docs/runbook/**&quot;
+    severity: major
+    message: &quot;env/config changed without .env.example or deployment docs update&quot;
+
+  # ─── CI/인프라 변경 → 운영 문서 ──────────────────────────────────────────────
+  - id: workflow-ops-doc
+    when:
+      any_changed:
+        - &quot;.github/workflows/**&quot;
+        - &quot;infra/**&quot;
+        - &quot;terraform/**&quot;
+        - &quot;Dockerfile&quot;
+        - &quot;Dockerfile.*&quot;
+        - &quot;k8s/**&quot;
+        - &quot;helm/**&quot;
+    require:
+      groups:
+        - name: &quot;운영 문서&quot;
+          any_changed:
+            - &quot;docs/ops/**&quot;
+            - &quot;docs/runbook/**&quot;
+    severity: minor
+    message: &quot;CI/infra changed without ops documentation update&quot;
+
+  # ─── auth/권한 변경 → 보안 문서 ───────────────────────────────────────────────
+  - id: auth-security-doc
+    when:
+      any_changed:
+        - &quot;**/auth/**&quot;
+        - &quot;**/middleware/auth*&quot;
+        - &quot;**/rbac/**&quot;
+        - &quot;**/permissions/**&quot;
+    require:
+      groups:
+        - name: &quot;보안/권한 문서&quot;
+          any_changed:
+            - &quot;docs/security/**&quot;
+            - &quot;docs/auth/**&quot;
+            - &quot;docs/runbook/**&quot;
+    severity: major
+    message: &quot;Auth/permission changed without security documentation update&quot;
+
+# ─── CI 게이트 기준 ────────────────────────────────────────────────────────────
+gate:
+  fail_on_blocker: true      # BLOCKER ≥ 1 → CI fail
+  fail_on_major_count: 2     # MAJOR ≥ 2  → CI fail  (1개는 warn)
+
+# ─── drift 평가 제외 경로 ─────────────────────────────────────────────────────
+# 주의: ignore_paths는 트리거(when)와 충족(require) 양쪽 모두에서 제외.
+# docs/**, tests/** 등 require.groups에서 사용하는 경로는 여기에 넣지 않는다.
+ignore_paths:
+  - &quot;src/internal/**&quot;     # 외부 계약에 영향 없는 내부 구현
+  - &quot;scripts/dev/**&quot;      # 개발 편의 스크립트
+</pre>
+</details>
+    </aside>
+  </section>
+</main>
+<script>
+  function copyText(btn, text) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = '✓ Copied';
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = '⧉ Copy';
+        btn.classList.remove('copied');
+      }, 1800);
+    }).catch(function() {
+      btn.textContent = 'Failed';
+      setTimeout(function() { btn.textContent = '⧉ Copy'; }, 1500);
+    });
+  }
+</script>
+</body>
+</html>

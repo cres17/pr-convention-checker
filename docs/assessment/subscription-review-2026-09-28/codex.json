@@ -1,0 +1,51 @@
+{
+  "synthetic": true,
+  "provider": "codex",
+  "cli_version": "codex-cli 0.158.0-alpha.2.1",
+  "case": "code GET /members versus docs GET /customers",
+  "expected_llm_verdict": "fail",
+  "policy": "rules:\n  - id: api-doc-sync\n    when:\n      any_changed: [src/routes/**]\n    require:\n      groups:\n        - name: API docs\n          any_changed: [docs/api.md]\n          content: api-routes\n    severity: blocker\n",
+  "files": [
+    {
+      "path": "src/routes/users.py",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "@@ -1 +1 @@\n-@app.get('/users')\n+@app.get('/members')\n",
+      "semantic_signals": [],
+      "semantic_evidence": [],
+      "analysis_method": "not-analyzed",
+      "analysis_reason": "",
+      "documented_env_keys": null
+    },
+    {
+      "path": "docs/api.md",
+      "status": "modified",
+      "previous_path": null,
+      "patch": "@@ -1 +1 @@\n-GET /users\n+GET /customers\n",
+      "semantic_signals": [],
+      "semantic_evidence": [],
+      "analysis_method": "not-analyzed",
+      "analysis_reason": "",
+      "documented_env_keys": null
+    }
+  ],
+  "rule_gate_before": "fail",
+  "rule_gate_after": "fail",
+  "gate_unchanged": true,
+  "elapsed_seconds": 7.96,
+  "review": {
+    "provider": "codex",
+    "verdict": "fail",
+    "summary": "보이는 diff에서 코드의 새 경로와 문서의 새 경로가 달라 API 계약이 불일치합니다.",
+    "findings": [
+      {
+        "rule_id": "api-doc-sync",
+        "reason": "코드는 GET /users를 GET /members로 변경했지만 문서는 GET /customers로 변경했습니다. docs/api.md는 실제로 수정되었으므로 검사기의 '필수 그룹 누락' 설명은 부정확하며, 확인되는 문제는 경로 불일치입니다.",
+        "suggestion": "의도한 API 경로를 확정하고 코드와 문서를 일치시키세요. 코드가 기준이라면 문서를 GET /members로 수정하세요."
+      }
+    ],
+    "limitations": [
+      "제공된 diff만 검토했으므로 전체 라우트 구성이나 별칭 경로의 존재 여부는 확인할 수 없습니다."
+    ]
+  }
+}

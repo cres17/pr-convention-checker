@@ -20,10 +20,11 @@ import webbrowser
 from pathlib import Path
 
 from drift_gate.adapters.eval.runner import (
+    DEFAULT_FIXTURE_PATH,
+    require_fixture_paths,
     benchmark_gate_failures,
     compare_engines,
     compare_paths,
-    discover_fixture_paths,
     evaluate_paths,
     render_comparison_html,
     render_comparison_markdown,
@@ -33,8 +34,7 @@ from drift_gate.adapters.eval.runner import (
     EvalEngineComparison,
     write_case_reports,
 )
-from drift_gate.adapters.ast.analyzer import enrich_semantic_signals
-from drift_gate.adapters.git.client import GitAdapter
+from drift_gate.adapters.git.client import GitAdapter, GitInputError
 from drift_gate.adapters.github.client import GitHubAdapter, parse_drift_ignores
 from drift_gate.adapters.history.store import (
     DEFAULT_HISTORY_PATH,
@@ -45,15 +45,22 @@ from drift_gate.adapters.history.store import (
     render_history_markdown,
 )
 from drift_gate.adapters.claude.enricher import ClaudeEnricher
-from drift_gate.core.engine import run
+from drift_gate.adapters.inspection import inspect as run  # noqa: F401 -- existing patch point; check now captures then inspects
 from drift_gate.core.gating.temporal import apply_temporal_gate
 from drift_gate.core.policy.loader import PolicyLoadError
-from drift_gate.adapters.policy_loader import load_policy
+from drift_gate.core.evaluation.result_guard import ResultValidationError
+from drift_gate.adapters.policy_loader import load_policy, read_policy, require_check_policy
 from drift_gate.core.policy.validator import validate
 from drift_gate.reporters.json_reporter import JsonReporter
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.reporters.markdown import MarkdownReporter
 from drift_gate.utils.glob_matcher import match_glob
+from drift_gate.adapters.execution import identity, atomic_text, atomic_json
+from drift_gate.adapters.bundle_codec import BundleError
+
+
+class CLIInputError(ValueError):
+    """Invalid CLI input handled by the command boundary."""
 
 
 POLICY_TEMPLATE = """# Drift Gate policy
@@ -332,6 +339,56 @@ def run_cli(argv=None):
     parser = _build_parser()
     args = parser.parse_args(argv)
 
+    inspections = {"check": _run_check, "report": _run_check,
+                   "review": _run_review, "self-audit": _run_self_audit,
+                   "history": _run_history, "bundle": _run_bundle, "run": _run_runs,
+                   "publication": _run_publication, "engine": _run_engine, "scope": _run_scope, "migrate": _run_migrate,
+                   "holdout": _run_holdout, "org": _run_org,
+                   "trusted-check": _run_trusted_check}
+    if args.command in inspections:
+        args.execution = identity()
+        from drift_gate.adapters.run_coordinator import RunTerminated
+        from drift_gate.adapters.run_store import RunStoreError
+        from drift_gate.adapters.engine_artifact import EngineArtifactError
+        from drift_gate.core.budget import ResourceLimit
+        from drift_gate.adapters.holdout import HoldoutError
+        try:
+            inspections[args.command](args)
+        except (CLIInputError, GitInputError, PolicyLoadError, OSError, UnicodeError, ResultValidationError,
+                BundleError, RunStoreError, RunTerminated, EngineArtifactError, ResourceLimit, HoldoutError) as exc:
+            terminated = isinstance(exc, RunTerminated)
+            code = (exc.state.replace('-', '_') if terminated else
+                    'resource_limit' if isinstance(exc, ResourceLimit) else
+                    'result_validation_error' if isinstance(exc, ResultValidationError) else 'input_error')
+            from drift_gate.core.gating.enforcement import execution_outcome
+            error = {'execution': {**args.execution, 'status': code, 'outcome': execution_outcome(code)},
+                     'error': {'code': code, 'message': str(exc),
+                               **({'resource': exc.to_dict()} if isinstance(exc, ResourceLimit) else {})}}
+            controller = getattr(args, 'run_controller', None)
+            if controller is not None:
+                try:
+                    error['execution']['run'] = controller.view().to_dict()
+                    state = error['execution']['run'].get('state') or ''
+                    error['execution']['outcome']['publication_state'] = state if state.startswith('publi') else None
+                except (RunStoreError, OSError):
+                    error['execution']['run'] = {'state': 'unreadable'}
+            # holdout and engine --out name write-once artifacts; an error is never written in their place.
+            write_once_out = args.command in {'holdout', 'engine'}
+            for output in (getattr(args, 'out_json', None), None if write_once_out else getattr(args, 'out', None)):
+                if output:
+                    atomic_json(output, error)
+            for output in (getattr(args, 'out_html', None), getattr(args, 'out_md', None),
+                           getattr(args, 'html', None)):
+                if output:
+                    import html
+                    atomic_text(output, '<pre>' + html.escape(json.dumps(error, ensure_ascii=False)) + '</pre>')
+            if getattr(args, "json_output", False) or getattr(args, "format", "") == "json":
+                _write_stdout(json.dumps(error, ensure_ascii=False))
+            print(str(exc), file=sys.stderr)
+            # 3: the run closed without a semantic result (cancelled/timed out/recovered).
+            sys.exit(3 if terminated else 2)
+        return
+
     if args.command == "demo":
         _run_demo(args)
         return
@@ -344,20 +401,11 @@ def run_cli(argv=None):
     if args.command == "doctor":
         _run_doctor(args)
         return
-    if args.command == "history":
-        _run_history(args)
-        return
     if args.command == "explain":
         _run_explain(args)
         return
-    if args.command == "self-audit":
-        _run_self_audit(args)
-        return
     if args.command == "docs-check":
         _run_docs_check(args)
-        return
-    if args.command == "review":
-        _run_review(args)
         return
     if args.command == "install":
         _run_install(args)
@@ -368,8 +416,6 @@ def run_cli(argv=None):
     if args.command == "serve":
         _run_serve(args)
         return
-
-    _run_check(args)
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -396,6 +442,110 @@ def _build_parser() -> argparse.ArgumentParser:
         out_json="drift-report.json",
         out_html="drift-report.html",
     )
+
+    bundle = subparsers.add_parser('bundle', help='Verify or replay a locally persisted evidence bundle')
+    bundle.add_argument('operation', choices=['verify', 'replay', 'spans'])
+    bundle.add_argument('path', help='Published bundle directory (named by receipt SHA-256)')
+    bundle.add_argument('--expected-receipt-sha256', help='Optional independently retained receipt digest')
+    bundle.add_argument('--json', action='store_true', dest='json_output')
+    bundle.add_argument('--out-json', help='Write verification or replay JSON')
+    bundle.add_argument('--engine-manifest', help='Replay with the pinned engine that produced the bundle')
+    bundle.add_argument('--engine-manifest-sha256', help='Externally retained SHA-256 pin of --engine-manifest')
+    bundle.add_argument('--repo-root', default='.', help='Repository holding the pinned engine commit')
+
+    scope = subparsers.add_parser('scope', help='Whole-tree dependency impact, service identity and no-delta certificates')
+    scope.add_argument('--base', required=True)
+    scope.add_argument('--head', required=True)
+    scope.add_argument('--policy', default='.drift-gate.yml')
+    scope.add_argument('--trusted-policy-ref', required=True)
+    scope.add_argument('--trusted-policy-sha256', required=True)
+    scope.add_argument('--isolated-workers', action='store_true', help='Extract module facts in isolated worker processes')
+    scope.add_argument('--cache-dir', help='Persistent analysis cache keyed by input, engine, profile and parser digests')
+    scope.add_argument('--out-json')
+    scope.add_argument('--json', action='store_true', dest='json_output')
+
+    migrate = subparsers.add_parser('migrate', help='Shadow-compare legacy decisions with proof-gate or typed triggers')
+    migrate.add_argument('kind', choices=['proof-gate', 'typed-trigger'])
+    migrate.add_argument('--base', required=True)
+    migrate.add_argument('--head', required=True)
+    migrate.add_argument('--policy', default='.drift-gate.yml')
+    migrate.add_argument('--trusted-policy-ref', required=True)
+    migrate.add_argument('--trusted-policy-sha256', required=True)
+    migrate.add_argument('--out-json')
+    migrate.add_argument('--json', action='store_true', dest='json_output')
+
+    holdout = subparsers.add_parser('holdout', help='Independent evaluation: split, freeze, run, review packet, adjudicate, score')
+    holdout.add_argument('operation', choices=['split', 'freeze', 'run', 'packet', 'adjudicate', 'score'])
+    holdout.add_argument('--input', help='Candidate cases (split) / holdout cases (freeze)')
+    holdout.add_argument('--frozen', help='Frozen holdout file')
+    holdout.add_argument('--frozen-sha256', help='Pinned SHA-256 of --frozen')
+    holdout.add_argument('--results', help='Results file (score)')
+    holdout.add_argument('--results-sha256', help='Pinned SHA-256 of --results')
+    holdout.add_argument('--packet', help='Review packet (adjudicate)')
+    holdout.add_argument('--packet-sha256', help='Pinned SHA-256 of --packet (printed by packet)')
+    holdout.add_argument('--reviews', nargs='*', default=[], help='Review JSONL files (adjudicate)')
+    holdout.add_argument('--resolutions', help='Adjudicator resolutions JSONL (optional)')
+    holdout.add_argument('--labels', help='Adjudicated labels file (score)')
+    holdout.add_argument('--labels-sha256', help='Pinned SHA-256 of --labels (printed by adjudicate)')
+    holdout.add_argument('--seed', default='drift-gate-holdout')
+    holdout.add_argument('--holdout-fraction', type=float, default=0.3)
+    holdout.add_argument('--regression-families', nargs='*', default=[])
+    holdout.add_argument('--protocol', default='drift-gate-holdout-protocol-v1')
+    holdout.add_argument('--out', required=True, help='Output path (never overwritten)')
+    holdout.add_argument('--out-development', help='Development split output (split)')
+    holdout.set_defaults(json_output=True)
+
+    org = subparsers.add_parser('org', help='Organization service operations on a local tenant store')
+    org.add_argument('operation', choices=['create-tenant', 'add-principal', 'store', 'list', 'delete', 'purge',
+                                           'audit', 'backup', 'restore', 'set-retention'])
+    org.add_argument('--root', required=True, help='Service store directory')
+    org.add_argument('--tenant', required=True)
+    org.add_argument('--actor', required=True, help='Principal performing the action (self-asserted in the CLI)')
+    org.add_argument('--principal'); org.add_argument('--roles', nargs='*', default=[])
+    org.add_argument('--scopes', nargs='*', default=[]); org.add_argument('--repository')
+    org.add_argument('--result-json', help='Inspection JSON to store'); org.add_argument('--result-id')
+    org.add_argument('--retention-days', type=int, default=90); org.add_argument('--archive')
+    org.add_argument('--archive-sha256'); org.add_argument('--max-runs-per-day', type=int, default=500)
+    org.add_argument('--max-stored-bytes', type=int, default=1_000_000_000)
+    org.set_defaults(json_output=True)
+
+    engine = subparsers.add_parser('engine', help='Build an engine manifest or attest loaded code against one')
+    engine.add_argument('operation', choices=['manifest', 'attest'])
+    engine.add_argument('--ref', help='Immutable engine commit (manifest)')
+    engine.add_argument('--manifest', help='Engine manifest file (attest)')
+    engine.add_argument('--manifest-sha256', help='Externally retained SHA-256 pin of --manifest')
+    engine.add_argument('--out', help='Write the manifest (never overwrites an existing file)')
+    engine.add_argument('--json', action='store_true', dest='json_output')
+
+    trusted = subparsers.add_parser('trusted-check',
+                                    help='Evaluate the candidate head with a pinned trusted engine and policy')
+    trusted.add_argument('--base', required=True)
+    trusted.add_argument('--head', required=True)
+    trusted.add_argument('--policy', default='.drift-gate.yml')
+    trusted.add_argument('--trusted-policy-ref', required=True)
+    trusted.add_argument('--trusted-policy-sha256', required=True)
+    trusted.add_argument('--engine-manifest', required=True)
+    trusted.add_argument('--engine-manifest-sha256', required=True)
+    trusted.add_argument('--comparison-mode', choices=['commit', 'merge-base'], default='commit')
+    trusted.add_argument('--out-json')
+    trusted.add_argument('--json', action='store_true', dest='json_output')
+
+    runs = subparsers.add_parser('run', help='Inspect, cancel or recover journaled runs and latest pointers')
+    runs.add_argument('operation', choices=['show', 'list', 'cancel', 'recover', 'latest', 'reconcile'])
+    runs.add_argument('name', nargs='?', help='Run ID (show/cancel) or latest target name (latest)')
+    runs.add_argument('--run-store', required=True, help='Run store directory used by check --run-store')
+    runs.add_argument('--reason', default='operator-request', help='Cancellation reason to record')
+    runs.add_argument('--stale-after', type=float, default=600.0,
+                      help='Seconds of owner silence after which recover closes a run')
+    runs.add_argument('--json', action='store_true', dest='json_output')
+
+    publication = subparsers.add_parser('publication', help='Resolve a PR comment whose write outcome is unknown')
+    publication.add_argument('operation', choices=['reconcile'])
+    publication.add_argument('--record', required=True, help='drift_gate_publication.json from the action artifact')
+    publication.add_argument('--repo', required=True)
+    publication.add_argument('--pr', type=int, required=True)
+    publication.add_argument('--out-json', help='Write the reconciled record (never overwrites --record)')
+    publication.add_argument('--json', action='store_true', dest='json_output')
 
     init = subparsers.add_parser(
         "init",
@@ -428,7 +578,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     demo.add_argument(
         "--fixtures",
-        default="drift_gate/tests/fixtures",
+        default=str(DEFAULT_FIXTURE_PATH),
         help="Fixture JSON file or directory",
     )
     demo.add_argument("--html-out", default="benchmark.html")
@@ -599,7 +749,17 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _add_check_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--policy", default=".drift-gate.yml", help="Policy file path")
+    parser.add_argument('--run-store', help='Journal this run (stages, failure, cancel, publication) in a local store')
+    parser.add_argument('--timeout-seconds', type=float, help='Close the run as timed-out at this deadline')
+    parser.add_argument('--retry-of', help='Closed run ID this run retries; the previous record is kept')
+    parser.add_argument('--latest-target', help='Compare-and-set this result as latest for a named target')
+    parser.add_argument('--evidence-store', help='Opt in to private raw-input storage; persists the base inspection')
+    parser.add_argument('--head', help='Immutable Git target ref; requires a separate policy ref and SHA-256 pin')
+    parser.add_argument('--trusted-policy-ref', help='Caller-selected trusted Git policy revision')
+    parser.add_argument('--trusted-policy-sha256', help='Expected raw SHA-256 of the selected trusted policy')
+    parser.add_argument('--contract-proofs', action='store_true', help='Include validated shadow proofs; policy gate is unchanged')
+    parser.add_argument("--policy", default=None, help="Policy file path (explicit paths use the calling directory)")
+    parser.add_argument('--comparison-mode', choices=['commit', 'merge-base'], default='commit')
     parser.add_argument("--pr", type=int, help="GitHub PR number")
     parser.add_argument("--repo", help="GitHub repository in owner/repo format")
     parser.add_argument(
@@ -665,7 +825,7 @@ def _add_eval_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "path",
         nargs="?",
-        default="drift_gate/tests/fixtures",
+        default=str(DEFAULT_FIXTURE_PATH),
         help="Fixture JSON file or directory",
     )
     parser.add_argument(
@@ -703,21 +863,190 @@ def _add_eval_args(parser: argparse.ArgumentParser) -> None:
 
 
 def _run_check(args) -> None:
-    changed_files, drift_ignores = _collect_inputs(args)
+    lifecycle_options = [name for name, value in (
+        ('--timeout-seconds', args.timeout_seconds), ('--retry-of', args.retry_of),
+        ('--latest-target', args.latest_target)) if value is not None]
+    if lifecycle_options and not args.run_store:
+        raise CLIInputError(f'{", ".join(lifecycle_options)} requires --run-store')
+    if args.latest_target is not None and not (args.head and args.evidence_store):
+        raise CLIInputError('--latest-target requires immutable --head mode and --evidence-store receipts')
+    if not args.run_store:
+        return _check_body(args, None)
+    from drift_gate.adapters.run_coordinator import RunController, RunTerminated
+    controller = RunController(args.run_store, run_id=args.execution['run_id'],
+                               timeout_seconds=args.timeout_seconds)
+    controller.start(retry_of=args.retry_of, data={
+        'command': args.command, 'mode': 'immutable-git' if args.head else 'github-pr' if args.pr else 'local-git',
+        'base': args.base, 'head': args.head, 'pr': args.pr, 'repo': args.repo,
+        'publication_target': args.latest_target, 'evidence_store': bool(args.evidence_store)})
+    args.run_controller = controller
+    import signal
+    previous_handler = None
 
-    start = time.perf_counter()
+    def operator_signal(signum, frame):
+        raise KeyboardInterrupt
+
     try:
-        policy_for_run = load_policy(args.policy)
-    except FileNotFoundError:
-        policy_for_run = None
-    result = run(
-        changed_files=changed_files,
-        drift_ignores=drift_ignores,
-        policy=policy_for_run,
-    )
+        previous_handler = signal.signal(signal.SIGTERM, operator_signal)
+    except (ValueError, OSError, AttributeError):  # not the main thread / unsupported
+        previous_handler = None
+    try:
+        _check_body(args, controller)
+    except SystemExit:
+        raise
+    except RunTerminated:
+        raise
+    except KeyboardInterrupt:
+        controller.fail('cancelled', 'interrupt', 'interrupted by the operator')
+        view = controller.view()
+        raise RunTerminated(view.state, 'interrupt', view) from None
+    except Exception as exc:
+        view = controller.view()
+        early = view is not None and lifecycle_stage_index(view.state) < lifecycle_stage_index('analyzing')
+        input_error = isinstance(exc, (CLIInputError, GitInputError, PolicyLoadError, UnicodeError, BundleError))
+        state = 'rejected-input' if early and input_error else 'internal-error'
+        code = ('result_validation_error' if isinstance(exc, ResultValidationError)
+                else 'input_error' if input_error else type(exc).__name__)
+        controller.fail(state, code, exc)
+        raise
+    finally:
+        if previous_handler is not None:
+            signal.signal(signal.SIGTERM, previous_handler)
+
+
+def lifecycle_stage_index(state):
+    from drift_gate.core.execution.lifecycle import STAGES
+    return STAGES.index(state) if state in STAGES else len(STAGES)
+
+
+def _authority_digest(snapshot):
+    """Policy, approvals and comparison basis that a latest result depends on."""
+    from hashlib import sha256
+    from drift_gate.adapters.bundle_codec import decode_json
+    from drift_gate.core.models.input_manifest import canonical_bytes
+    payload = decode_json(snapshot.payload)
+    evidence = snapshot.git_evidence
+    basis = {'schema': 'latest-authority-v1', 'policy_source_sha256': sha256(
+                 (payload.get('policy_source') or '').encode('utf-8')).hexdigest(),
+             'policy': payload['policy'], 'drift_ignores': payload['drift_ignores'],
+             'policy_anchor': {'revision': evidence.trusted_revision, 'path': evidence.policy_path,
+                               'sha256': evidence.expected_policy_sha256},
+             'base_oid': evidence.subject.base_oid, 'comparison_mode': evidence.subject.comparison_mode,
+             'evaluation_context': payload['context'], 'contract_proofs': payload['contract_proofs']}
+    return sha256(canonical_bytes(basis)).hexdigest()
+
+
+def _check_body(args, controller) -> None:
+    from drift_gate.adapters.git.client import repository_root
+    from drift_gate.adapters.inspection import inspect_snapshot
+
+    def stage(state, **data):
+        if controller is not None:
+            controller.advance(state, **data)
+
+    def bounded(name, function):
+        return controller.call(name, function) if controller is not None else function()
+
+    if bool(args.pr) != bool(args.repo):
+        raise GitInputError('Specify both --pr and --repo for remote PR inspection')
+    if args.head and (args.pr or not args.trusted_policy_ref or not args.trusted_policy_sha256):
+        raise GitInputError('Immutable --head requires --trusted-policy-ref and --trusted-policy-sha256; PR API mode is separate')
+    if not args.head and (args.trusted_policy_ref or args.trusted_policy_sha256):
+        raise GitInputError('Trusted policy options require immutable --head mode')
+    # Immutable collection resolves the repository with its isolated Git
+    # environment; the legacy root probe would honor caller GIT_DIR/GIT_WORK_TREE.
+    root = Path.cwd() if args.pr or args.head else repository_root()
+    start = time.perf_counter()
+    if args.head:
+        from drift_gate.adapters.git.immutable import collect_git_snapshot
+        stage('validated')
+        from drift_gate.core.budget import InspectionBudget
+        budget = InspectionBudget.from_policy(None, clock=time.monotonic)
+        args.inspection_budget = budget
+        snapshot = bounded('captured', lambda: collect_git_snapshot(root=root, base=args.base, head=args.head,
+            trusted_policy_ref=args.trusted_policy_ref, trusted_policy_sha256=args.trusted_policy_sha256,
+            policy_path=args.policy or '.drift-gate.yml', comparison_mode=args.comparison_mode,
+            contract_proofs=args.contract_proofs, budget=budget))
+        captured = snapshot.materialize()
+        args.policy_source, policy_for_run = captured['policy_source'], captured['policy']
+        changed_files = captured['changed_files']
+    else:
+        args.policy = str(Path(args.policy).resolve() if args.policy is not None else root / '.drift-gate.yml')
+        args.policy_source, args.loaded_policy = read_policy(args.policy)
+        require_check_policy(args.loaded_policy)
+        validate(args.loaded_policy).raise_if_errors()
+        stage('validated')
+        args.local_root = root
+
+        def collect():
+            files, ignores = _collect_inputs(args)
+            if args.loaded_policy and not (args.pr and args.repo):
+                from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+                files = attach_env_documents(files, args.loaded_policy, local_document_reader(root))
+            return files, ignores
+
+        changed_files, drift_ignores = bounded('captured', collect)
+        policy_for_run = args.loaded_policy
+        from datetime import datetime, timezone
+        from drift_gate.adapters.snapshot import capture_inspection
+        from drift_gate.core.models.evaluation_context import EvaluationContext
+        context = EvaluationContext(datetime.now(timezone.utc).date())
+        if args.pr:
+            from drift_gate.adapters.execution import digest
+            from drift_gate.adapters.github_action.runner import _approval_context
+            context = _approval_context(getattr(args, 'approval_head', None), digest(args.policy_source), drift_ignores)
+        snapshot = capture_inspection(changed_files=changed_files, policy=policy_for_run,
+            drift_ignores=drift_ignores, context=context,
+            policy_source=args.policy_source, policy_path=args.policy,
+            provenance=getattr(args, 'input_provenance', {}), contract_proofs=args.contract_proofs)
+    observation = None
+    capture_data = {'input_sha256': snapshot.manifest.input_sha256, 'manifest_sha256': snapshot.manifest.digest,
+                    'subject': snapshot.git_evidence.subject.to_dict() if snapshot.git_evidence else None}
+    if controller is not None:
+        if args.retry_of:
+            previous = RunJournalView(args.run_store, args.retry_of)
+            previous_input = previous.data.get('input_sha256')
+            capture_data['retry_input_relation'] = ('previous-not-captured' if previous_input is None else
+                'same-input' if previous_input == snapshot.manifest.input_sha256 else 'different-input')
+        if args.latest_target is not None:
+            from drift_gate.adapters.run_store import TargetLedger
+            observation = TargetLedger(args.run_store, args.latest_target).observe(
+                head_oid=snapshot.git_evidence.subject.head_oid, authority_sha256=_authority_digest(snapshot),
+                run_id=args.execution['run_id'])
+            capture_data['latest_observation'] = observation
+    stage('captured', **capture_data)
+    stage('planned', rules=len(policy_for_run.rules), changed_files=len(changed_files),
+          contract_proofs=args.contract_proofs, plan_scope='policy-and-inputs-fixed-before-engine-call')
+    stage('analyzing')
+    result = bounded('analyzing', lambda: inspect_snapshot(snapshot, execution=args.execution))
+    stage('evaluated', gate_result=result.result)
     runtime_seconds = time.perf_counter() - start
     result.scan_metrics.runtime_seconds = runtime_seconds
-    policy = _load_policy_optional(args.policy)
+    base_result = result.to_dict()  # Projection re-validates the retained IR.
+    if controller is not None:
+        from drift_gate.adapters.run_coordinator import result_digest
+        stage('result-validated', result_sha256=result_digest(base_result), gate_result=result.result)
+    bundle = None
+    if args.evidence_store:
+        from drift_gate.adapters.evidence_bundle import save_bundle
+        bundle = save_bundle(result, args.evidence_store)
+        result.execution['evidence_bundle'] = bundle.to_dict()
+    if controller is not None:
+        from drift_gate.adapters.execution import atomic_bytes
+        from drift_gate.core.models.input_manifest import canonical_bytes
+        raw = canonical_bytes(base_result)
+        atomic_bytes(controller.journal.path / 'result.json', raw)
+        stage('persisted', result_file='result.json', result_file_sha256=hashlib_sha256(raw),
+              receipt_sha256=bundle.to_dict()['receipt_sha256'] if bundle else None)
+        if args.latest_target is None:
+            stage('publication-skipped', publication={'state': 'publication-skipped', 'reason': 'no-target'})
+        else:
+            _publish_latest(args, controller, observation, bundle, base_result)
+        result.execution['run'] = controller.view().to_dict()
+        if 'outcome' in result.execution:
+            state = result.execution['run'].get('state') or ''
+            result.execution['outcome']['publication_state'] = state if state.startswith('publi') else None
+    policy = policy_for_run
     if args.temporal_gate:
         threshold = (
             args.temporal_threshold
@@ -725,7 +1054,7 @@ def _run_check(args) -> None:
         )
         records = load_records(
             args.history_path,
-            days=_parse_days(args.temporal_window),
+            days=_parse_days(args.temporal_window, option="--temporal-window"),
         )
         result = apply_temporal_gate(
             result,
@@ -748,11 +1077,18 @@ def _run_check(args) -> None:
             model=args.model,
         ).enrich(result)
 
+    budget = getattr(args, 'inspection_budget', None)
+    if budget is not None:
+        budget.check_time('report')
+        result.execution['budget'] = budget.to_dict()
     markdown = MarkdownReporter().render(result, explain=args.explain)
     json_report = JsonReporter().render(result)
+    if budget is not None:
+        budget.consume('report_bytes', len(json.dumps(json_report, ensure_ascii=False).encode('utf-8')),
+                       stage='report')
     html_report = HtmlReporter().render(
         result,
-        policy_source=_read_policy_source(args.policy),
+        policy_source=args.policy_source,
     )
 
     if args.json_output:
@@ -765,17 +1101,14 @@ def _run_check(args) -> None:
             _write_stdout(prefix + result.enrichment_metrics.format_report())
 
     if args.out_md:
-        Path(args.out_md).write_text(markdown, encoding="utf-8")
+        atomic_text(args.out_md, markdown)
 
     if args.out_json:
-        Path(args.out_json).write_text(
-            json.dumps(json_report, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        atomic_json(args.out_json, json_report)
 
     if args.out_html:
         html_path = Path(args.out_html)
-        html_path.write_text(html_report, encoding="utf-8")
+        atomic_text(html_path, html_report)
         if args.open:
             _open_file(html_path)
     elif args.open:
@@ -797,8 +1130,301 @@ def _run_check(args) -> None:
     sys.exit(1 if result.result == "fail" else 0)
 
 
+def hashlib_sha256(raw):
+    from hashlib import sha256
+    return sha256(raw).hexdigest()
+
+
+def RunJournalView(root, run_id):
+    from drift_gate.adapters.run_store import RunJournal
+    view = RunJournal(root, run_id).view()
+    if view is None:
+        raise CLIInputError('unknown --retry-of run')
+    return view
+
+
+def _publish_latest(args, controller, observation, bundle, base_result):
+    """Local compare-and-set of the latest pointer; never rewrites the result."""
+    from drift_gate.adapters.run_coordinator import result_digest
+    from drift_gate.adapters.run_store import RunStoreError, TargetLedger
+    from drift_gate.adapters.evidence_bundle import load_bundle
+    ledger = TargetLedger(args.run_store, args.latest_target)
+    request = {**{k: observation[k] for k in ('ticket', 'generation', 'head_oid', 'authority_sha256')},
+               'run_id': args.execution['run_id'], 'receipt_sha256': bundle.to_dict()['receipt_sha256'],
+               'result_sha256': result_digest(base_result)}
+    controller.advance('publish-pending', publication={'state': 'publish-pending', 'kind': 'local-latest-pointer',
+                                                       'target': args.latest_target},
+                       publication_request={'target': args.latest_target, **request})
+    try:
+        # Re-admit the stored receipt instead of trusting the in-memory object.
+        reloaded = load_bundle(bundle.path, expected_receipt_sha256=request['receipt_sha256'])
+        completed = controller.view().semantic_completed and reloaded.receipt['status'] == 'completed'
+        decision, state = ledger.publish(request, completed=completed)
+    except (RunStoreError, OSError, BundleError) as exc:
+        try:
+            state, _ = ledger.state()
+            landed = state.latest is not None and state.latest.run_id == request['run_id']
+            outcome, reason = ('published', 'write-error-but-entry-present') if landed else (
+                'publication-rejected', f'write-failed-entry-absent: {exc}')
+        except (RunStoreError, OSError) as read_error:
+            outcome, reason = 'publication-unknown', f'write-and-lookup-failed: {read_error}'
+        controller.advance(outcome, publication={'state': outcome, 'reason': reason})
+        return
+    if decision.accepted:
+        outcome = 'published'
+    elif decision.reason in {'generation-changed', 'head-or-authority-changed', 'newer-or-same-result-already-latest'}:
+        outcome = 'publication-stale'
+    else:
+        outcome = 'publication-rejected'
+    controller.advance(outcome, publication={'state': outcome, 'reason': decision.reason,
+                                             'latest': state.to_dict()})
+
+
+def _run_runs(args):
+    from drift_gate.adapters import run_store
+    from drift_gate.adapters.run_coordinator import cancel_run
+    exit_code = 0
+    if args.operation in {'show', 'cancel', 'latest', 'reconcile'} and not args.name:
+        raise CLIInputError(f'run {args.operation} requires a name')
+    if args.operation == 'show':
+        view = run_store.RunJournal(args.run_store, args.name).view()
+        if view is None:
+            raise CLIInputError('unknown run')
+        data = view.to_dict()
+    elif args.operation == 'list':
+        runs = []
+        for run_id in run_store.list_runs(args.run_store):
+            try:
+                view = run_store.RunJournal(args.run_store, run_id).view()
+                runs.append(view.to_dict() if view else {'run_id': run_id, 'state': 'no-events-yet'})
+            except (run_store.RunStoreError, OSError) as exc:
+                runs.append({'run_id': run_id, 'state': 'unreadable', 'error': str(exc)})
+        data = {'runs': runs}
+    elif args.operation == 'reconcile':
+        data = run_store.reconcile_latest(args.run_store, args.name)
+        exit_code = 0 if data['state'] == 'published' else 1
+    elif args.operation == 'cancel':
+        decision, view = cancel_run(args.run_store, args.name, reason=args.reason)
+        data = {'cancelled': decision.accepted, 'reason': decision.reason, 'run': view.to_dict()}
+        exit_code = 0 if decision.accepted else 1
+    elif args.operation == 'recover':
+        data = {'recovered': run_store.recover(args.run_store, stale_after_seconds=args.stale_after)}
+    else:
+        state, _ = run_store.TargetLedger(args.run_store, args.name).state()
+        data = state.to_dict()
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(exit_code)
+
+
+def _run_publication(args):
+    """Look up the attempt's idempotency key; this command never posts or edits."""
+    from drift_gate.adapters.github import publication
+    token = os.environ.get('GITHUB_TOKEN', '')
+    if not token:
+        raise CLIInputError('GITHUB_TOKEN is required to look up PR comments')
+    try:
+        record = json.loads(Path(args.record).read_text(encoding='utf-8'))
+    except ValueError as exc:
+        raise CLIInputError(f'invalid publication record JSON: {exc}') from exc
+    if not isinstance(record, dict) or not isinstance(record.get('idempotency_key'), str) \
+            or not isinstance(record.get('body_sha256'), str):
+        raise CLIInputError('record has no idempotency key and body digest; nothing was attempted')
+    if args.out_json and Path(args.out_json).resolve() == Path(args.record).resolve():
+        raise CLIInputError('--out-json must not overwrite the original record')
+    data = publication.reconcile_record(publication.CommentApi(token, args.repo), pr_number=args.pr, record=record)
+    if args.out_json:
+        atomic_json(args.out_json, data)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0 if data['state'] == 'published' else 1)
+
+
+def _run_org(args):
+    from drift_gate.adapters.org_service import OrgService
+    from drift_gate.core.org.policy import Quota
+    service, op = OrgService(args.root), args.operation
+    if op == 'create-tenant':
+        service.create_tenant(args.tenant, admin_id=args.actor, retention_days=args.retention_days,
+                              quota=Quota(args.max_runs_per_day, args.max_stored_bytes))
+        data = {'tenant': args.tenant, 'admin': args.actor}
+    elif op == 'add-principal':
+        service.add_principal(args.actor, args.tenant, args.principal, roles=args.roles, scopes=args.scopes)
+        data = {'principal': args.principal}
+    elif op == 'store':
+        result = json.loads(Path(args.result_json).read_text(encoding='utf-8'))
+        data = {'result_id': service.store_result(args.actor, args.tenant, args.repository, result)}
+    elif op == 'list':
+        data = {'results': service.list_results(args.actor, args.tenant, args.repository)}
+    elif op == 'delete':
+        service.delete_result(args.actor, args.tenant, args.result_id)
+        data = {'deleted': args.result_id}
+    elif op == 'purge':
+        data = {'removed': service.purge(args.actor, args.tenant)}
+    elif op == 'audit':
+        data = {'audit': service.audit_log(args.actor, args.tenant)}
+    elif op == 'backup':
+        data = {'archive_sha256': service.backup(args.actor, args.tenant, args.archive)}
+    elif op == 'restore':
+        service.restore(args.actor, args.tenant, args.archive, expected_sha256=args.archive_sha256)
+        data = {'restored': args.tenant}
+    else:
+        service.set_retention(args.actor, args.tenant, args.retention_days)
+        data = {'retention_days': args.retention_days}
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0)
+
+
+def _run_holdout(args):
+    from drift_gate.adapters import holdout as h
+
+    def load(path):
+        return json.loads(Path(path).read_text(encoding='utf-8'))
+
+    def lines(path):
+        return [json.loads(line) for line in Path(path).read_text(encoding='utf-8').splitlines() if line.strip()]
+
+    pins = {'run': ('frozen_sha256',), 'packet': ('frozen_sha256',), 'adjudicate': ('packet_sha256',),
+            'score': ('results_sha256', 'labels_sha256')}
+    missing = [name for name in pins.get(args.operation, ()) if not getattr(args, name)]
+    if missing:
+        raise h.HoldoutError('holdout ' + args.operation + ' requires --' + ', --'.join(n.replace('_', '-') for n in missing)
+                             + ': later steps admit earlier artifacts only through their pinned SHA-256')
+    if args.operation == 'split':
+        held, development = h.split(load(args.input), seed=args.seed, holdout_fraction=args.holdout_fraction,
+                                    regression_families=tuple(args.regression_families))
+        digest = h.write_once(args.out, held)
+        extra = {'development_sha256': h.write_once(args.out_development, development)} if args.out_development else {}
+        data = {'holdout_sha256': digest, 'holdout_cases': len(held['cases']),
+                'development_cases': len(development['cases']), **extra}
+    elif args.operation == 'freeze':
+        digest = h.write_once(args.out, h.freeze(load(args.input), protocol=args.protocol))
+        data = {'frozen_sha256': digest, 'pin_this_value_before_running': True}
+    elif args.operation == 'run':
+        frozen, digest = h.read_pinned(args.frozen, args.frozen_sha256, h.FROZEN)
+        data = {'results_sha256': h.write_once(args.out, h.run_frozen(frozen, digest))}
+    elif args.operation == 'packet':
+        frozen, _ = h.read_pinned(args.frozen, args.frozen_sha256, h.FROZEN)
+        from drift_gate.adapters.holdout_instructions import REVIEW_INSTRUCTIONS
+        data = {'packet_sha256': h.write_once(args.out, h.review_packet(frozen, instructions=REVIEW_INSTRUCTIONS))}
+    elif args.operation == 'adjudicate':
+        packet, _ = h.read_pinned(args.packet, args.packet_sha256, h.PACKET)
+        reviews = [row for path in args.reviews for row in lines(path)]
+        resolutions = lines(args.resolutions) if args.resolutions else []
+        labels = h.adjudicate(packet, reviews, resolutions)
+        data = {'labels_sha256': h.write_once(args.out, labels), 'unresolved': len(labels['unresolved']),
+                'agreement': labels['agreement']}
+    else:
+        results, _ = h.read_pinned(args.results, args.results_sha256, h.RESULTS)
+        labels, labels_digest = h.read_pinned(args.labels, args.labels_sha256, h.LABELS)
+        report = {**h.score_all(results, labels), 'labels_sha256': labels_digest,
+                  'labels_pinned_by_caller': args.labels_sha256 is not None}
+        data = {'metrics_sha256': h.write_once(args.out, report)}
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0)
+
+
+def _run_migrate(args):
+    from drift_gate.adapters.git.immutable import collect_git_snapshot
+    from drift_gate.adapters.migration import proof_gate_report, typed_trigger_report
+    snapshot = collect_git_snapshot(root=Path.cwd(), base=args.base, head=args.head,
+                                    trusted_policy_ref=args.trusted_policy_ref,
+                                    trusted_policy_sha256=args.trusted_policy_sha256, policy_path=args.policy)
+    data = proof_gate_report(snapshot) if args.kind == 'proof-gate' else typed_trigger_report(snapshot)
+    data['subject'] = snapshot.git_evidence.subject.to_dict()
+    if args.out_json:
+        atomic_json(args.out_json, data)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0 if data.get('safe_to_switch', data.get('differences', 0) == 0) else 1)
+
+
+def _run_scope(args):
+    from drift_gate.adapters.scope_analysis import analyze_scope
+    data = analyze_scope(root=Path.cwd(), base=args.base, head=args.head, trusted_policy_ref=args.trusted_policy_ref,
+                         trusted_policy_sha256=args.trusted_policy_sha256, policy_path=args.policy,
+                         isolated=args.isolated_workers, cache_dir=args.cache_dir)
+    if args.out_json:
+        atomic_json(args.out_json, data)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0 if data['complete'] else 2)
+
+
+def _run_engine(args):
+    from hashlib import sha256
+    from drift_gate.adapters import engine_artifact as engines
+    if args.operation == 'manifest':
+        if not args.ref:
+            raise CLIInputError('engine manifest requires --ref')
+        manifest = engines.build_manifest(Path.cwd(), args.ref)
+        raw = engines.manifest_bytes(manifest)
+        if args.out:
+            target = Path(args.out)
+            if target.exists():
+                raise CLIInputError('--out already exists; manifests are never overwritten')
+            from drift_gate.adapters.execution import atomic_bytes
+            atomic_bytes(target, raw)
+        data = {'manifest_sha256': sha256(raw).hexdigest(), 'manifest': manifest}
+    else:
+        if not args.manifest or not args.manifest_sha256:
+            raise CLIInputError('engine attest requires --manifest and --manifest-sha256')
+        manifest = engines.load_manifest(args.manifest, args.manifest_sha256)
+        from drift_gate.adapters.grammar_resources import get_parser
+        get_parser('python')  # load the grammar the engine uses before attesting it
+        data = engines.attest(manifest)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(0 if args.operation == 'manifest' or data['loaded_code_matches_manifest'] else 2)
+
+
+def _run_trusted_check(args):
+    from drift_gate.adapters import engine_artifact as engines
+    from drift_gate.adapters.trusted_validation import trusted_check
+    manifest = engines.load_manifest(args.engine_manifest, args.engine_manifest_sha256)
+    data = trusted_check(root=Path.cwd(), base=args.base, head=args.head, policy=args.policy,
+                         trusted_policy_ref=args.trusted_policy_ref, trusted_policy_sha256=args.trusted_policy_sha256,
+                         manifest=manifest, comparison_mode=args.comparison_mode, execution=args.execution)
+    if args.out_json:
+        atomic_json(args.out_json, data)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    # allow 0, block 1, review (no merge basis without a reviewed reason) 5.
+    sys.exit({'allow': 0, 'block': 1, 'review': 5}[data['decision']['action']])
+
+
+def _run_bundle(args):
+    from drift_gate.adapters.evidence_bundle import load_bundle
+    if args.engine_manifest or args.engine_manifest_sha256:
+        if args.operation != 'replay' or not (args.engine_manifest and args.engine_manifest_sha256):
+            raise CLIInputError('certified replay requires replay with --engine-manifest and --engine-manifest-sha256')
+        from drift_gate.adapters import engine_artifact as engines
+        from drift_gate.adapters.trusted_validation import certified_replay
+        manifest = engines.load_manifest(args.engine_manifest, args.engine_manifest_sha256)
+        data = certified_replay(args.path, root=Path(args.repo_root).resolve(), manifest=manifest,
+                                expected_receipt_sha256=args.expected_receipt_sha256)
+        if args.out_json:
+            atomic_json(args.out_json, data)
+        _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+        sys.exit(0 if data['certified'] else 2)
+    bundle = load_bundle(args.path, expected_receipt_sha256=args.expected_receipt_sha256)
+    if args.operation == 'spans':
+        from drift_gate.adapters.evidence_spans import bundle_spans
+        data = bundle_spans(bundle)
+        if args.out_json:
+            atomic_json(args.out_json, data)
+        _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+        sys.exit(0 if data['available'] and data['verified'] == data['total'] else 2)
+    if args.operation == 'verify':
+        data = {'bundle': bundle.to_dict(), 'receipt': bundle.receipt,
+                'validation': 'stored-bytes-and-input-binding', 'semantic_truth_certified': False}
+        exit_code = 0
+    else:
+        result = bundle.replay(execution=args.execution)
+        data = result.to_dict()
+        exit_code = (1 if result.result == 'fail' else 0) if result.execution['bundle_replay']['recorded_result_matches_current'] else 2
+    if args.out_json:
+        atomic_json(args.out_json, data)
+    _write_stdout(json.dumps(data, ensure_ascii=False, indent=2))
+    sys.exit(exit_code)
+
+
 def _run_demo(args) -> None:
-    paths = discover_fixture_paths(Path(args.fixtures))
+    paths = require_fixture_paths(Path(args.fixtures))
     comparison = compare_paths(paths)
 
     Path(args.html_out).write_text(
@@ -815,7 +1441,7 @@ def _run_demo(args) -> None:
 
 
 def _run_eval(args) -> None:
-    paths = discover_fixture_paths(Path(args.path), recursive=args.recursive)
+    paths = require_fixture_paths(Path(args.path), recursive=args.recursive)
     report = (
         compare_engines(paths, args.engines.split(","))
         if args.engines
@@ -1058,7 +1684,6 @@ def _run_explain(args) -> None:
 
 
 def _run_review(args) -> None:
-    from pathlib import Path as _Path
     from drift_gate.adapters.git.client import GitAdapter
     from drift_gate.core.review.heuristics import (
         find_reporter_field_gaps,
@@ -1067,31 +1692,27 @@ def _run_review(args) -> None:
         SEVERITY_ORDER,
     )
 
+    from drift_gate.adapters.git.client import repository_root
+    root = repository_root()
     patch_text = ""
     # Collect files to review
     if args.all_files:
-        file_paths = _collect_python_files(_Path.cwd())
+        file_paths = [str(Path(p).relative_to(root)) for p in _collect_python_files(root)]
     else:
-        try:
-            git = GitAdapter()
-            changed_objs = git.get_changed_files(args.base)
-            file_paths = [
-                f.path for f in changed_objs
-                if f.path.endswith(".py")
-            ]
-            patch_text = _collect_patch_text(args.base)
-        except Exception as exc:
-            print(f"WARNING: could not collect git diff: {exc}", file=sys.stderr)
-            file_paths = []
-
-    if not file_paths:
-        _write_stdout("No Python files to review.")
-        sys.exit(0)
+        changed_objs = GitAdapter().get_changed_files(args.base)
+        file_paths = [f.path for f in changed_objs if f.path.endswith(".py") and f.status != "deleted"]
+        patch_text = "\n".join(f.patch for f in changed_objs)
 
     def _read_file(path: str) -> str:
-        return _Path(path).read_text(encoding="utf-8", errors="replace")
+        try:
+            return (root / path).read_text(encoding="utf-8", errors="replace")
+        except OSError as exc:
+            raise GitInputError(f"검사할 파일을 읽지 못했습니다: {path}") from exc
 
-    result = review_files(file_paths, _read_file)
+    # The core review helper tolerates unavailable files; CLI automation must
+    # distinguish incomplete input from a successfully reviewed empty set.
+    contents = {path: _read_file(path) for path in file_paths}
+    result = review_files(file_paths, contents.__getitem__)
 
     if patch_text and not args.all_files:
         result.test_gaps = find_test_gaps(patch_text, file_paths)
@@ -1191,21 +1812,14 @@ def _run_self_audit(args) -> None:
 
     checklist_path = _Path(args.checklist)
     if not checklist_path.exists():
-        print(f"ERROR: checklist file not found: {checklist_path}", file=sys.stderr)
-        sys.exit(1)
+        raise GitInputError(f'checklist file not found: {checklist_path}')
 
     items = parse_checklist(checklist_path)
 
     # Collect git diff evidence
-    try:
-        git = GitAdapter()
-        changed_files_objs = git.get_changed_files(args.base)
-        changed_file_paths = [f.path for f in changed_files_objs]
-        patch_text = _collect_patch_text(args.base)
-    except Exception as exc:
-        print(f"WARNING: could not collect git diff: {exc}", file=sys.stderr)
-        changed_file_paths = []
-        patch_text = ""
+    changed_files_objs = GitAdapter().get_changed_files(args.base)
+    changed_file_paths = [f.path for f in changed_files_objs]
+    patch_text = "\n".join(f.patch for f in changed_files_objs)
 
     evidence = DiffEvidence.from_raw(
         changed_files=changed_file_paths,
@@ -1234,13 +1848,13 @@ def _run_self_audit(args) -> None:
     warnings = audit_result.warnings
     mismatch_count = sum(1 for w in warnings if w.kind == "checklist-code-mismatch")
     missing_count = sum(1 for w in warnings if w.kind == "missing-progress-entry")
-    supported = sum(1 for i in audit_result.checklist_items if i.status == "supported")
+    supported = sum(1 for i in audit_result.checklist_items if i.status == "related-evidence-found")
     checked = sum(1 for i in audit_result.checklist_items if i.checked)
 
     if not args.json_output:
         _write_stdout("")
         _write_stdout(
-            f"Self-audit: {supported}/{checked} checked items supported by diff evidence"
+            f"Self-audit: {supported}/{checked} checked items with related diff references (behavior not verified)"
         )
         if warnings:
             _write_stdout(
@@ -1251,29 +1865,14 @@ def _run_self_audit(args) -> None:
     sys.exit(0)
 
 
-def _collect_patch_text(base: str) -> str:
-    """Return the unified diff text from git diff base."""
-    import subprocess
-    try:
-        return subprocess.check_output(
-            ["git", "diff", base],
-            stderr=subprocess.DEVNULL,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-        )
-    except Exception:
-        return ""
-
-
 def _format_self_audit_markdown(audit_result) -> str:
     lines = ["# Self-Audit Report", ""]
-    supported = [i for i in audit_result.checklist_items if i.status == "supported"]
-    unsupported = [i for i in audit_result.checklist_items if i.status == "unsupported"]
+    supported = [i for i in audit_result.checklist_items if i.status == "related-evidence-found"]
+    unsupported = [i for i in audit_result.checklist_items if i.status == "no-related-evidence"]
     unchecked = [i for i in audit_result.checklist_items if i.status == "unchecked"]
 
     lines.append(
-        f"**{len(supported)} supported** / **{len(supported)+len(unsupported)} checked** "
+        f"**{len(supported)} with related evidence** / **{len(supported)+len(unsupported)} checked** "
         f"/ {len(unchecked)} unchecked"
     )
     lines.append("")
@@ -1299,13 +1898,13 @@ def _format_self_audit_markdown(audit_result) -> str:
 
 def _render_self_audit_html(audit_result) -> str:
     import html as _html
-    supported = [i for i in audit_result.checklist_items if i.status == "supported"]
-    unsupported = [i for i in audit_result.checklist_items if i.status == "unsupported"]
+    supported = [i for i in audit_result.checklist_items if i.status == "related-evidence-found"]
+    unsupported = [i for i in audit_result.checklist_items if i.status == "no-related-evidence"]
     unchecked = [i for i in audit_result.checklist_items if i.status == "unchecked"]
 
     def _item_rows(items, badge_class, badge_label):
         if not items:
-            return f"<tr><td colspan='3'><em>None</em></td></tr>"
+            return "<tr><td colspan='3'><em>None</em></td></tr>"
         rows = ""
         for item in items:
             ev = ", ".join(_html.escape(e) for e in item.evidence) or "—"
@@ -1336,7 +1935,7 @@ def _render_self_audit_html(audit_result) -> str:
   </div>"""
 
     all_rows = (
-        _item_rows(supported, "green", "supported")
+        _item_rows(supported, "green", "related reference")
         + _item_rows(unsupported, "red", "unsupported")
         + _item_rows(unchecked, "gray", "unchecked")
     )
@@ -1366,7 +1965,7 @@ def _render_self_audit_html(audit_result) -> str:
   <h1>Drift Gate — Self-Audit Report</h1>
   <div class="card">
     <p class="summary">
-      <strong>{len(supported)}</strong> supported &nbsp;/&nbsp;
+      <strong>{len(supported)}</strong> related references &nbsp;/&nbsp;
       <strong>{len(supported) + len(unsupported)}</strong> checked &nbsp;/&nbsp;
       {len(unchecked)} unchecked
     </p>
@@ -1497,15 +2096,14 @@ def _load_policy_optional(path: str):
         return None
 
 
-def _parse_days(value: str) -> int:
+def _parse_days(value: str, *, option: str = "--last") -> int:
     normalized = value.strip().lower()
     if normalized.endswith("d"):
         normalized = normalized[:-1]
     try:
         days = int(normalized)
-    except ValueError:
-        print(f"ERROR: invalid --last value: {value}", file=sys.stderr)
-        sys.exit(2)
+    except ValueError as exc:
+        raise CLIInputError(f"invalid {option} value: {value}") from exc
     return max(days, 1)
 
 
@@ -1513,14 +2111,25 @@ def _collect_inputs(args) -> tuple[list, list]:
     if args.pr and args.repo:
         token = os.environ.get("GITHUB_TOKEN", "")
         if not token:
-            print("ERROR: GITHUB_TOKEN is required for GitHub PR mode", file=sys.stderr)
-            sys.exit(1)
+            raise GitInputError('GITHUB_TOKEN is required for GitHub PR mode')
         github = GitHubAdapter(token=token, repo=args.repo)
         changed_files, pr_body = github.get_pr_files_and_body(args.pr)
-        return enrich_semantic_signals(changed_files), parse_drift_ignores(pr_body)
+        from drift_gate.adapters.github.approvals import verify_ignores
+        directives = parse_drift_ignores(pr_body)
+        policy = args.loaded_policy
+        if policy:
+            from drift_gate.adapters.execution import digest
+            directives = verify_ignores(github, args.pr, directives, policy, changed_files,
+                                        policy_sha256=digest(args.policy_source))
+            args.approval_head = getattr(github, '_snapshot_head', None)
+            changed_files = github.attach_env_documents(args.pr, changed_files, policy)
+        args.input_provenance = {"source": "github-pr", "repository": args.repo, "pr_number": args.pr}
+        return changed_files, directives
 
-    git = GitAdapter()
-    return enrich_semantic_signals(git.get_changed_files(args.base)), []
+    git = GitAdapter(args.local_root)
+    files = git.get_changed_files(args.base, comparison_mode=args.comparison_mode)
+    args.input_provenance = {"source": "local-git", **git.provenance}
+    return files, []
 
 
 def _git_ok(args: list[str]) -> bool:
@@ -1581,7 +2190,7 @@ def _dead_rule_warnings(policy, repo_root: Path) -> list[str]:
 
 def _repo_recommendations(repo_root: Path) -> dict:
     paths = set(_repo_paths(repo_root))
-    frameworks = _detect_frameworks(paths)
+    frameworks = _detect_frameworks(paths, repo_root)
     presets = []
 
     if _has_any(paths, ["prisma/schema.prisma", "db/**", "database/migrations/**", "alembic/versions/**"]):
@@ -1623,11 +2232,24 @@ def _select_init_preset(requested: str, recommendations: dict) -> str:
     return "fullstack"
 
 
-def _detect_frameworks(paths: set[str]) -> list[str]:
+def recommend_preset(repo_root: Path, requested: str = "auto") -> dict:
+    """Starter-policy choice and repository recommendations for ``repo_root``.
+
+    Independent of the working directory, so GUIs can preview what ``init`` would write.
+    """
+    recommendations = _repo_recommendations(repo_root)
+    return {
+        "preset": _select_init_preset(requested, recommendations),
+        "recommendations": recommendations,
+    }
+
+
+def _detect_frameworks(paths: set[str], repo_root: Path | None = None) -> list[str]:
     frameworks = []
-    package_json = Path("package.json")
-    pyproject = Path("pyproject.toml")
-    requirements = Path("requirements.txt")
+    base = repo_root if repo_root is not None else Path(".")
+    package_json = base / "package.json"
+    pyproject = base / "pyproject.toml"
+    requirements = base / "requirements.txt"
 
     package_text = package_json.read_text(encoding="utf-8") if package_json.exists() else ""
     pyproject_text = pyproject.read_text(encoding="utf-8") if pyproject.exists() else ""

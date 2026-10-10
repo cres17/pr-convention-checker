@@ -1,0 +1,98 @@
+{
+  "schema": "trusted-validation-v1",
+  "subject": {
+    "base_oid": "791565fd88e109645379b2a2efcd6601840e4191",
+    "head_oid": "8004ca7442308e2c89479ce226b7e676aceae9fe",
+    "base_tree": "f80554dab86552c80bbbe37c8c5b19996c7c0841",
+    "head_tree": "524c2e3ed2b6583e13ceabe59738eb3920a883c2",
+    "comparison_mode": "commit",
+    "collection_mode": "immutable-git",
+    "working_tree_ignored": true,
+    "unsaved_buffers_included": false,
+    "untracked_included": false
+  },
+  "trusted": {
+    "engine_commit": "ed9f9046cca46c79b379ccdbafaa08feaa8241d6",
+    "manifest_sha256": "88f275f568282507e71a66ad6f4e414e77dc0cdbf223c211c451eb1c1c0e37e8",
+    "gate_result": "pass",
+    "error": "",
+    "attestation": {
+      "schema": "engine-attestation-v1",
+      "manifest_commit": "ed9f9046cca46c79b379ccdbafaa08feaa8241d6",
+      "manifest_producer_source_sha256": "b3c5ca76e38dd05c86c856e23b8be69d1503305da1ef9bb4fb3ad8f2132ace33",
+      "loaded_modules": 88,
+      "module_mismatches": [],
+      "loaded_code_matches_manifest": true,
+      "parsers": {
+        "basis": "process-memory-map",
+        "platform": "linux-x86_64",
+        "version": "1.20.0",
+        "libraries": [
+          {
+            "name": "libtree_sitter_python.so",
+            "sha256": "0a39a054ae5e50132fbf969697e3e5932a9d5636db3e4810b829c95d8019a281",
+            "pinned": "0a39a054ae5e50132fbf969697e3e5932a9d5636db3e4810b829c95d8019a281",
+            "matches_pin": true
+          }
+        ],
+        "matched": true
+      },
+      "interpreter_attested": false,
+      "scope": "imported drift_gate modules and loaded grammar libraries at attestation time"
+    },
+    "input_sha256": "8a6af0170c8834b102e13b0b84a0f146ff102356dc9f0192bfec9cd26a9f8388"
+  },
+  "candidate": {
+    "engine": "current-process",
+    "gate_result": "pass",
+    "error": "",
+    "role": "shadow-not-merge-basis",
+    "input_sha256": "8a6af0170c8834b102e13b0b84a0f146ff102356dc9f0192bfec9cd26a9f8388"
+  },
+  "subject_binding": {
+    "resolved_refs": {
+      "base": "791565fd88e109645379b2a2efcd6601840e4191",
+      "head": "8004ca7442308e2c89479ce226b7e676aceae9fe",
+      "trusted_policy": "ae0028d5edd95d5dd4819939a5801cb028639a6b"
+    },
+    "mismatches": [],
+    "input_digest_compared": true
+  },
+  "decision": {
+    "schema": "trusted-validation-decision-v1",
+    "action": "review",
+    "merge_basis": "trusted-engine",
+    "reasons": [
+      "candidate-changes-checker-policy-or-workflow"
+    ],
+    "trust_sensitive_paths": [
+      "drift_gate/adapters/analysis_cache.py",
+      "drift_gate/adapters/cli/runner.py",
+      "drift_gate/adapters/evidence_bundle.py",
+      "drift_gate/adapters/holdout.py",
+      "drift_gate/adapters/inspection.py",
+      "drift_gate/adapters/org_service.py",
+      "drift_gate/adapters/run_coordinator.py",
+      "drift_gate/adapters/run_store.py",
+      "drift_gate/adapters/scope_analysis.py",
+      "drift_gate/adapters/trusted_validation.py",
+      "drift_gate/core/contracts/certificates.py",
+      "drift_gate/core/contracts/dependency.py",
+      "drift_gate/core/evaluation/compatibility.py",
+      "drift_gate/core/execution/lifecycle.py",
+      "drift_gate/core/org/policy.py",
+      "drift_gate/core/trust/validation.py",
+      "drift_gate/tests/test_decision_models.py",
+      "drift_gate/tests/test_evidence_bundle.py",
+      "drift_gate/tests/test_holdout_evaluation.py",
+      "drift_gate/tests/test_org_and_cache.py",
+      "drift_gate/tests/test_run_time_contract.py",
+      "drift_gate/tests/test_scope_analysis.py",
+      "drift_gate/tests/test_trust_boundary.py",
+      "packaging/verify_package_cli.py",
+      "pyproject.toml"
+    ],
+    "candidate_pass_is_not_merge_basis": true
+  },
+  "boundary": "separate-interpreter-no-credentials; shares host filesystem and network"
+}

@@ -1,0 +1,1 @@
+{"local_entrypoint_manifests_equal": false, "captured_source_digest_matches_control": true, "stale_then_updated_gate": true, "replay_after_repository_deleted": true, "replay_capture_identity_unchanged": true, "new_attempt_identity": true, "new_checkout_input_digest_changed": true, "no_authenticity_or_selection_claim": true}

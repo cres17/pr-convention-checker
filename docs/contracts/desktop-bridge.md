@@ -1,0 +1,80 @@
+# 데스크톱 편집·이벤트 계약
+
+## Qt signal 연결과 종료 (2026-10-10)
+
+Desktop 코드는 signal에 `self`를 잡는 lambda를 연결하지 않고 bound method를 연결한다. PySide6 6.12.0에서 자식 위젯의 signal을
+`lambda: ... self ...`에 연결한 객체를 삭제하면 interpreter가 segmentation fault로 끝나는 것을 재현했다. `ReviewDialog`의 질문
+복사 버튼과 `PackageCheck`의 45초 timeout을 bound method로 바꿨다. 화면 동작과 bridge event는 바뀌지 않는다.
+`test_qt_teardown.py`가 desktop 코드의 해당 패턴을 정적으로 금지하고, PySide6가 있는 환경에서 dialog 삭제 후 정상 종료를 확인한다.
+
+## 패키지 안 CLI와 종료 추적 (2026-10-08)
+
+첫 인자가 `--cli`이면 `DriftGate --cli <인자>`는 Qt 창을 만들지 않고 `drift-gate <인자>`와 같은 CLI를 실행한 뒤 그 종료 코드로 끝난다.
+windowed 빌드는 표준 출력이 없을 수 있으므로 결과는 `--out-json`으로 받는다. 이 경로는 bridge event를 보내지
+않으며 화면 기능이 아니다. `--cli`가 아닌 인자는 기존 UI·`--verify-package` 흐름을 그대로 따른다.
+
+`DRIFT_GATE_TEARDOWN_TRACE=<파일>`이 있으면 `main-start`, `event-loop-start`, `event-loop-returned`,
+`window-close-event`, `package-check-exit-requested`, `atexit`을 monotonic 초·pid와 함께 기록하고 faulthandler를 그
+파일에 연결한다. 종료 순서를 바꾸지 않는다. 변수가 없으면 아무것도 기록하지 않는다.
+
+`App.test.tsx`의 vitest 제한 시간은 20초다. 화면 동작이나 bridge event는 바꾸지 않았고, macOS Intel runner에서 전체 App
+render가 기본 5초를 넘은 실행(2026-10-08 Desktop run 37741382186·37742364446)에 대한 조정이다.
+
+## S1-e 서비스 결과 확장
+
+`scan_repository(..., contract_proofs=True)`는 CLI/MCP와 같은 `contract_diagnostics`를
+반환한다. 기본 false이며 현재 Qt 화면에 새 설정 스위치를 추가하지 않는다. scanned
+이벤트는 확장 필드를 보존하고 HTML/JSON 내보내기는 공통 projection을 사용한다.
+브라우저가 받은 context를 원본 검증으로 신뢰하거나 새 gate를 계산하는 기능은 없다.
+proof 실패는 서비스 예외로 끝나며 성공 scan으로 반환하지 않는다.
+
+## 논리 검사 결과 표시
+
+schema3의 그룹·규칙 decision/verification/content_mode를 선택 필드로 읽어 이전 보고서도 표시한다. 판단 보류는 조치할 항목 필터에 포함한다. 내용 미검증 안내는 문법 분석 성공 여부와 독립적으로 표시하며 auto의 파일 조건 통과를 내용 검증 완료로 표시하지 않는다. 위반과 판단 보류가 함께 있으면 상세 요약에서 각각의 수를 구분한다. confidence는 확률이 아닌 경로 매칭 구체성으로 표시한다.
+
+교차 조건 그룹에는 relation/source_files가 선택 필드로 추가된다. 상위 trigger_files와 별개로 실제 내용 검사 범위를 기록한다. auto-strict도 동일한 decision/verification 표시 계약을 사용하며 새 mode 문자열을 전체 검증 성공으로 간주하지 않는다.
+
+Qt 작업은 요청 식별값과 요청 완료 여부를 전달한다. 기준에서 파생한 현황·이력·테스트·링크 결과에는 baseline 버전·식별값과 검사 식별값을 붙인다. 화면은 다른 저장소/오래된 요청/다른 기준의 결과로 현재 편집을 덮어쓰지 않는다.
+
+문서 재추출은 기존 근거를 보존하며 새 후보를 합친다. 출처 내용이 바뀌면 재확인이 필요하다. 문서 연결 해제는 출처와 근거를 남기고 해당 문서만의 기능을 현재 집계에서 제외한다.
+
+편집은 650ms 지연 후 보관하며 저장/내보내기/최신 기준 전환의 순서를 관리한다. 상한 초과 초안은 백업 내보내기와 명시적인 항목 정리로 처리한다. 내보내기 성공을 검증한 뒤 최신 기준 사용이 가능하다.
+
+근거 없음·재확인 필요는 별도 상태다. 요약 카드는 목록과 같은 필터를 쓰고 다시 누르면 해제한다. 현황 비율은 기록된 근거의 상태이며 실제 개발률이 아니다.
+
+Python 이벤트와 TypeScript 입력 schema의 공통 사례는 `drift_gate/tests/contracts/progress.json`에 있다. React의 저장소 전환·지연 응답·충돌·복구 회귀 검사를 유지한다.
+
+## 2026-10-06 검사 입력과 설치본 검증
+
+데스크톱 검사도 정책 원문을 한 번 읽으며 규칙이 비어 있으면 오류를 표시한다. 실행 ID·정책 digest·비교 SHA·분석 상태가 내보내는 결과에 포함된다. UI의 정책 판정은 계속 core 결과를 따른다. 설치본 검증은 QWebChannel을 통해 첫8언어 검사 후 유효 varargs/kwargs 추가, src→docs rename을 별도 검사한다. 두 반례가 PASS이면 설치본 검증이 실패한다. 이 검사는 자동 실제 브리지 실행이며 사람의 실사용 평가나 모든 화면 조작을 대신하지 않는다.
+
+## 설치본 검사 단계 식별
+
+설치본 검증기는 매 실행 새로운 결과 폴더와 challenge를 사용한다. 앱은 challenge와 fixture 저장소를 응답에 포함하며 외부 검증기는 예상 값과 대조한다. grammar·signature·rename 단계는 순서와 서로 다른 실행 ID를 확인하고, 실제 추가 인자 diff와 `src/api.py → docs/api.py` 변경 상태를 확인한다. 이전 실행 또는 다른 단계 결과를 재사용하면 실패해야 한다. 이 식별은 협조하는 앱의 회귀 오류를 검출하는 계약이며 악의적인 바이너리의 자체 보고를 인증하는 보안 서명은 아니다.
+## S2-b 설치본 검증 경계
+
+진단 설치본 검사는 실제 UI·QWebChannel·오프라인 문법 분석 뒤에 동일 바이너리에서
+원본 Git 객체·CRLF 보존·명시 정책 pin·약화 거부·working tree 무시를 대조한다.
+외부 `packaging/verify_package.py`는 새 `git_object_checks` 프로토콜과 고정 fixture
+해시·subject·판정을 다시 검사한다. 이 검사는 일반 화면의 새 Git 모드 설정을 의미하지 않는다.
+진단 실행은 사용자 파일 대신 별도 임시 Git 저장소를 쓴다.
+
+`scanned_files`는 변경 파일뿐 아니라 설정된 문서의 부재 관찰도 포함한다.
+signature·rename 대조는 변경 source 1개와 `docs/api.md` 부재 관찰 1개를 확인한다.
+공개 input capture의 patch 경로 집합과 빈 문서 patch·명시 absent를 함께 검사하고,
+다른 관찰이 끼면 거부한다. 실패 응답은 단계와 마지막 fixture scan을 남겨 설치본
+실패를 재현할 수 있게 한다. 성공 조건이나 예상 drift 판정을 완화하지 않는다.
+
+첫 grammar 단계는 8개 source와 같은 문서 부재 관찰을 포함하므로 총 9개 관찰이다.
+8개 source에 문법 분석이 적용됐는지와 문서의 명시 부재를 각각 검증한다. 모든 단계는
+공통 관찰 범위 검증기를 사용하며, 다른 source·누락·중복 patch 관찰은 실패해야 한다.
+
+Git 진단의 현재 schema는 `packaged-git-controls-v2`다. working-tree 대조는 source,
+policy, index attributes, info attributes, diff config를 실제로 변형하고, 판정뿐 아니라
+`verification`과 `input_capture`가 변형 전과 같은지도 검사한다. 외부 검증기는
+`diff_mode=isolated-raw-git`와 이 변형 목록·capture 일치를 확인한다. v1 진단 JSON은
+과거 계약의 근거로만 보존하며 v2 격리 완료의 근거로 인정하지 않는다.
+
+진단 JSON은 UTF-8로 읽고 쓴다. 플랫폼 기본 인코딩으로 결과를 해석하지 않는다.
+원본 정책·문서 대조 fixture는 LF/CRLF bytes를 명시하며, Windows의 텍스트 쓰기 변환이
+예상 해시를 바꾸지 않도록 한다. 진단 검증 조건을 플랫폼별로 완화하지 않는다.

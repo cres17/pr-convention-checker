@@ -6,6 +6,7 @@ from typing import List
 
 from drift_gate.utils.glob_matcher import matches_any
 from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.change_paths import change_paths
 
 TYPE_PATTERNS: dict = {
     "api-surface": [
@@ -56,7 +57,7 @@ def classify_change_types(changed_files: List[ChangedFile]) -> List[str]:
     - 모든 파일이 test 패턴 → ['test-only']
     - 그 외 → 감지된 유형 정렬 목록
     """
-    paths = [f.path for f in changed_files]
+    paths = [path for f in changed_files for path in change_paths(f)]
     if not paths:
         return []
 

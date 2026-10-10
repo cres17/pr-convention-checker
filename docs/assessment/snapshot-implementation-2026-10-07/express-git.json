@@ -1,0 +1,1977 @@
+{
+  "protocol": {
+    "version": 1,
+    "input": "real Git snapshots; authored nonblind Express cases frozen before first run",
+    "axes": [
+      "facts",
+      "decision",
+      "verification",
+      "gate"
+    ],
+    "scope": "default ESM import, direct const app/router, literal method/path/mount, ordinary handlers"
+  },
+  "suite_sha256": "992cf555cdf16ecc30390a40e2c109a02aa184196d545d45f4489da8412a155f",
+  "counts": {
+    "facts": {
+      "correct": 8,
+      "total": 8
+    },
+    "decision": {
+      "correct": 8,
+      "total": 8
+    },
+    "verification": {
+      "correct": 8,
+      "total": 8
+    },
+    "gate": {
+      "correct": 8,
+      "total": 8
+    }
+  },
+  "false_verified": [],
+  "missed_known_violations": [],
+  "cases": [
+    {
+      "id": "chain-current",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /v1/products"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /v1/products"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.01012433401774615,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; add GET /v1/products; remove GET /v1/catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "1b5f8f92e57745cab780391608c50654",
+          "started_at": "2026-10-07T13:24:12.123129+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "f143ce870b5a147c45266710fefcab0dd25bf421f1b3cc055a16dd96b6c21b44",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "6ad7b18af5c5de09c01d117744443b8469f2fa091074d38caa79489e14afc1ae",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c4edab222adfb40fb85ccafb327e332a200396778853f9077aff851c61994a4c",
+                "observed_text_bytes": 595,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "a5cbbcfb5da972a5254ded72fb624fd9664a5ae259fa8676be46a2058de948ef",
+                "observed_text_bytes": 17,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "docs/api.md",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "da6a59692015dbc09f2a7311a934db3f994f69256d5f4b6c576dc3f9131dc0dd",
+                "observed_text_bytes": 198,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e59b05cf19c85b8f9e32317f50ad5b59bf7062e37c54a0fbe88fbf1eacb125e4",
+                "observed_text_bytes": 197,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.js",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "5414928dfee804ca4f774e1e75d8a8af8be7e60d2fefd78193b2ea388456ce22",
+                "observed_text_bytes": 360,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "d30504f35b399392103f472228c024f027bfc0d97e705ba9cf418ebed8f9b09b",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "f143ce870b5a147c45266710fefcab0dd25bf421f1b3cc055a16dd96b6c21b44"
+    },
+    {
+      "id": "chain-stale",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /v1/products"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /v1/products"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "violated",
+        "verification": "verified",
+        "gate": "fail"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0026576669770292938,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "fail",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "confidence": "low",
+            "confidence_basis": "path-specificity; not a probability of correctness",
+            "change_types": [
+              "other"
+            ],
+            "change_type": "other",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/api.js",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "diff --git a/src/api.js b/src/api.js\nindex 9fc9ceb..851733d 100644\n--- a/src/api.js\n+++ b/src/api.js\n@@ -2,5 +2,5 @@ import express from 'express';\n const app = express();\n const router = express.Router();\n function handler(req, res) { res.send('ok'); }\n-router.route('/catalog').get(handler);\n+router.route('/products').get(handler);\n app.use('/v1', router);\n",
+                "semantic_signals": [],
+                "semantic_evidence": [],
+                "analysis_method": "grammar+heuristic",
+                "analysis_reason": "",
+                "documented_env_keys": null,
+                "document_input_state": ""
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; add GET /v1/products; remove GET /v1/catalog",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "checklist": [
+              "docs 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "impl-only",
+            "change_intensities": [
+              "impl-only"
+            ],
+            "trigger_patterns": [
+              "src/**"
+            ],
+            "blast_radius": [
+              "missing requirement group: docs"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "decision": "violated",
+            "verification": "verified",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; add GET /v1/products; remove GET /v1/catalog",
+                "decision": "violated",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "935613c486984da6ba46059cbfa312b0",
+          "started_at": "2026-10-07T13:24:12.226306+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "f36a402c024169bbdc7c8846c7698300e48c793bf7ffaae48f5ed8e980edba25",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "37c4a25b2fa365121a2b6dc1ef2a2d9da19d13d96bc8544843e46da4a7a9384c",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c4edab222adfb40fb85ccafb327e332a200396778853f9077aff851c61994a4c",
+                "observed_text_bytes": 595,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "8dc878a6f08bf2ab9c1f6a8f108d00f1d1fdc3b9d0523741acf9667957d25872",
+                "observed_text_bytes": 16,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "docs/api.md",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "da6a59692015dbc09f2a7311a934db3f994f69256d5f4b6c576dc3f9131dc0dd",
+                "observed_text_bytes": 198,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e59b05cf19c85b8f9e32317f50ad5b59bf7062e37c54a0fbe88fbf1eacb125e4",
+                "observed_text_bytes": 197,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.js",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "5414928dfee804ca4f774e1e75d8a8af8be7e60d2fefd78193b2ea388456ce22",
+                "observed_text_bytes": 360,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "42aa0b14d6143148acf7413ef7519382df8a7281bece99f116cb951e2879120e",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "f36a402c024169bbdc7c8846c7698300e48c793bf7ffaae48f5ed8e980edba25"
+    },
+    {
+      "id": "mount-prefix",
+      "expected": {
+        "facts": {
+          "added": [
+            "GET /v2/catalog"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "GET /v2/catalog"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.002534041996113956,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; add GET /v2/catalog; remove GET /v1/catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "7c1b94a323e24d4aa34ab2382799545b",
+          "started_at": "2026-10-07T13:24:12.325998+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "5cd8d16d5ba0af92739cbde299c6b58ce009f00b9cfe49b8cbec355c3d7a9075",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "841cdb3cef748d90404948420c276677804003b7512cf0d3b5dcf9d0f0c3be04",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c4edab222adfb40fb85ccafb327e332a200396778853f9077aff851c61994a4c",
+                "observed_text_bytes": 595,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "8e617208e8f06f32458946ad0fcfc1584ad4986440deb2608838ff7bdc696fbb",
+                "observed_text_bytes": 16,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "docs/api.md",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "2b133d0e8b5a006ef25ad2005e566227daa9edde4f10792a89a32670c6c48dc2",
+                "observed_text_bytes": 197,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e59b05cf19c85b8f9e32317f50ad5b59bf7062e37c54a0fbe88fbf1eacb125e4",
+                "observed_text_bytes": 197,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.js",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "f537d082fb597cfecd7b97b422a9dc5664f86f06d84644de4ebdad14d6baccbe",
+                "observed_text_bytes": 312,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "562a615c7a67215e34f76d668c3b474dd30050ff699f0a688abc2f534c4382fe",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "5cd8d16d5ba0af92739cbde299c6b58ce009f00b9cfe49b8cbec355c3d7a9075"
+    },
+    {
+      "id": "method-replaced",
+      "expected": {
+        "facts": {
+          "added": [
+            "POST /v1/catalog"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [
+            "POST /v1/catalog"
+          ],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.00238341698423028,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; add POST /v1/catalog; remove GET /v1/catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "6fe8b85885824b0da1f9a21ce805c571",
+          "started_at": "2026-10-07T13:24:12.426659+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "6bce5825f1ef9c0986d55bf31473f31570c50102ccc2d26e308d0876f68631f5",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "f7d526195ce34786e7c30cc677d0cdb586fdfabe43ef27c5e327c3227f2aa2f2",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c4edab222adfb40fb85ccafb327e332a200396778853f9077aff851c61994a4c",
+                "observed_text_bytes": 595,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "f332270c98c86f9b50f5ab695f6597402dde8aeb4769fd4bdede069ddd07b420",
+                "observed_text_bytes": 17,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "docs/api.md",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "434a454b0cdf2df230f8ce3eb61e56a56f91524fbbd0d43713864f29700c0593",
+                "observed_text_bytes": 198,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e59b05cf19c85b8f9e32317f50ad5b59bf7062e37c54a0fbe88fbf1eacb125e4",
+                "observed_text_bytes": 197,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.js",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "01c722364cc99edecc97ffaad241190e352a0f294a9c22c296d54fc122d1b289",
+                "observed_text_bytes": 360,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "9761ce896cd2afdce436d899a6bb85467005bb4f2756e1944fbd7eb2220bbcbf",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "6bce5825f1ef9c0986d55bf31473f31570c50102ccc2d26e308d0876f68631f5"
+    },
+    {
+      "id": "router-unmounted",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0022497919853776693,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; remove GET /v1/catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "2d373498f1ee4a21a022fe20d521c951",
+          "started_at": "2026-10-07T13:24:12.519014+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "f023b310cea73b296efda1d070d036e87051e1d2a57606dd8a3d726195d3da70",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "5601c097506796214331bcf3b7c14c7318528442a672b763e1bd1cc604f762de",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c4edab222adfb40fb85ccafb327e332a200396778853f9077aff851c61994a4c",
+                "observed_text_bytes": 595,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "docs/api.md",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "882fdef962be703f587a2f4535b2bc5093e27c0a8350d5fa50bbb6d54be2a7d3",
+                "observed_text_bytes": 174,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e59b05cf19c85b8f9e32317f50ad5b59bf7062e37c54a0fbe88fbf1eacb125e4",
+                "observed_text_bytes": 197,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.js",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "80443bc3fc4d4972b4aaf7138b78b6ba8d53d9f93d563c48ba89c8bd4f1fb81f",
+                "observed_text_bytes": 289,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "ee79b32fad5c0e89b2ecb29fc93ca27d3591b768f0c18d69d0da7642b4545878",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "f023b310cea73b296efda1d070d036e87051e1d2a57606dd8a3d726195d3da70"
+    },
+    {
+      "id": "chain-deleted",
+      "expected": {
+        "facts": {
+          "added": [],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "actual": {
+        "facts": {
+          "added": [],
+          "removed": [
+            "GET /v1/catalog"
+          ]
+        },
+        "decision": "satisfied",
+        "verification": "verified",
+        "gate": "pass"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "verified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass",
+          "undetermined_rules": 0,
+          "unverified_rules": 0
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.00254770799074322,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "pass",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "decision": "satisfied",
+            "verification": "verified",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Complete document route coverage; remove GET /v1/catalog",
+                "decision": "satisfied",
+                "verification": "verified",
+                "content_mode": "auto-strict"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "6f6b5ca196cf4f78938237091ea42b9e",
+          "started_at": "2026-10-07T13:24:12.613336+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "9b48f6e4e566f4f84fb8cfc2b93954aa3c1f5bee6f2fe1357f0a71e4a5973ba6",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "3429620478aafd5b9a39c60fec054ce927c71ada7f8811709d79bec38626edfd",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c4edab222adfb40fb85ccafb327e332a200396778853f9077aff851c61994a4c",
+                "observed_text_bytes": 595,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "docs/api.md",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e59b05cf19c85b8f9e32317f50ad5b59bf7062e37c54a0fbe88fbf1eacb125e4",
+                "observed_text_bytes": 197,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.js",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "51615b3f713e4516ccf2ef1af1770183f40d2ad0a9b9e4d858698aa46b6a8e6f",
+                "observed_text_bytes": 320,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "b8ef53f574361ef02043c47bdbc74f091d6882df8921e89c15a680ef41b628db",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "9b48f6e4e566f4f84fb8cfc2b93954aa3c1f5bee6f2fe1357f0a71e4a5973ba6"
+    },
+    {
+      "id": "fake-framework",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0016204589628614485,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "one default Express import is required; configured trigger threshold is unverified",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "auto-strict"
+              },
+              {
+                "name": "Analysis evidence unavailable",
+                "required": [
+                  "src/api.js"
+                ],
+                "type": "analysis",
+                "evidence": "Cannot establish the configured change threshold; provide analyzable input or a valid exception",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "paths"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "cfb554a5b13a41d2823d31c0c6b9dde0",
+          "started_at": "2026-10-07T13:24:12.714807+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "3423ef24fc7866ea05a3e5113e26813fa38ec1927ea69864866e259d3f3bb1bf",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "aab842f76bcb85639f5d96ab91051e53a0b7849daf1e316f12c8f9f2bba1dabf",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c4edab222adfb40fb85ccafb327e332a200396778853f9077aff851c61994a4c",
+                "observed_text_bytes": 595,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "8dc878a6f08bf2ab9c1f6a8f108d00f1d1fdc3b9d0523741acf9667957d25872",
+                "observed_text_bytes": 16,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "docs/api.md",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "bec52187406c532801d40cebd28d0e0d5a61e17f084e6eb5a2f7ad0ca89a88d6",
+                "observed_text_bytes": 196,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e59b05cf19c85b8f9e32317f50ad5b59bf7062e37c54a0fbe88fbf1eacb125e4",
+                "observed_text_bytes": 197,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.js",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e4c1db2a503cfe134df0c70d077f9733ae42f2c5c8af02be6bf72f915ed181f1",
+                "observed_text_bytes": 286,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "75571f7d92a8cbcaa4802a396fa5522b40c30ba498e6276283dabb7cc78b4c8b",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "3423ef24fc7866ea05a3e5113e26813fa38ec1927ea69864866e259d3f3bb1bf"
+    },
+    {
+      "id": "shadowed-router",
+      "expected": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "actual": {
+        "facts": "unknown",
+        "decision": "undetermined",
+        "verification": "unverified",
+        "gate": "warn"
+      },
+      "checks": {
+        "facts": true,
+        "decision": true,
+        "verification": true,
+        "gate": true
+      },
+      "report": {
+        "schema_version": 3,
+        "verification": "unverified",
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "warn",
+          "undetermined_rules": 1,
+          "unverified_rules": 1
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.001629540987778455,
+          "analysis_notes": [
+            {
+              "path": "src/api.js",
+              "method": "grammar+heuristic",
+              "reason": ""
+            },
+            {
+              "path": "docs/api.md",
+              "method": "unavailable",
+              "reason": "Patch unavailable; intensity cannot exclude a contract change"
+            }
+          ]
+        },
+        "result": "warn",
+        "skip": false,
+        "skip_reason": "",
+        "no_policy": false,
+        "change_types": [
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "contract",
+            "severity": "BLOCKER",
+            "status": "undetermined",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "reason": "Required content or change threshold could not be verified",
+            "matched_patterns": [
+              "src/**"
+            ],
+            "trigger_files": [
+              "src/api.js"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "all_changed",
+                "evidence": "Express binding is shadowed, reassigned, escaped or used outside registration; configured trigger threshold is unverified",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "auto-strict"
+              },
+              {
+                "name": "Analysis evidence unavailable",
+                "required": [
+                  "src/api.js"
+                ],
+                "type": "analysis",
+                "evidence": "Cannot establish the configured change threshold; provide analyzable input or a valid exception",
+                "decision": "undetermined",
+                "verification": "unverified",
+                "content_mode": "paths"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2,
+          "on_unverified": "warn"
+        },
+        "execution": {
+          "schema_version": 2,
+          "run_id": "17a3fa4e42944256a2715ae5f0b1d901",
+          "started_at": "2026-10-07T13:24:12.807299+00:00",
+          "status": "success",
+          "policy_sha256": "440a60c64c51e95bda8a410a3abd71c560f697d709f9cef28eeea1214754f0cc",
+          "policy_digest_kind": "policy-object",
+          "warnings": [],
+          "evaluation_context": {
+            "evaluated_on": "2026-10-07",
+            "date_basis": "UTC"
+          },
+          "input_digest_version": 3,
+          "input_sha256": "bdaf3191570dd1d5db1f873e9cbed256da02cd5322899ed883536f0b27d5d0a6",
+          "input_capture": {
+            "schema": "input-manifest-v1",
+            "digest_protocol": "python-json-observation-v1",
+            "input_sha256": "9184d9150eb2ce25da4dde72ad7a8438e6d327d2d99a487178592b88e579365a",
+            "collection_mode": "captured-adapter-input",
+            "atomicity": "per-artifact-observation",
+            "original_bytes_certified": false,
+            "revision_certified": false,
+            "policy_authority": "unverified-caller-input",
+            "selection_complete": false,
+            "artifacts": [
+              {
+                "path": "@policy",
+                "role": "policy-semantics",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "c4edab222adfb40fb85ccafb327e332a200396778853f9077aff851c61994a4c",
+                "observed_text_bytes": 595,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "@policy",
+                "role": "policy-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "8dc878a6f08bf2ab9c1f6a8f108d00f1d1fdc3b9d0523741acf9667957d25872",
+                "observed_text_bytes": 16,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "docs/api.md",
+                "role": "before-source",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "docs/api.md",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "observed_text_bytes": 0,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "after-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "75943f8c690f53b29a8c4ba06b92ab2f346427b01ea4d1a604caffc30b15733b",
+                "observed_text_bytes": 254,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "before-source",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "e59b05cf19c85b8f9e32317f50ad5b59bf7062e37c54a0fbe88fbf1eacb125e4",
+                "observed_text_bytes": 197,
+                "encoding": "utf-8-observed-text"
+              },
+              {
+                "path": "src/api.js",
+                "role": "document-json",
+                "state": "not-collected",
+                "reason": "not_collected",
+                "observed_text_sha256": null,
+                "observed_text_bytes": null,
+                "encoding": null
+              },
+              {
+                "path": "src/api.js",
+                "role": "patch",
+                "state": "present",
+                "reason": "",
+                "observed_text_sha256": "bde4f181b091602832d23d6134f6eba80fa9cd52b10e5e7176bc5efe51ef52e7",
+                "observed_text_bytes": 351,
+                "encoding": "utf-8-observed-text"
+              }
+            ],
+            "manifest_sha256": "215a1bfa0ccda604f713d5e561af42e936b9e5f09486a21d693391ff7a17252a",
+            "retention": "process-memory-only",
+            "replay_scope": "captured-inputs-current-engine"
+          }
+        }
+      },
+      "input_sha256": "bdaf3191570dd1d5db1f873e9cbed256da02cd5322899ed883536f0b27d5d0a6"
+    }
+  ]
+}

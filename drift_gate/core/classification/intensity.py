@@ -8,6 +8,9 @@ import re
 from typing import Iterable, List
 
 from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.route_syntax import METHOD_PATTERN, route_registration_method
+from drift_gate.core.python_syntax import environment_keys, without_literals
+from drift_gate.core.patch_lines import changed_lines as patch_changed_lines
 
 INTENSITY_ORDER = {
     "any": -1,
@@ -24,6 +27,12 @@ INTENSITY_ORDER = {
 }
 
 VALID_INTENSITIES = set(INTENSITY_ORDER)
+
+
+def analysis_unavailable(file: ChangedFile) -> bool:
+    """Missing input is not evidence that a change is below a threshold."""
+    return (file.analysis_method == "unavailable" or not file.patch.strip()
+            or file.patch.startswith(("[binary file skipped]", "[large file skipped]")))
 
 SEMANTIC_SIGNAL_INTENSITY = {
     "env-key-added": "config-key-added",
@@ -57,6 +66,8 @@ EXPORT_PATTERNS = [
 ]
 
 ENV_KEY_PATTERNS = [
+    re.compile(r"os\.environ\[\s*['\"]([A-Z][A-Z0-9_]*)['\"]"),
+    re.compile(r"process\.env\[\s*['\"]([A-Z][A-Z0-9_]*)['\"]"),
     re.compile(r"^\s*[A-Z][A-Z0-9_]*\s*="),
     re.compile(r"process\.env\.([A-Z][A-Z0-9_]*)"),
     re.compile(r"os\.environ(?:\.get)?\(\s*['\"]([A-Z][A-Z0-9_]*)['\"]"),
@@ -64,9 +75,7 @@ ENV_KEY_PATTERNS = [
 ]
 
 ROUTE_PATTERNS = [
-    re.compile(r"\b(router|app)\.(get|post|put|patch|delete)\s*\("),
-    re.compile(r"@\w+\.(get|post|put|patch|delete)\s*\("),
-    re.compile(r"@(Get|Post|Put|Patch|Delete)\s*\("),
+    re.compile(rf"^\s*@({METHOD_PATTERN})\s*\(", re.I),
     re.compile(r"\b(response_model|Body|Query|Path)\s*="),
     re.compile(r"\b(z\.object|schema|requestSchema|responseSchema)\s*\("),
     re.compile(r"^\s*(export\s+)?(interface|type)\s+\w*(Request|Response|Payload|Dto)\b"),
@@ -136,27 +145,30 @@ def classify_file_intensity(file: ChangedFile) -> str:
 
     if file.status == "added":
         return "export-added"
-    if file.status in ("deleted", "renamed"):
+    if file.status in ("deleted", "renamed") and not file.patch:
         return "signature-change"
     if not file.patch:
         return "signature-change"
 
-    changed_lines = list(_changed_content_lines(file.patch))
+    changed_lines = patch_changed_lines(file)
     if not changed_lines:
         return "impl-only"
 
-    if all(_is_comment_or_blank(line) for line in changed_lines):
+    if not patch_changed_lines(file, code_only=True):
         return "comment-only"
+
+    changed_lines = patch_changed_lines(file, code_only=True)
 
     added_lines = [line for marker, line in changed_lines if marker == "+"]
     removed_lines = [line for marker, line in changed_lines if marker == "-"]
-    if _adds_config_key(added_lines, removed_lines):
+    if _adds_config_key(added_lines, removed_lines, file.path):
         return "config-key-added"
 
     if any(_matches_any(line, CONFIG_SCHEMA_PATTERNS) for _, line in changed_lines):
         return "config-key-added"
 
-    if any(_matches_any(line, CI_SECRET_PATTERNS) for _, line in changed_lines):
+    word_lines = without_literals([line for _, line in changed_lines]) if file.path.endswith('.py') else [line for _, line in changed_lines]
+    if any(_matches_any(line, CI_SECRET_PATTERNS) for line in word_lines):
         return "ci-secret-change"
 
     if any(_matches_any(line, CLI_PUBLIC_PATTERNS) for _, line in changed_lines):
@@ -168,7 +180,8 @@ def classify_file_intensity(file: ChangedFile) -> str:
     if any(_matches_any(line, DB_SCHEMA_PATTERNS) for _, line in changed_lines):
         return "db-schema-change"
 
-    if any(_matches_any(line, ROUTE_PATTERNS) for _, line in changed_lines):
+    if any(route_registration_method(line) or _matches_any(line, ROUTE_PATTERNS)
+           for _, line in changed_lines):
         return "route-contract-change"
 
     if (
@@ -200,27 +213,6 @@ def meets_min_intensity(actual: str, minimum: str) -> bool:
     return INTENSITY_ORDER.get(actual, 2) >= INTENSITY_ORDER.get(minimum, 2)
 
 
-def _changed_content_lines(patch: str) -> Iterable[tuple[str, str]]:
-    for raw in patch.splitlines():
-        if not raw or raw.startswith(("+++", "---", "@@", "diff --git", "index ")):
-            continue
-        if raw.startswith("\\ No newline"):
-            continue
-        marker = raw[0]
-        if marker in ("+", "-"):
-            yield marker, raw[1:]
-
-
-def _is_comment_or_blank(item: tuple[str, str]) -> bool:
-    _, line = item
-    stripped = line.strip()
-    return (
-        not stripped
-        or stripped.startswith(("#", "//", "/*", "*", "*/"))
-        or stripped in ('"""', "'''")
-    )
-
-
 def _matches_any(line: str, patterns: List[re.Pattern]) -> bool:
     return any(pattern.search(line) for pattern in patterns)
 
@@ -236,13 +228,22 @@ def _semantic_intensity(signals: List[str]) -> str:
     return strongest
 
 
-def _adds_config_key(added_lines: List[str], removed_lines: List[str]) -> bool:
-    added_keys = _extract_config_keys(added_lines)
-    removed_keys = _extract_config_keys(removed_lines)
+def _adds_config_key(added_lines: List[str], removed_lines: List[str], path: str = '') -> bool:
+    added_keys = _extract_config_keys(added_lines, path)
+    removed_keys = _extract_config_keys(removed_lines, path)
     return bool(added_keys - removed_keys)
 
 
-def _extract_config_keys(lines: List[str]) -> set[str]:
+def _extract_config_keys(lines: List[str], path: str = '') -> set[str]:
+    if path.endswith('.py'):
+        parsed = environment_keys(lines)
+        if parsed is not None:
+            # Plain uppercase Python configuration assignments remain supported.
+            for line in without_literals(lines):
+                match = re.match(r'^\s*([A-Z][A-Z0-9_]*)\s*=', line)
+                if match:
+                    parsed.add(match.group(1))
+            return parsed
     keys = set()
     for line in lines:
         for pattern in ENV_KEY_PATTERNS:

@@ -1,0 +1,13 @@
+{
+  "schema": "self-check-input-limit-rejection-v1",
+  "run_id": 37643814235,
+  "job_id": 112869228863,
+  "source_commit": "f712dfdde0c719e2d7ef43b93b0c365100d93b07",
+  "error_line": "2026-10-07T15:25:51.7135763Z Git object exceeds 1 MB capture limit",
+  "job_log_sha256": "fe29ae68a7127bae46474f48d80e377e6f80d57eef1cc4f9d5e102d9a094cc5f",
+  "rejected_path": "docs/assessment/git-trust-implementation-2026-10-07/ci-mirror-tests.log",
+  "observed_bytes": 1207220,
+  "capture_limit_bytes": 1000000,
+  "correction": "gzip preserves the original bytes and original SHA-256; input limit unchanged",
+  "note": "A comparison against the old oversized blob also remains rejected. This is an actual failed input check, not a successful verification."
+}

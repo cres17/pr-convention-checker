@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/private/tmp/driftgate-final-review-venv/bin/python",
+    "-m",
+    "drift_gate",
+    "check",
+    "--temporal-gate",
+    "--temporal-window",
+    "nonsense",
+    "--json",
+    "--out-json",
+    "/Users/moon/Documents/pr-convention-checker/docs/assessment/multi-review-2026-10-06/policy/temporal-result.json",
+    "--out-html",
+    "/Users/moon/Documents/pr-convention-checker/docs/assessment/multi-review-2026-10-06/policy/temporal-result.html"
+  ],
+  "exit": 2,
+  "stdout": "",
+  "stderr": "ERROR: invalid --last value: nonsense\n",
+  "json_after": {
+    "result": "pass",
+    "execution": {
+      "run_id": "OLD"
+    }
+  },
+  "html_after": "OLD PASS"
+}

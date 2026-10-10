@@ -1,0 +1,833 @@
+[
+  {
+    "type": "ready",
+    "repository": "/fixture/repo",
+    "base": "HEAD",
+    "installed": {
+      "codex": "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+      "claude": "/opt/homebrew/bin/claude"
+    }
+  },
+  {
+    "type": "progressDocs",
+    "requested_path": "/fixture/repo",
+    "repository": "/fixture/repo",
+    "documents": [
+      {
+        "path": "past.md",
+        "tracked": false,
+        "bytes": 36
+      },
+      {
+        "path": "README.md",
+        "tracked": false,
+        "bytes": 51
+      }
+    ],
+    "omitted": 0,
+    "baseline": {
+      "schema": 1,
+      "repository": "/fixture/repo",
+      "version": 1,
+      "saved_at": "2026-10-01T07:06:22.465001+00:00",
+      "documents": {
+        "README.md": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479",
+        "past.md": "2ff6b2cd248a53fcb0a56bb132d2bf5596ba9d5b8a0a9577f3b13fe43dc44cc1"
+      },
+      "document_kinds": {
+        "README.md": "current",
+        "past.md": "past"
+      },
+      "requirements": [
+        {
+          "id": "4fa4fc8e9d2c14f6",
+          "title": "결제",
+          "criterion": "결제",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 2,
+            "excerpt": "- [ ] 결제",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/pay.py",
+            "line": 1,
+            "excerpt": "def pay():",
+            "sha256": "778c9149d587470de93f9c04c4424cdd1c52ae0ae624603fbef739336a84087e",
+            "note": "함수 확인"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_pay_typo"
+          ]
+        },
+        {
+          "id": "f75a1ff84f169faf",
+          "title": "알림",
+          "criterion": "알림",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 3,
+            "excerpt": "- [ ] 알림",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "unknown",
+          "evidence": null,
+          "verification_status": "unverified",
+          "verification_note": "",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_alert_typo"
+          ]
+        },
+        {
+          "id": "c829f5d646ccc548",
+          "title": "로그인",
+          "criterion": "로그인",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 4,
+            "excerpt": "- [ ] 로그인",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/login.py",
+            "line": 1,
+            "excerpt": "def login():",
+            "sha256": "abf8ecca3a0383f9ed65c07d9c6777bf341f2db761ec1fd336d5c6d5592d759e",
+            "note": "함수 확인"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_login"
+          ]
+        },
+        {
+          "id": "3ad81e0352b594d9",
+          "title": "과거 기능",
+          "criterion": "과거 기능",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "past.md",
+            "line": 2,
+            "excerpt": "- [ ] 과거 기능",
+            "sha256": "2ff6b2cd248a53fcb0a56bb132d2bf5596ba9d5b8a0a9577f3b13fe43dc44cc1"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/pay.py",
+            "line": 1,
+            "excerpt": "def pay():",
+            "sha256": "778c9149d587470de93f9c04c4424cdd1c52ae0ae624603fbef739336a84087e",
+            "note": "함수 확인"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_past_typo"
+          ]
+        }
+      ]
+    },
+    "request_id": "f865c4d8-0e01-4ec0-81b5-c5f3bfd45154:1",
+    "request_done": true
+  },
+  {
+    "type": "progressReport",
+    "requested_path": "/fixture/repo",
+    "report": {
+      "repository": "/fixture/repo",
+      "version": 1,
+      "at": "2026-10-01T07:06:23.660742+00:00",
+      "head": "커밋 없음",
+      "documents": {
+        "README.md": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479",
+        "past.md": "2ff6b2cd248a53fcb0a56bb132d2bf5596ba9d5b8a0a9577f3b13fe43dc44cc1"
+      },
+      "document_kinds": {
+        "README.md": "current",
+        "past.md": "past"
+      },
+      "stale_documents": [],
+      "stale_context_documents": [],
+      "counts": {
+        "implemented": 1,
+        "partial": 0,
+        "not_implemented": 0,
+        "unknown": 2,
+        "complete": 1,
+        "excluded": 1
+      },
+      "total": 3,
+      "items": [
+        {
+          "id": "4fa4fc8e9d2c14f6",
+          "title": "결제",
+          "criterion": "결제",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 2,
+            "excerpt": "- [ ] 결제",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/pay.py",
+            "line": 1,
+            "excerpt": "def pay():",
+            "sha256": "778c9149d587470de93f9c04c4424cdd1c52ae0ae624603fbef739336a84087e",
+            "note": "함수 확인"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_pay_typo"
+          ],
+          "stale_evidence": true,
+          "stale_requirement": false,
+          "document_kind": "current",
+          "in_current_scope": true,
+          "effective_status": "unknown"
+        },
+        {
+          "id": "f75a1ff84f169faf",
+          "title": "알림",
+          "criterion": "알림",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 3,
+            "excerpt": "- [ ] 알림",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "unknown",
+          "evidence": null,
+          "verification_status": "unverified",
+          "verification_note": "",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_alert_typo"
+          ],
+          "stale_evidence": false,
+          "stale_requirement": false,
+          "document_kind": "current",
+          "in_current_scope": true,
+          "effective_status": "unknown"
+        },
+        {
+          "id": "c829f5d646ccc548",
+          "title": "로그인",
+          "criterion": "로그인",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 4,
+            "excerpt": "- [ ] 로그인",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/login.py",
+            "line": 1,
+            "excerpt": "def login():",
+            "sha256": "abf8ecca3a0383f9ed65c07d9c6777bf341f2db761ec1fd336d5c6d5592d759e",
+            "note": "함수 확인"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_login"
+          ],
+          "stale_evidence": false,
+          "stale_requirement": false,
+          "document_kind": "current",
+          "in_current_scope": true,
+          "effective_status": "implemented"
+        },
+        {
+          "id": "3ad81e0352b594d9",
+          "title": "과거 기능",
+          "criterion": "과거 기능",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "past.md",
+            "line": 2,
+            "excerpt": "- [ ] 과거 기능",
+            "sha256": "2ff6b2cd248a53fcb0a56bb132d2bf5596ba9d5b8a0a9577f3b13fe43dc44cc1"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/pay.py",
+            "line": 1,
+            "excerpt": "def pay():",
+            "sha256": "778c9149d587470de93f9c04c4424cdd1c52ae0ae624603fbef739336a84087e",
+            "note": "함수 확인"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_past_typo"
+          ],
+          "stale_evidence": true,
+          "stale_requirement": false,
+          "document_kind": "past",
+          "in_current_scope": false,
+          "effective_status": "excluded"
+        }
+      ],
+      "doc_claims_unbacked": 0,
+      "test_pattern_hints": {
+        "4fa4fc8e9d2c14f6": [
+          "test_pay_typo"
+        ],
+        "f75a1ff84f169faf": [
+          "test_alert_typo"
+        ],
+        "c829f5d646ccc548": [
+          "test_login"
+        ]
+      },
+      "limitations": "상태는 사용자가 확정한 코드 근거와 수동 검증 기록 기준입니다. 자동 의미 판정이나 테스트 실행은 아직 제공하지 않습니다."
+    },
+    "request_id": "f865c4d8-0e01-4ec0-81b5-c5f3bfd45154:2",
+    "request_done": false
+  },
+  {
+    "type": "progressHistory",
+    "requested_path": "/fixture/repo",
+    "snapshots": [],
+    "since_save": null,
+    "request_id": "f865c4d8-0e01-4ec0-81b5-c5f3bfd45154:2",
+    "request_done": false
+  },
+  {
+    "type": "progressTests",
+    "requested_path": "/fixture/repo",
+    "format": "junit",
+    "file": "results.xml",
+    "modified": "2026-10-01T07:06:22.465565+00:00",
+    "total": 3,
+    "items": {
+      "4fa4fc8e9d2c14f6": {
+        "patterns": [
+          "test_pay_typo"
+        ],
+        "matched": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "failing": [],
+        "no_match": false,
+        "code_newer": false
+      },
+      "f75a1ff84f169faf": {
+        "patterns": [
+          "test_alert_typo"
+        ],
+        "matched": 0,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "failing": [],
+        "no_match": true,
+        "code_newer": false
+      },
+      "c829f5d646ccc548": {
+        "patterns": [
+          "test_login"
+        ],
+        "matched": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "failing": [],
+        "no_match": false,
+        "code_newer": false
+      }
+    },
+    "remembered": true,
+    "request_id": "f865c4d8-0e01-4ec0-81b5-c5f3bfd45154:2",
+    "request_done": true
+  },
+  {
+    "type": "progressTestsCancelled",
+    "requested_path": "/fixture/repo",
+    "request_id": "f865c4d8-0e01-4ec0-81b5-c5f3bfd45154:3",
+    "request_done": true
+  },
+  {
+    "type": "progressSaved",
+    "requested_path": "/fixture/repo",
+    "baseline": {
+      "schema": 1,
+      "repository": "/fixture/repo",
+      "version": 2,
+      "saved_at": "2026-10-01T07:06:27.449791+00:00",
+      "documents": {
+        "README.md": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479",
+        "past.md": "2ff6b2cd248a53fcb0a56bb132d2bf5596ba9d5b8a0a9577f3b13fe43dc44cc1"
+      },
+      "document_kinds": {
+        "README.md": "current",
+        "past.md": "past"
+      },
+      "requirements": [
+        {
+          "id": "4fa4fc8e9d2c14f6",
+          "title": "결제",
+          "criterion": "결제",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 2,
+            "excerpt": "- [ ] 결제",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/pay.py",
+            "line": 1,
+            "note": "함수 확인",
+            "excerpt": "def pay():",
+            "sha256": "778c9149d587470de93f9c04c4424cdd1c52ae0ae624603fbef739336a84087e"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_pay_typo"
+          ]
+        },
+        {
+          "id": "f75a1ff84f169faf",
+          "title": "알림",
+          "criterion": "알림",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 3,
+            "excerpt": "- [ ] 알림",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "unknown",
+          "evidence": null,
+          "verification_status": "unverified",
+          "verification_note": "",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_alert_typo"
+          ]
+        },
+        {
+          "id": "c829f5d646ccc548",
+          "title": "로그인",
+          "criterion": "로그인",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 4,
+            "excerpt": "- [ ] 로그인",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/login.py",
+            "line": 1,
+            "note": "함수 확인",
+            "excerpt": "def login():",
+            "sha256": "abf8ecca3a0383f9ed65c07d9c6777bf341f2db761ec1fd336d5c6d5592d759e"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_login"
+          ]
+        },
+        {
+          "id": "3ad81e0352b594d9",
+          "title": "과거 기능 편집 보존",
+          "criterion": "과거 기능",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "past.md",
+            "line": 2,
+            "excerpt": "- [ ] 과거 기능",
+            "sha256": "2ff6b2cd248a53fcb0a56bb132d2bf5596ba9d5b8a0a9577f3b13fe43dc44cc1"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/pay.py",
+            "line": 1,
+            "note": "함수 확인",
+            "excerpt": "def pay():",
+            "sha256": "778c9149d587470de93f9c04c4424cdd1c52ae0ae624603fbef739336a84087e"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_past_typo"
+          ]
+        }
+      ]
+    },
+    "request_id": "f865c4d8-0e01-4ec0-81b5-c5f3bfd45154:4",
+    "request_done": false
+  },
+  {
+    "type": "progressReport",
+    "requested_path": "/fixture/repo",
+    "report": {
+      "repository": "/fixture/repo",
+      "version": 2,
+      "at": "2026-10-01T07:06:27.477724+00:00",
+      "head": "커밋 없음",
+      "documents": {
+        "README.md": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479",
+        "past.md": "2ff6b2cd248a53fcb0a56bb132d2bf5596ba9d5b8a0a9577f3b13fe43dc44cc1"
+      },
+      "document_kinds": {
+        "README.md": "current",
+        "past.md": "past"
+      },
+      "stale_documents": [],
+      "stale_context_documents": [],
+      "counts": {
+        "implemented": 1,
+        "partial": 0,
+        "not_implemented": 0,
+        "unknown": 2,
+        "complete": 1,
+        "excluded": 1
+      },
+      "total": 3,
+      "items": [
+        {
+          "id": "4fa4fc8e9d2c14f6",
+          "title": "결제",
+          "criterion": "결제",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 2,
+            "excerpt": "- [ ] 결제",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/pay.py",
+            "line": 1,
+            "note": "함수 확인",
+            "excerpt": "def pay():",
+            "sha256": "778c9149d587470de93f9c04c4424cdd1c52ae0ae624603fbef739336a84087e"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_pay_typo"
+          ],
+          "stale_evidence": true,
+          "stale_requirement": false,
+          "document_kind": "current",
+          "in_current_scope": true,
+          "effective_status": "unknown"
+        },
+        {
+          "id": "f75a1ff84f169faf",
+          "title": "알림",
+          "criterion": "알림",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 3,
+            "excerpt": "- [ ] 알림",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "unknown",
+          "evidence": null,
+          "verification_status": "unverified",
+          "verification_note": "",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_alert_typo"
+          ],
+          "stale_evidence": false,
+          "stale_requirement": false,
+          "document_kind": "current",
+          "in_current_scope": true,
+          "effective_status": "unknown"
+        },
+        {
+          "id": "c829f5d646ccc548",
+          "title": "로그인",
+          "criterion": "로그인",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "README.md",
+            "line": 4,
+            "excerpt": "- [ ] 로그인",
+            "sha256": "0aa953c3eba2a1cc7151e6a134255e5d14710e8114186666527627b393e2a479"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/login.py",
+            "line": 1,
+            "note": "함수 확인",
+            "excerpt": "def login():",
+            "sha256": "abf8ecca3a0383f9ed65c07d9c6777bf341f2db761ec1fd336d5c6d5592d759e"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_login"
+          ],
+          "stale_evidence": false,
+          "stale_requirement": false,
+          "document_kind": "current",
+          "in_current_scope": true,
+          "effective_status": "implemented"
+        },
+        {
+          "id": "3ad81e0352b594d9",
+          "title": "과거 기능 편집 보존",
+          "criterion": "과거 기능",
+          "area": "",
+          "included": true,
+          "source": {
+            "path": "past.md",
+            "line": 2,
+            "excerpt": "- [ ] 과거 기능",
+            "sha256": "2ff6b2cd248a53fcb0a56bb132d2bf5596ba9d5b8a0a9577f3b13fe43dc44cc1"
+          },
+          "implementation_status": "implemented",
+          "evidence": {
+            "path": "src/pay.py",
+            "line": 1,
+            "note": "함수 확인",
+            "excerpt": "def pay():",
+            "sha256": "778c9149d587470de93f9c04c4424cdd1c52ae0ae624603fbef739336a84087e"
+          },
+          "verification_status": "verified",
+          "verification_note": "직접 검증",
+          "doc_marked_done": false,
+          "test_patterns": [
+            "test_past_typo"
+          ],
+          "stale_evidence": true,
+          "stale_requirement": false,
+          "document_kind": "past",
+          "in_current_scope": false,
+          "effective_status": "excluded"
+        }
+      ],
+      "doc_claims_unbacked": 0,
+      "test_pattern_hints": {
+        "4fa4fc8e9d2c14f6": [
+          "test_pay_typo"
+        ],
+        "f75a1ff84f169faf": [
+          "test_alert_typo"
+        ],
+        "c829f5d646ccc548": [
+          "test_login"
+        ]
+      },
+      "limitations": "상태는 사용자가 확정한 코드 근거와 수동 검증 기록 기준입니다. 자동 의미 판정이나 테스트 실행은 아직 제공하지 않습니다."
+    },
+    "request_id": "f865c4d8-0e01-4ec0-81b5-c5f3bfd45154:4",
+    "request_done": false
+  },
+  {
+    "type": "progressHistory",
+    "requested_path": "/fixture/repo",
+    "snapshots": [
+      {
+        "at": "2026-10-01T07:06:27.477724+00:00",
+        "version": 2,
+        "head": "커밋 없음",
+        "total": 3,
+        "counts": {
+          "implemented": 1,
+          "partial": 0,
+          "not_implemented": 0,
+          "unknown": 2,
+          "complete": 1,
+          "excluded": 1
+        },
+        "changes": null,
+        "complete_delta": null
+      }
+    ],
+    "since_save": null,
+    "request_id": "f865c4d8-0e01-4ec0-81b5-c5f3bfd45154:4",
+    "request_done": true
+  },
+  {
+    "type": "scanned",
+    "scan": {
+      "repository": "/sample/project",
+      "base": "HEAD",
+      "changed_file_count": 2,
+      "result": {
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0,
+          "analysis_notes": []
+        },
+        "result": "fail",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [
+          {
+            "rule_id": "api-doc-sync",
+            "severity": "BLOCKER",
+            "confidence": "high",
+            "change_types": [
+              "api-surface"
+            ],
+            "change_type": "api-surface",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/routes/users.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "@@ -1 +1 @@\n-@app.get('/users')\n+@app.get('/members')\n",
+                "semantic_signals": [],
+                "semantic_evidence": [],
+                "analysis_method": "not-analyzed",
+                "analysis_reason": "",
+                "documented_env_keys": null
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "any_changed",
+                "evidence": "API documentation must reflect: add GET /members; remove GET /users"
+              }
+            ],
+            "checklist": [
+              "API docs 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "route-contract-change",
+            "change_intensities": [
+              "route-contract-change"
+            ],
+            "trigger_patterns": [
+              "src/routes/**"
+            ],
+            "blast_radius": [
+              "OpenAPI/spec documentation",
+              "external API consumers",
+              "missing requirement group: API docs",
+              "release notes"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc-sync",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/users.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api.md"
+                ],
+                "type": "any_changed",
+                "evidence": "API documentation must reflect: add GET /members; remove GET /users"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "policy": "rules:\n  - id: api-doc-sync\n    when:\n      any_changed: [src/routes/**]\n    require:\n      groups:\n        - name: API docs\n          any_changed: [docs/api.md]\n          content: api-routes\n    severity: blocker\n",
+      "files": [
+        {
+          "path": "src/routes/users.py",
+          "patch": "@@ -1 +1 @@\n-@app.get('/users')\n+@app.get('/members')\n",
+          "status": "modified"
+        },
+        {
+          "path": "docs/api.md",
+          "patch": "@@ -1 +1 @@\n-GET /users\n+GET /customers\n",
+          "status": "modified"
+        }
+      ],
+      "at": "2026-09-29T04:51:17.383480+00:00"
+    }
+  }
+]

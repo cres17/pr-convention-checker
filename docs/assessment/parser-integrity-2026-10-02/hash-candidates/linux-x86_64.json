@@ -1,0 +1,15 @@
+{
+  "version": "1.20.0",
+  "platform": "linux",
+  "machine": "x86_64",
+  "libraries": {
+    "libtree_sitter_python.so": "0a39a054ae5e50132fbf969697e3e5932a9d5636db3e4810b829c95d8019a281",
+    "libtree_sitter_typescript.so": "5afc27fbe28f53e72a43911085f7fd9c10820dd284bd2dc755b19589e1dcba6a",
+    "libtree_sitter_tsx.so": "ef44143187f5804cabe5031f2c00d6eefa11862c9caa41e467f2cb4c9ba3ca3e",
+    "libtree_sitter_javascript.so": "c636e7aca772dfcafaef6fbdfbf194dc0fa63607fd1588a2081dbdaf33294038",
+    "libtree_sitter_go.so": "582e52d3b1803642b641db038b6c40f467c27244f8cfeda93e8e953b27a6e87c",
+    "libtree_sitter_java.so": "38d7debeacab7eb5be73fff12cff9c14ce4162baaa80e165ac9d18076874e380",
+    "libtree_sitter_kotlin.so": "40abf2de70b5b67912e204c65d5d2b3e5135865d2f234db1f221d0c46162a4c1",
+    "libtree_sitter_ruby.so": "24bd94ea9bc6baef8290dbe828bd42d5b5ddbbcf0829e6a5ad4e1af594168b82"
+  }
+}

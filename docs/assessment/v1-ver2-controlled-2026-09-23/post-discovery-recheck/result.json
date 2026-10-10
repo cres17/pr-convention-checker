@@ -1,0 +1,646 @@
+{
+  "measured_at_utc": "2026-09-23T02:12:15.828238+00:00",
+  "v1_commit": "13a5ded9ca03f67cf07d134421d5a1e1cd82b19e",
+  "v2_commit": "b9c2bd4b2afaca0fcf932f9e3fc1f1428e038cbd",
+  "protocol_sha256": "da21d08fdf2b106d275fa400bfe3f5f697c26dfb35cc465083e43f0bffbf66d8",
+  "cases_sha256": "9c8202b9b73b5573ab6281adfd8a23f501f57cdd9879da7b89376606d50c391b",
+  "harness_sha256": "c8996e74b124110ef584454857d2ef29ed0b1f37539c699560340d46dc2a9163",
+  "v1_entrypoint_sha256": "f423290b9943c532d677c539d070264cfbf20621975e2f1b37aa76b8208f76ad",
+  "v2_product_sha256": {
+    "drift_gate/__init__.py": "a7f8753efa58ba2ae30cfe2ad7ceec9265d18415d27768e80a3e4abc7e9f495d",
+    "drift_gate/__main__.py": "aa1c42b733b0c3d8cc65f2760e09f648054cbbe292e1b092c120987e97ac8337",
+    "drift_gate/adapters/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/adapters/ast/__init__.py": "6c86051c6b1b840f2c1701fcb043c9d2365a4e654b4bb296154f406d4e6bc181",
+    "drift_gate/adapters/ast/analyzer.py": "fbd45b85fd63ccf2b0935e5b460ce7b5dc67dd8f1631689c27f9234bc5ff3efe",
+    "drift_gate/adapters/ast/go_adapter.py": "1e6db6e937b58ff1571af2610ee4dd13509cec36acd416e3f140c20270d82734",
+    "drift_gate/adapters/ast/interface.py": "a11661c971d07359a312e615e146a6e3c8995a8ae38363bae12ca99f7772c6a1",
+    "drift_gate/adapters/ast/java_kotlin_adapter.py": "f051095fd3e36102941fd3f290fb5285e5188a9bff703e002d228f49bc65745d",
+    "drift_gate/adapters/ast/python_adapter.py": "f33489dc3435c6455d3043809580a792b469390160691a56eb7a725d1a7ba2fd",
+    "drift_gate/adapters/ast/ruby_adapter.py": "a1363b6702b2afa18f1aa0c67f79d92fd2aa0f412a7418b351fb4fd44176152c",
+    "drift_gate/adapters/ast/tree_sitter_python_adapter.py": "9ab4f29b9f578d39a32982891338ffba1759fc3797503867047d886767312f85",
+    "drift_gate/adapters/ast/tree_sitter_support.py": "5ab6a696ee216ffaf3bd354caedc7cf439086adbf6e45b86439ee5191b860662",
+    "drift_gate/adapters/ast/tree_sitter_typescript_adapter.py": "e88a334fb39aca71dcc4d7e5b2fe6bfe3110b55c9406f8e9bfbc5bcafcea3d8f",
+    "drift_gate/adapters/ast/typescript_adapter.py": "f735b747549de97f48b7e5e50b0dd984666fe91d05a3289476c959a942c94a74",
+    "drift_gate/adapters/claude/__init__.py": "370df5ed190f4aa27cc8e2445876d7bba35a7729426efb85b309aed839dee38d",
+    "drift_gate/adapters/claude/enricher.py": "797547b3a3c07374c57ef1a13057c6fe0bb8347512f0635fe14bcaf195186fc6",
+    "drift_gate/adapters/cli/__init__.py": "5fe21007eedd1b3c6610cb4391cf75233c25241b4c89d8dd55b8372d11628d36",
+    "drift_gate/adapters/cli/runner.py": "c628c261bc9ebee21a224cedc4799e791b0533123981a42949efe60be0f2ee6a",
+    "drift_gate/adapters/docs/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/adapters/docs/checklist.py": "ff4e707db62bb5b11691cf2806d6b52a17d3ce1e3ed77c258a354080bb156d80",
+    "drift_gate/adapters/docs/content.py": "cd66ed469305f6153030acd2800aad3cf2cf5a5679d814b18b33de72fa303227",
+    "drift_gate/adapters/docs/readme_contract.py": "dda013b252571e81ce33215835c0dad009fca975ad399ca8a9ba81b07efff7e0",
+    "drift_gate/adapters/eval/__init__.py": "9dff049ca647863663b64b531e8f81364879292ac7db5e2035e5a2209c0a998e",
+    "drift_gate/adapters/eval/runner.py": "cdf78a1e883ecc7f4c79a2565ee3afbf1a25847e689517e62fcd3f022435314b",
+    "drift_gate/adapters/git/__init__.py": "01f78a7423a6ca53060ad7b73194baf7c5cf57033e831df12ef63bfc03f4104c",
+    "drift_gate/adapters/git/client.py": "ab338fe778e938b2a4a39d26fcde6e8f181ae1a008a9b31ca5285f4a28740084",
+    "drift_gate/adapters/github/__init__.py": "0d88edb79daba977cd1637d6d2782fe105f5bc16157ffa4efe46db2b7a7c7536",
+    "drift_gate/adapters/github/approvals.py": "36f99cc46014bd54063836a320a5a4db7d15c5f707feccdfa97e45c89a40e8f5",
+    "drift_gate/adapters/github/client.py": "bce9f13f99ed7ae43562cac8a13e3c72a0ec52a946f54a1fffe941309a1d7a6f",
+    "drift_gate/adapters/github/commenter.py": "ee0f8eb334b825bed8a5a288ff67c1188d5f05d47383717e1bd922357bf0a901",
+    "drift_gate/adapters/github_action/__init__.py": "ee6ed5ddd85d69bd45fca4cfb7721e689292701b1318c57b8ba937ca578e0969",
+    "drift_gate/adapters/github_action/runner.py": "9916ae88c7c43756353de5ca354a29feda10671e4d43bd44466e4d1b6056284b",
+    "drift_gate/adapters/history/__init__.py": "e79bba126727e1a03aa1acd1317c25d7333329b3bad7177e874e0b08acdfff39",
+    "drift_gate/adapters/history/store.py": "ad1845f291cb1ef937322c7781d3baccf81392777219f8ad241a56ec065e3820",
+    "drift_gate/adapters/mcp/__init__.py": "446b48bccc8178e10dc707bfec90fccd036118df9f2d91e2b4eaa060a3e61782",
+    "drift_gate/adapters/mcp/server.py": "e1c6ca7c961e5420e900413ab884cbd48a9fb15aed870955cf0d51cdf2e0bd97",
+    "drift_gate/adapters/mcp/tools.py": "0b4164c14e9548ce0998e721c18259287f398dc16753bd69ce0ab917de8f69db",
+    "drift_gate/adapters/policy_loader.py": "17ad3b7346e57be1693a3c13c81988abbcae65d212dd87df6978d33de030063a",
+    "drift_gate/core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/classification/__init__.py": "f56a2625fea85f1afa386d06f6ca97a599353eeac4ba638b6cb82e7d5da2c05f",
+    "drift_gate/core/classification/classifier.py": "a4fd8131c7c516e9983799dca48a9b4612c349f89a1c4f8df069506f5df3aeee",
+    "drift_gate/core/classification/intensity.py": "174bf00670fbb28de4b5d0ef9bbd8d5764368d0922284d828a58af5d3f47af67",
+    "drift_gate/core/engine.py": "475884cd9299ef09a7d72a47ddd4904fa8ffc4b0d0cc63a5823eb591ce6a96e2",
+    "drift_gate/core/evaluation/__init__.py": "4e57467e9cecbe1331c2fb4f27e09c00dc1de007fba0003afd7d64e52e8f439a",
+    "drift_gate/core/evaluation/contracts.py": "4c64254d583fbbb26e1b717b4f38145c2d7a679947197bb47869128cb66b8a85",
+    "drift_gate/core/evaluation/evaluator.py": "93b69bf12ded49d663a33f9584f251d789314831686758f544b142fc32ffa4d3",
+    "drift_gate/core/gating/__init__.py": "c3129cecba4acd315d1d27362e07c2e1ba16c23e175d0e01d0b5a66f3b5f6239",
+    "drift_gate/core/gating/gate.py": "07bed01f25053a22041cda78950deb4a5a0b85f8852d26e4601a095a73a39bd2",
+    "drift_gate/core/gating/temporal.py": "1b0d020aa0782ae605ae8bd2280205bd18f45c582af6fdd6acc1849b2d7affac",
+    "drift_gate/core/models/__init__.py": "a76ddc7463ee49c7d757f21f322fa4a5c000fe1abfffcd14ea2c56dd17a420ae",
+    "drift_gate/core/models/changed_file.py": "a60357b48622b6905a0d7829d4ed0a2122513734f5c3d06a32b0c04ee3c7151f",
+    "drift_gate/core/models/policy.py": "29a03275b06c6bde75743321d79f331a2b07fee72aeb039d69756bf074ec50c1",
+    "drift_gate/core/models/result.py": "e384b0f5c03742f6fd7f9710e6a8b739ec26ee21f8162abd24e7ddfb43841446",
+    "drift_gate/core/policy/__init__.py": "7e3e5a9c6d0b447024e44512a3f49db6db48886571c4cf39948ea4efa4d4bc86",
+    "drift_gate/core/policy/loader.py": "8513b377e943f9c6dd29f53f1859d8b3f28465367d1ed5b2368babc764ee5865",
+    "drift_gate/core/policy/validator.py": "27803f892e4a67d45fe28663179f788c2f78df59f1e10c6a0ce8785f6965ae24",
+    "drift_gate/core/reasoning/__init__.py": "4775b311e7693210d62e5a5d5d41ef3affaa20c56489bc849a6dbfb4dd6a3656",
+    "drift_gate/core/reasoning/checklist.py": "2c93277350fa61d41aa4762e920ebb89eefb25df860875153da2c181f1c77e06",
+    "drift_gate/core/review/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/review/heuristics.py": "ad66bd13791a228460385d75b39a6e31ab149e476f6768e678c06a352065a756",
+    "drift_gate/core/self_audit/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/self_audit/matcher.py": "a14fa8ce57c3bc602efec82ec2485152fde94f22fadf84c61bc6d7c4856a2f31",
+    "drift_gate/reporters/__init__.py": "6bf7ed9b4b50ba7125398e985500d15382d749751930bde20041485e4194010f",
+    "drift_gate/reporters/html.py": "4daa1cf82630e72e3028ba438f2b21d4e16352471033cd39a0a3506025c0fa6a",
+    "drift_gate/reporters/json_reporter.py": "bd258bdccd83532109a9c2842a888e0d4544035b6f45523e4cc966deefee4c5d",
+    "drift_gate/reporters/markdown.py": "ff8a24a496e3b8fab26ad5828ce7087f1b9e5e82496e8d2e669244dd238cf404",
+    "drift_gate/utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/utils/glob_matcher.py": "d126260292d7323c90d28661987823b51359f8b4e35830114111ba2b807a9118",
+    "main.py": "5abde12f447b1e370bc974ce9ab962bb6e979ca40ce774a42cd455d094c80420"
+  },
+  "environment": {
+    "python": "3.11.15",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "git": "git version 2.55.0",
+    "jq": "jq-1.8.2"
+  },
+  "counts": {
+    "support": {
+      "total": 11,
+      "matched": 9,
+      "tp": 5,
+      "tn": 4,
+      "fp": 1,
+      "fn": 1,
+      "error_or_skip": 0
+    },
+    "boundary": {
+      "total": 1,
+      "matched": 0,
+      "tp": 0,
+      "tn": 0,
+      "fp": 1,
+      "fn": 0,
+      "error_or_skip": 0
+    }
+  },
+  "v1_request_count": 12,
+  "v1_response_sensitive_count": 12,
+  "v2_repeat_same_count": 12,
+  "cases": [
+    {
+      "id": "P01-route-undocumented",
+      "scope": "support",
+      "expected": "fail",
+      "reason": "Route path changed without docs",
+      "git_diff_sha256": "783a15f9c6b0517d4ebc6c098ad73141a7c898d72160c02566e6dd47f842c986",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "a88badb17281f27ea43f11334d0ad6865ee2e38bec87427c9c86e108b3bcd6d7",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "a88badb17281f27ea43f11334d0ad6865ee2e38bec87427c9c86e108b3bcd6d7",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 1,
+        "result": "fail",
+        "violation_rule_ids": [
+          "api-doc"
+        ],
+        "skip_reason": null,
+        "analysis_methods": {
+          "src/routes/users.py": "heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "P02-route-documented",
+      "scope": "support",
+      "expected": "pass",
+      "reason": "Matching route path changed in docs",
+      "git_diff_sha256": "dc32891bdab92950277abd40320cf903351b283cfa32d31f0d07c96c712fcf1d",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "7b85a4ec4e55438b0aa8f8d1cc8a2ead915b82a19bc3d9db13ca7644bc1b9f31",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "7b85a4ec4e55438b0aa8f8d1cc8a2ead915b82a19bc3d9db13ca7644bc1b9f31",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 0,
+        "result": "pass",
+        "violation_rule_ids": [],
+        "skip_reason": null,
+        "analysis_methods": {
+          "docs/api/routes.md": "heuristic",
+          "src/routes/users.py": "heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "P03-unrelated-doc",
+      "scope": "support",
+      "expected": "fail",
+      "reason": "Unrelated API document edit",
+      "git_diff_sha256": "b9943a61790103a84bc5bb43ff1cf0427987ace790c66aa12bfe041b614a1882",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "77f434c2ffaf6caa06f70bedbb6cb9d73bfa15e351784fa5cfb5220c52e6cba5",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "77f434c2ffaf6caa06f70bedbb6cb9d73bfa15e351784fa5cfb5220c52e6cba5",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 1,
+        "result": "fail",
+        "violation_rule_ids": [
+          "api-doc"
+        ],
+        "skip_reason": null,
+        "analysis_methods": {
+          "docs/api/other.md": "heuristic",
+          "src/routes/users.py": "heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "P04-deleted-route",
+      "scope": "support",
+      "expected": "fail",
+      "reason": "Public route removed without docs",
+      "git_diff_sha256": "7f1dff8f5ea1e60e3fe9b59877aa004d5620223bce0a2f2381bcef9593674e1a",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "a290f6657058b8363a4d1d5a8d7c9312707754f95db102b9c6921cbcd58cc2d0",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "a290f6657058b8363a4d1d5a8d7c9312707754f95db102b9c6921cbcd58cc2d0",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 1,
+        "result": "fail",
+        "violation_rule_ids": [
+          "api-doc"
+        ],
+        "skip_reason": null,
+        "analysis_methods": {
+          "src/routes/users.py": "grammar+heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "P05-implementation-only",
+      "scope": "support",
+      "expected": "pass",
+      "reason": "Local return value changed without contract",
+      "git_diff_sha256": "70447c55aafc35c9ab14d6ce9eb967039b32bb9ac27ec36f39a553b872767ec2",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "bc65eadc7caa8a0226dc5f50ee0a75c08d5aeaa65ec4465f7a0be852b729aec3",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "bc65eadc7caa8a0226dc5f50ee0a75c08d5aeaa65ec4465f7a0be852b729aec3",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 0,
+        "result": "pass",
+        "violation_rule_ids": [],
+        "skip_reason": null,
+        "analysis_methods": {
+          "src/routes/users.py": "grammar+heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "P06-route-in-string",
+      "scope": "support",
+      "expected": "pass",
+      "reason": "Route-shaped text in a Python string",
+      "git_diff_sha256": "d3d125963ea4fe87cee278ddd359942e156f5ce59e278596599c264b47aecabb",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "9ff956c8acd36f85a038e61ed9606400d76530106d212002c5f2a3d072bbdf15",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "9ff956c8acd36f85a038e61ed9606400d76530106d212002c5f2a3d072bbdf15",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 1,
+        "result": "fail",
+        "violation_rule_ids": [
+          "api-doc"
+        ],
+        "skip_reason": null,
+        "analysis_methods": {
+          "src/routes/users.py": "grammar+heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "P07-env-missing",
+      "scope": "support",
+      "expected": "fail",
+      "reason": "New static environment key without sample",
+      "git_diff_sha256": "36d7fcd6ffacc1c72c1ee6620869dedf6d5a981c471eb074a8bac7becf678583",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "e1921b58cd531acf53956f7d1379b6b49d6e96f4cd6fbc04231e8972ec10224c",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": false,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "e1921b58cd531acf53956f7d1379b6b49d6e96f4cd6fbc04231e8972ec10224c",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": false,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 1,
+        "result": "fail",
+        "violation_rule_ids": [
+          "env-example"
+        ],
+        "skip_reason": null,
+        "analysis_methods": {
+          "src/config/settings.py": "grammar+heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "P08-env-present",
+      "scope": "support",
+      "expected": "pass",
+      "reason": "New key in current sample",
+      "git_diff_sha256": "c7763f8fa5a2e4109fd1fab37b2bb78fd7f2da3da6ef967cd5c20e98d969ae3c",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "e1921b58cd531acf53956f7d1379b6b49d6e96f4cd6fbc04231e8972ec10224c",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": false,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "e1921b58cd531acf53956f7d1379b6b49d6e96f4cd6fbc04231e8972ec10224c",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": false,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 0,
+        "result": "pass",
+        "violation_rule_ids": [],
+        "skip_reason": null,
+        "analysis_methods": {
+          ".env.example": "heuristic",
+          "src/config/settings.py": "grammar+heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "P09-env-unrelated",
+      "scope": "support",
+      "expected": "fail",
+      "reason": "Sample edited but new key absent",
+      "git_diff_sha256": "544daa68bb41ca556e72e0c9a274fb79d1978c23b04572f73dcffc566f9e2bf7",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "e1921b58cd531acf53956f7d1379b6b49d6e96f4cd6fbc04231e8972ec10224c",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": false,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "e1921b58cd531acf53956f7d1379b6b49d6e96f4cd6fbc04231e8972ec10224c",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": false,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 1,
+        "result": "fail",
+        "violation_rule_ids": [
+          "env-example"
+        ],
+        "skip_reason": null,
+        "analysis_methods": {
+          ".env.example": "heuristic",
+          "src/config/settings.py": "grammar+heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "P10-head-route",
+      "scope": "support",
+      "expected": "fail",
+      "reason": "HEAD route added without docs",
+      "git_diff_sha256": "f5044fc0f70cb38242445a64f6dfda0f46fd4e9a8fca91c864378d033f347b4a",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "fd8d4a4842561bd109b060af1dab60ce0c7f1e84d9c7cca1b3225ad86c91dfbc",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "fd8d4a4842561bd109b060af1dab60ce0c7f1e84d9c7cca1b3225ad86c91dfbc",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 0,
+        "result": "pass",
+        "violation_rule_ids": [],
+        "skip_reason": null,
+        "analysis_methods": {
+          "src/routes/users.py": "grammar+heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "P11-docs-only",
+      "scope": "support",
+      "expected": "pass",
+      "reason": "Only documentation prose changed",
+      "git_diff_sha256": "05ec7fbba2abfd39e10327217fb93116637b695868a414da23967c32dd9a8215",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "88c9d282a55c46195a7089d00a017d1427724c501b8b601b3e9e2dd78a5a38fc",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": false,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "88c9d282a55c46195a7089d00a017d1427724c501b8b601b3e9e2dd78a5a38fc",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": false,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 0,
+        "result": "pass",
+        "violation_rule_ids": [],
+        "skip_reason": null,
+        "analysis_methods": {
+          "docs/api/other.md": "heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    },
+    {
+      "id": "B01-markdown-table",
+      "scope": "boundary",
+      "expected": "pass",
+      "reason": "Valid route update represented as a Markdown table",
+      "git_diff_sha256": "766e958cb31531998f3ad1632a2a0026c451ad8c5a307069551185e3e2027c07",
+      "v1": {
+        "clear": {
+          "exit_code": 0,
+          "result": "pass",
+          "blocker_count": "0",
+          "request_emitted": true,
+          "prompt_sha256": "6ae1259d6d41b6b2e55a467eaf3a026b9744c14f21e6c22f7da68ef0c0098482",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        },
+        "blocker": {
+          "exit_code": 0,
+          "result": "fail",
+          "blocker_count": "1",
+          "request_emitted": true,
+          "prompt_sha256": "6ae1259d6d41b6b2e55a467eaf3a026b9744c14f21e6c22f7da68ef0c0098482",
+          "prompt_has_rule": true,
+          "prompt_has_git_diff": true,
+          "prompt_has_env_example_change": false,
+          "prompt_has_route_change": true,
+          "stderr_tail": ""
+        }
+      },
+      "v2": {
+        "exit_code": 1,
+        "result": "fail",
+        "violation_rule_ids": [
+          "api-doc"
+        ],
+        "skip_reason": null,
+        "analysis_methods": {
+          "docs/api/routes.md": "heuristic",
+          "src/routes/users.py": "heuristic"
+        }
+      },
+      "v2_repeat_same": true
+    }
+  ]
+}

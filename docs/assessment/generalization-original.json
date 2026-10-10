@@ -1,0 +1,2446 @@
+{
+  "measured_at_utc": "2026-09-22T07:43:54.481592+00:00",
+  "revision": "bffc6550fd0b7da0509fe9ae8838efcf5fe9bc8c",
+  "protocol": "Post-development adversarial audit. Cases and expected results written before first execution; code is frozen during this audit. Author has seen the implementation, so this is not blind or independent third-party validation. Supported and explicitly unsupported boundary cases are reported separately. Synthetic engine-level inputs; no production accuracy claim.",
+  "python": "3.11.15",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "dependencies": {
+    "pyyaml": "6.0.3",
+    "tree-sitter": "0.26.0",
+    "tree-sitter-language-pack": "1.20.0"
+  },
+  "suite_sha256": "f58351d3b2eb947cca35d7abaf8ec09cc2944988ebfda09e820755ed07b65178",
+  "harness_sha256": "7d4459d55b41f098b8c30bf9efdd2988eaacb607e181a5c7a1c53083656d2dc2",
+  "product_sha256": {
+    "drift_gate/__init__.py": "a7f8753efa58ba2ae30cfe2ad7ceec9265d18415d27768e80a3e4abc7e9f495d",
+    "drift_gate/__main__.py": "aa1c42b733b0c3d8cc65f2760e09f648054cbbe292e1b092c120987e97ac8337",
+    "drift_gate/adapters/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/adapters/ast/__init__.py": "2cd6d10cc0a3f05adacf5dbea2cd83709b4248ea24083fab95b9b63059e0c99f",
+    "drift_gate/adapters/ast/analyzer.py": "d54b0bc2c3a9947d1bb6a2a3193d357cf07da85220aba684313ff941f2629301",
+    "drift_gate/adapters/ast/go_adapter.py": "1e6db6e937b58ff1571af2610ee4dd13509cec36acd416e3f140c20270d82734",
+    "drift_gate/adapters/ast/interface.py": "a11661c971d07359a312e615e146a6e3c8995a8ae38363bae12ca99f7772c6a1",
+    "drift_gate/adapters/ast/java_kotlin_adapter.py": "f051095fd3e36102941fd3f290fb5285e5188a9bff703e002d228f49bc65745d",
+    "drift_gate/adapters/ast/python_adapter.py": "f33489dc3435c6455d3043809580a792b469390160691a56eb7a725d1a7ba2fd",
+    "drift_gate/adapters/ast/ruby_adapter.py": "a1363b6702b2afa18f1aa0c67f79d92fd2aa0f412a7418b351fb4fd44176152c",
+    "drift_gate/adapters/ast/tree_sitter_python_adapter.py": "9ab4f29b9f578d39a32982891338ffba1759fc3797503867047d886767312f85",
+    "drift_gate/adapters/ast/tree_sitter_support.py": "81eac4fb3c61159fc00598a7170dc67e0660fd2299ca4de099dd0a065edd8690",
+    "drift_gate/adapters/ast/tree_sitter_typescript_adapter.py": "e88a334fb39aca71dcc4d7e5b2fe6bfe3110b55c9406f8e9bfbc5bcafcea3d8f",
+    "drift_gate/adapters/ast/typescript_adapter.py": "f735b747549de97f48b7e5e50b0dd984666fe91d05a3289476c959a942c94a74",
+    "drift_gate/adapters/claude/__init__.py": "370df5ed190f4aa27cc8e2445876d7bba35a7729426efb85b309aed839dee38d",
+    "drift_gate/adapters/claude/enricher.py": "797547b3a3c07374c57ef1a13057c6fe0bb8347512f0635fe14bcaf195186fc6",
+    "drift_gate/adapters/cli/__init__.py": "5fe21007eedd1b3c6610cb4391cf75233c25241b4c89d8dd55b8372d11628d36",
+    "drift_gate/adapters/cli/runner.py": "bc399c6d09dc01583ed5df37f838670176703cede04d93459ee8d8b64f1e46dc",
+    "drift_gate/adapters/docs/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/adapters/docs/checklist.py": "ff4e707db62bb5b11691cf2806d6b52a17d3ce1e3ed77c258a354080bb156d80",
+    "drift_gate/adapters/docs/readme_contract.py": "dda013b252571e81ce33215835c0dad009fca975ad399ca8a9ba81b07efff7e0",
+    "drift_gate/adapters/eval/__init__.py": "9dff049ca647863663b64b531e8f81364879292ac7db5e2035e5a2209c0a998e",
+    "drift_gate/adapters/eval/runner.py": "cdf78a1e883ecc7f4c79a2565ee3afbf1a25847e689517e62fcd3f022435314b",
+    "drift_gate/adapters/git/__init__.py": "01f78a7423a6ca53060ad7b73194baf7c5cf57033e831df12ef63bfc03f4104c",
+    "drift_gate/adapters/git/client.py": "27dc7bd4d3fc2c8f7ed8271c7593a8ca51c3a4a5dffc1977a379f44b8b1b3d49",
+    "drift_gate/adapters/github/__init__.py": "0d88edb79daba977cd1637d6d2782fe105f5bc16157ffa4efe46db2b7a7c7536",
+    "drift_gate/adapters/github/client.py": "322a2546091b0207dd883050f29d3ceff7e656a37a738f9c91600d2414ceb4a3",
+    "drift_gate/adapters/github/commenter.py": "ee0f8eb334b825bed8a5a288ff67c1188d5f05d47383717e1bd922357bf0a901",
+    "drift_gate/adapters/github_action/__init__.py": "ee6ed5ddd85d69bd45fca4cfb7721e689292701b1318c57b8ba937ca578e0969",
+    "drift_gate/adapters/github_action/runner.py": "6037e5e2c6ac888815de57827bbd4c6bfa2128b5dbe027a4effd0dfb731739d9",
+    "drift_gate/adapters/history/__init__.py": "e79bba126727e1a03aa1acd1317c25d7333329b3bad7177e874e0b08acdfff39",
+    "drift_gate/adapters/history/store.py": "ad1845f291cb1ef937322c7781d3baccf81392777219f8ad241a56ec065e3820",
+    "drift_gate/adapters/mcp/__init__.py": "446b48bccc8178e10dc707bfec90fccd036118df9f2d91e2b4eaa060a3e61782",
+    "drift_gate/adapters/mcp/server.py": "e1c6ca7c961e5420e900413ab884cbd48a9fb15aed870955cf0d51cdf2e0bd97",
+    "drift_gate/adapters/mcp/tools.py": "025253945196ad1da35e245b35c62208009e4c70a0be773112f8f6c5aa8404d8",
+    "drift_gate/adapters/policy_loader.py": "17ad3b7346e57be1693a3c13c81988abbcae65d212dd87df6978d33de030063a",
+    "drift_gate/core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/classification/__init__.py": "f56a2625fea85f1afa386d06f6ca97a599353eeac4ba638b6cb82e7d5da2c05f",
+    "drift_gate/core/classification/classifier.py": "a4fd8131c7c516e9983799dca48a9b4612c349f89a1c4f8df069506f5df3aeee",
+    "drift_gate/core/classification/intensity.py": "d27a70b5a23ec23b258bfcb1a95a1f8a56333a299e9b8955cf22cd6db34a0c3b",
+    "drift_gate/core/engine.py": "e1db0dd46f4d2caf3dc77084ed4b5b5fbca74bf93b5d3eda35bac47c1f26e82b",
+    "drift_gate/core/evaluation/__init__.py": "4e57467e9cecbe1331c2fb4f27e09c00dc1de007fba0003afd7d64e52e8f439a",
+    "drift_gate/core/evaluation/evaluator.py": "ca31be3f3d6be591aab2a1a5eda0d9bd112a8e963e62b191564e819c628414b8",
+    "drift_gate/core/gating/__init__.py": "c3129cecba4acd315d1d27362e07c2e1ba16c23e175d0e01d0b5a66f3b5f6239",
+    "drift_gate/core/gating/gate.py": "07bed01f25053a22041cda78950deb4a5a0b85f8852d26e4601a095a73a39bd2",
+    "drift_gate/core/gating/temporal.py": "1b0d020aa0782ae605ae8bd2280205bd18f45c582af6fdd6acc1849b2d7affac",
+    "drift_gate/core/models/__init__.py": "a76ddc7463ee49c7d757f21f322fa4a5c000fe1abfffcd14ea2c56dd17a420ae",
+    "drift_gate/core/models/changed_file.py": "0da51a5b791ff8b5b6fa85b9dc18beb9d2fad670cc13bf2bddba283678f1486e",
+    "drift_gate/core/models/policy.py": "cba0e4ef5ad17c842982d918a5588a07bdd74b8133cb9bb44cb9903ac0ab0a4c",
+    "drift_gate/core/models/result.py": "e603d135c65272f4f0c5be6815b475f2db28c5c6f8a5843e1cda9038405ab0ee",
+    "drift_gate/core/policy/__init__.py": "7e3e5a9c6d0b447024e44512a3f49db6db48886571c4cf39948ea4efa4d4bc86",
+    "drift_gate/core/policy/loader.py": "8513b377e943f9c6dd29f53f1859d8b3f28465367d1ed5b2368babc764ee5865",
+    "drift_gate/core/policy/validator.py": "f35650dd1ccdf84fe33a40156e59c2ea1a274fe309492059368c0fd78ee9f560",
+    "drift_gate/core/reasoning/__init__.py": "4775b311e7693210d62e5a5d5d41ef3affaa20c56489bc849a6dbfb4dd6a3656",
+    "drift_gate/core/reasoning/checklist.py": "2c93277350fa61d41aa4762e920ebb89eefb25df860875153da2c181f1c77e06",
+    "drift_gate/core/review/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/review/heuristics.py": "ad66bd13791a228460385d75b39a6e31ab149e476f6768e678c06a352065a756",
+    "drift_gate/core/self_audit/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/self_audit/matcher.py": "a14fa8ce57c3bc602efec82ec2485152fde94f22fadf84c61bc6d7c4856a2f31",
+    "drift_gate/reporters/__init__.py": "6bf7ed9b4b50ba7125398e985500d15382d749751930bde20041485e4194010f",
+    "drift_gate/reporters/html.py": "6b1087fa2ef0a6ef23b5658acf800b0bb36a9f059a91438391df0bcd724988bf",
+    "drift_gate/reporters/json_reporter.py": "bd258bdccd83532109a9c2842a888e0d4544035b6f45523e4cc966deefee4c5d",
+    "drift_gate/reporters/markdown.py": "822662490987a9da079ed589d7f92f8cc6a89340d3d8e330d0c5d35d141566b5",
+    "drift_gate/utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/utils/glob_matcher.py": "d126260292d7323c90d28661987823b51359f8b4e35830114111ba2b807a9118"
+  },
+  "counts": {
+    "supported": {
+      "total": 24,
+      "matched": 10,
+      "tp": 3,
+      "tn": 7,
+      "fp": 5,
+      "fn": 9,
+      "errors": 0
+    },
+    "boundary": {
+      "total": 8,
+      "matched": 2,
+      "tp": 0,
+      "tn": 2,
+      "fp": 0,
+      "fn": 6,
+      "errors": 0
+    }
+  },
+  "cases": [
+    {
+      "id": "A01-get-added",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "A new literal GET endpoint needs docs.",
+      "actual": "fail",
+      "report": {
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "fail",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "confidence": "high",
+            "change_types": [
+              "api-surface"
+            ],
+            "change_type": "api-surface",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/routes/catalog.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "+@app.get('/catalog')\n",
+                "semantic_signals": [
+                  "route-contract-change"
+                ],
+                "semantic_evidence": [
+                  "Python route decorator changed"
+                ]
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "checklist": [
+              "API docs 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "route-contract-change",
+            "change_intensities": [
+              "route-contract-change"
+            ],
+            "trigger_patterns": [
+              "src/routes/**"
+            ],
+            "blast_radius": [
+              "OpenAPI/spec documentation",
+              "external API consumers",
+              "missing requirement group: API docs",
+              "release notes"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "A02-delete-added",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "A new literal DELETE endpoint needs docs.",
+      "actual": "fail",
+      "report": {
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "fail",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "confidence": "high",
+            "change_types": [
+              "api-surface"
+            ],
+            "change_type": "api-surface",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/routes/catalog.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "+@app.delete('/catalog')\n",
+                "semantic_signals": [
+                  "route-contract-change"
+                ],
+                "semantic_evidence": [
+                  "Python route decorator changed"
+                ]
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "checklist": [
+              "API docs 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "route-contract-change",
+            "change_intensities": [
+              "route-contract-change"
+            ],
+            "trigger_patterns": [
+              "src/routes/**"
+            ],
+            "blast_radius": [
+              "OpenAPI/spec documentation",
+              "external API consumers",
+              "missing requirement group: API docs",
+              "release notes"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "A03-head-added",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "HEAD is explicitly listed as supported in content verification.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "A04-options-added",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "OPTIONS is explicitly listed as supported in content verification.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "A05-correct-route-doc",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "Both old removal and new addition are documented.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "A06-unrelated-route-doc",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "An unrelated endpoint update does not document this change.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "A07-correct-method-doc",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "The HTTP method change is documented.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "A08-wrong-method-doc",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "Documenting GET cannot satisfy a new POST operation.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "A09-stale-route-retained",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "The old route is removed then re-added in docs, so its net removal is not documented.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "A10-route-in-string",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "A Python string value describing a route does not register an endpoint.",
+      "actual": "fail",
+      "report": {
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "fail",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "confidence": "high",
+            "change_types": [
+              "api-surface"
+            ],
+            "change_type": "api-surface",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/routes/catalog.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "+message = \"@app.get('/example')\"\n",
+                "semantic_signals": [
+                  "route-contract-change"
+                ],
+                "semantic_evidence": [
+                  "Python route decorator changed"
+                ]
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "checklist": [
+              "API docs 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "route-contract-change",
+            "change_intensities": [
+              "route-contract-change"
+            ],
+            "trigger_patterns": [
+              "src/routes/**"
+            ],
+            "blast_radius": [
+              "OpenAPI/spec documentation",
+              "external API consumers",
+              "missing requirement group: API docs",
+              "release notes"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "A11-route-in-inline-comment",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "A route mentioned only in an inline comment is not registered.",
+      "actual": "fail",
+      "report": {
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "fail",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "confidence": "high",
+            "change_types": [
+              "api-surface"
+            ],
+            "change_type": "api-surface",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/routes/catalog.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "+counter = 1  # @app.get('/example')\n",
+                "semantic_signals": [
+                  "route-contract-change"
+                ],
+                "semantic_evidence": [
+                  "Python route decorator changed"
+                ]
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "checklist": [
+              "API docs 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "route-contract-change",
+            "change_intensities": [
+              "route-contract-change"
+            ],
+            "trigger_patterns": [
+              "src/routes/**"
+            ],
+            "blast_radius": [
+              "OpenAPI/spec documentation",
+              "external API consumers",
+              "missing requirement group: API docs",
+              "release notes"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "A12-route-in-comment-line",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "A comment-only route example must not block.",
+      "actual": "fail",
+      "report": {
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "fail",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "confidence": "high",
+            "change_types": [
+              "api-surface"
+            ],
+            "change_type": "api-surface",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/routes/catalog.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "+# @app.get('/example')\n",
+                "semantic_signals": [
+                  "route-contract-change"
+                ],
+                "semantic_evidence": [
+                  "Python route decorator changed"
+                ]
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "checklist": [
+              "API docs 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "route-contract-change",
+            "change_intensities": [
+              "route-contract-change"
+            ],
+            "trigger_patterns": [
+              "src/routes/**"
+            ],
+            "blast_radius": [
+              "OpenAPI/spec documentation",
+              "external API consumers",
+              "missing requirement group: API docs",
+              "release notes"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "A13-two-routes-documented",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "Two new literal routes both have matching documentation.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "A14-one-route-missing",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "Only one of two new literal routes is documented.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "A15-route-file-deleted",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "Deleting the route also changes the public contract.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "A16-local-variable-rename",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "Only a local variable name changes.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "E01-unrelated-key",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "The sample does not contain the new static key.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/config/**"
+            ],
+            "trigger_files": [
+              "src/config/payment.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "E02-bracket-key-present",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "The static key is already present in an unchanged sample.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "E03-javascript-key-present",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "The new JavaScript key is documented.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/config/**"
+            ],
+            "trigger_files": [
+              "src/config/payment.ts"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "E04-existing-token-key",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "The same static key exists before and after; only whitespace handling changes.",
+      "actual": "fail",
+      "report": {
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "fail",
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "confidence": "high",
+            "change_types": [
+              "env-config"
+            ],
+            "change_type": "env-config",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/config/payment.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "-token = os.getenv('DEPLOY_TOKEN')\n+token = os.getenv('DEPLOY_TOKEN').strip()\n",
+                "semantic_signals": [],
+                "semantic_evidence": []
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed"
+              }
+            ],
+            "checklist": [
+              "sample 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "ci-secret-change",
+            "change_intensities": [
+              "ci-secret-change"
+            ],
+            "trigger_patterns": [
+              "src/config/**"
+            ],
+            "blast_radius": [
+              ".env.example consumers",
+              "CI/CD pipeline",
+              "deployment configuration",
+              "missing requirement group: sample",
+              "ops/runbook owners",
+              "repository secrets",
+              "runtime operators"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/config/**"
+            ],
+            "trigger_files": [
+              "src/config/payment.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "E05-env-access-in-string",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "A string describing an access does not read an environment variable.",
+      "actual": "fail",
+      "report": {
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "fail",
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "confidence": "high",
+            "change_types": [
+              "env-config"
+            ],
+            "change_type": "env-config",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/config/payment.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "+message = \"os.getenv('RETRY_DELAY')\"\n",
+                "semantic_signals": [],
+                "semantic_evidence": []
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed"
+              }
+            ],
+            "checklist": [
+              "sample 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "config-key-added",
+            "change_intensities": [
+              "config-key-added"
+            ],
+            "trigger_patterns": [
+              "src/config/**"
+            ],
+            "blast_radius": [
+              ".env.example consumers",
+              "deployment configuration",
+              "missing requirement group: sample",
+              "runtime operators"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/config/**"
+            ],
+            "trigger_files": [
+              "src/config/payment.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "E06-empty-sample",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "An empty sample does not contain the required key.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/config/**"
+            ],
+            "trigger_files": [
+              "src/config/payment.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "E07-env-comment-only",
+      "scope": "supported",
+      "expected": "pass",
+      "reason": "A comment does not add a new required setting.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "E08-key-no-sample",
+      "scope": "supported",
+      "expected": "fail",
+      "reason": "A new static key is not documented.",
+      "actual": "fail",
+      "report": {
+        "summary": {
+          "blocker": 1,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "fail"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "fail",
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "confidence": "high",
+            "change_types": [
+              "env-config"
+            ],
+            "change_type": "env-config",
+            "message": "",
+            "trigger_files": [
+              {
+                "path": "src/config/payment.py",
+                "status": "modified",
+                "previous_path": null,
+                "patch": "+delay = os.getenv('RETRY_DELAY')\n",
+                "semantic_signals": [],
+                "semantic_evidence": []
+              }
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed"
+              }
+            ],
+            "checklist": [
+              "sample 업데이트"
+            ],
+            "ignored": false,
+            "change_intensity": "config-key-added",
+            "change_intensities": [
+              "config-key-added"
+            ],
+            "trigger_patterns": [
+              "src/config/**"
+            ],
+            "blast_radius": [
+              ".env.example consumers",
+              "deployment configuration",
+              "missing requirement group: sample",
+              "runtime operators"
+            ],
+            "missing_docs_explanation": "",
+            "changed_contract_summary": "",
+            "docs_update_draft": "",
+            "false_positive_note": "",
+            "cross_file_relations": []
+          }
+        ],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "fail",
+            "reason": "required groups are missing",
+            "matched_patterns": [
+              "src/config/**"
+            ],
+            "trigger_files": [
+              "src/config/payment.py"
+            ],
+            "satisfied_groups": [],
+            "unsatisfied_groups": [
+              {
+                "name": "sample",
+                "required": [
+                  ".env.example"
+                ],
+                "type": "all_changed"
+              }
+            ]
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "B01-multiline-route",
+      "scope": "boundary",
+      "expected": "fail",
+      "reason": "A multiline route changes but unrelated docs are edited; unsupported syntax stress test.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "B02-markdown-table",
+      "scope": "boundary",
+      "expected": "pass",
+      "reason": "The table documents the exact method and path; formatting compatibility stress test.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "B03-openapi-yaml",
+      "scope": "boundary",
+      "expected": "pass",
+      "reason": "The nested OpenAPI path is updated correctly; documented unsupported structured format.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": true
+    },
+    {
+      "id": "B04-router-prefix",
+      "scope": "boundary",
+      "expected": "fail",
+      "reason": "Changing the router prefix changes URLs even though method declarations are untouched.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "B05-dynamic-environment-key",
+      "scope": "boundary",
+      "expected": "fail",
+      "reason": "Dynamic key cannot be validated against a static sample; conservative desired behavior.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "B06-aliased-environment-getter",
+      "scope": "boundary",
+      "expected": "fail",
+      "reason": "An aliased getter reads a new key but is outside current recognition.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "env-config"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "env-sync",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "B07-response-schema",
+      "scope": "boundary",
+      "expected": "fail",
+      "reason": "Response schema changes with the same route; unrelated docs do not describe it.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 2,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface",
+          "other"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "pass",
+            "reason": "trigger matched and all required groups were satisfied",
+            "matched_patterns": [
+              "src/routes/**"
+            ],
+            "trigger_files": [
+              "src/routes/catalog.py"
+            ],
+            "satisfied_groups": [
+              {
+                "name": "API docs",
+                "required": [
+                  "docs/api/**",
+                  "openapi/**"
+                ],
+                "type": "any_changed"
+              }
+            ],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    },
+    {
+      "id": "B08-chained-router",
+      "scope": "boundary",
+      "expected": "fail",
+      "reason": "A chained Express route adds a public endpoint outside current literal matcher.",
+      "actual": "pass",
+      "report": {
+        "summary": {
+          "blocker": 0,
+          "major": 0,
+          "minor": 0,
+          "nit": 0,
+          "gate_decision": "pass"
+        },
+        "scan_metrics": {
+          "scanned_files": 1,
+          "skipped_ignored_files": 0,
+          "skipped_binary_files": 0,
+          "skipped_large_files": 0,
+          "evaluated_rules": 1,
+          "runtime_seconds": 0.0
+        },
+        "result": "pass",
+        "change_types": [
+          "api-surface"
+        ],
+        "violations": [],
+        "rule_decisions": [
+          {
+            "rule_id": "api-doc",
+            "severity": "BLOCKER",
+            "status": "unmatched",
+            "reason": "no changed files matched this rule after ignore paths and intensity filters",
+            "matched_patterns": [],
+            "trigger_files": [],
+            "satisfied_groups": [],
+            "unsatisfied_groups": []
+          }
+        ],
+        "skipped_rules": [],
+        "rejected_ignores": [],
+        "ignore_audit": [],
+        "temporal_warnings": [],
+        "gate": {
+          "fail_on_blocker": true,
+          "fail_on_major_count": 2
+        }
+      },
+      "matched": false
+    }
+  ]
+}

@@ -1,0 +1,463 @@
+{
+  "schema": "typed-facts-implementation-verification-v1",
+  "recorded_at": "2026-10-07T08:14:56.265309+00:00",
+  "head": "d262ec2faff3b98c917e3e99f7b6260cf0514ff3",
+  "branch": "ver2",
+  "state": "uncommitted-working-tree",
+  "python": "3.11.15 (main, Mar  3 2026, 00:52:57) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "existing_source_paths_changed": [
+    ".github/workflows/desktop-build.yml",
+    "drift_gate/core/evaluation/environment.py",
+    "drift_gate/core/evaluation/routes.py"
+  ],
+  "new_source_paths": [
+    "drift_gate/core/contracts/__init__.py",
+    "drift_gate/core/contracts/delta.py",
+    "drift_gate/core/models/facts.py",
+    "drift_gate/tests/test_typed_facts.py"
+  ],
+  "source_hashes": {
+    ".github/workflows/benchmark.yml": "684fcd4e177449570379c6cee269b33ec46886e4ca0b93e3f867bf6cd7a062c4",
+    ".github/workflows/ci.yml": "aae9e9c1584d748e786457dfa1cfcf8f2038d791d935ea9b7cd3c4db0f078be8",
+    ".github/workflows/desktop-build.yml": "bba3f3ebd783a19a44ca4ffdb07ef5babe235182e6df7484e33982e726153afd",
+    ".github/workflows/desktop-release.yml": "af9d4846aeec327702cb85e885436371602880bc573f33b39001039c32647e08",
+    ".github/workflows/parser-hashes.yml": "af74bcb74a4d8a88a534dfe9ce76ce07805e4beaeede8bc859600c9f337f37b5",
+    "desktop-ui/src/App.test.tsx": "dd40553364f624f78981968e6efe004e47c49ba692b5f45adf18aa4fe350a066",
+    "desktop-ui/src/App.tsx": "0bed4c41198483414ffc0f79778e837ec2fd0b484d71d7ef0fc6394b3748a1aa",
+    "desktop-ui/src/WorkspacePanels.tsx": "982bb11a6c96f9eb9d6e72d3191a003e3c20e3e04127e13fd3dfccf514bd3456",
+    "desktop-ui/src/bridge.ts": "bf8848849576e34dc2708be476780e59f2c84623d49690f789f70135c4f6e01e",
+    "desktop-ui/src/components/tool-ui/approval-card/_adapter.tsx": "5f3d233a943fbed5daf56be93746a347eb048d87beb43a2c5e181a59003fc4b8",
+    "desktop-ui/src/components/tool-ui/approval-card/approval-card.tsx": "8296c5d067175d680f030977427ad0c82e10a675fc5082badd29adcd2e43d843",
+    "desktop-ui/src/components/tool-ui/approval-card/index.tsx": "c538fb0912b65d8175e7e3cbf72807c5ca1c5ad98ce12616c8f1eb49c158f4fc",
+    "desktop-ui/src/components/tool-ui/approval-card/schema.ts": "24bbd43864838ef518ea8b2ef27f06d0d955551e9fe884356b7685e4a6317fa7",
+    "desktop-ui/src/components/tool-ui/code-diff/_adapter.tsx": "c0455392cd079486c81f2c16ec60ad9b5f05b149206180fdb8a52c725e8f63ce",
+    "desktop-ui/src/components/tool-ui/code-diff/code-diff.tsx": "b2b3667e40391c67f7a06e9e3542b5e50c760fb4d89a262d8ab9c21e3ab8af99",
+    "desktop-ui/src/components/tool-ui/code-diff/index.tsx": "b0e6db8ebeba3439832bb5bb3b820fadfaabb845a3867a063dfd5a1cda19d41f",
+    "desktop-ui/src/components/tool-ui/code-diff/schema.ts": "f16cebf38777aeda7d995b872ce54eacc78307aacafce991a6b81b0fede6b760",
+    "desktop-ui/src/components/tool-ui/option-list/_adapter.tsx": "aa785504dd77836a4f8fc45caafc7c2c5b06428dddfe22f41c90fba2edef9e40",
+    "desktop-ui/src/components/tool-ui/option-list/index.tsx": "51cdfa66c787f85a1a7d032a06ab2ed61d54b1004f4ff571d693a909c8f1b108",
+    "desktop-ui/src/components/tool-ui/option-list/option-list.tsx": "25b340f6c8f81bcb6f3e5e91d5887d2e6371a9cac501c2ddf31b0fc61beec476",
+    "desktop-ui/src/components/tool-ui/option-list/schema.ts": "1e468a9b034b8415580cb63e8c34b6734b4b064ec123ab0586375a92e06212aa",
+    "desktop-ui/src/components/tool-ui/option-list/selection.ts": "1b24350a337692c441562490b9d2e76c19844ccb822ac37abc8a65a537a72878",
+    "desktop-ui/src/components/tool-ui/progress-tracker/_adapter.tsx": "e78775172d16b3db4f2e00e0f2cca01ee9e92789bfcee07f3e4a6ad6f9de0f58",
+    "desktop-ui/src/components/tool-ui/progress-tracker/index.tsx": "cf35e045704f4dcdda8f15d4ae6210d6a8bae951d16c395f71ec37c51b3f5777",
+    "desktop-ui/src/components/tool-ui/progress-tracker/progress-tracker.tsx": "e3704940a56443729be369d1da26ffbdf81a48a5ef1eb8758414595a360a9d4f",
+    "desktop-ui/src/components/tool-ui/progress-tracker/schema.ts": "0bed6ecaa2f0c5d186f1e0bb193e410a9f49e77a745fdb392106e57d8b7827e6",
+    "desktop-ui/src/components/tool-ui/shared/_adapter.tsx": "9cb3994eb838db5351b994e3b2d08b379e59311ca032a3f1faff85629b844016",
+    "desktop-ui/src/components/tool-ui/shared/action-buttons.tsx": "5e837e96082d8a9982063c45a59502d2bd4c5d07eb703f252f85a5f06938b505",
+    "desktop-ui/src/components/tool-ui/shared/actions-config.ts": "fc3f34e25e328cc2e39f4808fe5fc0c7ca7cc3571c850081983426310f1baad6",
+    "desktop-ui/src/components/tool-ui/shared/contract.ts": "549d3572e17e5f42666a513db344f3e46e5118fb31ae8b09c829fe66c9fe1650",
+    "desktop-ui/src/components/tool-ui/shared/embedded-actions.ts": "8fdb2b5f7a304d3fcb8b3d16955902c08d3e7755d458ad3c826a790b20e79cf8",
+    "desktop-ui/src/components/tool-ui/shared/parse.ts": "8839af540bebc2bf95da3dcbf30500f13a2c53e701b98d7ac285c6a64845c9b0",
+    "desktop-ui/src/components/tool-ui/shared/schema.ts": "aaa77e580338b90059a6bfc9a6c1a810913f4f13a958a97f5cd4ddb362f38e7d",
+    "desktop-ui/src/components/tool-ui/shared/use-action-buttons.tsx": "e94961a388927a016fa6c4c1bb095c5330c850995dbdc4e7e0704349ce45013a",
+    "desktop-ui/src/components/tool-ui/shared/use-copy-to-clipboard.ts": "751fd9105b9aede7161ad62761a9d1fc6466b50d2e3f0fd4eb7e05cc860a3c5a",
+    "desktop-ui/src/components/tool-ui/stats-display/_adapter.tsx": "6cf74fcb47bec38d7363c8eeccc25dfe7212f4baac28027d30faf6f33e939aab",
+    "desktop-ui/src/components/tool-ui/stats-display/index.tsx": "e991538447799b888d55985bdcda1e02394cf9dd96a54d5e9856ff33cda9c73f",
+    "desktop-ui/src/components/tool-ui/stats-display/schema.ts": "f7cba969e64f9b49e0bcc969ac5b56e6616d754b1303f7302cf45b24a337e872",
+    "desktop-ui/src/components/tool-ui/stats-display/sparkline.tsx": "7aaf8727ad8499bf1ab0cb8c7a1fefdf65e85cd214e8d9a462c6e506e617fe42",
+    "desktop-ui/src/components/tool-ui/stats-display/stats-display.tsx": "e2ac43a77a919a625fd2590e079221c2dee01c5fb05654a0aa0937cf2e09cab4",
+    "desktop-ui/src/components/ui/button.tsx": "31d6b12767bfc5fa70ac96a1c36d402fb9cf4763d4080aa9222da08463a7f115",
+    "desktop-ui/src/components/ui/card.tsx": "9d1f95c827ee1a3b08983b2a94196f5e50a483b3d9b09b59d06de5654c4faff1",
+    "desktop-ui/src/components/ui/collapsible.tsx": "b2b06d754ee41935e478e41387e0923e866b5132ee5c830a73662323ff574d50",
+    "desktop-ui/src/components/ui/separator.tsx": "aa207a4535c8ae24da2a76fa128a2225504672ecd975f9907f97710323f4157e",
+    "desktop-ui/src/eventSchema.test.ts": "5f3804d90927d13fdf1a9e4feeed6087f94aea708523c62ab0aa40ecb1b7eb16",
+    "desktop-ui/src/eventSchema.ts": "e07bf6c25ba6d88e1011d0810017986f6486cf04f462cc30254ded1435bfeea0",
+    "desktop-ui/src/events.ts": "77920859ce01c5451d80f035a137be2bfbb9b51be7423580e90d606d593551d2",
+    "desktop-ui/src/features/project-progress/DocumentSetup.tsx": "a571b2c0701e644c68fe6af0dc55588d3f494987e6127b11bc19c91bfc7a568d",
+    "desktop-ui/src/features/project-progress/DraftRecovery.tsx": "c7bf5ba851c34550a562fffdbf420fab725991c337c410eb92ba77724b607278",
+    "desktop-ui/src/features/project-progress/History.tsx": "4d745ef4909ec50ea11a6d5fb811803d083810431ddcaf4b83ac23898464cc3c",
+    "desktop-ui/src/features/project-progress/ProgressOverview.test.tsx": "daf8d21728ca2442443a131b2eb818c681b9e9392da962b2a4eaf343353713ee",
+    "desktop-ui/src/features/project-progress/ProgressOverview.tsx": "d90fe702a18857a6ccaa0338274417a58f2aa3adf7000c57f0b828a814730801",
+    "desktop-ui/src/features/project-progress/ProjectProgress.test.tsx": "256c2bc95e89155a1a093cb217e1f6b8d1eb9336fb43ce75755401a3c0512b15",
+    "desktop-ui/src/features/project-progress/ProjectProgress.tsx": "22aa152dd3572ac3b3bd8a0b32fc63fc24ad88f42de234154c14af517271e34d",
+    "desktop-ui/src/features/project-progress/ReferenceChecks.tsx": "60c780a214118fe1e05023f709414689d424bf8728a884115965ce03373a564d",
+    "desktop-ui/src/features/project-progress/RequirementDetail.tsx": "8f7eb2d3cbc9890a7ee1956fd3b76b227da2cd3d122f5cfdc9a5cc453496c3d5",
+    "desktop-ui/src/features/project-progress/RequirementList.tsx": "f608b9a11e00ac93e1afa3e37e5f83de6c03371810730b3224b570f04676cef6",
+    "desktop-ui/src/features/project-progress/documents.ts": "d9bf51f8818e7876e5dc91e61022bcf48a543015b9e4da175679185ef81d4e5f",
+    "desktop-ui/src/features/project-progress/editorLifecycle.test.tsx": "8038b7c4b4d047f4a591e40da69954219f6ff8785f142735794c0985d5e7021c",
+    "desktop-ui/src/features/project-progress/editorSessions.ts": "4d9bce0abe940ff402c72c168d5ee371715f09249fed46911c4720621b50a157",
+    "desktop-ui/src/features/project-progress/limits.ts": "3fad7057764dca2ac58f09ddfcdbde86c7b3822ec4275f1fb38e4300704516f5",
+    "desktop-ui/src/features/project-progress/merge.test.ts": "f3dbbdae2e82a55e6dea67ce1e501c605aa63d1332327cdf6ee22fec0e18d910",
+    "desktop-ui/src/features/project-progress/merge.ts": "9ee63b5f89d832484e4e2a633672c7b4256bb0d07522b1ed0eb433b183d2b08c",
+    "desktop-ui/src/features/project-progress/operations.ts": "345f8b88a11724cf3b7ba25c9b561d61177957facb8b221be305d58f62adc5ed",
+    "desktop-ui/src/features/project-progress/presentation.test.ts": "e2fb88f84d73d788d2e9e82ea27ccc798fc2a3a39554c0bf7bcc4f404b62b6eb",
+    "desktop-ui/src/features/project-progress/presentation.ts": "feb700c64f8ea510434e7cd000fd97d1a1b31f2731451a2594fcb44adf305b9d",
+    "desktop-ui/src/features/project-progress/progressContracts.test.ts": "cb4c544f71ddbfda8552cab1fef0d08dc747031b5f52fcb9773092e1b65c0326",
+    "desktop-ui/src/features/project-progress/progressState.ts": "052d71e1b9a65fcdeb4f55aa7e61d0b0ffdc7cda5e8c389cf2d756ffb5b8d4a5",
+    "desktop-ui/src/features/project-progress/rebase.test.ts": "dcbbc96793b42383845bc71f9fdbac222ece8a372269a73f35c65e662f68ecc3",
+    "desktop-ui/src/features/project-progress/rebase.ts": "a7d869014495c39544b4cbfb60dc12bfc11f146b6f194811e192e96f5be164c8",
+    "desktop-ui/src/features/project-progress/requestSession.test.ts": "b18ff69dc70b71c4fc24fb05b921202dc9bcb6f0a297e6cd6c6f29c6260688be",
+    "desktop-ui/src/features/project-progress/requestSession.ts": "67ac1acb7c048a348c64eec568b28ebc6a930c819325ba6c8a4b6eb674c4885d",
+    "desktop-ui/src/features/project-progress/requirement.ts": "1a4de486433ab1f90d6472ef9355fe26437ea9d9e3143c2c0208a8e3320852a7",
+    "desktop-ui/src/features/project-progress/status.ts": "09953586fae2bb8690adad425fa7615973b954de2e51378a0007b706d8505527",
+    "desktop-ui/src/features/project-progress/useProjectProgress.ts": "27c0d9bc0f660a63182fc99b1516a1725b4d2a2d416634cabfa1dac2044855f9",
+    "desktop-ui/src/features/review/AnalysisNotice.test.tsx": "e85703203eb6fc55a32d7d005466581908b476db92aad16c95400a9142f7d6fb",
+    "desktop-ui/src/features/review/AnalysisNotice.tsx": "13483095fffdaf815fcde6d0eafa8eba52f7128f6845f8a77d9a140063a73e42",
+    "desktop-ui/src/features/review/PolicySetup.tsx": "c7f5a75de083fea18ebcdd463d88c91c716a5f323e92b6c2f1d6569bd5d50e77",
+    "desktop-ui/src/features/review/ReviewDiff.tsx": "4089df7933f562835aea167e95a2cdd12996458a80ab248cbf160280b371a179",
+    "desktop-ui/src/features/review/ScanImpact.tsx": "6b1665b309814db4aa5fa76443b4bfe09b7eb10561bdff4dbdc75bd9add0f66c",
+    "desktop-ui/src/features/review/ViolationGuide.tsx": "0a514764728e54450455cba0089601fdc2d6f1683a37427f9f01013a48e266c7",
+    "desktop-ui/src/features/review/violations.ts": "b4bf56e8949073cfe2f669aa9b924e4c116f890619246fa359f0b6b44157ba95",
+    "desktop-ui/src/lib/ui/cn.ts": "179f499c0075973e51efe828e8d63c34a8b5326f6ebeda018eaf80bbed9e03a3",
+    "desktop-ui/src/lib/utils.ts": "f14646330eb2c3ae1bf3d5e93a4a8f20e85f4267eaa624ac69a5aed1d23816b7",
+    "desktop-ui/src/main.tsx": "525f777f99e2fb569a9d14d55466cb64092063efb4e9698c1c618220bf2755ae",
+    "desktop-ui/src/presentation.tsx": "5fdb58652231d999aa396aa7f70d18004b99a5b93cd98f8dbb25dd98edebcbf2",
+    "desktop-ui/src/preview.tsx": "948d85b69ad52e97081422cc3de5226e36f084596b4c0b39cc5850087bbb2848",
+    "drift_gate/__init__.py": "a7f8753efa58ba2ae30cfe2ad7ceec9265d18415d27768e80a3e4abc7e9f495d",
+    "drift_gate/__main__.py": "aa1c42b733b0c3d8cc65f2760e09f648054cbbe292e1b092c120987e97ac8337",
+    "drift_gate/adapters/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/adapters/ast/__init__.py": "76c5350fb04593feafbc15173cce2f5d7a7fd67307bb8a6acdbf27631444da07",
+    "drift_gate/adapters/ast/analyzer.py": "3d3af6dc3383993c35caa871f7220099568c81033042477a5212caf9620ce664",
+    "drift_gate/adapters/ast/express_routes.py": "514f1c0ccf4427efdaa602704aa7080b21951d35f3146768a2e0ff2d68b51535",
+    "drift_gate/adapters/ast/go_adapter.py": "1e6db6e937b58ff1571af2610ee4dd13509cec36acd416e3f140c20270d82734",
+    "drift_gate/adapters/ast/interface.py": "a11661c971d07359a312e615e146a6e3c8995a8ae38363bae12ca99f7772c6a1",
+    "drift_gate/adapters/ast/java_kotlin_adapter.py": "f051095fd3e36102941fd3f290fb5285e5188a9bff703e002d228f49bc65745d",
+    "drift_gate/adapters/ast/python_adapter.py": "78e82a4ac982345f2e24f089701cbdc1083e3645cad53ced460ea8487c8b8bca",
+    "drift_gate/adapters/ast/ruby_adapter.py": "a1363b6702b2afa18f1aa0c67f79d92fd2aa0f412a7418b351fb4fd44176152c",
+    "drift_gate/adapters/ast/tree_sitter_python_adapter.py": "9ab4f29b9f578d39a32982891338ffba1759fc3797503867047d886767312f85",
+    "drift_gate/adapters/ast/tree_sitter_support.py": "f4a625de41ccff67fdb1c660029e5685bd7be754e18813d952f7f8adecdabd18",
+    "drift_gate/adapters/ast/tree_sitter_typescript_adapter.py": "e88a334fb39aca71dcc4d7e5b2fe6bfe3110b55c9406f8e9bfbc5bcafcea3d8f",
+    "drift_gate/adapters/ast/typescript_adapter.py": "a7cd36200c6c0bf17e6dceb681a5214e2ef751db37cdad088964b0ff4c3cee02",
+    "drift_gate/adapters/claude/__init__.py": "370df5ed190f4aa27cc8e2445876d7bba35a7729426efb85b309aed839dee38d",
+    "drift_gate/adapters/claude/enricher.py": "797547b3a3c07374c57ef1a13057c6fe0bb8347512f0635fe14bcaf195186fc6",
+    "drift_gate/adapters/cli/__init__.py": "5fe21007eedd1b3c6610cb4391cf75233c25241b4c89d8dd55b8372d11628d36",
+    "drift_gate/adapters/cli/runner.py": "5de50e6d2eb34ca952143e8f4e70e34afb49e8d3b7d81b36e730a73e1af7edc5",
+    "drift_gate/adapters/docs/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/adapters/docs/checklist.py": "47a9ec290c35cb02ed4e66f2349f9e95dcb07ac1f1ce06a17bd5bc28c451209f",
+    "drift_gate/adapters/docs/content.py": "36abeb8d7a94f240455453868de7bfe1617f4dc57dad2ef298dcb7d562007309",
+    "drift_gate/adapters/docs/readme_contract.py": "e53a8f9b737b781988d66383e3a029074b124214012a90dd0d29507aa441b066",
+    "drift_gate/adapters/docs/structured.py": "49c12057bad06d027b47da93dc6ba73a8ea7e52bb92fc4f106961913932719fa",
+    "drift_gate/adapters/eval/__init__.py": "9dff049ca647863663b64b531e8f81364879292ac7db5e2035e5a2209c0a998e",
+    "drift_gate/adapters/eval/runner.py": "2d486a03742682417729a60f7bdcef7842acfc240caf6922b820b97d0e9b6d6f",
+    "drift_gate/adapters/execution.py": "9b1df9b8a7228f57a960c2c16b6616ee7b86bc4493abfd19f41bcf0f0e276eaf",
+    "drift_gate/adapters/git/__init__.py": "01f78a7423a6ca53060ad7b73194baf7c5cf57033e831df12ef63bfc03f4104c",
+    "drift_gate/adapters/git/client.py": "433344284a2f127c111969146b1d63d578a35d912ce80fc786e2de97716000da",
+    "drift_gate/adapters/github/__init__.py": "0d88edb79daba977cd1637d6d2782fe105f5bc16157ffa4efe46db2b7a7c7536",
+    "drift_gate/adapters/github/approvals.py": "36f99cc46014bd54063836a320a5a4db7d15c5f707feccdfa97e45c89a40e8f5",
+    "drift_gate/adapters/github/client.py": "92ee9fbf67148769eb12fbb32cf30513142963ff4ffed24b90e8fae8fc3e2fa1",
+    "drift_gate/adapters/github/commenter.py": "ee0f8eb334b825bed8a5a288ff67c1188d5f05d47383717e1bd922357bf0a901",
+    "drift_gate/adapters/github_action/__init__.py": "ee6ed5ddd85d69bd45fca4cfb7721e689292701b1318c57b8ba937ca578e0969",
+    "drift_gate/adapters/github_action/runner.py": "d7a74407224b0ef66ef6d19db79d6bfc3a2336c935f9efd0ab54e51efb9426e1",
+    "drift_gate/adapters/grammar_resources.py": "e0caebe7a3e51f6d8d768808cf0713426062ff5e20bee8f95b4b5ecb2b592396",
+    "drift_gate/adapters/history/__init__.py": "e79bba126727e1a03aa1acd1317c25d7333329b3bad7177e874e0b08acdfff39",
+    "drift_gate/adapters/history/store.py": "ad1845f291cb1ef937322c7781d3baccf81392777219f8ad241a56ec065e3820",
+    "drift_gate/adapters/inspection.py": "5d79a4642c8fca7901ae18c0ff2e2887d977404f9b1bc9ed5b3f8d6301322299",
+    "drift_gate/adapters/mcp/__init__.py": "446b48bccc8178e10dc707bfec90fccd036118df9f2d91e2b4eaa060a3e61782",
+    "drift_gate/adapters/mcp/server.py": "59a218dbedf90e3cc3c38da0ee6af7196d896ca452be38c10115443124192041",
+    "drift_gate/adapters/mcp/tools.py": "011798f604963f7da6f7334c64936a463d7f18ca4f05d8e0c13c4f962bb25612",
+    "drift_gate/adapters/policy_loader.py": "e555967edfefa300ccf8cb9a25cf36f46f790100b3c6fec2d880589bc33ba6f8",
+    "drift_gate/adapters/report_naming.py": "b7ed7b32f5f77578ace702ad172a1980d35637e7bb926af172b651858eecb6fb",
+    "drift_gate/adapters/source_scope.py": "0ed71170f78366e286699efb28cbeed874029167f2643a0f30aba38fc083520d",
+    "drift_gate/core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/change_paths.py": "e7bdf5e1bb4857c4a24def310f9d48ad8678f13cb54124d7fc2771c48d67b4db",
+    "drift_gate/core/classification/__init__.py": "f56a2625fea85f1afa386d06f6ca97a599353eeac4ba638b6cb82e7d5da2c05f",
+    "drift_gate/core/classification/classifier.py": "448bdfed4e9c3f968f46ed19b5a0dda85402c382ff52230d3b663e76847012b9",
+    "drift_gate/core/classification/intensity.py": "2b963958870f8881a09b05eb1609b54acec95ea0cab446ace5ba8233b6a3b215",
+    "drift_gate/core/contracts/__init__.py": "1d2254c52fd69c2889567b774e00180d7453ef2089b30a723d3f92c94f1d75d4",
+    "drift_gate/core/contracts/delta.py": "5cb74d66d38efd6e317f2b9e4255a257b7db2c1d2a767f626a34fe4c059e52e3",
+    "drift_gate/core/engine.py": "ae2f6db504550a7303c9dca28104e014f90c1ac05e52aefe5b489b22e795912f",
+    "drift_gate/core/evaluation/__init__.py": "4e57467e9cecbe1331c2fb4f27e09c00dc1de007fba0003afd7d64e52e8f439a",
+    "drift_gate/core/evaluation/analysis_session.py": "a1f24b129cb059dd42c575e9f07de6ec919d3d6f7482841e27de8c2510b58aea",
+    "drift_gate/core/evaluation/api_schema.py": "c4f354eeb2f15b6124275f5ede8c5a6bbb5a6e7deaa251b60f9f05ae60443c8d",
+    "drift_gate/core/evaluation/content_result.py": "e340ebedd0b4e10bed33232348a6a3b49f159a3bfcd35e86ff4cbcfd3194a126",
+    "drift_gate/core/evaluation/contracts.py": "fb4620a14f2f1f8dde3c99cad14ef06d757ba864223cf20022592c069966ff55",
+    "drift_gate/core/evaluation/environment.py": "efb44cdca5d7ca20f4efb7b3002154a4243a2a198a963c330bbeb9eae93e49ac",
+    "drift_gate/core/evaluation/evaluator.py": "dc6b625e4e47f622f6bf6d8b68a038bbcd6a311efdc51d517b526cc5fe16a398",
+    "drift_gate/core/evaluation/openapi_document.py": "b07135b64ae86f336e9f748224619af8a76dde94a768dd28adb311759795d260",
+    "drift_gate/core/evaluation/routes.py": "46e559479e7754da8e672f4a6b37480bd667f4c6d26ef8b44eb2875f7a22c248",
+    "drift_gate/core/evaluation/static_routers.py": "0b3a7f359e26f38db42c382edc2b50c1a0f4ff9791a865857e0cb5bb1fa0dfb1",
+    "drift_gate/core/gating/__init__.py": "c3129cecba4acd315d1d27362e07c2e1ba16c23e175d0e01d0b5a66f3b5f6239",
+    "drift_gate/core/gating/gate.py": "073d1ca1844ee56c6578400474eefdc9c64f0f3cf0e31e50cf84f07836c207c2",
+    "drift_gate/core/gating/temporal.py": "1b0d020aa0782ae605ae8bd2280205bd18f45c582af6fdd6acc1849b2d7affac",
+    "drift_gate/core/models/__init__.py": "a76ddc7463ee49c7d757f21f322fa4a5c000fe1abfffcd14ea2c56dd17a420ae",
+    "drift_gate/core/models/changed_file.py": "33c5b7d5b6bbaa061ce5a32c7b45c5bcf8eed2a7b0855ddf39847b704bac4477",
+    "drift_gate/core/models/evaluation_context.py": "b54ba3f2537db960aedff2769241c4530735941c2845557dc479c681f09625b0",
+    "drift_gate/core/models/facts.py": "213b659afc143d063d278f6903d1fccabb197c777da377ab51b4284270c7805a",
+    "drift_gate/core/models/policy.py": "cb20bdb7149f70e1de7ead9ca3de7f9a506d866bb3d8056f5eb19b9a86d240d2",
+    "drift_gate/core/models/result.py": "e34da69663504b9be85b3244adf93d576d662e19c0c4d3b839e0e3c2aece0564",
+    "drift_gate/core/patch_lines.py": "c5faef0300bdb3a9bed754e0030c82ff6d520b1daa8542829451a31d252cdb5e",
+    "drift_gate/core/policy/__init__.py": "7e3e5a9c6d0b447024e44512a3f49db6db48886571c4cf39948ea4efa4d4bc86",
+    "drift_gate/core/policy/guard.py": "b5ed8babb971ec1a4c29a430b5ac7507a029f44390267881d868feffd57bb618",
+    "drift_gate/core/policy/loader.py": "d211bc2bb1a2e03dfa2d65ec003f39bc5a07bd138d1e71eccca8e95ad975bb3f",
+    "drift_gate/core/policy/schema.py": "12e9b1f05be2d3d0f61e1be8da4bbe845e33a367ccd889f8029fce6728125798",
+    "drift_gate/core/policy/validator.py": "a6162e2df22bdece57875fa4c535a48c270276f91c295af3567e4b89b7f73399",
+    "drift_gate/core/python_syntax.py": "c894c0b50c4f2bc70363bcc1d0836bed0442e68f01077c14cc08b09fcebec387",
+    "drift_gate/core/reasoning/__init__.py": "4775b311e7693210d62e5a5d5d41ef3affaa20c56489bc849a6dbfb4dd6a3656",
+    "drift_gate/core/reasoning/checklist.py": "2c93277350fa61d41aa4762e920ebb89eefb25df860875153da2c181f1c77e06",
+    "drift_gate/core/review/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/review/heuristics.py": "ad66bd13791a228460385d75b39a6e31ab149e476f6768e678c06a352065a756",
+    "drift_gate/core/route_syntax.py": "8a92f887ac303ab1e1eeb141816be93bf47b207cad99d7ba6844c79c22d440d3",
+    "drift_gate/core/self_audit/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/core/self_audit/matcher.py": "1ccfb0781dfcfa52faed7ef3a3d45239e79ac2e482d15ef68564fd6fc8c95ab4",
+    "drift_gate/desktop/__init__.py": "ac75161cac9ca4c9f7e2624bfc202df49f23036f4c9ae974d957f57609205397",
+    "drift_gate/desktop/app.py": "4954ac113369d919b34e7b0f67ee574006cc8955a43865329a6513c86e5d9fef",
+    "drift_gate/desktop/doc_links.py": "a9fcdaed92b4fbd9e16997f1aceca1cdce176de8edb8318437e839964062cb7a",
+    "drift_gate/desktop/json_store.py": "77f2415d34aafc1952b20af1ff3ee4181df83c2f2a34cdc440c0c52f7aef9fbc",
+    "drift_gate/desktop/package_check.py": "4cba63ca48fed9ddcbbc9a62880bf7a376dfc159bfc4b4eac08286ed43025968",
+    "drift_gate/desktop/package_check_contract.py": "c684a3779923eadf4b894647ed8d845799676ee289d2eeb986e1cb7b33fb8db0",
+    "drift_gate/desktop/policy_setup.py": "764c83e1aa0975289c0d4a5ee1220008861f8cccbac4876b01c12e00d8650868",
+    "drift_gate/desktop/progress_context.py": "55500814c6870d8595f9de2629ad74372618ebc63b17b11ccdd22a677b328103",
+    "drift_gate/desktop/progress_documents.py": "fd0819a2ccce45ab14c4e30b1cdffb39c4b8c73bab2cae3c84eb2e5191440402",
+    "drift_gate/desktop/progress_drafts.py": "fff3c4df7a776472a8af94983e513237b7695cbdac562db1b47ba17acf6d794e",
+    "drift_gate/desktop/progress_history.py": "98fabbc30ec0a3287c72daf91bf8434b8484dfee1541021797a2c09ecec7acf0",
+    "drift_gate/desktop/progress_limits.py": "2693ef1c87cb6966c7ff70dc6eb3aaf809cecfe0d63ea2a7622dca92bac0a9e2",
+    "drift_gate/desktop/progress_report.py": "879ed8aeed37e85beefe22ad18db454fcbf01fb72cc09f0710fe6e36cc22d34a",
+    "drift_gate/desktop/progress_scope.py": "f669717ff48d27a32362a676ae0de3489cae66acd526039b578af4b4b6fbd0cb",
+    "drift_gate/desktop/progress_service.py": "97f06b0e6c9746d0799791bf98b3b592ce99ae30e86b8e98409538f2c945eb30",
+    "drift_gate/desktop/resources.py": "1c092be0b1735f0a3fe273e0ac83463de812b7257dfcece43fee2857c31122ee",
+    "drift_gate/desktop/review_dialog.py": "70272a224b6d2123bd72802fe494cc3d26f1c8f5b2c90ff5cb784a30e98330cf",
+    "drift_gate/desktop/service.py": "9f0ccde23b335aabe5023539e9d35883f217da86f1b2b9acd20a4df555d26605",
+    "drift_gate/desktop/store_lock.py": "4658cd4e3f9fe20b10c335afab1711735a4291e4991b0834b25634d90958dba2",
+    "drift_gate/desktop/subscription_review.py": "71f288e286944636f53fbd4d82763afae735f281088a73273c69befb9a676083",
+    "drift_gate/desktop/verification_records.py": "5108619d4059f78845bb3c59158061abb5551261593d74a0ef8c2963cc52bd2f",
+    "drift_gate/desktop/web_app.py": "254a1dedcf530b11382b01c8ef9d8727f150aa60f6ac40130866d42d5f14b467",
+    "drift_gate/reporters/__init__.py": "6bf7ed9b4b50ba7125398e985500d15382d749751930bde20041485e4194010f",
+    "drift_gate/reporters/html.py": "e8ef5fca22de6632442ae690ee489f84e75b32a0856577002f2b095fd8fe5347",
+    "drift_gate/reporters/json_reporter.py": "bd258bdccd83532109a9c2842a888e0d4544035b6f45523e4cc966deefee4c5d",
+    "drift_gate/reporters/markdown.py": "8df28506b4bd3b0e4e8ea2147850f4c028dfb95768a8fda3858f39495e72575b",
+    "drift_gate/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/tests/test_auto_development.py": "4079c6e1f9d33433aec2d1719df47700182395866257e0e6b9193e7dc765a492",
+    "drift_gate/tests/test_contract_followup.py": "d041edabd10e74e83944db9b361fa8ea21ae1455a8fafd32b9e5c1e772326ad3",
+    "drift_gate/tests/test_contract_route_regressions.py": "68591197ce384515736fbfff61eb61aa601a47fa54239fd8a7a3be4a09556553",
+    "drift_gate/tests/test_desktop_service.py": "232a1a45159d6dcc3eb4652631a86fee8708243b53c14dd4effbbfa0f84e3e99",
+    "drift_gate/tests/test_desktop_ui.py": "7dd1d88893700ab50f9b23ec53225e9baa433f1a4caa9127e7072c157035025a",
+    "drift_gate/tests/test_desktop_web.py": "765c1888cc4f7e70072ba8b95d12f4566e1fb4df0ff7991b6d7326f807c33d74",
+    "drift_gate/tests/test_development_regressions.py": "e67bae125504c1e2a91b894e7ad410fb37bc6d1b15f6983abb428903256a6380",
+    "drift_gate/tests/test_doc_links.py": "f93f9c17a48188e7ca0234cc14f547b6de719d1dc31cbe24db6944d95ee540cc",
+    "drift_gate/tests/test_docs_check.py": "c878cb36eca88ad7bb71d2252535357343d4d536f24614dc3ad39ba7ed830dfc",
+    "drift_gate/tests/test_engine.py": "0a686bef7b7d1186b1d5452e0646d7b88f1312f760a9f615557d71aa99ec9b1a",
+    "drift_gate/tests/test_enricher.py": "090bd50371b2c170ba5f42a88c94e081f5b055649856737fb9200ab17fd1b5ce",
+    "drift_gate/tests/test_enterprise_correctness.py": "14cdd1760744f4dacf2f2d397f54240b2b7cbd2817aa41d4f1436d3bb6bfe70b",
+    "drift_gate/tests/test_eval_runner.py": "14c7d882114fdd44bc74d878cb616936fdf73598fd54a4fe9456cbc0f4b9d616",
+    "drift_gate/tests/test_express_contracts.py": "bfab8ba555111c58bf4df773e42fb77d1a52d9630d135f0762719e9f72a58b78",
+    "drift_gate/tests/test_fastapi_oracle.py": "445c8a9443a0dd39ccb4a6ce9854adde025d5e468829283983f30b82a81798bf",
+    "drift_gate/tests/test_git_collection.py": "afe49a6f1354710ed29b5ca646f7d1f4379acaf536155640b5de94fd80e257fb",
+    "drift_gate/tests/test_github_action_runner.py": "6a423cfe864d1cffddb5e40b4d900476c407ab6de33de8adb01bb41020f50038",
+    "drift_gate/tests/test_github_client.py": "465e565d3ae949f90c1b5fca295ebe2c9c5de865223c30c040f047bec8de6d59",
+    "drift_gate/tests/test_hardening_contracts.py": "76f43e5ed135e693f9778c3f41eca35353ea7bedf0bc5c7499ed7736b709bc85",
+    "drift_gate/tests/test_history.py": "28919af89650ea08384c5528ff23ec6c7b44f3aceb2d9843566cc19d7b88d4ba",
+    "drift_gate/tests/test_html_reporter.py": "c48b32458f0bb3130ffc2d462929532e11db4b2b2b516c8fea4865d04ac6dd7b",
+    "drift_gate/tests/test_intensity_classifier.py": "7fd34e82ce33c32011bfc349188c07ff665ff9dd7fc0214e7e4ab9efbbd90307",
+    "drift_gate/tests/test_logical_contracts.py": "d1e90b257750b498d90e315e7b7e65c8573e84489769e372013e1989ee29e173",
+    "drift_gate/tests/test_logical_entrypoints.py": "8607513682a97fab24325531aad68262f213cb07660a345e0f42ab4bc711da23",
+    "drift_gate/tests/test_logical_rereview.py": "7aed5c67dac05d291fedb091a37f1253d067fa608852691a272cc86944714532",
+    "drift_gate/tests/test_mcp_tools.py": "cf90c1745a4b30cfa41eec59e34ae43c3ea5a6a2d372587519618cf66974952d",
+    "drift_gate/tests/test_multi_review_adapters.py": "5bec4ed10b45cce469543c8e63801e91c93a09cd06abd69d2b4400d1a44aa5f7",
+    "drift_gate/tests/test_multi_review_cli.py": "ac1d2ff789d0b5aa4bab2390ec7e22ef7ce7c7b511ac41f8b3bfccf42ad838bd",
+    "drift_gate/tests/test_multi_review_core.py": "c2b477d8d57aa13a7d5e316d640d08fe8e382cc18b4e471e443c4bac76df1384",
+    "drift_gate/tests/test_packaging.py": "513cc3cdf44977bd7f33d1946a9e3b5819ebe8f9fbfd454e82671263e7ec9bad",
+    "drift_gate/tests/test_policy_setup.py": "cbae3b9e58b05e92db0ed7e70b0b1eddce539dc331d052d0963a0dedba96ebf5",
+    "drift_gate/tests/test_progress_concurrency.py": "2383743fe21743a7ea5a99cb4e265af341640bb7deb276c3a09691848334bd8c",
+    "drift_gate/tests/test_progress_drafts.py": "efdd9ffd103f17dfe271fc37bc879f88c897b6293b9eeebf836da5fbf0c0c352",
+    "drift_gate/tests/test_progress_history.py": "eb059c0fd9f569c6e7f7b88f3351f9f7a0714c01537df851b9198c6fb2e18e51",
+    "drift_gate/tests/test_progress_report.py": "36d34f07aa4a4fc028564e1f5aecd9857a234cdd844268956a18831e1e250abc",
+    "drift_gate/tests/test_progress_service.py": "5fa019a70679b7daeccb719adf455e937925cb8a81877398f1a71c12500079c3",
+    "drift_gate/tests/test_report_naming.py": "abfd7e5fa2b34bf4130247eeb843c900d0b14d737fe1714f8e2de49c7d23176a",
+    "drift_gate/tests/test_review.py": "7182c963b00265cef274ea38edb2e63af5ce451402edf9ebcf10c7824ee5ade9",
+    "drift_gate/tests/test_self_audit.py": "3e49350c995278d85352a4f175f21e10f8894612295d4b2999bca46b1e4519c0",
+    "drift_gate/tests/test_self_policy.py": "b6593ea590a596a7607b0276a7114e48b212eb06e103dd409484b0129e181192",
+    "drift_gate/tests/test_semantic_adapter.py": "6f1dde9abc94ef4a39fd0059f71a2792c9d4ff378f756aa092a032362307199f",
+    "drift_gate/tests/test_subscription_review.py": "e4f776ae7d39cb27262f7e84fc900415985c290a225995037c2011b66b8f5f4b",
+    "drift_gate/tests/test_typed_facts.py": "ad466147bafd789fe72158adba4b2e0977294e0c3d1adb58835433d6a8214a0b",
+    "drift_gate/tests/test_validator.py": "9bf4e8af1cc67058fe2652b94a4065cf55b1c789c5e253c1a4f11eff9080ea15",
+    "drift_gate/tests/test_verification_records.py": "04d76576c550cdf34436d3310e4d9cb6c85fd1a8b40e4a17103cdf692e29622c",
+    "drift_gate/utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "drift_gate/utils/glob_matcher.py": "980c481cf582e2a0d3ad7a9c1fb504a11fd4d3d0913eec5111be27c27d587714",
+    "scripts/audit_auto_contracts.py": "cf6f839ad28b051675ffaea8b98b0ae880c0d8798804e880c7757ed6bc5f492a",
+    "scripts/audit_generalization.py": "7d4459d55b41f098b8c30bf9efdd2988eaacb607e181a5c7a1c53083656d2dc2",
+    "scripts/check_self.py": "8bd4c08e2c967ed3b8fa3dcbfd4ac134ad8102ffaeed22afef3a6634debd0ccf",
+    "scripts/compare_v1_ver2.py": "c8996e74b124110ef584454857d2ef29ed0b1f37539c699560340d46dc2a9163",
+    "scripts/compare_v1_ver2_postfix.py": "863965aabd942df8755b15e5d8e87673b723533482657ab90edb3887318569ac",
+    "scripts/measure_development.py": "b91ddc9e5b5ee85e92ef04c57b6e9c581c57823b35457d2cb5fee3d9280216c1",
+    "scripts/measure_env_contract.py": "78df63e7a4b4477b76350fb349dbe5bff1306751c367799e47528695f5f29b86",
+    "scripts/smoke_subscription_review.py": "817ffd80e23bfd6d9da3566ce91c43b6d714b8e78c1158a5c47887c8c5b823b6"
+  },
+  "frozen_input_hashes": {
+    "docs/review/drift-gate-auto-panel-2026-10-07.md": "740fc4600134858b83147701455c0e069983713179ce13be3bad095b4c796946",
+    "docs/review/drift-gate-auto-update-2026-10-07.md": "5b3e9f8c2100464fd07e2396910ea90b526a5301b32fef2e015595a8715e58bc",
+    "docs/assessment/generalization-audit-v1.json": "f58351d3b2eb947cca35d7abaf8ec09cc2944988ebfda09e820755ed07b65178",
+    "drift_gate/tests/contracts/auto-contracts-v2.json": "b5c66c01a9f07c794563c1b99d07971527a8b258b937549a0d60dc296c98830d",
+    "drift_gate/tests/contracts/express-contracts-v1.json": "992cf555cdf16ecc30390a40e2c109a02aa184196d545d45f4489da8412a155f"
+  },
+  "frozen_inputs_unchanged": true,
+  "runs": {
+    "python_full": {
+      "passed": 1355,
+      "skipped": 0,
+      "new_typed_facts_tests": 54
+    },
+    "targeted": {
+      "passed": 127
+    },
+    "fixed_fixture": {
+      "passed": 21,
+      "total": 21
+    },
+    "git_axes": {
+      "python-git.json": {
+        "counts": {
+          "facts": {
+            "correct": 14,
+            "total": 14
+          },
+          "decision": {
+            "correct": 14,
+            "total": 14
+          },
+          "verification": {
+            "correct": 14,
+            "total": 14
+          },
+          "gate": {
+            "correct": 14,
+            "total": 14
+          }
+        },
+        "actual_rows_equal_previous": true,
+        "suite_hash_equal": true,
+        "false_verified": [],
+        "missed_known_violations": []
+      },
+      "express-git.json": {
+        "counts": {
+          "facts": {
+            "correct": 8,
+            "total": 8
+          },
+          "decision": {
+            "correct": 8,
+            "total": 8
+          },
+          "verification": {
+            "correct": 8,
+            "total": 8
+          },
+          "gate": {
+            "correct": 8,
+            "total": 8
+          }
+        },
+        "actual_rows_equal_previous": true,
+        "suite_hash_equal": true,
+        "false_verified": [],
+        "missed_known_violations": []
+      }
+    },
+    "self_gate": {
+      "result": "pass",
+      "verification": "unverified",
+      "file_count": 78,
+      "explicit_untracked_count": 31
+    },
+    "ruff_E9_F": "passed",
+    "git_diff_check": "passed"
+  },
+  "evidence_hashes": {
+    "docs/assessment/typed-facts-implementation-2026-10-07/before.json": "f93688f2e5efea090e85c47cc9c25159b940757c86e66059accef0431dc83645",
+    "docs/assessment/typed-facts-implementation-2026-10-07/express-git.json": "5822e7083ad66ed1d994cab07b03d66f2d7bf11a2b8a16084d551be729c123a5",
+    "docs/assessment/typed-facts-implementation-2026-10-07/express-git.log": "9255872775c716feafdbae0d1990621092a9d544bae2af8352ff9ac9902b602a",
+    "docs/assessment/typed-facts-implementation-2026-10-07/fixed-evaluation.json": "823ccf0e86c33388adb773e18ed974d756cb23ce8e31cde8a9d5738e39465d06",
+    "docs/assessment/typed-facts-implementation-2026-10-07/fixed-evaluation.log": "02e639d168172d3540da3e47e696291ea19e6632be488c8f700bad5d2a789c00",
+    "docs/assessment/typed-facts-implementation-2026-10-07/python-final.log": "b92d2dee73db1f6fa435f91b110ca0ca88af03cea20e6003f9de6638bb39fe72",
+    "docs/assessment/typed-facts-implementation-2026-10-07/python-full.log": "6d1a08fb9f9cf3c8ab3bf2be78a3b29d48fcbb9e0e45e9b0bf1997e86c05074c",
+    "docs/assessment/typed-facts-implementation-2026-10-07/python-git.json": "4b798a87a9eb05b9373275723a772700c1c73192df8f90057adc21462838196e",
+    "docs/assessment/typed-facts-implementation-2026-10-07/python-git.log": "6521298925578f5692d25a54c43d6711e430596d9ce2676874024836bc35105e",
+    "docs/assessment/typed-facts-implementation-2026-10-07/ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "docs/assessment/typed-facts-implementation-2026-10-07/self-check-inputs.json": "9781aeee2963a5c7e6bc8b5aba3554cb438590dc83bdfe443f83ddeb3b6d1da4",
+    "docs/assessment/typed-facts-implementation-2026-10-07/self-check.json": "61690b34af1de4aa36625a1fb88c05a18cd0453b86956ff4974c13b5ba486529",
+    "docs/assessment/typed-facts-implementation-2026-10-07/targeted-first.log": "ca1cf96cc181cacc1a9f7c8581e91560ac97bd48bce69ee9dca0a4041ce01f14"
+  },
+  "document_hashes": {
+    "docs/review/drift-gate-typed-facts-implementation-2026-10-07.md": "09372a78afebf334c9ec5137247df50ce6db0f0fe4a22a8a4e1366a8318592ab",
+    "docs/contracts/gate-and-inputs.md": "69a691c6b1be64fbe30a67077475c1b68ffc3d0f6bdef03ebe9c5ae30456f89d",
+    "docs/ops/drift-gate-self-check.md": "6cc395b64c5c70c589e509256433682f8eef12179be8befc1e58f27c2f2b5e59"
+  },
+  "report_links": [
+    {
+      "target": "../architecture/drift-gate-enterprise-detailed-design-2026-10-07.md",
+      "exists": true
+    },
+    {
+      "target": "../../drift_gate/core/models/facts.py",
+      "exists": true
+    },
+    {
+      "target": "../../drift_gate/core/contracts/delta.py",
+      "exists": true
+    },
+    {
+      "target": "../../drift_gate/core/evaluation/routes.py",
+      "exists": true
+    },
+    {
+      "target": "../../drift_gate/core/evaluation/environment.py",
+      "exists": true
+    },
+    {
+      "target": "../../drift_gate/tests/test_typed_facts.py",
+      "exists": true
+    },
+    {
+      "target": "../../.github/workflows/desktop-build.yml",
+      "exists": true
+    },
+    {
+      "target": "../contracts/gate-and-inputs.md",
+      "exists": true
+    },
+    {
+      "target": "../ops/drift-gate-self-check.md",
+      "exists": true
+    },
+    {
+      "target": "../assessment/typed-facts-implementation-2026-10-07/python-final.log",
+      "exists": true
+    },
+    {
+      "target": "../assessment/typed-facts-implementation-2026-10-07/targeted-first.log",
+      "exists": true
+    },
+    {
+      "target": "../assessment/typed-facts-implementation-2026-10-07/ruff.log",
+      "exists": true
+    },
+    {
+      "target": "../assessment/typed-facts-implementation-2026-10-07/fixed-evaluation.json",
+      "exists": true
+    },
+    {
+      "target": "../assessment/typed-facts-implementation-2026-10-07/python-git.json",
+      "exists": true
+    },
+    {
+      "target": "../assessment/typed-facts-implementation-2026-10-07/express-git.json",
+      "exists": true
+    },
+    {
+      "target": "../assessment/typed-facts-implementation-2026-10-07/verification.json",
+      "exists": true
+    },
+    {
+      "target": "../assessment/typed-facts-implementation-2026-10-07/self-check.json",
+      "exists": true
+    },
+    {
+      "target": "../assessment/typed-facts-implementation-2026-10-07/self-check-inputs.json",
+      "exists": true
+    },
+    {
+      "target": "../assessment/typed-facts-implementation-2026-10-07/python-full.log",
+      "exists": true
+    }
+  ],
+  "scope": "S1-a only: immutable identity facts/deltas and current route/Python env compatibility wrappers.",
+  "unverified": [
+    "S1-b–e registry/planner/proof DAG/new projection are pending.",
+    "No service-wide discovery/closure or authenticated manifest certificate.",
+    "No latest remote CI, installer or Windows/Linux verification.",
+    "No React/tsc rerun this turn; no UI source changes.",
+    "No independent blind/real PR accuracy evaluation."
+  ],
+  "git_mutations": "No index changes, commit or push this turn."
+}

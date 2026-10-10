@@ -1,0 +1,8 @@
+{
+  "validator_commit": "3f356d12d72058ea8744311a63e49345f3a7e9d7",
+  "old_error": "Installed-app grammar analysis failed: [{'path': 'src/Api.java', 'method': 'grammar+heuristic', 'reason': ''}, {'path': 'src/Api.kt', 'method': 'grammar+heuristic', 'reason': ''}, {'path': 'src/api.go', 'method': 'grammar+heuristic', 'reason': ''}, {'path': 'src/api.js', 'method': 'grammar+heuristic', 'reason': ''}, {'path': 'src/api.py', 'method': 'grammar+heuristic', 'reason': ''}, {'path': 'src/api.rb', 'method': 'grammar+heuristic', 'reason': ''}, {'path': 'src/api.ts', 'method': 'grammar+heuristic', 'reason': ''}, {'path': 'src/view.tsx', 'method': 'grammar+heuristic', 'reason': ''}, {'path': 'docs/api.md', 'method': 'unavailable', 'reason': 'Patch unavailable; intensity cannot exclude a contract change'}]",
+  "raw_result_sha256": "1b0439fc9a5df88bd3352a9c6fa337156eb5226f7a5133dca0d339d023b62900",
+  "source_grammar_count": 8,
+  "document_absence_count": 1,
+  "final_verifier_accepts_fresh_attempt": true
+}

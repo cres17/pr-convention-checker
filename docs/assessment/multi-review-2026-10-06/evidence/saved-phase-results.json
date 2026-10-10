@@ -1,0 +1,68 @@
+{
+  "hashes_checked": 82,
+  "reports": [
+    {
+      "path": "build/hardening-final-20261006/d262ec2/downloaded-installed/result.json",
+      "distinct_phase_ids": [
+        "a8f74b13e9e7432a84a32d3fe434e278",
+        "b4df429f3ca24001bdb2d2660503c354",
+        "616e6c29f7d04dcea93e2f56ba2e4548"
+      ],
+      "signature_and_rename_payloads_match": true
+    },
+    {
+      "path": "build/hardening-final-20261006/d262ec2/remote-evidence/Offline-check-Windows/offline-installer/result.json",
+      "distinct_phase_ids": [
+        "a3e01b6ba8a84ca59e6b05f235495b05",
+        "c45c2d19e7ee4f67888fd672f9792b8d",
+        "1e644ea1f7e040e798219a5d1e5024a6"
+      ],
+      "signature_and_rename_payloads_match": true
+    },
+    {
+      "path": "build/hardening-final-20261006/d262ec2/remote-evidence/Offline-check-Windows/offline-package/result.json",
+      "distinct_phase_ids": [
+        "285268bdb73b4ad38b10beafffcba2b4",
+        "6c3cd3d249364c06a4d77d336b3f0841",
+        "6f4a0e82a7144b67981249062eb5b371"
+      ],
+      "signature_and_rename_payloads_match": true
+    },
+    {
+      "path": "build/hardening-final-20261006/d262ec2/remote-evidence/Offline-check-macOS-arm64/offline-dmg/result.json",
+      "distinct_phase_ids": [
+        "ca1ab7c4235f4258af57ae4772900a54",
+        "15268f7d57444dd49a58b32f16664b73",
+        "fb60bd5d26634c1aa6610aa9cecfaf2e"
+      ],
+      "signature_and_rename_payloads_match": true
+    },
+    {
+      "path": "build/hardening-final-20261006/d262ec2/remote-evidence/Offline-check-macOS-arm64/offline-package/result.json",
+      "distinct_phase_ids": [
+        "694957b6f6574fc1a82c6edb03df8cd3",
+        "c2aee134f62b4cd88c19c376aff11b9b",
+        "004e3253604143d28370aa4ae5235917"
+      ],
+      "signature_and_rename_payloads_match": true
+    },
+    {
+      "path": "build/hardening-final-20261006/d262ec2/remote-evidence/Offline-check-macOS-intel/offline-dmg/result.json",
+      "distinct_phase_ids": [
+        "b5a37f0b5e5d43409e177f4fcf7d0b57",
+        "5b64d8b41b114e13ace764f5e384232e",
+        "331604c62f4941b2aec1cd21d2e7baa4"
+      ],
+      "signature_and_rename_payloads_match": true
+    },
+    {
+      "path": "build/hardening-final-20261006/d262ec2/remote-evidence/Offline-check-macOS-intel/offline-package/result.json",
+      "distinct_phase_ids": [
+        "bc30ab4c2b2543cb8d27d5108c9e73d0",
+        "c7651acc83314f6c85d65b0c1d0448f2",
+        "9b81c75c70034ccbb7f637cd16dd6c8c"
+      ],
+      "signature_and_rename_payloads_match": true
+    }
+  ]
+}

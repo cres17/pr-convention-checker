@@ -1,0 +1,54 @@
+{
+  "mode": "overflow",
+  "kind": "source Qt + built React + actual QWebChannel + local persistence",
+  "events": [
+    {
+      "type": "ready",
+      "request_id": null,
+      "request_done": null
+    },
+    {
+      "type": "progressDocs",
+      "request_id": "2f393ec0-4e76-44e6-a39f-61d7ca5bd006:1",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "request_id": "2f393ec0-4e76-44e6-a39f-61d7ca5bd006:2",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "2f393ec0-4e76-44e6-a39f-61d7ca5bd006:2",
+      "request_done": true
+    },
+    {
+      "type": "progressError",
+      "request_id": "2f393ec0-4e76-44e6-a39f-61d7ca5bd006:3",
+      "request_done": true
+    },
+    {
+      "type": "progressDraftExported",
+      "request_id": "2f393ec0-4e76-44e6-a39f-61d7ca5bd006:4",
+      "request_done": true
+    },
+    {
+      "type": "progressLatestUsed",
+      "request_id": "2f393ec0-4e76-44e6-a39f-61d7ca5bd006:5",
+      "request_done": true
+    },
+    {
+      "type": "progressReport",
+      "request_id": "2f393ec0-4e76-44e6-a39f-61d7ca5bd006:6",
+      "request_done": false
+    },
+    {
+      "type": "progressHistory",
+      "request_id": "2f393ec0-4e76-44e6-a39f-61d7ca5bd006:6",
+      "request_done": true
+    }
+  ],
+  "local_draft_and_ancestry_exported": true,
+  "latest_baseline_used": true,
+  "old_autosave_not_revived": true
+}

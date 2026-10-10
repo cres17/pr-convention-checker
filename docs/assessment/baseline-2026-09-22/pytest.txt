@@ -1,0 +1,31 @@
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+........................................................................ [ 45%]
+........................................................................ [ 61%]
+........................................................................ [ 76%]
+...........................................................F............ [ 91%]
+.......................................                                  [100%]
+=================================== FAILURES ===================================
+____________________ test_tree_sitter_grammar_is_available _____________________
+
+    def test_tree_sitter_grammar_is_available():
+        assert TREE_SITTER_AVAILABLE is True
+>       assert "function_definition" in parse_sexp("python", ["def create_user():", "    pass"])
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+drift_gate/tests/test_semantic_adapter.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+language = 'python', added_lines = ['def create_user():', '    pass']
+
+    def parse_sexp(language: str, added_lines: list[str]) -> str:
+        """Parse added lines with a real grammar and return the root S-expression."""
+        parser = _parser(language)
+>       tree = parser.parse("\n".join(added_lines) + "\n")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: source must be a bytestring or a callable, not str
+
+drift_gate/adapters/ast/tree_sitter_support.py:17: TypeError
+=========================== short test summary info ============================
+FAILED drift_gate/tests/test_semantic_adapter.py::test_tree_sitter_grammar_is_available
+1 failed, 470 passed in 0.46s

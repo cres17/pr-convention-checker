@@ -1,0 +1,62 @@
+{
+  "python-git.json": {
+    "cases": 14,
+    "unchanged_expected_actual_and_input_hashes": true,
+    "suite_sha256": "b5c66c01a9f07c794563c1b99d07971527a8b258b937549a0d60dc296c98830d",
+    "counts": {
+      "facts": {
+        "correct": 14,
+        "total": 14
+      },
+      "decision": {
+        "correct": 14,
+        "total": 14
+      },
+      "verification": {
+        "correct": 14,
+        "total": 14
+      },
+      "gate": {
+        "correct": 14,
+        "total": 14
+      }
+    }
+  },
+  "express-git.json": {
+    "cases": 8,
+    "unchanged_expected_actual_and_input_hashes": true,
+    "suite_sha256": "992cf555cdf16ecc30390a40e2c109a02aa184196d545d45f4489da8412a155f",
+    "counts": {
+      "facts": {
+        "correct": 8,
+        "total": 8
+      },
+      "decision": {
+        "correct": 8,
+        "total": 8
+      },
+      "verification": {
+        "correct": 8,
+        "total": 8
+      },
+      "gate": {
+        "correct": 8,
+        "total": 8
+      }
+    }
+  },
+  "fixed-evaluation.json": {
+    "passed": 21,
+    "total": 21,
+    "unchanged_decisions_and_reports_excluding_execution_timing": true
+  },
+  "planner-git-examples.json": {
+    "matched": 6,
+    "total": 6
+  },
+  "new_findings": {
+    "R1_stale_plan": true,
+    "R2_deleted_env_document": true,
+    "R3_scope_serialization": true
+  }
+}

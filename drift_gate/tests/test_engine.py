@@ -3,6 +3,7 @@ Core engine 통합 테스트 — fixtures 기반.
 외부 I/O 없음.
 """
 import json
+from datetime import date
 from pathlib import Path
 import tempfile
 import os
@@ -11,6 +12,7 @@ import pytest
 from drift_gate.core.engine import run
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.policy import Policy
+from drift_gate.core.models.evaluation_context import EvaluationContext
 from drift_gate.core.models.result import DriftIgnoreDirective
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -259,7 +261,8 @@ class TestDriftIgnorePolicy:
                 expires="2000-01-01",
             )
         ]
-        result = run(changed_files=files, drift_ignores=ignores, policy=policy)
+        result = run(changed_files=files, drift_ignores=ignores, policy=policy,
+                     context=EvaluationContext(date(2026, 10, 7)))
 
         assert len(result.violations) == 1
         assert len(result.rejected_ignores) == 1
@@ -275,7 +278,8 @@ class TestDriftIgnorePolicy:
                 expires="2999-01-01",
             )
         ]
-        result = run(changed_files=files, drift_ignores=ignores, policy=policy)
+        result = run(changed_files=files, drift_ignores=ignores, policy=policy,
+                     context=EvaluationContext(date(2026, 10, 7)))
 
         assert result.violations == []
         assert len(result.skipped_rules) == 1
@@ -337,14 +341,23 @@ class TestDriftIgnorePolicy:
         assert len(result.violations) == 1
         assert result.rejected_ignores[0].reason == "CODEOWNERS approval is required"
 
-        approved = [
-            DriftIgnoreDirective(
-                rule_id="test-rule",
-                reason="temporary",
-                approved_by="@team/api",
-            )
-        ]
-        approved_result = run(changed_files=files, drift_ignores=approved, policy=policy)
+        # W09: an adapter flag alone is no longer authority; a bound envelope is.
+        flag_only = [DriftIgnoreDirective(rule_id="test-rule", reason="temporary", approved_by="@team/api",
+                                          approval_verified=True, approval_commit="a" * 40)]
+        assert len(run(changed_files=files, drift_ignores=flag_only, policy=policy).violations) == 1
+
+        from datetime import date
+        from drift_gate.core.models.evaluation_context import EvaluationContext
+        from drift_gate.core.trust.approvals import ApprovalEnvelope
+        envelope = ApprovalEnvelope("test-rule", ("src/routes/users.ts",), "a" * 40, "b" * 64, "temporary",
+                                    "2026-09-01", None, ("api-owner",),
+                                    {"kind": "github-codeowners-review", "codeowners_sha256": "c" * 64,
+                                     "reviews": [{"id": 1, "commit_id": "a" * 40, "state": "APPROVED"}]}).to_dict()
+        approved = [DriftIgnoreDirective(rule_id="test-rule", reason="temporary", approved_by="@team/api",
+                                         approval_verified=True, approval_commit="a" * 40,
+                                         approval_envelope=envelope)]
+        context = EvaluationContext(date(2026, 9, 2), "a" * 40, "b" * 64)
+        approved_result = run(changed_files=files, drift_ignores=approved, policy=policy, context=context)
         assert approved_result.violations == []
         assert approved_result.ignore_audit[0].approved_by == "@team/api"
 
@@ -734,7 +747,6 @@ class TestLargePR:
         data = json.loads((FIXTURES / "pr_large_100_files.json").read_text(encoding="utf-8"))
         files = [ChangedFile.from_dict(f) for f in data["changed_files"]]
         from drift_gate.core.models.policy import Policy
-        from drift_gate.core.models.result import DriftIgnoreDirective
         policy = Policy.from_dict(data["policy"])
         result = run(changed_files=files, drift_ignores=[], policy=policy)
         assert result.scan_metrics.scanned_files >= 99
@@ -747,3 +759,14 @@ class TestLargePR:
         policy = Policy.from_dict(data["policy"])
         result = run(changed_files=files, drift_ignores=[], policy=policy)
         assert result.result in ("pass", "warn", "fail")
+
+
+def test_policy_path_cannot_silently_bypass_a_blocking_policy(tmp_path):
+    from drift_gate.adapters.policy_loader import load_policy
+    target = tmp_path / '.drift-gate.yml'
+    target.write_text('rules:\n  - id: docs\n    when:\n      any_changed: ["src/**"]\n    require:\n      groups:\n        - name: docs\n          any_changed: ["docs/**"]\n    severity: blocker\n', encoding='utf-8')
+    files = [ChangedFile(path='src/routes/a.py', status='modified', patch='+def route(): pass')]
+    assert run(files, policy=load_policy(target)).result == 'fail'
+    with pytest.raises(ValueError, match='adapter'):
+        run(files, policy_path=target)
+    assert run(files).no_policy
