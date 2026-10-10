@@ -52,8 +52,13 @@ class PackageCheck(QObject):
         window.bridge.event.connect(self.on_bridge_event)
         self.timeout = QTimer(self)
         self.timeout.setSingleShot(True)
-        self.timeout.timeout.connect(lambda: self.fail("UI/bridge/analysis did not complete in 45 seconds"))
+        # A bound method, not a lambda: a closure over ``self`` connected to a child's signal makes a cycle
+        # that PySide6 tears down in the wrong order at interpreter exit (segfault after a clean run).
+        self.timeout.timeout.connect(self._timed_out)
         self.timeout.start(45000)
+
+    def _timed_out(self):
+        self.fail("UI/bridge/analysis did not complete in 45 seconds")
 
     def fail(self, reason):
         if self.finished:
