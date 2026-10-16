@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Re-check claims written by an AI against the real Drift Gate implementation.
+"""Re-check documented claims against the real Drift Gate implementation.
 
 Every probe builds its own throw-away Git repository or stdio session and calls
 the shipped CLI/adapters. Nothing is read from earlier reports. A claim is

@@ -1,4 +1,4 @@
-# AI가 작성한 문서에서 가져온 주장 (모두 "확인 완료"로 체크된 상태)
+# 문서에서 가져온 주장 (모두 "확인 완료"로 체크된 상태)
 
 출처: `docs/contracts/gate-and-inputs.md`, `docs/contracts/mcp-transport.md`, `README.md`, `docs/assessment/self-verification-2026-10-06/` 를 만든 작업 기록.
 각 항목은 원문을 그대로 옮겼고, 주장한 쪽이 이미 검증을 마쳤다고 표시한 상태(`[x]`)로 둔다.

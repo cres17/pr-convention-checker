@@ -5,7 +5,7 @@
   "pr_head": "b5c52ab281ed550b1e645bf000834f7c012f050f",
   "executed_at": "2026-10-08T02:50:00.357534+00:00",
   "code_commit": "b5c52ab281ed550b1e645bf000834f7c012f050f",
-  "executor": "claude-session-direct-call-not-github-action",
+  "executor": "direct-call-not-github-action",
   "steps": [
     {
       "body_match": "suffix-appended",
@@ -32,7 +32,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:47:04Z",
           "key": "9e92193acdd3eda567444e0f6791275a6cfdc4e5b043525b48140d165438923a",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             1,
             3
@@ -45,7 +44,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:37Z",
           "key": "cf5908133ecb63e2a68ef572acffb2be9580279fe7f4eacf5b9bd344c7c162a2",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             1
@@ -96,7 +94,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:37Z",
           "key": "cf5908133ecb63e2a68ef572acffb2be9580279fe7f4eacf5b9bd344c7c162a2",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             1
@@ -109,7 +106,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:37Z",
           "key": "cf5908133ecb63e2a68ef572acffb2be9580279fe7f4eacf5b9bd344c7c162a2",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             1
@@ -169,7 +165,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:37Z",
           "key": "cf5908133ecb63e2a68ef572acffb2be9580279fe7f4eacf5b9bd344c7c162a2",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             1
@@ -182,7 +177,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:45Z",
           "key": "059da10afa61fc96101086b8caf2dc22934b5fa8821723d59d30b650f9cffc41",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             2
@@ -265,7 +259,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:45Z",
           "key": "059da10afa61fc96101086b8caf2dc22934b5fa8821723d59d30b650f9cffc41",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             2
@@ -278,7 +271,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:50Z",
           "key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             3
@@ -343,7 +335,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:50Z",
           "key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             3
@@ -356,7 +347,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:50Z",
           "key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             3
@@ -400,7 +390,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:50Z",
           "key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             3
@@ -413,7 +402,6 @@
           "id": 6051129812,
           "updated_at": "2026-10-08T02:49:50Z",
           "key": "2c27b743e1fa393bf1ea176308451b421a58acc400c86d4b949c1811e3b721cc",
-          "ends_with": "erated by [Claude Code](https://claude.ai/code)_",
           "order": [
             2,
             3

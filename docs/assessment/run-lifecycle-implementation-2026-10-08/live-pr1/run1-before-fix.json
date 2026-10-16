@@ -5,7 +5,7 @@
   "pr_head": "b5c52ab281ed550b1e645bf000834f7c012f050f",
   "executed_at": "2026-10-08T02:47:14.321522+00:00",
   "code_commit": "b5c52ab281ed550b1e645bf000834f7c012f050f",
-  "executor": "claude-session-direct-call-not-github-action",
+  "executor": "direct-call-not-github-action",
   "steps": [
     {
       "step": "A-create",

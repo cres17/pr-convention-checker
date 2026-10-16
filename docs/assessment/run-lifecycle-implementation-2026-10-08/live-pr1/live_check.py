@@ -12,7 +12,7 @@ result_sha = json.load(open(os.path.join(out_dir, 'report.json')))
 from hashlib import sha256
 from drift_gate.core.models.input_manifest import canonical_bytes
 result_sha = sha256(canonical_bytes(result_sha)).hexdigest()
-NOTE = ('\n\n---\n> W15 게시 경로 수동 검증: Claude 세션에서 `drift_gate.adapters.github.publication`을 직접 실행했다. '
+NOTE = ('\n\n---\n> W15 게시 경로 수동 검증: `drift_gate.adapters.github.publication`을 직접 실행했다. '
         'GitHub Action 실행이 아니며, 본문은 W15 변경(`ed9f904..b5c52ab`)의 자체 정책 결과다.\n')
 
 real = pub.CommentApi(os.environ['GH_TOKEN'], REPO)
@@ -48,7 +48,7 @@ def snapshot():
     for c in real.comments(PR):
         meta = pub.parse(c.get('body'))
         if meta is not None:
-            found.append({'id': c['id'], 'updated_at': c['updated_at'], 'key': meta.get('key'), 'ends_with': c['body'][-48:],
+            found.append({'id': c['id'], 'updated_at': c['updated_at'], 'key': meta.get('key'),
                           'order': [meta.get('run_number'), meta.get('run_attempt')], 'body_intact': meta.get('body_intact')})
     return found
 
@@ -77,6 +77,6 @@ json.dump({'record_from_D': r4}, open(os.path.join(out_dir, 'record-D.json'), 'w
 json.dump({'record_from_C': r3}, open(os.path.join(out_dir, 'record-C.json'), 'w'), indent=2)
 json.dump({'schema': 'w15-live-publication-check-v1', 'repo': REPO, 'pr': PR, 'pr_head': HEAD,
            'executed_at': datetime.now(timezone.utc).isoformat(), 'code_commit': HEAD,
-           'executor': 'claude-session-direct-call-not-github-action', 'steps': steps,
+           'executor': 'direct-call-not-github-action', 'steps': steps,
            'all_matched': all(s['matched_expectation'] for s in steps)},
           open(os.path.join(out_dir, 'live-publication-check.json'), 'w'), ensure_ascii=False, indent=2)
