@@ -2,7 +2,7 @@
 
 ## 후보 코드를 실행하지 않는 신뢰 엔진 job (2026-10-09)
 
-CI의 `trusted-engine` job은 후보 checkout을 Git 객체 저장소로만 쓴다. `git archive ed9f9046cca46c79b379ccdbafaa08feaa8241d6`로
+CI의 `trusted-engine` job은 후보 checkout을 Git 객체 저장소로만 쓴다. `git archive f7157885f9b7992c5c981d0624747803d11eb944`로
 pin한 commit의 파일을 꺼내 비 editable로 설치하고, `python -I -c`로 `drift_gate`가 site-packages에서 import되는지 확인한다.
 grammar 준비와 검사도 그 설치본으로 실행한다. 검사는 immutable Git 경로(`check --base --head --trusted-policy-ref
 --trusted-policy-sha256`)이므로 후보 commit의 파일은 Git 객체로 읽힐 뿐 import·실행되지 않는다. pass·warn은 통과, fail(1)과
@@ -18,7 +18,7 @@ workflow를 써야 한다. 이 저장소 파일만으로는 설정할 수 없으
 
 ## S2-e~S4 신뢰 엔진 대조·설치본 증거 기능·종료 진단 (2026-10-08)
 
-CI self-check job은 `engine manifest --ref ed9f9046cca46c79b379ccdbafaa08feaa8241d6`로 manifest를 다시 만들고
+CI self-check job은 `engine manifest --ref f7157885f9b7992c5c981d0624747803d11eb944`로 manifest를 다시 만들고
 SHA-256 `88f275f568282507e71a66ad6f4e414e77dc0cdbf223c211c451eb1c1c0e37e8`과 일치할 때만 그 엔진으로
 `trusted-check`를 실행한다. block(1)·오류(2·3)는 job 실패다. review(5)는 `merge_basis=trusted-engine`일 때만
 경고로 남기고 계속하며, 신뢰 판정이 없거나 attestation이 맞지 않는 review는 실패시킨다. 이 저장소의 변경은
@@ -139,7 +139,7 @@ Mac 임시 서명은 Developer ID 서명·공증과 다르다. 로컬 소스 검
 
 `scripts/check_self.py`는 빈 정책·미분류 운영 경로·없는/빈 필수 계약 문서를 입력 오류로 거부한다. 운영 범위는 `source_scope.product_path`에 명시하며 임의 위치의 모든 운영 파일을 자동 식별한다는 보장은 없다. coverage와 evaluator가 rename 경로 역할을 공유한다. 오류 산출물도 실행 ID와 원자적 교체를 사용한다. 내부 예외는 진단 traceback 및 execution_error/종료3으로 남긴다.
 
-CI의 `--trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b`는 초기 의무를 고정한다. 기존 규칙 삭제·심각도 감소·실패 개수 증가·ignore 추가·필수 그룹 완화·trigger 축소·강도 기준 상향을 거부하며 trigger 확장과 신규 규칙 추가는 허용한다. 마이그레이션은 이 참조를 검토해 갱신해야 한다. **이는 후보 브랜치의 실행기/workflow까지 신뢰하는 현재 CI의 한계를 없애는 외부 보안 경계는 아니다.** 분리된 신뢰 실행기와 GitHub 필수 검사 발행 통제는 후속 운영 설정이며 이번 커밋으로 완료됐다고 표시하지 않는다.
+CI의 `--trusted-policy-ref f7df9d8e46837fd39f4f1efd589e39ed120f086c`는 초기 의무를 고정한다. 기존 규칙 삭제·심각도 감소·실패 개수 증가·ignore 추가·필수 그룹 완화·trigger 축소·강도 기준 상향을 거부하며 trigger 확장과 신규 규칙 추가는 허용한다. 마이그레이션은 이 참조를 검토해 갱신해야 한다. **이는 후보 브랜치의 실행기/workflow까지 신뢰하는 현재 CI의 한계를 없애는 외부 보안 경계는 아니다.** 분리된 신뢰 실행기와 GitHub 필수 검사 발행 통제는 후속 운영 설정이며 이번 커밋으로 완료됐다고 표시하지 않는다.
 
 최종 desktop build는 package/DMG 또는 installer 각각에서8언어 오프라인 파서 분석에 더해 실제 브리지의 signature/rename 반례 검사를 수행한다. 공개 릴리스 게시 없이 같은 커밋의 CI 산출물을 사용한다. 설치본은 ad-hoc 서명이며 공증을 대체하지 않는다.
 
@@ -183,7 +183,7 @@ open guard 제거 거부, relation source scope, 실제 legacy shadow 연결을 
 ## S2-b 원격·설치본 검사
 
 CI는 기존 변경 검사와 함께 immutable `--head "$GITHUB_SHA"` 검사를 실행한다.
-기존에 선택한 `ae0028d5edd95d5dd4819939a5801cb028639a6b`의 `.drift-gate.self.yml`을
+기존에 선택한 `f7df9d8e46837fd39f4f1efd589e39ed120f086c`의 `.drift-gate.self.yml`을
 raw SHA-256 `3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb`로 확인한다.
 정책 pin은 caller 기준이며 조직 승인이나 checker binary 인증은 아니다.
 출력 `object-self-check.json`에는 고정 subject와 원본 해시 근거가 남는다.
@@ -215,3 +215,7 @@ mtime·ctime을 비교하고 안정적인 파일을 받아들여야 한다. 기�
 Windows JSON·로그의 CRLF도 원본 SHA-256과 같게 보관하며, 작업 폴더 해시만이 아니라
 staged/committed Git blob bytes를 영수증과 대조한다. 이 속성은 해당 근거 폴더에만
 적용하고 일반 소스 파일의 줄바꿈 규칙이나 immutable raw diff 계약은 바꾸지 않는다.
+
+## 커밋 참조 갱신
+
+커밋 이력의 메타데이터를 정리하면서 주소가 바뀌었다. CI의 신뢰 엔진·정책과 버전 비교 스크립트는 같은 파일 내용을 가진 새 커밋을 참조한다. 기존 측정 자료의 커밋 주소는 당시 기록이며, [주소 대응표](commit-ref-map-2026-10-16.json)에서 새 주소를 확인할 수 있다. 측정 결과와 정책 내용 해시는 유지한다.

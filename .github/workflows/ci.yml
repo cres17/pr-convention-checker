@@ -36,7 +36,7 @@ jobs:
         env:
           SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
           TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
-        run: python scripts/check_self.py --base "$SELF_CHECK_BASE" --trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b --out build/self-check.json
+        run: python scripts/check_self.py --base "$SELF_CHECK_BASE" --trusted-policy-ref f7df9d8e46837fd39f4f1efd589e39ed120f086c --out build/self-check.json
       - name: Check immutable objects with a pinned policy
         env:
           SELF_CHECK_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
@@ -44,7 +44,7 @@ jobs:
         run: >
           python -m drift_gate check --base "$SELF_CHECK_BASE" --head "$GITHUB_SHA"
           --policy .drift-gate.self.yml
-          --trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b
+          --trusted-policy-ref f7df9d8e46837fd39f4f1efd589e39ed120f086c
           --trusted-policy-sha256 3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb
           --evidence-store build/object-evidence
           --json --out-json build/object-self-check.json > build/object-self-check-stdout.json
@@ -59,10 +59,10 @@ jobs:
         run: |
           # The engine pin is a commit plus the SHA-256 of its manifest. The manifest is rebuilt from Git
           # objects here; this job still runs candidate code, so it is a recorded comparison, not a sandbox.
-          python -m drift_gate engine manifest --ref ed9f9046cca46c79b379ccdbafaa08feaa8241d6 --out build/trusted-engine.json > /dev/null
+          python -m drift_gate engine manifest --ref f7157885f9b7992c5c981d0624747803d11eb944 --out build/trusted-engine.json > /dev/null
           set +e
           python -m drift_gate trusted-check --base "$SELF_CHECK_BASE" --head "$GITHUB_SHA" --policy .drift-gate.self.yml \
-            --trusted-policy-ref ae0028d5edd95d5dd4819939a5801cb028639a6b \
+            --trusted-policy-ref f7df9d8e46837fd39f4f1efd589e39ed120f086c \
             --trusted-policy-sha256 3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb \
             --engine-manifest build/trusted-engine.json \
             --engine-manifest-sha256 88f275f568282507e71a66ad6f4e414e77dc0cdbf223c211c451eb1c1c0e37e8 \
@@ -104,8 +104,8 @@ jobs:
     permissions:
       contents: read
     env:
-      TRUSTED_ENGINE: ed9f9046cca46c79b379ccdbafaa08feaa8241d6
-      TRUSTED_POLICY: ae0028d5edd95d5dd4819939a5801cb028639a6b
+      TRUSTED_ENGINE: f7157885f9b7992c5c981d0624747803d11eb944
+      TRUSTED_POLICY: f7df9d8e46837fd39f4f1efd589e39ed120f086c
       TRUSTED_POLICY_SHA256: 3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
