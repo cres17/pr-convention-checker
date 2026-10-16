@@ -1,0 +1,1266 @@
+Building wheel...
+running egg_info
+writing drift_gate.egg-info/PKG-INFO
+writing dependency_links to drift_gate.egg-info/dependency_links.txt
+writing entry points to drift_gate.egg-info/entry_points.txt
+writing requirements to drift_gate.egg-info/requires.txt
+writing top-level names to drift_gate.egg-info/top_level.txt
+reading manifest file 'drift_gate.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'drift_gate.egg-info/SOURCES.txt'
+running bdist_wheel
+running build
+running build_py
+copying drift_gate/tests/test_focused_logic.py -> build/lib/drift_gate/tests
+copying drift_gate/adapters/holdout.py -> build/lib/drift_gate/adapters
+running egg_info
+writing drift_gate.egg-info/PKG-INFO
+writing dependency_links to drift_gate.egg-info/dependency_links.txt
+writing entry points to drift_gate.egg-info/entry_points.txt
+writing requirements to drift_gate.egg-info/requires.txt
+writing top-level names to drift_gate.egg-info/top_level.txt
+reading manifest file 'drift_gate.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'drift_gate.egg-info/SOURCES.txt'
+installing to build/bdist.macosx-26.0-arm64/wheel
+running install
+running install_lib
+creating build/bdist.macosx-26.0-arm64/wheel
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/classification
+copying build/lib/drift_gate/core/classification/classifier.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/classification
+copying build/lib/drift_gate/core/classification/triggers.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/classification
+copying build/lib/drift_gate/core/classification/intensity.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/classification
+copying build/lib/drift_gate/core/classification/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/classification
+copying build/lib/drift_gate/core/patch_lines.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core
+copying build/lib/drift_gate/core/evaluation_stats.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/compat
+copying build/lib/drift_gate/core/compat/legacy_result.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/compat
+copying build/lib/drift_gate/core/compat/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/compat
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/gating
+copying build/lib/drift_gate/core/gating/temporal.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/gating
+copying build/lib/drift_gate/core/gating/enforcement.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/gating
+copying build/lib/drift_gate/core/gating/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/gating
+copying build/lib/drift_gate/core/gating/gate.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/gating
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/org
+copying build/lib/drift_gate/core/org/policy.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/org
+copying build/lib/drift_gate/core/org/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/org
+copying build/lib/drift_gate/core/budget.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/contracts
+copying build/lib/drift_gate/core/contracts/planner.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/contracts
+copying build/lib/drift_gate/core/contracts/services.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/contracts
+copying build/lib/drift_gate/core/contracts/discovery.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/contracts
+copying build/lib/drift_gate/core/contracts/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/contracts
+copying build/lib/drift_gate/core/contracts/input_identity.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/contracts
+copying build/lib/drift_gate/core/contracts/certificates.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/contracts
+copying build/lib/drift_gate/core/contracts/dependency.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/contracts
+copying build/lib/drift_gate/core/contracts/delta.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/contracts
+copying build/lib/drift_gate/core/contracts/profiles.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/contracts
+copying build/lib/drift_gate/core/change_paths.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core
+copying build/lib/drift_gate/core/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/models
+copying build/lib/drift_gate/core/models/facts.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/models
+copying build/lib/drift_gate/core/models/evaluation_context.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/models
+copying build/lib/drift_gate/core/models/policy.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/models
+copying build/lib/drift_gate/core/models/changed_file.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/models
+copying build/lib/drift_gate/core/models/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/models
+copying build/lib/drift_gate/core/models/result.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/models
+copying build/lib/drift_gate/core/models/proof.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/models
+copying build/lib/drift_gate/core/models/input_manifest.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/models
+copying build/lib/drift_gate/core/models/git_input.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/models
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/reasoning
+copying build/lib/drift_gate/core/reasoning/checklist.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/reasoning
+copying build/lib/drift_gate/core/reasoning/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/reasoning
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/self_audit
+copying build/lib/drift_gate/core/self_audit/matcher.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/self_audit
+copying build/lib/drift_gate/core/self_audit/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/self_audit
+copying build/lib/drift_gate/core/engine.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/execution
+copying build/lib/drift_gate/core/execution/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/execution
+copying build/lib/drift_gate/core/execution/latest.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/execution
+copying build/lib/drift_gate/core/execution/lifecycle.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/execution
+copying build/lib/drift_gate/core/execution/publication.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/execution
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/review
+copying build/lib/drift_gate/core/review/heuristics.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/review
+copying build/lib/drift_gate/core/review/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/review
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/compatibility.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/propositions.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/openapi_document.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/evidence_spans.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/json_values.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/static_routers.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/obligations.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/api_schema.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/proof_gate.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/analysis_session.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/content_result.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/contracts.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/environment.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/result_guard.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/membership.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/evaluator.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/contract_proof.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/evaluation/routes.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/evaluation
+copying build/lib/drift_gate/core/python_syntax.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/trust
+copying build/lib/drift_gate/core/trust/approvals.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/trust
+copying build/lib/drift_gate/core/trust/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/trust
+copying build/lib/drift_gate/core/trust/validation.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/trust
+copying build/lib/drift_gate/core/route_syntax.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/core/policy
+copying build/lib/drift_gate/core/policy/validator.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/policy
+copying build/lib/drift_gate/core/policy/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/policy
+copying build/lib/drift_gate/core/policy/loader.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/policy
+copying build/lib/drift_gate/core/policy/guard.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/policy
+copying build/lib/drift_gate/core/policy/schema.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/core/policy
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/tests
+copying build/lib/drift_gate/tests/test_verification_records.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_acceptance_matrix.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_org_and_cache.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_desktop_ui.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_html_reporter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_engine.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_focused_logic.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_fastapi_oracle.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_report_naming.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_packaging.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_contract_projection.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_policy_setup.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_progress_concurrency.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_typed_facts.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_qt_teardown.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_subscription_review.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_logical_rereview.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_multi_review_adapters.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_progress_service.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_desktop_service.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_git_collection.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/tests/contracts
+copying build/lib/drift_gate/tests/contracts/express-contracts-v1.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/contracts
+copying build/lib/drift_gate/tests/contracts/logical-rereview.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/contracts
+copying build/lib/drift_gate/tests/contracts/progress.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/contracts
+copying build/lib/drift_gate/tests/contracts/auto-contracts-v2.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/contracts
+copying build/lib/drift_gate/tests/test_mcp_tools.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_trust_boundary.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_enterprise_correctness.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_profile_discovery.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_scope_analysis.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_hardening_contracts.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_contract_route_regressions.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_self_policy.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_git_immutable.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_holdout_evaluation.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_decision_models.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_express_contracts.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_semantic_adapter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_packaged_cli.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_contract_followup.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_enforcement_outcome.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_run_time_contract.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_development_regressions.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_logical_contracts.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_progress_history.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_analyzer_worker.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_auto_development.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_input_snapshot.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_evidence_bundle.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_run_lifecycle.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_progress_drafts.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_proof_evaluation.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_github_publication.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_self_audit.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_validator.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/tests/fixtures
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/tests/fixtures/real_oss_samples
+copying build/lib/drift_gate/tests/fixtures/real_oss_samples/fastapi_route_schema_change.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures/real_oss_samples
+copying build/lib/drift_gate/tests/fixtures/pr_reject_ignore_blocker.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/oss_pr_fastapi_route_add.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_route_added_no_openapi.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_api_change.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_auth_policy_no_security_docs.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_env_key_no_example.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_file_delete.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_db_column_no_runbook.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/oss_pr_docs_only.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_impl_only_api_no_doc.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/semantic_fp_comment_only.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_large_100_files.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_workflow_secret_no_ops_docs.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_tests_only_api_no_doc.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_db_change.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_docs_only.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_comment_only_api_no_doc.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_ignore_paths.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_empty.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/oss_pr_prisma_migration.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/fixtures/pr_file_rename.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests/fixtures
+copying build/lib/drift_gate/tests/test_docs_check.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_intensity_classifier.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_enricher.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_history.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_logical_entrypoints.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_obligation_planner.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_multi_review_core.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_desktop_web.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_github_client.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_eval_runner.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_github_action_runner.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_multi_review_cli.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_doc_links.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_review.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_progress_report.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/tests/test_membership_and_spans.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/tests
+copying build/lib/drift_gate/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/desktop
+copying build/lib/drift_gate/desktop/package_check.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/progress_context.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/service.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/progress_drafts.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/subscription_review.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/web_app.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/cli_entry.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/doc_links.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/desktop/web
+copying build/lib/drift_gate/desktop/web/index.html -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web
+copying build/lib/drift_gate/desktop/web/TOOL-UI-LICENSE.txt -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pkl-u5AG7uiY.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/twig-27uCiNez.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vb-Cu-pLBUe.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/clojure-P80f7IUj.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/nord-Ddv68eIx.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/catppuccin-frappe-CZL1YF0i.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/tex-D96PA37w.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/systemd-4A_iFExJ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/jison-wvAkD_A8.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gnuplot-DdkO51Og.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/racket-BqYA7rlc.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/graphql-ChdNCCLP.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/rose-pine-5qJOZa0Y.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/github-light-high-contrast-BfjtVDDH.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/viml-CJc9bBzg.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/python-B6aJPvgy.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/zenscript-DVFEvuxE.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pierre-dark-CyvmCCZW.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/html-derivative-DlHx6ybY.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/terraform-BETggiCN.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/reg-C-SQnVFl.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/solarized-light-Dlz6yCKv.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/move-el3G9tDJ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/system-verilog-0hqHdDBg.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/fortran-fixed-form-CkoXwp7k.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/turtle-BsS91CYL.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/r-Cf5RLm7j.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gruvbox-light-soft-hJgmCMqR.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/apex-DhZFqWV2.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/aurora-x-D-2ljcwZ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gruvbox-dark-soft-CVdnzihN.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/plastic-3e1v2bzS.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/wasm-CG6Dc4jp.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/raku-DXvB9xmW.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/prisma-Vru482bI.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/css-CLj8gQPS.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/poimandres-CS3Unz2-.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ada-bCR0ucgS.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/soy-8wufbnw4.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/bat-CickPsom.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/go-C27-OAKa.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/sdbl-DVxCFoDh.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/rust-B1yitclQ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/index-BFjewbQE.css -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/typespec-CAFt9gP4.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/coq-C7JzOVbR.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/catppuccin-mocha-Ct7hS0mc.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vitesse-black-Bkuqu6BP.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/nextflow-C-mBbutL.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/asciidoc-CSVQ5wI8.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ini-BEwlwnbL.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vala-CsfeWuGM.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pierre-light-tritanopia-B4_gpKOM.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/nushell-D3jzshHO.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/jsonnet-DFQXde-d.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/kanagawa-dragon-BuwD2xS4.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/codeql-DsOJ9woJ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/docker-BcOcwvcX.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/powershell-BmBUJMz7.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/mojo-DJz3ZmWd.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/github-dark-default-Cuk6v7N8.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/github-light-default-D7oLnXFd.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/c3-Dp5svz6Z.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/dream-maker-BtqSS_iP.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/houston-DnULxvSX.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/angular-ts-BrjP3tb8.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/plsql-ChMvpjG-.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/wikitext-BhOHFoWU.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/lua-BaeVxFsk.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/moonbit-CHtswR0a.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/rose-pine-moon-C9pEdX9L.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/github-dark-dimmed-DH5Ifo-i.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/rel-C3B-1QV4.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/material-theme-D5KoaKCx.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/everforest-light-C8M2exoo.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/llvm-BZoOZj88.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/javascript-wDzz0qaB.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/snazzy-light-Bw305WKR.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/bird2-Bx8U0n9b.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/cmake-D1j8_8rp.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/dax-CEL-wOlO.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/synthwave-84-CbfX1IO0.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/sas-DEy46yEz.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/berry-uYugtg8r.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/shaderlab-Dg9Lc6iA.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/jsx-g9-lgVsj.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/log-2UxHyX5q.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/openscad-C4EeE6gA.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ruby-C0TQ7zu5.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/splunk-BtCnVYZw.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/http-jrhK8wxY.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/jsonl-DcaNXYhu.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/asm-D_Q5rh1f.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/nix-CwoSXNpI.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/scss-D5BDwBP9.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/org-DM6o9KBp.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gdresource-TyuKm33G.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/scala-CqE71os6.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/puppet-BMWR74SV.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/index-D_PiEryK.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/diff-D97Zzqfu.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/git-commit-F4YmCXRG.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/dracula-BzJJZx-M.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/bibtex-CHM0blh-.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/night-owl-C39BiMTA.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/erlang-DsQrWhSR.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/postcss-CXtECtnM.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/v-BGw2Nkan.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/kotlin-BdnUsdx6.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vitesse-light-CVO1_9PV.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/one-dark-pro-DVMEJ2y_.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gruvbox-light-medium-DRw_LuNl.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/tsv-B_m7g4N7.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/surrealql-Cjom0U5J.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ayu-dark-DYE7WIF3.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/elixir-CkH2-t6x.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gruvbox-dark-hard-CFHQjOhq.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gn-n2N0HUVH.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/cue-D82EKSYY.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/everforest-dark-BgDCqdQA.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/glimmer-ts-BfAWNZQY.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/solidity-DijEV5ha.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/shellscript-Yzrsuije.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/latex-D5pSuvFb.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/crystal-DGywbUpC.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/tcl-dwOrl1Do.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vyper-CDx5xZoG.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/wgsl-Dx-B1_4e.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/sparql-rVzFXLq3.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/light-plus-B7mTdjB0.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/sql-CRqJ_cUM.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/monokai-BRVnQi9A.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/po-BTJTHyun.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/desktop-BmXAJ9_W.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/jssm-C2t-YnRu.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pierre-dark-protanopia-deuteranopia-Rgc0TwpF.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/json-Cp-IABpG.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/common-lisp-Cg-RD9OK.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/talonscript-CkByrt1z.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/haml-D5jkg6IW.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/csv-fuZLfV_i.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/nextflow-groovy-vE_lwT2v.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gleam-BspZqrRM.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/fsharp-CXgrBDvD.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/tasl-QIJgUcNo.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gherkin-DyxjwDmM.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/solarized-dark-CpvCGNkr.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/index-Cj4j70RM.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/dart-bE4Kk8sk.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/chapel-DTp_pixX.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/git-rebase-r7XF79zn.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/apache-Pmp26Uib.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/coffee-Ch7k5sss.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/index-BC-cBnJu.css -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/hjson-D5-asLiD.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/markdown-Cvjx9yec.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/cypher-COkxafJQ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/xsl-CtQFsRM5.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/sass-Cj5Yp3dK.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/genie-D0YGMca9.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/java-CylS5w8V.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/d-85-TOEBH.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/jsonc-Des-eS-w.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/zig-VOosw3JB.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pierre-dark-vibrant-BWBVywrn.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/index-HGmQtkgb.css -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ara-BRHolxvo.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/wolfram-lXgVvXCa.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/typescript-BPQ3VLAy.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/awk-DMzUqQB5.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pierre-light-480U9XYS.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/php-Csjmro_R.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/imba-DGztddWO.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/jinja-f2NsQr07.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ayu-light-BA47KaF1.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/hack-BWmVpMyf.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/clarity-Dn5IMItf.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/verilog-nZwndyjY.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/objective-c-DXmwc3jG.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/xml-sdJ4AIDG.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/kdl-DV7GczEv.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ron-D8l8udqQ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pierre-light-protanopia-deuteranopia-CaVOBURG.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gruvbox-light-hard-CH1njM8p.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/hy-DFXneXwc.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/kanagawa-wave-DFGoQZhC.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/toml-vGWfd6FD.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/dotenv-Da5cRb03.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/regexp-CDVJQ6XC.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/logo-BtOb2qkB.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/lean-BZvkOJ9d.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ahk-CsyLZFj1.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/material-theme-palenight-Csfq5Kiy.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/smithy-cds9vsN8.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/kanagawa-lotus-C3DzagqV.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/stata-DI20mbqo.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/svelte-Cy7k_4gC.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/objective-cpp-CLxacb5B.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/material-theme-lighter-B0m2ddpp.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/catppuccin-latte-DH-8KZSZ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ahk2-8Zs4aa1G.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vue-vine-BoDAl6tE.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/mdx-Cmh6b_Ma.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/perl-B9cMNwum.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/haxe-CfZj7gIn.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/material-theme-ocean-CyktbL80.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/polar-C0HS_06l.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/just-Cwhn7H3k.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/powerquery-CEu0bR-o.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/min-light-CTRr51gU.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/emacs-lisp-C_m_b--Z.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/bicep-Bmn6On1c.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/cobol-nBiQ_Alo.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/qss-IeuSbFQv.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/one-light-C3Wv6jpd.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/tsx-COt5Ahok.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/actionscript-3-B3316cI-.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/nim-BIad80T-.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ballerina-BFfxhgS-.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/night-owl-light-CMTm3GFP.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/hxml-2-FPmUDs.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/groovy-gcz8RCvz.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/dark-plus-C3mMm8J8.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/narrat-DRg8JJMk.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/fish-BvzEVeQv.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/prolog-CbFg5uaA.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gruvbox-dark-medium-GsRaNv29.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/hcl-BWvSN4gD.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/odin-BBf5iR-q.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/abap-BdImnpbu.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ayu-mirage-32ctXXKs.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ssh-config-_ykCGR6B.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vesper-DRje8inN.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/catppuccin-macchiato-B7yYVSCf.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/fennel-BYunw83y.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/luau-BnpPk5vE.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/wit-5i3qLPDT.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/hlsl-D3lLCCz7.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/dracula-soft-BXkSAIEj.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/codeowners-Bp6g37R7.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/github-dark-DHJKELXO.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/cairo-KRGpt6FW.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/yaml-Buea-lGh.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/bsl-DlhNcFeZ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/apl-CORt7UWP.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/rose-pine-dawn-zx0QlTCp.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/astro-HNnZUWAn.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/kusto-wEQ09or8.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ts-tags-D351s5mN.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/wasm-MzD3tlZU.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/slack-dark-BthQWCQV.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/csharp-DSvCPggb.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/tokyo-night-hegEt444.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/smalltalk-BOQMe2GC.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/index-DR3D3oF2.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vue-html-AaS7Mt5G.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vitesse-dark-D0r3Knsf.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/ocaml-C0hk2d4L.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/glimmer-js-ByusRIyA.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/c-BIGW1oBm.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/razor-BjBPvh-w.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/horizon-BUw7H-hv.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pascal-D93ZcfNL.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/templ-DhtptRzy.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/glsl-DplSGwfg.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pierre-light-vibrant-DdTDNdfJ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/index-DKLp8A7q.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/fortran-free-form-BxgE0vQu.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/wenyan-BV7otONQ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/angular-html-DA-rfuFy.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/json5-C9tS-k6U.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/elm-DbKCFpqz.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/mdc-D1_yUvq7.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pierre-light-soft-CVdyfjmI.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/handlebars-BpdQsYii.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/mermaid-CQcHuHx7.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/mipsasm-CKIfxQSi.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/material-theme-darker-BfHTSMKl.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/nginx-BpAMiNFr.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/marko-DjSrsDqO.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/make-CHLpvVh8.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/haskell-Df6bDoY_.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/shellsession-BADoaaVG.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/cadence-Bv_4Rxtq.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/fluent-C4IJs8-o.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/min-dark-CafNBF8u.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/rst-bs7f0vWN.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/rbs-CpoqiR4B.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/red-hvxz__6c.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pug-DKIMFp6K.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/scheme-C98Dy4si.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/rosmsg-BJDFO7_C.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/horizon-bright-CUuTKBJd.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/laserwave-DUszq2jm.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/qmldir-C8lEn-DE.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/less-B1dDrJ26.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gdshader-DkwncUOv.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vhdl-CeAyd5Ju.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/edge-FbVlp4U3.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/proto-C7zT0LnQ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/qml-3beO22l8.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/applescript-Co6uUVPk.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/blade-2xfisSek.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/typst-BUadGCkm.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/purescript-CklMAg4u.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/erb-DXfck5VN.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pierre-dark-soft-BHGpRqa4.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/github-light-DAi9KRSo.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/julia-5Bft2YPA.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/beancount-k_qm7-4y.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/matlab-D7o27uSR.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/cpp-BMRokrvK.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/gdscript-DqcFQ5yU.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/liquid-C0sCDyMI.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/vue-BqiEGhQt.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/nsis-BlV79W_Q.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/stylus-BEDo0Tqx.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/swift-C2oV4EkX.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/andromeeda-C4gqWexZ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/hurl-irOxFIW8.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/riscv-BM1_JUlF.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/slack-ochin-DqwNpetd.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/github-dark-high-contrast-E3gJ1_iC.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/html-pp8916En.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/web/assets/pierre-dark-tritanopia-Beq2gCRQ.js -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop/web/assets
+copying build/lib/drift_gate/desktop/json_store.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/progress_report.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/progress_history.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/review_dialog.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/package_check_contract.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/progress_service.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/progress_limits.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/progress_scope.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/verification_records.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/app.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/resources.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/progress_documents.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/package_git_check.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/policy_setup.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+copying build/lib/drift_gate/desktop/store_lock.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/desktop
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/utils
+copying build/lib/drift_gate/utils/glob_matcher.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/utils
+copying build/lib/drift_gate/utils/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/utils
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters
+copying build/lib/drift_gate/adapters/analyzer_worker.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/policy_loader.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/evidence_bundle.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/parser_hashes.json -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/execution.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/grammar_resources.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/report_naming.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/analysis_cache.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/evidence_spans.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/trusted_validation.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/source_scope.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters/claude
+copying build/lib/drift_gate/adapters/claude/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/claude
+copying build/lib/drift_gate/adapters/claude/enricher.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/claude
+copying build/lib/drift_gate/adapters/run_coordinator.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/approval_signing.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters/mcp
+copying build/lib/drift_gate/adapters/mcp/server.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/mcp
+copying build/lib/drift_gate/adapters/mcp/tools.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/mcp
+copying build/lib/drift_gate/adapters/mcp/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/mcp
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters/docs
+copying build/lib/drift_gate/adapters/docs/checklist.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/docs
+copying build/lib/drift_gate/adapters/docs/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/docs
+copying build/lib/drift_gate/adapters/docs/content.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/docs
+copying build/lib/drift_gate/adapters/docs/structured.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/docs
+copying build/lib/drift_gate/adapters/docs/readme_contract.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/docs
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters/cli
+copying build/lib/drift_gate/adapters/cli/runner.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/cli
+copying build/lib/drift_gate/adapters/cli/presets.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/cli
+copying build/lib/drift_gate/adapters/cli/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/cli
+copying build/lib/drift_gate/adapters/cli/parser.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/cli
+copying build/lib/drift_gate/adapters/cli/holdout_command.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/cli
+copying build/lib/drift_gate/adapters/cli/org_command.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/cli
+copying build/lib/drift_gate/adapters/cli/output.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/cli
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters/github_action
+copying build/lib/drift_gate/adapters/github_action/runner.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/github_action
+copying build/lib/drift_gate/adapters/github_action/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/github_action
+copying build/lib/drift_gate/adapters/holdout_instructions.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/inspection.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/holdout.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/org_service.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters/github
+copying build/lib/drift_gate/adapters/github/commenter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/github
+copying build/lib/drift_gate/adapters/github/approvals.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/github
+copying build/lib/drift_gate/adapters/github/client.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/github
+copying build/lib/drift_gate/adapters/github/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/github
+copying build/lib/drift_gate/adapters/github/publication.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/github
+copying build/lib/drift_gate/adapters/bundle_codec.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters/history
+copying build/lib/drift_gate/adapters/history/store.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/history
+copying build/lib/drift_gate/adapters/history/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/history
+copying build/lib/drift_gate/adapters/scope_analysis.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/engine_artifact.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/express_routes.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/typescript_adapter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/tree_sitter_typescript_adapter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/interface.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/analyzer.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/python_adapter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/tree_sitter_support.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/go_adapter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/ruby_adapter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/java_kotlin_adapter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+copying build/lib/drift_gate/adapters/ast/tree_sitter_python_adapter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/ast
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters/eval
+copying build/lib/drift_gate/adapters/eval/runner.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/eval
+copying build/lib/drift_gate/adapters/eval/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/eval
+copying build/lib/drift_gate/adapters/migration.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+copying build/lib/drift_gate/adapters/run_store.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/adapters/git
+copying build/lib/drift_gate/adapters/git/immutable.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/git
+copying build/lib/drift_gate/adapters/git/client.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/git
+copying build/lib/drift_gate/adapters/git/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters/git
+copying build/lib/drift_gate/adapters/snapshot.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/adapters
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate/reporters
+copying build/lib/drift_gate/reporters/json_reporter.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/reporters
+copying build/lib/drift_gate/reporters/html.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/reporters
+copying build/lib/drift_gate/reporters/__init__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/reporters
+copying build/lib/drift_gate/reporters/markdown.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate/reporters
+copying build/lib/drift_gate/__main__.py -> build/bdist.macosx-26.0-arm64/wheel/./drift_gate
+running install_egg_info
+Copying drift_gate.egg-info to build/bdist.macosx-26.0-arm64/wheel/./drift_gate-1.0.0-py3.11.egg-info
+running install_scripts
+creating build/bdist.macosx-26.0-arm64/wheel/drift_gate-1.0.0.dist-info/WHEEL
+creating '/private/tmp/driftgate-focused-wheel/.tmp-cv7_lmtd/drift_gate-1.0.0-py3-none-any.whl' and adding 'build/bdist.macosx-26.0-arm64/wheel' to it
+adding 'drift_gate/__init__.py'
+adding 'drift_gate/__main__.py'
+adding 'drift_gate/adapters/__init__.py'
+adding 'drift_gate/adapters/analysis_cache.py'
+adding 'drift_gate/adapters/analyzer_worker.py'
+adding 'drift_gate/adapters/approval_signing.py'
+adding 'drift_gate/adapters/bundle_codec.py'
+adding 'drift_gate/adapters/engine_artifact.py'
+adding 'drift_gate/adapters/evidence_bundle.py'
+adding 'drift_gate/adapters/evidence_spans.py'
+adding 'drift_gate/adapters/execution.py'
+adding 'drift_gate/adapters/grammar_resources.py'
+adding 'drift_gate/adapters/holdout.py'
+adding 'drift_gate/adapters/holdout_instructions.py'
+adding 'drift_gate/adapters/inspection.py'
+adding 'drift_gate/adapters/migration.py'
+adding 'drift_gate/adapters/org_service.py'
+adding 'drift_gate/adapters/parser_hashes.json'
+adding 'drift_gate/adapters/policy_loader.py'
+adding 'drift_gate/adapters/report_naming.py'
+adding 'drift_gate/adapters/run_coordinator.py'
+adding 'drift_gate/adapters/run_store.py'
+adding 'drift_gate/adapters/scope_analysis.py'
+adding 'drift_gate/adapters/snapshot.py'
+adding 'drift_gate/adapters/source_scope.py'
+adding 'drift_gate/adapters/trusted_validation.py'
+adding 'drift_gate/adapters/ast/__init__.py'
+adding 'drift_gate/adapters/ast/analyzer.py'
+adding 'drift_gate/adapters/ast/express_routes.py'
+adding 'drift_gate/adapters/ast/go_adapter.py'
+adding 'drift_gate/adapters/ast/interface.py'
+adding 'drift_gate/adapters/ast/java_kotlin_adapter.py'
+adding 'drift_gate/adapters/ast/python_adapter.py'
+adding 'drift_gate/adapters/ast/ruby_adapter.py'
+adding 'drift_gate/adapters/ast/tree_sitter_python_adapter.py'
+adding 'drift_gate/adapters/ast/tree_sitter_support.py'
+adding 'drift_gate/adapters/ast/tree_sitter_typescript_adapter.py'
+adding 'drift_gate/adapters/ast/typescript_adapter.py'
+adding 'drift_gate/adapters/claude/__init__.py'
+adding 'drift_gate/adapters/claude/enricher.py'
+adding 'drift_gate/adapters/cli/__init__.py'
+adding 'drift_gate/adapters/cli/holdout_command.py'
+adding 'drift_gate/adapters/cli/org_command.py'
+adding 'drift_gate/adapters/cli/output.py'
+adding 'drift_gate/adapters/cli/parser.py'
+adding 'drift_gate/adapters/cli/presets.py'
+adding 'drift_gate/adapters/cli/runner.py'
+adding 'drift_gate/adapters/docs/__init__.py'
+adding 'drift_gate/adapters/docs/checklist.py'
+adding 'drift_gate/adapters/docs/content.py'
+adding 'drift_gate/adapters/docs/readme_contract.py'
+adding 'drift_gate/adapters/docs/structured.py'
+adding 'drift_gate/adapters/eval/__init__.py'
+adding 'drift_gate/adapters/eval/runner.py'
+adding 'drift_gate/adapters/git/__init__.py'
+adding 'drift_gate/adapters/git/client.py'
+adding 'drift_gate/adapters/git/immutable.py'
+adding 'drift_gate/adapters/github/__init__.py'
+adding 'drift_gate/adapters/github/approvals.py'
+adding 'drift_gate/adapters/github/client.py'
+adding 'drift_gate/adapters/github/commenter.py'
+adding 'drift_gate/adapters/github/publication.py'
+adding 'drift_gate/adapters/github_action/__init__.py'
+adding 'drift_gate/adapters/github_action/runner.py'
+adding 'drift_gate/adapters/history/__init__.py'
+adding 'drift_gate/adapters/history/store.py'
+adding 'drift_gate/adapters/mcp/__init__.py'
+adding 'drift_gate/adapters/mcp/server.py'
+adding 'drift_gate/adapters/mcp/tools.py'
+adding 'drift_gate/core/__init__.py'
+adding 'drift_gate/core/budget.py'
+adding 'drift_gate/core/change_paths.py'
+adding 'drift_gate/core/engine.py'
+adding 'drift_gate/core/evaluation_stats.py'
+adding 'drift_gate/core/patch_lines.py'
+adding 'drift_gate/core/python_syntax.py'
+adding 'drift_gate/core/route_syntax.py'
+adding 'drift_gate/core/classification/__init__.py'
+adding 'drift_gate/core/classification/classifier.py'
+adding 'drift_gate/core/classification/intensity.py'
+adding 'drift_gate/core/classification/triggers.py'
+adding 'drift_gate/core/compat/__init__.py'
+adding 'drift_gate/core/compat/legacy_result.py'
+adding 'drift_gate/core/contracts/__init__.py'
+adding 'drift_gate/core/contracts/certificates.py'
+adding 'drift_gate/core/contracts/delta.py'
+adding 'drift_gate/core/contracts/dependency.py'
+adding 'drift_gate/core/contracts/discovery.py'
+adding 'drift_gate/core/contracts/input_identity.py'
+adding 'drift_gate/core/contracts/planner.py'
+adding 'drift_gate/core/contracts/profiles.py'
+adding 'drift_gate/core/contracts/services.py'
+adding 'drift_gate/core/evaluation/__init__.py'
+adding 'drift_gate/core/evaluation/analysis_session.py'
+adding 'drift_gate/core/evaluation/api_schema.py'
+adding 'drift_gate/core/evaluation/compatibility.py'
+adding 'drift_gate/core/evaluation/content_result.py'
+adding 'drift_gate/core/evaluation/contract_proof.py'
+adding 'drift_gate/core/evaluation/contracts.py'
+adding 'drift_gate/core/evaluation/environment.py'
+adding 'drift_gate/core/evaluation/evaluator.py'
+adding 'drift_gate/core/evaluation/evidence_spans.py'
+adding 'drift_gate/core/evaluation/json_values.py'
+adding 'drift_gate/core/evaluation/membership.py'
+adding 'drift_gate/core/evaluation/obligations.py'
+adding 'drift_gate/core/evaluation/openapi_document.py'
+adding 'drift_gate/core/evaluation/proof_gate.py'
+adding 'drift_gate/core/evaluation/propositions.py'
+adding 'drift_gate/core/evaluation/result_guard.py'
+adding 'drift_gate/core/evaluation/routes.py'
+adding 'drift_gate/core/evaluation/static_routers.py'
+adding 'drift_gate/core/execution/__init__.py'
+adding 'drift_gate/core/execution/latest.py'
+adding 'drift_gate/core/execution/lifecycle.py'
+adding 'drift_gate/core/execution/publication.py'
+adding 'drift_gate/core/gating/__init__.py'
+adding 'drift_gate/core/gating/enforcement.py'
+adding 'drift_gate/core/gating/gate.py'
+adding 'drift_gate/core/gating/temporal.py'
+adding 'drift_gate/core/models/__init__.py'
+adding 'drift_gate/core/models/changed_file.py'
+adding 'drift_gate/core/models/evaluation_context.py'
+adding 'drift_gate/core/models/facts.py'
+adding 'drift_gate/core/models/git_input.py'
+adding 'drift_gate/core/models/input_manifest.py'
+adding 'drift_gate/core/models/policy.py'
+adding 'drift_gate/core/models/proof.py'
+adding 'drift_gate/core/models/result.py'
+adding 'drift_gate/core/org/__init__.py'
+adding 'drift_gate/core/org/policy.py'
+adding 'drift_gate/core/policy/__init__.py'
+adding 'drift_gate/core/policy/guard.py'
+adding 'drift_gate/core/policy/loader.py'
+adding 'drift_gate/core/policy/schema.py'
+adding 'drift_gate/core/policy/validator.py'
+adding 'drift_gate/core/reasoning/__init__.py'
+adding 'drift_gate/core/reasoning/checklist.py'
+adding 'drift_gate/core/review/__init__.py'
+adding 'drift_gate/core/review/heuristics.py'
+adding 'drift_gate/core/self_audit/__init__.py'
+adding 'drift_gate/core/self_audit/matcher.py'
+adding 'drift_gate/core/trust/__init__.py'
+adding 'drift_gate/core/trust/approvals.py'
+adding 'drift_gate/core/trust/validation.py'
+adding 'drift_gate/desktop/__init__.py'
+adding 'drift_gate/desktop/app.py'
+adding 'drift_gate/desktop/cli_entry.py'
+adding 'drift_gate/desktop/doc_links.py'
+adding 'drift_gate/desktop/json_store.py'
+adding 'drift_gate/desktop/package_check.py'
+adding 'drift_gate/desktop/package_check_contract.py'
+adding 'drift_gate/desktop/package_git_check.py'
+adding 'drift_gate/desktop/policy_setup.py'
+adding 'drift_gate/desktop/progress_context.py'
+adding 'drift_gate/desktop/progress_documents.py'
+adding 'drift_gate/desktop/progress_drafts.py'
+adding 'drift_gate/desktop/progress_history.py'
+adding 'drift_gate/desktop/progress_limits.py'
+adding 'drift_gate/desktop/progress_report.py'
+adding 'drift_gate/desktop/progress_scope.py'
+adding 'drift_gate/desktop/progress_service.py'
+adding 'drift_gate/desktop/resources.py'
+adding 'drift_gate/desktop/review_dialog.py'
+adding 'drift_gate/desktop/service.py'
+adding 'drift_gate/desktop/store_lock.py'
+adding 'drift_gate/desktop/subscription_review.py'
+adding 'drift_gate/desktop/verification_records.py'
+adding 'drift_gate/desktop/web_app.py'
+adding 'drift_gate/desktop/web/TOOL-UI-LICENSE.txt'
+adding 'drift_gate/desktop/web/index.html'
+adding 'drift_gate/desktop/web/assets/abap-BdImnpbu.js'
+adding 'drift_gate/desktop/web/assets/actionscript-3-B3316cI-.js'
+adding 'drift_gate/desktop/web/assets/ada-bCR0ucgS.js'
+adding 'drift_gate/desktop/web/assets/ahk-CsyLZFj1.js'
+adding 'drift_gate/desktop/web/assets/ahk2-8Zs4aa1G.js'
+adding 'drift_gate/desktop/web/assets/andromeeda-C4gqWexZ.js'
+adding 'drift_gate/desktop/web/assets/angular-html-DA-rfuFy.js'
+adding 'drift_gate/desktop/web/assets/angular-ts-BrjP3tb8.js'
+adding 'drift_gate/desktop/web/assets/apache-Pmp26Uib.js'
+adding 'drift_gate/desktop/web/assets/apex-DhZFqWV2.js'
+adding 'drift_gate/desktop/web/assets/apl-CORt7UWP.js'
+adding 'drift_gate/desktop/web/assets/applescript-Co6uUVPk.js'
+adding 'drift_gate/desktop/web/assets/ara-BRHolxvo.js'
+adding 'drift_gate/desktop/web/assets/asciidoc-CSVQ5wI8.js'
+adding 'drift_gate/desktop/web/assets/asm-D_Q5rh1f.js'
+adding 'drift_gate/desktop/web/assets/astro-HNnZUWAn.js'
+adding 'drift_gate/desktop/web/assets/aurora-x-D-2ljcwZ.js'
+adding 'drift_gate/desktop/web/assets/awk-DMzUqQB5.js'
+adding 'drift_gate/desktop/web/assets/ayu-dark-DYE7WIF3.js'
+adding 'drift_gate/desktop/web/assets/ayu-light-BA47KaF1.js'
+adding 'drift_gate/desktop/web/assets/ayu-mirage-32ctXXKs.js'
+adding 'drift_gate/desktop/web/assets/ballerina-BFfxhgS-.js'
+adding 'drift_gate/desktop/web/assets/bat-CickPsom.js'
+adding 'drift_gate/desktop/web/assets/beancount-k_qm7-4y.js'
+adding 'drift_gate/desktop/web/assets/berry-uYugtg8r.js'
+adding 'drift_gate/desktop/web/assets/bibtex-CHM0blh-.js'
+adding 'drift_gate/desktop/web/assets/bicep-Bmn6On1c.js'
+adding 'drift_gate/desktop/web/assets/bird2-Bx8U0n9b.js'
+adding 'drift_gate/desktop/web/assets/blade-2xfisSek.js'
+adding 'drift_gate/desktop/web/assets/bsl-DlhNcFeZ.js'
+adding 'drift_gate/desktop/web/assets/c-BIGW1oBm.js'
+adding 'drift_gate/desktop/web/assets/c3-Dp5svz6Z.js'
+adding 'drift_gate/desktop/web/assets/cadence-Bv_4Rxtq.js'
+adding 'drift_gate/desktop/web/assets/cairo-KRGpt6FW.js'
+adding 'drift_gate/desktop/web/assets/catppuccin-frappe-CZL1YF0i.js'
+adding 'drift_gate/desktop/web/assets/catppuccin-latte-DH-8KZSZ.js'
+adding 'drift_gate/desktop/web/assets/catppuccin-macchiato-B7yYVSCf.js'
+adding 'drift_gate/desktop/web/assets/catppuccin-mocha-Ct7hS0mc.js'
+adding 'drift_gate/desktop/web/assets/chapel-DTp_pixX.js'
+adding 'drift_gate/desktop/web/assets/clarity-Dn5IMItf.js'
+adding 'drift_gate/desktop/web/assets/clojure-P80f7IUj.js'
+adding 'drift_gate/desktop/web/assets/cmake-D1j8_8rp.js'
+adding 'drift_gate/desktop/web/assets/cobol-nBiQ_Alo.js'
+adding 'drift_gate/desktop/web/assets/codeowners-Bp6g37R7.js'
+adding 'drift_gate/desktop/web/assets/codeql-DsOJ9woJ.js'
+adding 'drift_gate/desktop/web/assets/coffee-Ch7k5sss.js'
+adding 'drift_gate/desktop/web/assets/common-lisp-Cg-RD9OK.js'
+adding 'drift_gate/desktop/web/assets/coq-C7JzOVbR.js'
+adding 'drift_gate/desktop/web/assets/cpp-BMRokrvK.js'
+adding 'drift_gate/desktop/web/assets/crystal-DGywbUpC.js'
+adding 'drift_gate/desktop/web/assets/csharp-DSvCPggb.js'
+adding 'drift_gate/desktop/web/assets/css-CLj8gQPS.js'
+adding 'drift_gate/desktop/web/assets/csv-fuZLfV_i.js'
+adding 'drift_gate/desktop/web/assets/cue-D82EKSYY.js'
+adding 'drift_gate/desktop/web/assets/cypher-COkxafJQ.js'
+adding 'drift_gate/desktop/web/assets/d-85-TOEBH.js'
+adding 'drift_gate/desktop/web/assets/dark-plus-C3mMm8J8.js'
+adding 'drift_gate/desktop/web/assets/dart-bE4Kk8sk.js'
+adding 'drift_gate/desktop/web/assets/dax-CEL-wOlO.js'
+adding 'drift_gate/desktop/web/assets/desktop-BmXAJ9_W.js'
+adding 'drift_gate/desktop/web/assets/diff-D97Zzqfu.js'
+adding 'drift_gate/desktop/web/assets/docker-BcOcwvcX.js'
+adding 'drift_gate/desktop/web/assets/dotenv-Da5cRb03.js'
+adding 'drift_gate/desktop/web/assets/dracula-BzJJZx-M.js'
+adding 'drift_gate/desktop/web/assets/dracula-soft-BXkSAIEj.js'
+adding 'drift_gate/desktop/web/assets/dream-maker-BtqSS_iP.js'
+adding 'drift_gate/desktop/web/assets/edge-FbVlp4U3.js'
+adding 'drift_gate/desktop/web/assets/elixir-CkH2-t6x.js'
+adding 'drift_gate/desktop/web/assets/elm-DbKCFpqz.js'
+adding 'drift_gate/desktop/web/assets/emacs-lisp-C_m_b--Z.js'
+adding 'drift_gate/desktop/web/assets/erb-DXfck5VN.js'
+adding 'drift_gate/desktop/web/assets/erlang-DsQrWhSR.js'
+adding 'drift_gate/desktop/web/assets/everforest-dark-BgDCqdQA.js'
+adding 'drift_gate/desktop/web/assets/everforest-light-C8M2exoo.js'
+adding 'drift_gate/desktop/web/assets/fennel-BYunw83y.js'
+adding 'drift_gate/desktop/web/assets/fish-BvzEVeQv.js'
+adding 'drift_gate/desktop/web/assets/fluent-C4IJs8-o.js'
+adding 'drift_gate/desktop/web/assets/fortran-fixed-form-CkoXwp7k.js'
+adding 'drift_gate/desktop/web/assets/fortran-free-form-BxgE0vQu.js'
+adding 'drift_gate/desktop/web/assets/fsharp-CXgrBDvD.js'
+adding 'drift_gate/desktop/web/assets/gdresource-TyuKm33G.js'
+adding 'drift_gate/desktop/web/assets/gdscript-DqcFQ5yU.js'
+adding 'drift_gate/desktop/web/assets/gdshader-DkwncUOv.js'
+adding 'drift_gate/desktop/web/assets/genie-D0YGMca9.js'
+adding 'drift_gate/desktop/web/assets/gherkin-DyxjwDmM.js'
+adding 'drift_gate/desktop/web/assets/git-commit-F4YmCXRG.js'
+adding 'drift_gate/desktop/web/assets/git-rebase-r7XF79zn.js'
+adding 'drift_gate/desktop/web/assets/github-dark-DHJKELXO.js'
+adding 'drift_gate/desktop/web/assets/github-dark-default-Cuk6v7N8.js'
+adding 'drift_gate/desktop/web/assets/github-dark-dimmed-DH5Ifo-i.js'
+adding 'drift_gate/desktop/web/assets/github-dark-high-contrast-E3gJ1_iC.js'
+adding 'drift_gate/desktop/web/assets/github-light-DAi9KRSo.js'
+adding 'drift_gate/desktop/web/assets/github-light-default-D7oLnXFd.js'
+adding 'drift_gate/desktop/web/assets/github-light-high-contrast-BfjtVDDH.js'
+adding 'drift_gate/desktop/web/assets/gleam-BspZqrRM.js'
+adding 'drift_gate/desktop/web/assets/glimmer-js-ByusRIyA.js'
+adding 'drift_gate/desktop/web/assets/glimmer-ts-BfAWNZQY.js'
+adding 'drift_gate/desktop/web/assets/glsl-DplSGwfg.js'
+adding 'drift_gate/desktop/web/assets/gn-n2N0HUVH.js'
+adding 'drift_gate/desktop/web/assets/gnuplot-DdkO51Og.js'
+adding 'drift_gate/desktop/web/assets/go-C27-OAKa.js'
+adding 'drift_gate/desktop/web/assets/graphql-ChdNCCLP.js'
+adding 'drift_gate/desktop/web/assets/groovy-gcz8RCvz.js'
+adding 'drift_gate/desktop/web/assets/gruvbox-dark-hard-CFHQjOhq.js'
+adding 'drift_gate/desktop/web/assets/gruvbox-dark-medium-GsRaNv29.js'
+adding 'drift_gate/desktop/web/assets/gruvbox-dark-soft-CVdnzihN.js'
+adding 'drift_gate/desktop/web/assets/gruvbox-light-hard-CH1njM8p.js'
+adding 'drift_gate/desktop/web/assets/gruvbox-light-medium-DRw_LuNl.js'
+adding 'drift_gate/desktop/web/assets/gruvbox-light-soft-hJgmCMqR.js'
+adding 'drift_gate/desktop/web/assets/hack-BWmVpMyf.js'
+adding 'drift_gate/desktop/web/assets/haml-D5jkg6IW.js'
+adding 'drift_gate/desktop/web/assets/handlebars-BpdQsYii.js'
+adding 'drift_gate/desktop/web/assets/haskell-Df6bDoY_.js'
+adding 'drift_gate/desktop/web/assets/haxe-CfZj7gIn.js'
+adding 'drift_gate/desktop/web/assets/hcl-BWvSN4gD.js'
+adding 'drift_gate/desktop/web/assets/hjson-D5-asLiD.js'
+adding 'drift_gate/desktop/web/assets/hlsl-D3lLCCz7.js'
+adding 'drift_gate/desktop/web/assets/horizon-BUw7H-hv.js'
+adding 'drift_gate/desktop/web/assets/horizon-bright-CUuTKBJd.js'
+adding 'drift_gate/desktop/web/assets/houston-DnULxvSX.js'
+adding 'drift_gate/desktop/web/assets/html-derivative-DlHx6ybY.js'
+adding 'drift_gate/desktop/web/assets/html-pp8916En.js'
+adding 'drift_gate/desktop/web/assets/http-jrhK8wxY.js'
+adding 'drift_gate/desktop/web/assets/hurl-irOxFIW8.js'
+adding 'drift_gate/desktop/web/assets/hxml-2-FPmUDs.js'
+adding 'drift_gate/desktop/web/assets/hy-DFXneXwc.js'
+adding 'drift_gate/desktop/web/assets/imba-DGztddWO.js'
+adding 'drift_gate/desktop/web/assets/index-BC-cBnJu.css'
+adding 'drift_gate/desktop/web/assets/index-BFjewbQE.css'
+adding 'drift_gate/desktop/web/assets/index-Cj4j70RM.js'
+adding 'drift_gate/desktop/web/assets/index-DKLp8A7q.js'
+adding 'drift_gate/desktop/web/assets/index-DR3D3oF2.js'
+adding 'drift_gate/desktop/web/assets/index-D_PiEryK.js'
+adding 'drift_gate/desktop/web/assets/index-HGmQtkgb.css'
+adding 'drift_gate/desktop/web/assets/ini-BEwlwnbL.js'
+adding 'drift_gate/desktop/web/assets/java-CylS5w8V.js'
+adding 'drift_gate/desktop/web/assets/javascript-wDzz0qaB.js'
+adding 'drift_gate/desktop/web/assets/jinja-f2NsQr07.js'
+adding 'drift_gate/desktop/web/assets/jison-wvAkD_A8.js'
+adding 'drift_gate/desktop/web/assets/json-Cp-IABpG.js'
+adding 'drift_gate/desktop/web/assets/json5-C9tS-k6U.js'
+adding 'drift_gate/desktop/web/assets/jsonc-Des-eS-w.js'
+adding 'drift_gate/desktop/web/assets/jsonl-DcaNXYhu.js'
+adding 'drift_gate/desktop/web/assets/jsonnet-DFQXde-d.js'
+adding 'drift_gate/desktop/web/assets/jssm-C2t-YnRu.js'
+adding 'drift_gate/desktop/web/assets/jsx-g9-lgVsj.js'
+adding 'drift_gate/desktop/web/assets/julia-5Bft2YPA.js'
+adding 'drift_gate/desktop/web/assets/just-Cwhn7H3k.js'
+adding 'drift_gate/desktop/web/assets/kanagawa-dragon-BuwD2xS4.js'
+adding 'drift_gate/desktop/web/assets/kanagawa-lotus-C3DzagqV.js'
+adding 'drift_gate/desktop/web/assets/kanagawa-wave-DFGoQZhC.js'
+adding 'drift_gate/desktop/web/assets/kdl-DV7GczEv.js'
+adding 'drift_gate/desktop/web/assets/kotlin-BdnUsdx6.js'
+adding 'drift_gate/desktop/web/assets/kusto-wEQ09or8.js'
+adding 'drift_gate/desktop/web/assets/laserwave-DUszq2jm.js'
+adding 'drift_gate/desktop/web/assets/latex-D5pSuvFb.js'
+adding 'drift_gate/desktop/web/assets/lean-BZvkOJ9d.js'
+adding 'drift_gate/desktop/web/assets/less-B1dDrJ26.js'
+adding 'drift_gate/desktop/web/assets/light-plus-B7mTdjB0.js'
+adding 'drift_gate/desktop/web/assets/liquid-C0sCDyMI.js'
+adding 'drift_gate/desktop/web/assets/llvm-BZoOZj88.js'
+adding 'drift_gate/desktop/web/assets/log-2UxHyX5q.js'
+adding 'drift_gate/desktop/web/assets/logo-BtOb2qkB.js'
+adding 'drift_gate/desktop/web/assets/lua-BaeVxFsk.js'
+adding 'drift_gate/desktop/web/assets/luau-BnpPk5vE.js'
+adding 'drift_gate/desktop/web/assets/make-CHLpvVh8.js'
+adding 'drift_gate/desktop/web/assets/markdown-Cvjx9yec.js'
+adding 'drift_gate/desktop/web/assets/marko-DjSrsDqO.js'
+adding 'drift_gate/desktop/web/assets/material-theme-D5KoaKCx.js'
+adding 'drift_gate/desktop/web/assets/material-theme-darker-BfHTSMKl.js'
+adding 'drift_gate/desktop/web/assets/material-theme-lighter-B0m2ddpp.js'
+adding 'drift_gate/desktop/web/assets/material-theme-ocean-CyktbL80.js'
+adding 'drift_gate/desktop/web/assets/material-theme-palenight-Csfq5Kiy.js'
+adding 'drift_gate/desktop/web/assets/matlab-D7o27uSR.js'
+adding 'drift_gate/desktop/web/assets/mdc-D1_yUvq7.js'
+adding 'drift_gate/desktop/web/assets/mdx-Cmh6b_Ma.js'
+adding 'drift_gate/desktop/web/assets/mermaid-CQcHuHx7.js'
+adding 'drift_gate/desktop/web/assets/min-dark-CafNBF8u.js'
+adding 'drift_gate/desktop/web/assets/min-light-CTRr51gU.js'
+adding 'drift_gate/desktop/web/assets/mipsasm-CKIfxQSi.js'
+adding 'drift_gate/desktop/web/assets/mojo-DJz3ZmWd.js'
+adding 'drift_gate/desktop/web/assets/monokai-BRVnQi9A.js'
+adding 'drift_gate/desktop/web/assets/moonbit-CHtswR0a.js'
+adding 'drift_gate/desktop/web/assets/move-el3G9tDJ.js'
+adding 'drift_gate/desktop/web/assets/narrat-DRg8JJMk.js'
+adding 'drift_gate/desktop/web/assets/nextflow-C-mBbutL.js'
+adding 'drift_gate/desktop/web/assets/nextflow-groovy-vE_lwT2v.js'
+adding 'drift_gate/desktop/web/assets/nginx-BpAMiNFr.js'
+adding 'drift_gate/desktop/web/assets/night-owl-C39BiMTA.js'
+adding 'drift_gate/desktop/web/assets/night-owl-light-CMTm3GFP.js'
+adding 'drift_gate/desktop/web/assets/nim-BIad80T-.js'
+adding 'drift_gate/desktop/web/assets/nix-CwoSXNpI.js'
+adding 'drift_gate/desktop/web/assets/nord-Ddv68eIx.js'
+adding 'drift_gate/desktop/web/assets/nsis-BlV79W_Q.js'
+adding 'drift_gate/desktop/web/assets/nushell-D3jzshHO.js'
+adding 'drift_gate/desktop/web/assets/objective-c-DXmwc3jG.js'
+adding 'drift_gate/desktop/web/assets/objective-cpp-CLxacb5B.js'
+adding 'drift_gate/desktop/web/assets/ocaml-C0hk2d4L.js'
+adding 'drift_gate/desktop/web/assets/odin-BBf5iR-q.js'
+adding 'drift_gate/desktop/web/assets/one-dark-pro-DVMEJ2y_.js'
+adding 'drift_gate/desktop/web/assets/one-light-C3Wv6jpd.js'
+adding 'drift_gate/desktop/web/assets/openscad-C4EeE6gA.js'
+adding 'drift_gate/desktop/web/assets/org-DM6o9KBp.js'
+adding 'drift_gate/desktop/web/assets/pascal-D93ZcfNL.js'
+adding 'drift_gate/desktop/web/assets/perl-B9cMNwum.js'
+adding 'drift_gate/desktop/web/assets/php-Csjmro_R.js'
+adding 'drift_gate/desktop/web/assets/pierre-dark-CyvmCCZW.js'
+adding 'drift_gate/desktop/web/assets/pierre-dark-protanopia-deuteranopia-Rgc0TwpF.js'
+adding 'drift_gate/desktop/web/assets/pierre-dark-soft-BHGpRqa4.js'
+adding 'drift_gate/desktop/web/assets/pierre-dark-tritanopia-Beq2gCRQ.js'
+adding 'drift_gate/desktop/web/assets/pierre-dark-vibrant-BWBVywrn.js'
+adding 'drift_gate/desktop/web/assets/pierre-light-480U9XYS.js'
+adding 'drift_gate/desktop/web/assets/pierre-light-protanopia-deuteranopia-CaVOBURG.js'
+adding 'drift_gate/desktop/web/assets/pierre-light-soft-CVdyfjmI.js'
+adding 'drift_gate/desktop/web/assets/pierre-light-tritanopia-B4_gpKOM.js'
+adding 'drift_gate/desktop/web/assets/pierre-light-vibrant-DdTDNdfJ.js'
+adding 'drift_gate/desktop/web/assets/pkl-u5AG7uiY.js'
+adding 'drift_gate/desktop/web/assets/plastic-3e1v2bzS.js'
+adding 'drift_gate/desktop/web/assets/plsql-ChMvpjG-.js'
+adding 'drift_gate/desktop/web/assets/po-BTJTHyun.js'
+adding 'drift_gate/desktop/web/assets/poimandres-CS3Unz2-.js'
+adding 'drift_gate/desktop/web/assets/polar-C0HS_06l.js'
+adding 'drift_gate/desktop/web/assets/postcss-CXtECtnM.js'
+adding 'drift_gate/desktop/web/assets/powerquery-CEu0bR-o.js'
+adding 'drift_gate/desktop/web/assets/powershell-BmBUJMz7.js'
+adding 'drift_gate/desktop/web/assets/prisma-Vru482bI.js'
+adding 'drift_gate/desktop/web/assets/prolog-CbFg5uaA.js'
+adding 'drift_gate/desktop/web/assets/proto-C7zT0LnQ.js'
+adding 'drift_gate/desktop/web/assets/pug-DKIMFp6K.js'
+adding 'drift_gate/desktop/web/assets/puppet-BMWR74SV.js'
+adding 'drift_gate/desktop/web/assets/purescript-CklMAg4u.js'
+adding 'drift_gate/desktop/web/assets/python-B6aJPvgy.js'
+adding 'drift_gate/desktop/web/assets/qml-3beO22l8.js'
+adding 'drift_gate/desktop/web/assets/qmldir-C8lEn-DE.js'
+adding 'drift_gate/desktop/web/assets/qss-IeuSbFQv.js'
+adding 'drift_gate/desktop/web/assets/r-Cf5RLm7j.js'
+adding 'drift_gate/desktop/web/assets/racket-BqYA7rlc.js'
+adding 'drift_gate/desktop/web/assets/raku-DXvB9xmW.js'
+adding 'drift_gate/desktop/web/assets/razor-BjBPvh-w.js'
+adding 'drift_gate/desktop/web/assets/rbs-CpoqiR4B.js'
+adding 'drift_gate/desktop/web/assets/red-hvxz__6c.js'
+adding 'drift_gate/desktop/web/assets/reg-C-SQnVFl.js'
+adding 'drift_gate/desktop/web/assets/regexp-CDVJQ6XC.js'
+adding 'drift_gate/desktop/web/assets/rel-C3B-1QV4.js'
+adding 'drift_gate/desktop/web/assets/riscv-BM1_JUlF.js'
+adding 'drift_gate/desktop/web/assets/ron-D8l8udqQ.js'
+adding 'drift_gate/desktop/web/assets/rose-pine-5qJOZa0Y.js'
+adding 'drift_gate/desktop/web/assets/rose-pine-dawn-zx0QlTCp.js'
+adding 'drift_gate/desktop/web/assets/rose-pine-moon-C9pEdX9L.js'
+adding 'drift_gate/desktop/web/assets/rosmsg-BJDFO7_C.js'
+adding 'drift_gate/desktop/web/assets/rst-bs7f0vWN.js'
+adding 'drift_gate/desktop/web/assets/ruby-C0TQ7zu5.js'
+adding 'drift_gate/desktop/web/assets/rust-B1yitclQ.js'
+adding 'drift_gate/desktop/web/assets/sas-DEy46yEz.js'
+adding 'drift_gate/desktop/web/assets/sass-Cj5Yp3dK.js'
+adding 'drift_gate/desktop/web/assets/scala-CqE71os6.js'
+adding 'drift_gate/desktop/web/assets/scheme-C98Dy4si.js'
+adding 'drift_gate/desktop/web/assets/scss-D5BDwBP9.js'
+adding 'drift_gate/desktop/web/assets/sdbl-DVxCFoDh.js'
+adding 'drift_gate/desktop/web/assets/shaderlab-Dg9Lc6iA.js'
+adding 'drift_gate/desktop/web/assets/shellscript-Yzrsuije.js'
+adding 'drift_gate/desktop/web/assets/shellsession-BADoaaVG.js'
+adding 'drift_gate/desktop/web/assets/slack-dark-BthQWCQV.js'
+adding 'drift_gate/desktop/web/assets/slack-ochin-DqwNpetd.js'
+adding 'drift_gate/desktop/web/assets/smalltalk-BOQMe2GC.js'
+adding 'drift_gate/desktop/web/assets/smithy-cds9vsN8.js'
+adding 'drift_gate/desktop/web/assets/snazzy-light-Bw305WKR.js'
+adding 'drift_gate/desktop/web/assets/solarized-dark-CpvCGNkr.js'
+adding 'drift_gate/desktop/web/assets/solarized-light-Dlz6yCKv.js'
+adding 'drift_gate/desktop/web/assets/solidity-DijEV5ha.js'
+adding 'drift_gate/desktop/web/assets/soy-8wufbnw4.js'
+adding 'drift_gate/desktop/web/assets/sparql-rVzFXLq3.js'
+adding 'drift_gate/desktop/web/assets/splunk-BtCnVYZw.js'
+adding 'drift_gate/desktop/web/assets/sql-CRqJ_cUM.js'
+adding 'drift_gate/desktop/web/assets/ssh-config-_ykCGR6B.js'
+adding 'drift_gate/desktop/web/assets/stata-DI20mbqo.js'
+adding 'drift_gate/desktop/web/assets/stylus-BEDo0Tqx.js'
+adding 'drift_gate/desktop/web/assets/surrealql-Cjom0U5J.js'
+adding 'drift_gate/desktop/web/assets/svelte-Cy7k_4gC.js'
+adding 'drift_gate/desktop/web/assets/swift-C2oV4EkX.js'
+adding 'drift_gate/desktop/web/assets/synthwave-84-CbfX1IO0.js'
+adding 'drift_gate/desktop/web/assets/system-verilog-0hqHdDBg.js'
+adding 'drift_gate/desktop/web/assets/systemd-4A_iFExJ.js'
+adding 'drift_gate/desktop/web/assets/talonscript-CkByrt1z.js'
+adding 'drift_gate/desktop/web/assets/tasl-QIJgUcNo.js'
+adding 'drift_gate/desktop/web/assets/tcl-dwOrl1Do.js'
+adding 'drift_gate/desktop/web/assets/templ-DhtptRzy.js'
+adding 'drift_gate/desktop/web/assets/terraform-BETggiCN.js'
+adding 'drift_gate/desktop/web/assets/tex-D96PA37w.js'
+adding 'drift_gate/desktop/web/assets/tokyo-night-hegEt444.js'
+adding 'drift_gate/desktop/web/assets/toml-vGWfd6FD.js'
+adding 'drift_gate/desktop/web/assets/ts-tags-D351s5mN.js'
+adding 'drift_gate/desktop/web/assets/tsv-B_m7g4N7.js'
+adding 'drift_gate/desktop/web/assets/tsx-COt5Ahok.js'
+adding 'drift_gate/desktop/web/assets/turtle-BsS91CYL.js'
+adding 'drift_gate/desktop/web/assets/twig-27uCiNez.js'
+adding 'drift_gate/desktop/web/assets/typescript-BPQ3VLAy.js'
+adding 'drift_gate/desktop/web/assets/typespec-CAFt9gP4.js'
+adding 'drift_gate/desktop/web/assets/typst-BUadGCkm.js'
+adding 'drift_gate/desktop/web/assets/v-BGw2Nkan.js'
+adding 'drift_gate/desktop/web/assets/vala-CsfeWuGM.js'
+adding 'drift_gate/desktop/web/assets/vb-Cu-pLBUe.js'
+adding 'drift_gate/desktop/web/assets/verilog-nZwndyjY.js'
+adding 'drift_gate/desktop/web/assets/vesper-DRje8inN.js'
+adding 'drift_gate/desktop/web/assets/vhdl-CeAyd5Ju.js'
+adding 'drift_gate/desktop/web/assets/viml-CJc9bBzg.js'
+adding 'drift_gate/desktop/web/assets/vitesse-black-Bkuqu6BP.js'
+adding 'drift_gate/desktop/web/assets/vitesse-dark-D0r3Knsf.js'
+adding 'drift_gate/desktop/web/assets/vitesse-light-CVO1_9PV.js'
+adding 'drift_gate/desktop/web/assets/vue-BqiEGhQt.js'
+adding 'drift_gate/desktop/web/assets/vue-html-AaS7Mt5G.js'
+adding 'drift_gate/desktop/web/assets/vue-vine-BoDAl6tE.js'
+adding 'drift_gate/desktop/web/assets/vyper-CDx5xZoG.js'
+adding 'drift_gate/desktop/web/assets/wasm-CG6Dc4jp.js'
+adding 'drift_gate/desktop/web/assets/wasm-MzD3tlZU.js'
+adding 'drift_gate/desktop/web/assets/wenyan-BV7otONQ.js'
+adding 'drift_gate/desktop/web/assets/wgsl-Dx-B1_4e.js'
+adding 'drift_gate/desktop/web/assets/wikitext-BhOHFoWU.js'
+adding 'drift_gate/desktop/web/assets/wit-5i3qLPDT.js'
+adding 'drift_gate/desktop/web/assets/wolfram-lXgVvXCa.js'
+adding 'drift_gate/desktop/web/assets/xml-sdJ4AIDG.js'
+adding 'drift_gate/desktop/web/assets/xsl-CtQFsRM5.js'
+adding 'drift_gate/desktop/web/assets/yaml-Buea-lGh.js'
+adding 'drift_gate/desktop/web/assets/zenscript-DVFEvuxE.js'
+adding 'drift_gate/desktop/web/assets/zig-VOosw3JB.js'
+adding 'drift_gate/reporters/__init__.py'
+adding 'drift_gate/reporters/html.py'
+adding 'drift_gate/reporters/json_reporter.py'
+adding 'drift_gate/reporters/markdown.py'
+adding 'drift_gate/tests/__init__.py'
+adding 'drift_gate/tests/test_acceptance_matrix.py'
+adding 'drift_gate/tests/test_analyzer_worker.py'
+adding 'drift_gate/tests/test_auto_development.py'
+adding 'drift_gate/tests/test_contract_followup.py'
+adding 'drift_gate/tests/test_contract_projection.py'
+adding 'drift_gate/tests/test_contract_route_regressions.py'
+adding 'drift_gate/tests/test_decision_models.py'
+adding 'drift_gate/tests/test_desktop_service.py'
+adding 'drift_gate/tests/test_desktop_ui.py'
+adding 'drift_gate/tests/test_desktop_web.py'
+adding 'drift_gate/tests/test_development_regressions.py'
+adding 'drift_gate/tests/test_doc_links.py'
+adding 'drift_gate/tests/test_docs_check.py'
+adding 'drift_gate/tests/test_enforcement_outcome.py'
+adding 'drift_gate/tests/test_engine.py'
+adding 'drift_gate/tests/test_enricher.py'
+adding 'drift_gate/tests/test_enterprise_correctness.py'
+adding 'drift_gate/tests/test_eval_runner.py'
+adding 'drift_gate/tests/test_evidence_bundle.py'
+adding 'drift_gate/tests/test_express_contracts.py'
+adding 'drift_gate/tests/test_fastapi_oracle.py'
+adding 'drift_gate/tests/test_focused_logic.py'
+adding 'drift_gate/tests/test_git_collection.py'
+adding 'drift_gate/tests/test_git_immutable.py'
+adding 'drift_gate/tests/test_github_action_runner.py'
+adding 'drift_gate/tests/test_github_client.py'
+adding 'drift_gate/tests/test_github_publication.py'
+adding 'drift_gate/tests/test_hardening_contracts.py'
+adding 'drift_gate/tests/test_history.py'
+adding 'drift_gate/tests/test_holdout_evaluation.py'
+adding 'drift_gate/tests/test_html_reporter.py'
+adding 'drift_gate/tests/test_input_snapshot.py'
+adding 'drift_gate/tests/test_intensity_classifier.py'
+adding 'drift_gate/tests/test_logical_contracts.py'
+adding 'drift_gate/tests/test_logical_entrypoints.py'
+adding 'drift_gate/tests/test_logical_rereview.py'
+adding 'drift_gate/tests/test_mcp_tools.py'
+adding 'drift_gate/tests/test_membership_and_spans.py'
+adding 'drift_gate/tests/test_multi_review_adapters.py'
+adding 'drift_gate/tests/test_multi_review_cli.py'
+adding 'drift_gate/tests/test_multi_review_core.py'
+adding 'drift_gate/tests/test_obligation_planner.py'
+adding 'drift_gate/tests/test_org_and_cache.py'
+adding 'drift_gate/tests/test_packaged_cli.py'
+adding 'drift_gate/tests/test_packaging.py'
+adding 'drift_gate/tests/test_policy_setup.py'
+adding 'drift_gate/tests/test_profile_discovery.py'
+adding 'drift_gate/tests/test_progress_concurrency.py'
+adding 'drift_gate/tests/test_progress_drafts.py'
+adding 'drift_gate/tests/test_progress_history.py'
+adding 'drift_gate/tests/test_progress_report.py'
+adding 'drift_gate/tests/test_progress_service.py'
+adding 'drift_gate/tests/test_proof_evaluation.py'
+adding 'drift_gate/tests/test_qt_teardown.py'
+adding 'drift_gate/tests/test_report_naming.py'
+adding 'drift_gate/tests/test_review.py'
+adding 'drift_gate/tests/test_run_lifecycle.py'
+adding 'drift_gate/tests/test_run_time_contract.py'
+adding 'drift_gate/tests/test_scope_analysis.py'
+adding 'drift_gate/tests/test_self_audit.py'
+adding 'drift_gate/tests/test_self_policy.py'
+adding 'drift_gate/tests/test_semantic_adapter.py'
+adding 'drift_gate/tests/test_subscription_review.py'
+adding 'drift_gate/tests/test_trust_boundary.py'
+adding 'drift_gate/tests/test_typed_facts.py'
+adding 'drift_gate/tests/test_validator.py'
+adding 'drift_gate/tests/test_verification_records.py'
+adding 'drift_gate/tests/contracts/auto-contracts-v2.json'
+adding 'drift_gate/tests/contracts/express-contracts-v1.json'
+adding 'drift_gate/tests/contracts/logical-rereview.json'
+adding 'drift_gate/tests/contracts/progress.json'
+adding 'drift_gate/tests/fixtures/oss_pr_docs_only.json'
+adding 'drift_gate/tests/fixtures/oss_pr_fastapi_route_add.json'
+adding 'drift_gate/tests/fixtures/oss_pr_prisma_migration.json'
+adding 'drift_gate/tests/fixtures/pr_api_change.json'
+adding 'drift_gate/tests/fixtures/pr_auth_policy_no_security_docs.json'
+adding 'drift_gate/tests/fixtures/pr_comment_only_api_no_doc.json'
+adding 'drift_gate/tests/fixtures/pr_db_change.json'
+adding 'drift_gate/tests/fixtures/pr_db_column_no_runbook.json'
+adding 'drift_gate/tests/fixtures/pr_docs_only.json'
+adding 'drift_gate/tests/fixtures/pr_empty.json'
+adding 'drift_gate/tests/fixtures/pr_env_key_no_example.json'
+adding 'drift_gate/tests/fixtures/pr_file_delete.json'
+adding 'drift_gate/tests/fixtures/pr_file_rename.json'
+adding 'drift_gate/tests/fixtures/pr_ignore_paths.json'
+adding 'drift_gate/tests/fixtures/pr_impl_only_api_no_doc.json'
+adding 'drift_gate/tests/fixtures/pr_large_100_files.json'
+adding 'drift_gate/tests/fixtures/pr_reject_ignore_blocker.json'
+adding 'drift_gate/tests/fixtures/pr_route_added_no_openapi.json'
+adding 'drift_gate/tests/fixtures/pr_tests_only_api_no_doc.json'
+adding 'drift_gate/tests/fixtures/pr_workflow_secret_no_ops_docs.json'
+adding 'drift_gate/tests/fixtures/semantic_fp_comment_only.json'
+adding 'drift_gate/tests/fixtures/real_oss_samples/fastapi_route_schema_change.json'
+adding 'drift_gate/utils/__init__.py'
+adding 'drift_gate/utils/glob_matcher.py'
+adding 'drift_gate-1.0.0.dist-info/licenses/LICENSE'
+adding 'drift_gate-1.0.0.dist-info/METADATA'
+adding 'drift_gate-1.0.0.dist-info/WHEEL'
+adding 'drift_gate-1.0.0.dist-info/entry_points.txt'
+adding 'drift_gate-1.0.0.dist-info/top_level.txt'
+adding 'drift_gate-1.0.0.dist-info/RECORD'
+removing build/bdist.macosx-26.0-arm64/wheel
+Successfully built /private/tmp/driftgate-focused-wheel/drift_gate-1.0.0-py3-none-any.whl

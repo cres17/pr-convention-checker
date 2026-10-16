@@ -1,5 +1,34 @@
 # Gate와 입력 계약
 
+## 좁은 내용 검사와 평가 계약 보완 (2026-10-13)
+
+`init --preset focused-python`은 선택한 Python 설정·FastAPI 모듈의 새 환경 키와 경로 변경을
+`.env.example`, `docs/openapi.json`의 내용과 대조하는 별도 선택 프리셋이다.
+기존 프리셋·`auto`·동반 변경 정책은 유지한다. 문서 내용이 이미 맞으면 그 문서를 바꿀 의무를
+추가하지 않는다. 결과에는 누락 키, 빠진 추가 경로, 남은 제거 경로를 구체적으로 표시한다.
+지원하지 않는 동적 입력·읽을 수 없는 문서는 undetermined, 확인한 위반은 violated로 남는다.
+`on_unverified: warn`에서 CLI 0이어도 조직 조치는 review일 수 있다.
+선택 모듈 결과는 서비스 전체 변경 없음·경로 소유 범위 인증이 아니다.
+사용자 안내와 소유 범위 전제는 [focused-python](../focused-python.md)에 있다.
+
+API 호환성의 enum·정수 판정은 Python 표현형 대신 JSON 값의 의미를 사용한다.
+1과 1.0은 같고 bool은 숫자와 다르다. 입력의 decimal token은 손실 없이 읽고,
+NaN·Infinity·중복 JSON key는 판단 불가 입력으로 처리한다. 이 숫자 처리 계약은
+호환성 검사에 한정되며 다른 OpenAPI 분석기의 숫자 범위나 RFC 8785 적합성을 바꾸지 않는다.
+객체·배열의 타입 이름만으로 무한 집합이라고 판정하지 않는다. enum·닫힌 유한 객체·빈 항목
+스키마 배열 등은 가능한 값 전체를 비교하며, 유한 열거의 작업 상한(128개)을 넘으면 그 근거로
+빈 집합이나 위반을 만들지 않는다. 다른 충분한 증명이 없으면 U다.
+
+holdout은 정책의 모든 규칙을 평가·검토 단위로 생성한다. 기대값을 생략해도 해당 규칙이
+분모에서 사라지지 않는다. 제품 RuleDecision의 decision·verification을 그대로 사용하고
+gate status를 별도 방식으로 다시 해석하지 않는다. 지표 출력은 holdout-metrics-v2이며,
+not-applicable과의 불일치도 확정 오판에 포함한다. undecidable·미라벨은 평가 불가 수로
+따로 기록하고 정답·오답으로 꾸미지 않는다. 자세한 분모·이동 계약은
+[holdout 절차](../ops/holdout-evaluation.md)에 있다.
+
+CLI는 인자 정의(parser), 정책 텍스트(presets), UTF-8 출력(output), holdout/org 명령을
+분리했다. 공개 명령·옵션·오류 경계·기존 종료 코드는 유지한다.
+
 ## 조직 조치와 실행 결과의 분리 (2026-10-10, 설계 7장)
 
 검사 JSON에 `enforcement`(`enforcement-outcome-v1`)를 추가한다. 규칙 판정을 다시 내리지 않는 projection이다.
@@ -634,3 +663,15 @@ path `stat`과 handle `fstat`의 ctime 의미가 다를 수 있어 두 API를 �
 원문은 한 번 읽고, 첫 handle을 닫은 뒤 경로를 다시 열어 identity·size·mtime·ctime을
 확인한다. 관찰된 교체·크기·시간 변경과 symlink는 계속 거부한다. 같은 크기·mtime의
 다른 파일로 교체한 사례도 거부해야 한다. 전체 저장소 atomicity나 ABA 검출은 보장하지 않는다.
+
+## 2026-10-16 로컬 비교 기준 기본값
+
+로컬 작업 트리 검사(`check`·`report`의 `--head` 없는 실행, `review`, `self-audit`, `doctor`, 데스크톱, MCP 로컬 도구)의
+기본 비교 방식은 `merge-base`다. `GitAdapter.get_changed_files`의 기본값도 같다. `--base`와 `HEAD`의 공통 조상과
+작업 트리를 비교하므로, 기준 브랜치가 분기 뒤에 추가한 파일을 이 브랜치의 삭제로 보고하지 않는다. `--base HEAD`처럼
+기준이 HEAD의 조상이면 결과는 `commit`과 같다. 공통 조상을 구하지 못하면(무관한 이력, 얕은 clone) `commit`으로 바꾸지 않고
+입력 오류(종료 2)로 끝낸다. `--comparison-mode commit`은 지정 커밋과 그대로 비교한다. 수집 provenance의
+`comparison_mode`와 `resolved_base`에 실제 기준을 기록한다.
+
+`--head`를 쓰는 고정 Git 객체 검사, `trusted-check`, MCP `drift_gate_check_git`의 기본값은 `commit`으로 유지한다. 이 경로는
+명시한 commit 쌍을 증거·재실행·신뢰 판정의 subject로 묶고, `commit` 모드에서만 신뢰 엔진의 `resolved_base`를 대조한다.

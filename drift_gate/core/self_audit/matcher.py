@@ -52,7 +52,7 @@ class AuditedItem:
     line_number: int
     section: str
     evidence: List[str]
-    status: str  # "supported" | "unsupported" | "unchecked"
+    status: str  # related-evidence-found | no-related-evidence | unchecked
 
     def to_dict(self) -> dict:
         return {
@@ -104,8 +104,8 @@ def match_checklist(
     """Match checklist items against diff evidence.
 
     Rules:
-    - Checked items with matching evidence → "supported"
-    - Checked items without matching evidence → "unsupported" + checklist-code-mismatch warning
+    - Checked items with matching evidence → "related-evidence-found"
+    - Checked items without matching evidence → "no-related-evidence" + checklist-code-mismatch warning
     - Unchecked items → "unchecked" (no warning)
     - Changed files in evidence that match NO checked item → missing-progress-entry warning
     """

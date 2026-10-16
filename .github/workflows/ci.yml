@@ -210,6 +210,18 @@ jobs:
             build/pytest.log
             build/read-metadata.json
 
+      - name: Verify the focused preset through Git, CLI and stored replay
+        env:
+          TREE_SITTER_LANGUAGE_PACK_CACHE_DIR: ${{ runner.temp }}/driftgate-parser-cache
+        run: python scripts/check_focused.py --out build/focused-flow.json
+
+      - name: Preserve focused flow evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: focused-flow-${{ matrix.os }}-${{ matrix.python-version }}
+          path: build/focused-flow.json
+
       - name: Verify frozen semantic evaluation axes
         run: |
           python scripts/audit_auto_contracts.py --out build/auto-contracts-v2.json
@@ -229,13 +241,16 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]" ruff mypy
+          pip install -e ".[dev]" ruff mypy==1.18.2
 
       - name: Lint Python errors and unused code with ruff
         run: ruff check drift_gate/ --select=E9,F
 
       - name: Type check with mypy (optional)
         run: mypy drift_gate/core --ignore-missing-imports || true
+
+      - name: Require strict types for JSON value semantics
+        run: mypy --strict --follow-imports=silent drift_gate/core/evaluation/json_values.py
 
   benchmark:
     runs-on: ubuntu-latest

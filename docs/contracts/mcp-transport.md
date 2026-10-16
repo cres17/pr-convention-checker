@@ -57,3 +57,5 @@ MCP의 로컬/PR 검사와 근거 조회·수정 계획은 규칙이 없는 정�
 Git 정책 입력을 대체하지 않는다. 조직 승인이나 외부 checker 인증은 하지 않는다.
 full 출력은 원본 artifact 해시와 subject OID를 포함하고 compact는 전체 manifest digest,
 artifact 개수·생략 표시를 유지한다. 원문 bytes는 응답에 넣지 않는다.
+
+2026-10-16부터 로컬 검사·근거 조회 도구는 `--base`와 `HEAD`의 merge-base를 기준으로 변경을 수집한다. 공통 조상이 없으면 오류를 반환한다. `drift_gate_check_git`은 명시한 commit 쌍을 쓰며 기본 `comparison_mode`는 `commit`이다.

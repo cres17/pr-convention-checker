@@ -1,0 +1,415 @@
+{
+  "schema": "focused-flow-check-v1",
+  "basis": "author-created control fixtures; not holdout accuracy",
+  "policy_sha256": "19c8c17729a056a14dc272ba8c8ddafb3275be5908cfeea3c8c8bec087418467",
+  "temporary_evidence_retained": false,
+  "passed": true,
+  "cases": [
+    {
+      "case_id": "env-missing",
+      "subject": {
+        "base": "07fef42d222a6587c34d60007f31e2b69ecff4ee",
+        "head": "8be865fdede94dd835d271d54b09ec11ab84a183"
+      },
+      "rule": "env-sample-content",
+      "expected": {
+        "decision": "violated",
+        "action": "block",
+        "exit": 1
+      },
+      "observed": {
+        "decision": "violated",
+        "verification": "verified",
+        "action": "block",
+        "exit": 1,
+        "groups": [
+          {
+            "name": "Environment sample keys",
+            "required": [
+              ".env.example"
+            ],
+            "type": "all_changed",
+            "evidence": "Required environment keys: BILLING_TOKEN; .env.example: missing environment keys: BILLING_TOKEN",
+            "decision": "violated",
+            "verification": "verified",
+            "content_mode": "env-keys"
+          }
+        ]
+      },
+      "input_sha256": "84081caaa05cfb17d8a4884309d615d8af9edd6cabdb8be2cda633dc5e2451db",
+      "receipt_sha256": "e79a641d15e95f1e44dfc9ab7ff39cd3c59eb3ed3848f2c1be391a7a46d0b923",
+      "replay_matches": true,
+      "passed": true
+    },
+    {
+      "case_id": "env-fixed",
+      "subject": {
+        "base": "bcf9834d8c49f4693379e054c7ca228e83a89d95",
+        "head": "b71a4c1d55afb8130edceeb2621a0a997f5f53e3"
+      },
+      "rule": "env-sample-content",
+      "expected": {
+        "decision": "satisfied",
+        "action": "allow",
+        "exit": 0
+      },
+      "observed": {
+        "decision": "satisfied",
+        "verification": "verified",
+        "action": "allow",
+        "exit": 0,
+        "groups": [
+          {
+            "name": "Environment sample keys",
+            "required": [
+              ".env.example"
+            ],
+            "type": "all_changed",
+            "evidence": "Required environment keys: BILLING_TOKEN; .env.example: all required environment keys are documented",
+            "decision": "satisfied",
+            "verification": "verified",
+            "content_mode": "env-keys"
+          }
+        ]
+      },
+      "input_sha256": "387c19ecdc24903b68c2c091d08cf1088219687ef14b63ad95833e7aa278f9a2",
+      "receipt_sha256": "ebc748807329ba862bf68e389116bc432c7dca2bc89bb09db524b85f22c2b833",
+      "replay_matches": true,
+      "passed": true
+    },
+    {
+      "case_id": "env-already-documented",
+      "subject": {
+        "base": "c5dd29340986eea12cdb8904582fc512b6458380",
+        "head": "36eebfbde04e605ff0a73a83af482359da310d40"
+      },
+      "rule": "env-sample-content",
+      "expected": {
+        "decision": "satisfied",
+        "action": "allow",
+        "exit": 0
+      },
+      "observed": {
+        "decision": "satisfied",
+        "verification": "verified",
+        "action": "allow",
+        "exit": 0,
+        "groups": [
+          {
+            "name": "Environment sample keys",
+            "required": [
+              ".env.example"
+            ],
+            "type": "all_changed",
+            "evidence": "Required environment keys: BILLING_TOKEN; .env.example: all required environment keys are documented",
+            "decision": "satisfied",
+            "verification": "verified",
+            "content_mode": "env-keys"
+          }
+        ]
+      },
+      "input_sha256": "34b7ab990d3e530305d5efbdc3bf1358c7bf434648ddf18dcf8039033d56a0ca",
+      "receipt_sha256": "ea21da0a6d3e6ddfe01a7185c9d94b3f9e9c7731353c0065e1f0b60893a43098",
+      "replay_matches": true,
+      "passed": true
+    },
+    {
+      "case_id": "env-dynamic",
+      "subject": {
+        "base": "bcf9834d8c49f4693379e054c7ca228e83a89d95",
+        "head": "5cf3e5a36e16f0f678b9a9f837553be0b5c9565e"
+      },
+      "rule": "env-sample-content",
+      "expected": {
+        "decision": "undetermined",
+        "action": "review",
+        "exit": 0
+      },
+      "observed": {
+        "decision": "undetermined",
+        "verification": "unverified",
+        "action": "review",
+        "exit": 0,
+        "groups": [
+          {
+            "name": "Environment sample keys",
+            "required": [
+              ".env.example"
+            ],
+            "type": "all_changed",
+            "evidence": "No static new environment keys could be established from this change",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "content_mode": "env-keys"
+          },
+          {
+            "name": "Typed trigger unresolved",
+            "required": [
+              "src/config/settings.py"
+            ],
+            "type": "analysis",
+            "evidence": "typed trigger unknown; applicability left open for review",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "content_mode": "paths"
+          }
+        ]
+      },
+      "input_sha256": "8ff9807ab92db97562a92910f7ae08523a700aa0c4133411aaf0cec8e636dab6",
+      "receipt_sha256": "b4ea9d3835aff5593e7528ab81f48daabfa2f686623e90df331caf56e26f25cf",
+      "replay_matches": true,
+      "passed": true
+    },
+    {
+      "case_id": "api-missing",
+      "subject": {
+        "base": "1392a19d2bfdcb957870787df0476868fcfdbc77",
+        "head": "25bddbe0f30a957405ca4f205b969a163e4bb078"
+      },
+      "rule": "api-route-content",
+      "expected": {
+        "decision": "violated",
+        "action": "block",
+        "exit": 1
+      },
+      "observed": {
+        "decision": "violated",
+        "verification": "verified",
+        "action": "block",
+        "exit": 1,
+        "groups": [
+          {
+            "name": "API route documentation",
+            "required": [
+              "docs/openapi.json"
+            ],
+            "type": "all_changed",
+            "evidence": "docs/openapi.json: missing added routes: GET /new; removed routes still documented: GET /old; add GET /new; remove GET /old",
+            "decision": "violated",
+            "verification": "verified",
+            "content_mode": "api-routes"
+          }
+        ]
+      },
+      "input_sha256": "5657748564b221fdcce96b12d8cb4c5823ca9bbc3086f6fb753dbc0098af6104",
+      "receipt_sha256": "4232d19090c120702139e5b899d13fe045dfd58c578ee9cf6aff6c47019254f2",
+      "replay_matches": true,
+      "passed": true
+    },
+    {
+      "case_id": "api-fixed",
+      "subject": {
+        "base": "1392a19d2bfdcb957870787df0476868fcfdbc77",
+        "head": "d5ced54249cf5ef2217f774e1b5930030021ad60"
+      },
+      "rule": "api-route-content",
+      "expected": {
+        "decision": "satisfied",
+        "action": "allow",
+        "exit": 0
+      },
+      "observed": {
+        "decision": "satisfied",
+        "verification": "verified",
+        "action": "allow",
+        "exit": 0,
+        "groups": [
+          {
+            "name": "API route documentation",
+            "required": [
+              "docs/openapi.json"
+            ],
+            "type": "all_changed",
+            "evidence": "docs/openapi.json: all changed routes are reflected; add GET /new; remove GET /old",
+            "decision": "satisfied",
+            "verification": "verified",
+            "content_mode": "api-routes"
+          }
+        ]
+      },
+      "input_sha256": "67ed437cb25757d78de225458482cef3390687e30654dbdac6aff85b8f2e54e9",
+      "receipt_sha256": "999f3160332ae9f98b27742611147f768f981a07451a0c41c3557b6775b50554",
+      "replay_matches": true,
+      "passed": true
+    },
+    {
+      "case_id": "api-already-documented",
+      "subject": {
+        "base": "074449ee29181d4c3f79456a136252a24d942d69",
+        "head": "90487e509da11ca7d0fb2bc0f1a0def2dbdce3c5"
+      },
+      "rule": "api-route-content",
+      "expected": {
+        "decision": "satisfied",
+        "action": "allow",
+        "exit": 0
+      },
+      "observed": {
+        "decision": "satisfied",
+        "verification": "verified",
+        "action": "allow",
+        "exit": 0,
+        "groups": [
+          {
+            "name": "API route documentation",
+            "required": [
+              "docs/openapi.json"
+            ],
+            "type": "all_changed",
+            "evidence": "docs/openapi.json: all changed routes are reflected; add GET /new",
+            "decision": "satisfied",
+            "verification": "verified",
+            "content_mode": "api-routes"
+          }
+        ]
+      },
+      "input_sha256": "8d9b189c0401aaa320935f87886bd951624d4b5e250a282ebe655c5ecb34c500",
+      "receipt_sha256": "d285a0e05e510b641aa3aaa3abfe49ea482aac03de1b4edcafe0f3d0918e0550",
+      "replay_matches": true,
+      "passed": true
+    },
+    {
+      "case_id": "api-dynamic",
+      "subject": {
+        "base": "85e8db1b88fbda1f8488b6b60edab17ca080fbbb",
+        "head": "cecf2a34105c8d08a3cc13d80835827e1ac7bf9b"
+      },
+      "rule": "api-route-content",
+      "expected": {
+        "decision": "undetermined",
+        "action": "review",
+        "exit": 0
+      },
+      "observed": {
+        "decision": "undetermined",
+        "verification": "unverified",
+        "action": "review",
+        "exit": 0,
+        "groups": [
+          {
+            "name": "API route documentation",
+            "required": [
+              "docs/openapi.json"
+            ],
+            "type": "all_changed",
+            "evidence": "route path must be a literal absolute path",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "content_mode": "api-routes"
+          },
+          {
+            "name": "Typed trigger unresolved",
+            "required": [
+              "src/api/app.py"
+            ],
+            "type": "analysis",
+            "evidence": "typed trigger unknown; applicability left open for review",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "content_mode": "paths"
+          }
+        ]
+      },
+      "input_sha256": "bbbaf7783c5d81d83d947a7f5b33e319d91ed06f00ce1b3d4e2f52c2148907ae",
+      "receipt_sha256": "4195f60e494b8f23b6ac2ac0150e2d98694f197a487507693303b4fb06e2a7f6",
+      "replay_matches": true,
+      "passed": true
+    },
+    {
+      "case_id": "api-unreadable-document",
+      "subject": {
+        "base": "85e8db1b88fbda1f8488b6b60edab17ca080fbbb",
+        "head": "76076123ce7f5323c88f425bf8de429a52d1bf30"
+      },
+      "rule": "api-route-content",
+      "expected": {
+        "decision": "undetermined",
+        "action": "review",
+        "exit": 0
+      },
+      "observed": {
+        "decision": "undetermined",
+        "verification": "unverified",
+        "action": "review",
+        "exit": 0,
+        "groups": [
+          {
+            "name": "API route documentation",
+            "required": [
+              "docs/openapi.json"
+            ],
+            "type": "all_changed",
+            "evidence": "invalid OpenAPI JSON; add GET /new; remove GET /old",
+            "decision": "undetermined",
+            "verification": "unverified",
+            "content_mode": "api-routes"
+          }
+        ]
+      },
+      "input_sha256": "efdbd7fec4137f9b161b932f9a003b5db68f996c7b76d8b098b9c93eb5e7475c",
+      "receipt_sha256": "b9f1ce57b808b93f966c26c89fb6fa4476f92ff2b78b881d074f382c80687618",
+      "replay_matches": true,
+      "passed": true
+    },
+    {
+      "case_id": "env-no-new-key",
+      "subject": {
+        "base": "4970709e489d5e954096a3b07f744a762a23769f",
+        "head": "3e5ec6e09d8aff13bf96054d0270e6e3a6867af1"
+      },
+      "rule": "env-sample-content",
+      "expected": {
+        "decision": "not-applicable",
+        "action": "allow",
+        "exit": 0
+      },
+      "observed": {
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "action": "allow",
+        "exit": 0,
+        "groups": []
+      },
+      "input_sha256": "59df90014a5000581502d794c4345a5798aab81dbf9e37fc34beef9355c51b38",
+      "receipt_sha256": "cd6126dba665d4c101f8764c4b75608755a7493739ed201558b5c681e80a988b",
+      "replay_matches": true,
+      "passed": true
+    },
+    {
+      "case_id": "known-violation-with-open-scope",
+      "subject": {
+        "base": "4970709e489d5e954096a3b07f744a762a23769f",
+        "head": "d0ae2f59071599359e3461a3dabef792a83701eb"
+      },
+      "rule": "env-sample-content",
+      "expected": {
+        "decision": "violated",
+        "action": "block",
+        "exit": 1
+      },
+      "observed": {
+        "decision": "violated",
+        "verification": "verified",
+        "action": "block",
+        "exit": 1,
+        "groups": [
+          {
+            "name": "Environment sample keys",
+            "required": [
+              ".env.example"
+            ],
+            "type": "all_changed",
+            "evidence": "Required environment keys: BILLING_TOKEN; .env.example: missing environment keys: BILLING_TOKEN",
+            "decision": "violated",
+            "verification": "verified",
+            "content_mode": "env-keys"
+          }
+        ]
+      },
+      "input_sha256": "e64310f3c446d92617512fe5ff0e3020c81bd90c5ed189d3695417f8ad508e4f",
+      "receipt_sha256": "de004a76d457fb0f439dcc7eded36c59037acd75a7bbc57bd629cfd41e6e41dc",
+      "replay_matches": true,
+      "passed": true
+    }
+  ]
+}

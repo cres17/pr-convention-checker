@@ -1,0 +1,415 @@
+{
+  "requested_base": "c06309f5f9ca1e91f0c31c4d2c90811d823a3206",
+  "inputs": {
+    "requested_base": "c06309f5f9ca1e91f0c31c4d2c90811d823a3206",
+    "resolved_base": "c06309f5f9ca1e91f0c31c4d2c90811d823a3206",
+    "comparison_mode": "commit",
+    "head": "c06309f5f9ca1e91f0c31c4d2c90811d823a3206",
+    "dirty": true,
+    "untracked_skipped": [],
+    "snapshot_sha256": "af7bd4e440ef15aa36c0b4c23ef46dc28ded9e72362ced9afea1b5fc424f1742"
+  },
+  "policy_sha256": "49a5a5cb4674d5ae3f73619047014f509d3435c0b11c4716e4ff51141cfa9481",
+  "trusted_policy_ref": "c06309f5f9ca1e91f0c31c4d2c90811d823a3206",
+  "warnings": [],
+  "evaluation": {
+    "schema_version": 3,
+    "verification": "unverified",
+    "summary": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 0,
+      "nit": 0,
+      "gate_decision": "pass",
+      "undetermined_rules": 0,
+      "unverified_rules": 3
+    },
+    "scan_metrics": {
+      "scanned_files": 23,
+      "skipped_ignored_files": 1,
+      "skipped_binary_files": 0,
+      "skipped_large_files": 0,
+      "evaluated_rules": 3,
+      "runtime_seconds": 0.0,
+      "analysis_notes": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": ".github/workflows/desktop-build.yml",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/README.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/contracts/gate-and-inputs.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/focused-python.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/ops/drift-gate-self-check.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "docs/ops/holdout-evaluation.md",
+          "method": "heuristic",
+          "reason": "No grammar-backed detector for this file type"
+        },
+        {
+          "path": "drift_gate/adapters/cli/holdout_command.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/cli/org_command.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/cli/output.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/cli/parser.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/cli/presets.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/cli/runner.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/adapters/holdout.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/evaluation/compatibility.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/evaluation/contracts.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation/json_values.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation/routes.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "drift_gate/core/evaluation_stats.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/core/self_audit/matcher.py",
+          "method": "heuristic",
+          "reason": "Partial or invalid diff fragment; grammar recovery and patch heuristics used"
+        },
+        {
+          "path": "drift_gate/tests/test_focused_logic.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        },
+        {
+          "path": "scripts/check_focused.py",
+          "method": "grammar+heuristic",
+          "reason": ""
+        }
+      ]
+    },
+    "result": "pass",
+    "skip": false,
+    "skip_reason": "",
+    "no_policy": false,
+    "change_types": [
+      "other",
+      "workflow-ci"
+    ],
+    "violations": [],
+    "rule_decisions": [
+      {
+        "rule_id": "self-engine-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/*.py",
+          "drift_gate/core/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/holdout.py",
+          "drift_gate/core/evaluation/compatibility.py",
+          "drift_gate/core/evaluation/contracts.py",
+          "drift_gate/core/evaluation/json_values.py",
+          "drift_gate/core/evaluation/routes.py",
+          "drift_gate/core/evaluation_stats.py",
+          "drift_gate/core/self_audit/matcher.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Gate and analysis contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-cli-contract",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          "drift_gate/adapters/cli/**"
+        ],
+        "trigger_files": [
+          "drift_gate/adapters/cli/holdout_command.py",
+          "drift_gate/adapters/cli/org_command.py",
+          "drift_gate/adapters/cli/output.py",
+          "drift_gate/adapters/cli/parser.py",
+          "drift_gate/adapters/cli/presets.py",
+          "drift_gate/adapters/cli/runner.py"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Input and CLI contract",
+            "required": [
+              "docs/contracts/gate-and-inputs.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-mcp-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-progress-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-ui-bridge-contract",
+        "severity": "MAJOR",
+        "status": "unmatched",
+        "decision": "not-applicable",
+        "verification": "not-applicable",
+        "reason": "no changed files matched this rule after ignore paths and intensity filters",
+        "matched_patterns": [],
+        "trigger_files": [],
+        "satisfied_groups": [],
+        "unsatisfied_groups": []
+      },
+      {
+        "rule_id": "self-package-operations",
+        "severity": "MAJOR",
+        "status": "pass",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "reason": "trigger matched and all required groups were satisfied",
+        "matched_patterns": [
+          ".github/workflows/**"
+        ],
+        "trigger_files": [
+          ".github/workflows/ci.yml",
+          ".github/workflows/desktop-build.yml"
+        ],
+        "satisfied_groups": [
+          {
+            "name": "Self-check and package operations",
+            "required": [
+              "docs/ops/drift-gate-self-check.md"
+            ],
+            "type": "all_changed",
+            "evidence": "Legacy auto fallback: only file changes checked; contract content was not verified",
+            "decision": "satisfied",
+            "verification": "unverified",
+            "content_mode": "auto"
+          }
+        ],
+        "unsatisfied_groups": []
+      }
+    ],
+    "skipped_rules": [],
+    "rejected_ignores": [],
+    "ignore_audit": [],
+    "temporal_warnings": [],
+    "gate": {
+      "fail_on_blocker": true,
+      "fail_on_major_count": 1,
+      "on_unverified": "fail"
+    },
+    "enforcement": {
+      "schema": "enforcement-outcome-v1",
+      "action": "allow",
+      "basis": "no-violation-and-nothing-unresolved",
+      "gate_result": "pass",
+      "confirmed_violation_rule_ids": [],
+      "unresolved_rule_ids": [],
+      "partially_verified_rule_ids": [],
+      "waived_rule_ids": [],
+      "policy_ref": "execution.policy_sha256",
+      "semantics": "projection of rule decisions; the policy gate is unchanged"
+    }
+  },
+  "coverage": {
+    "kind": "declared path matches, before intensity filtering",
+    "matched": {
+      ".github/workflows/ci.yml": [
+        "self-package-operations"
+      ],
+      ".github/workflows/desktop-build.yml": [
+        "self-package-operations"
+      ],
+      "drift_gate/adapters/cli/holdout_command.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/cli/org_command.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/cli/output.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/cli/parser.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/cli/presets.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/cli/runner.py": [
+        "self-cli-contract"
+      ],
+      "drift_gate/adapters/holdout.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/compatibility.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/contracts.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/json_values.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation/routes.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/evaluation_stats.py": [
+        "self-engine-contract"
+      ],
+      "drift_gate/core/self_audit/matcher.py": [
+        "self-engine-contract"
+      ]
+    },
+    "unmatched": [
+      "README.md",
+      "docs/README.md",
+      "docs/contracts/gate-and-inputs.md",
+      "docs/focused-python.md",
+      "docs/ops/drift-gate-self-check.md",
+      "docs/ops/holdout-evaluation.md",
+      "scripts/check_focused.py"
+    ],
+    "ignored": [
+      "drift_gate/tests/test_focused_logic.py"
+    ]
+  },
+  "projection": {
+    "source_head": "a76306f5636b64daa617e3f90158a79785e07ad1",
+    "kind": "pending implementation paths and required contracts",
+    "paths": [
+      ".drift-gate.self.yml",
+      ".github/workflows/ci.yml",
+      ".github/workflows/desktop-build.yml",
+      "README.md",
+      "docs/README.md",
+      "docs/contracts/desktop-bridge.md",
+      "docs/contracts/gate-and-inputs.md",
+      "docs/contracts/mcp-transport.md",
+      "docs/contracts/progress-storage.md",
+      "docs/focused-python.md",
+      "docs/ops/drift-gate-self-check.md",
+      "docs/ops/holdout-evaluation.md",
+      "drift_gate/adapters/cli/holdout_command.py",
+      "drift_gate/adapters/cli/org_command.py",
+      "drift_gate/adapters/cli/output.py",
+      "drift_gate/adapters/cli/parser.py",
+      "drift_gate/adapters/cli/presets.py",
+      "drift_gate/adapters/cli/runner.py",
+      "drift_gate/adapters/holdout.py",
+      "drift_gate/core/evaluation/compatibility.py",
+      "drift_gate/core/evaluation/contracts.py",
+      "drift_gate/core/evaluation/json_values.py",
+      "drift_gate/core/evaluation/routes.py",
+      "drift_gate/core/evaluation_stats.py",
+      "drift_gate/core/self_audit/matcher.py",
+      "drift_gate/tests/test_focused_logic.py",
+      "scripts/check_focused.py"
+    ],
+    "complete_repository": false,
+    "user_index_changed": false
+  }
+}

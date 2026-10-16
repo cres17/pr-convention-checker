@@ -216,6 +216,18 @@ Windows JSON·로그의 CRLF도 원본 SHA-256과 같게 보관하며, 작업 �
 staged/committed Git blob bytes를 영수증과 대조한다. 이 속성은 해당 근거 폴더에만
 적용하고 일반 소스 파일의 줄바꿈 규칙이나 immutable raw diff 계약은 바꾸지 않는다.
 
+## focused-python 회귀 (2026-10-13)
+
+일반 CI의 OS·Python 행렬은 `scripts/check_focused.py`로 11개 통제 사례를 실행하고
+`focused-flow-<OS>-<Python>` artifact에 JSON을 보관한다. 실제 임시 Git commit·정책 pin,
+CLI 결과·종료 코드·enforcement와 증거 재실행 일치를 확인한다. 이 자료는 통제 회귀이며
+독립 PR 정확도 평가가 아니다. Desktop 회귀에도 `test_focused_logic.py`를 포함한다.
+새 JSON 값 의미론 모듈은 mypy 1.18.2의 strict 검사를 필수 단계로 실행한다.
+전체 core의 기존 선택형 타입 검사가 모두 필수가 된 것은 아니다.
+
+workflow 변경은 실행 준비다. 새 commit의 원격 실행 결과·artifact를 확인하기 전에는
+이 변경의 Windows·macOS arm64·Intel 검증이 끝났다고 보고하지 않는다.
+
 ## 커밋 참조 갱신
 
 커밋 이력의 메타데이터를 정리하면서 주소가 바뀌었다. CI의 신뢰 엔진·정책과 버전 비교 스크립트는 같은 파일 내용을 가진 새 커밋을 참조한다. 기존 측정 자료의 커밋 주소는 당시 기록이며, [주소 대응표](commit-ref-map-2026-10-16.json)에서 새 주소를 확인할 수 있다. 측정 결과와 정책 내용 해시는 유지한다.

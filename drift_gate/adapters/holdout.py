@@ -58,28 +58,53 @@ def read_pinned(path, expected_sha256, schema):
 
 
 def _validate_case(case):
+    from drift_gate.core.policy.loader import PolicyLoadError, load_policy_from_dict
+    if not isinstance(case, dict):
+        raise HoldoutError('case must be an object')
     for key in ('case_id', 'repository', 'source_family', 'policy', 'changed_files', 'expected'):
         if key not in case:
             raise HoldoutError(f'case is missing {key}')
+    for key in ('case_id', 'repository', 'source_family'):
+        if not isinstance(case[key], str) or not case[key].strip():
+            raise HoldoutError(f'case {key} must be nonempty text')
+    if '::' in case['case_id']:
+        raise HoldoutError('case_id must not contain the unit separator ::')
+    try:
+        date.fromisoformat(case.get('evaluated_on', '2026-01-01'))
+    except (ValueError, TypeError) as exc:
+        raise HoldoutError(f"case {case['case_id']}: invalid evaluated_on") from exc
     if not isinstance(case['changed_files'], list):
         raise HoldoutError(f"case {case['case_id']}: changed_files must be a list")
     for data in case['changed_files']:
         _changed_file(data)  # unknown or malformed fields are rejected before anything is frozen
     expected = case['expected']
-    if expected.get('gate') not in {'pass', 'warn', 'fail'} or not isinstance(expected.get('rules'), dict):
+    if not isinstance(expected, dict) or expected.get('gate') not in {'pass', 'warn', 'fail'} or not isinstance(expected.get('rules'), dict):
         raise HoldoutError(f"case {case['case_id']}: expected gate and rules are required")
+    try:
+        policy = load_policy_from_dict(case['policy'])
+    except PolicyLoadError as exc:
+        raise HoldoutError(f"case {case['case_id']}: invalid policy: {exc}") from exc
+    unknown = set(expected['rules']) - {rule.id for rule in policy.rules}
+    if unknown:
+        raise HoldoutError(f"case {case['case_id']}: expected rules not in policy: {sorted(unknown)}")
     for rule_id, row in expected['rules'].items():
-        if row.get('decision') not in stats.DECISIONS or row.get('support') not in {'supported', 'unsupported'}:
+        if not isinstance(row, dict) or row.get('decision') not in stats.DECISIONS or row.get('support') not in {'supported', 'unsupported'}:
             raise HoldoutError(f"case {case['case_id']} rule {rule_id}: invalid expected decision/support")
 
 
-def split(candidates, *, seed, holdout_fraction, regression_families=()):
-    cases = candidates.get('cases') or []
+def _validate_cases(cases):
+    if not isinstance(cases, list):
+        raise HoldoutError('cases must be a list')
     for case in cases:
         _validate_case(case)
     ids = [case['case_id'] for case in cases]
     if len(ids) != len(set(ids)):
         raise HoldoutError('duplicate case ids')
+
+
+def split(candidates, *, seed, holdout_fraction, regression_families=()):
+    cases = candidates.get('cases') or []
+    _validate_cases(cases)
     eligible = sorted({case['source_family'] for case in cases} - set(regression_families))
     assignment = stats.assign_split(eligible, seed=seed, holdout_fraction=holdout_fraction) if eligible else {}
     rows = []
@@ -100,8 +125,7 @@ def split(candidates, *, seed, holdout_fraction, regression_families=()):
 def freeze(holdout, *, protocol):
     if holdout.get('schema') != CASES or holdout.get('split') != 'holdout':
         raise HoldoutError('freeze accepts the holdout split only')
-    for case in holdout['cases']:
-        _validate_case(case)
+    _validate_cases(holdout['cases'])
     return {'schema': FROZEN, 'protocol': protocol, 'cases': holdout['cases'],
             'axes': ['decision', 'verification', 'gate', 'support'],
             'case_count': len(holdout['cases'])}
@@ -110,23 +134,20 @@ def freeze(holdout, *, protocol):
 def _units(case, result):
     units = []
     by_rule = {d.rule_id: d for d in result.rule_decisions} if result is not None else {}
-    status_map = {'pass': 'satisfied', 'fail': 'violated', 'rejected-ignore': 'violated',
-                  'undetermined': 'undetermined', 'unmatched': 'not-applicable', 'skipped': 'waived'}
-    for rule_id, expected in sorted(case['expected']['rules'].items()):
+    # Expectations/labels never choose the denominator. Every policy rule is
+    # present, even when there is no developer expectation or reviewer label.
+    for rule_id in sorted(rule['id'] for rule in case['policy'].get('rules', [])):
+        expected = case['expected']['rules'].get(rule_id, {})
         decision = by_rule.get(rule_id)
         if result is None:
             observed, verification = 'error', 'unverified'
         elif decision is None:
             observed, verification = 'skipped', 'unverified'
         else:
-            observed = status_map.get(decision.status, 'undetermined')
-            groups = decision.satisfied_groups + decision.unsatisfied_groups
-            levels = {g.verification for g in groups}
-            verification = ('verified' if levels <= {'verified', 'not-applicable'} and groups else
-                            'partial' if 'partial' in levels or ('verified' in levels) else 'unverified')
+            observed, verification = decision.decision, decision.verification
         units.append({'unit_id': f"{case['case_id']}::{rule_id}", 'case_id': case['case_id'], 'rule_id': rule_id,
                       'decision': observed, 'verification': verification,
-                      'expected_decision': expected['decision'], 'expected_support': expected['support'],
+                      'expected_decision': expected.get('decision'), 'expected_support': expected.get('support'),
                       'known_violation': bool(expected.get('known_violation'))})
     return units
 
@@ -157,6 +178,7 @@ def run_frozen(frozen, frozen_sha256):
         raise HoldoutError('run accepts a frozen holdout file only')
     if artifact_sha256(frozen) != frozen_sha256:
         raise HoldoutError('frozen input does not match the SHA-256 given for it')
+    _validate_cases(frozen['cases'])
     units, cases = [], []
     for case in frozen['cases']:
         error = ''
@@ -175,11 +197,13 @@ def run_frozen(frozen, frozen_sha256):
                       'input_sha256': result.execution.get('input_sha256') if result else None})
     return {'schema': RESULTS, 'frozen_sha256': frozen_sha256, 'protocol': frozen['protocol'],
             'inspection_path': 'drift_gate.adapters.inspection.inspect',
+            'unit_basis': 'all-policy-rules-v1',
             'engine': producer_identity(), 'units': units, 'cases': cases}
 
 
 def review_packet(frozen, *, instructions):
     """Blind items: inputs and the rule only; no engine output and no frozen expectation."""
+    _validate_cases(frozen['cases'])
     items = []
     for case in frozen['cases']:
         rules = {rule['id']: rule for rule in case['policy'].get('rules', [])}
@@ -188,7 +212,7 @@ def review_packet(frozen, *, instructions):
         # Context the outcome depends on (evaluation date, waivers); never the expectation.
         context = {'evaluated_on': case.get('evaluated_on', '2026-01-01'),
                    'drift_ignores': case.get('drift_ignores', [])}
-        for rule_id in sorted(case['expected']['rules']):
+        for rule_id in sorted(rules):
             items.append({'item_id': f"{case['case_id']}::{rule_id}", 'case_id': case['case_id'], 'kind': 'rule',
                           'rule': rules.get(rule_id), 'changed_files': files, 'context': context,
                           'allowed_labels': list(REVIEW_LABELS['rule'])})
@@ -246,6 +270,8 @@ def adjudicate(packet, reviews, resolutions=()):
 
 
 def score_all(results, labels):
+    if results.get('schema') != RESULTS or labels.get('schema') != LABELS:
+        raise HoldoutError('score requires holdout results and adjudicated labels')
     # The labels must be judgments of the very frozen input the results were computed from.
     if labels.get('frozen_sha256') != results.get('frozen_sha256'):
         raise HoldoutError('labels were made for a different frozen input than the results')
@@ -255,22 +281,42 @@ def score_all(results, labels):
     stray = sorted({l['unit_id'] for l in labels['labels']} - known)
     if stray:
         raise HoldoutError(f'labels name items the results do not contain: {stray[:5]}')
+    unit_ids = {unit['unit_id'] for unit in results['units']}
+    action_ids = {f"{case['case_id']}::pr-action" for case in results['cases']}
+    if len(unit_ids) != len(results['units']) or len(action_ids) != len(results['cases']):
+        raise HoldoutError('duplicate evaluation unit or PR case ids')
+    item_cases = {unit['unit_id']: unit['case_id'] for unit in results['units']}
+    item_cases.update({f"{case['case_id']}::pr-action": case['case_id'] for case in results['cases']})
+    for label in labels['labels']:
+        if label.get('source') not in stats.LABEL_SOURCES:
+            raise HoldoutError('unknown label source')
+        kind = label.get('kind')
+        valid_ids = unit_ids if kind == 'rule' else action_ids if kind == 'pr-action' else set()
+        if (label['unit_id'] not in valid_ids or label.get('label') not in REVIEW_LABELS.get(kind, ())
+                or label.get('case_id') != item_cases[label['unit_id']]):
+            raise HoldoutError('label kind, identity and value must refer to the same evaluation item')
     units = [u for u in results['units']]
     rule_labels = [l for l in labels['labels'] if l['kind'] == 'rule']
     pr_labels = [l for l in labels['labels'] if l['kind'] == 'pr-action']
-    report = {'schema': 'holdout-metrics-v1', 'frozen_sha256': results['frozen_sha256'],
+    expected_units = [unit for unit in units if unit.get('expected_decision') is not None]
+    report = {'schema': 'holdout-metrics-v2', 'frozen_sha256': results['frozen_sha256'],
               'packet_sha256': labels['packet_sha256'],
               'protocol': results['protocol'], 'engine_source_sha256': results['engine']['source_sha256'],
               'by_label_source': {}, 'unresolved_reviews': len(labels['unresolved']),
+              'unit_basis': results.get('unit_basis', 'legacy-expectation-selected-rules'),
+              'units_total': len(units), 'units_without_frozen_expectation': len(units) - len(expected_units),
               'frozen_expectation_agreement': stats.proportion(
-                  sum(u['decision'] == u['expected_decision'] for u in units), len(units))}
+                  sum(u['decision'] == u['expected_decision'] for u in expected_units), len(expected_units))}
     for source in stats.LABEL_SOURCES:
         if not any(l['source'] == source for l in labels['labels']):
             report['by_label_source'][source] = None
             continue
-        report['by_label_source'][source] = {
-            'obligations': stats.score(units, rule_labels, label_source=source),
-            'pr_actions': stats.pr_action_metrics(results['cases'], pr_labels, label_source=source)}
+        try:
+            report['by_label_source'][source] = {
+                'obligations': stats.score(units, rule_labels, label_source=source),
+                'pr_actions': stats.pr_action_metrics(results['cases'], pr_labels, label_source=source)}
+        except ValueError as exc:
+            raise HoldoutError(f'invalid score inputs: {exc}') from exc
     report['independence'] = ('human labels present' if report['by_label_source']['human'] else
                               'no human labels: llm-proxy metrics are review material, not blind ground truth')
     return report

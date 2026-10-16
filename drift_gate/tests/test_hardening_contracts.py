@@ -116,8 +116,9 @@ def test_merge_base_does_not_invent_main_only_deletion(repo):
     git(repo, 'add', '.')
     git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-m', 'ahead')
     git(repo, 'checkout', '--detach', initial)
-    assert any(f.status == 'deleted' for f in GitAdapter(repo).get_changed_files('ahead'))
+    assert any(f.status == 'deleted' for f in GitAdapter(repo).get_changed_files('ahead', comparison_mode='commit'))
     assert GitAdapter(repo).get_changed_files('ahead', comparison_mode='merge-base') == []
+    assert GitAdapter(repo).get_changed_files('ahead') == []  # merge-base is the local default
 
 
 def test_mcp_strict_result_notification_and_root_boundary(tmp_path, monkeypatch):

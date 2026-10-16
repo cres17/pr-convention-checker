@@ -7,10 +7,10 @@ GPT 같은 언어 모델을 사람 검토자 대신 쓸 때의 기록 방법을 
 
 | 지표 | 정의 | 분모 |
 |------|------|------|
-| `confirmed_violation_precision` | 엔진이 violated로 낸 의무 중 label도 violated인 비율 | 해당 출처가 label한 의무 중 엔진 violated 수 |
+| `confirmed_violation_precision` | 엔진이 violated로 낸 의무 중 label도 violated인 비율 | 해당 출처가 판정 가능한 label을 준 의무 중 엔진 violated 수 |
 | `confirmed_violation_recall` | label이 violated인 의무 중 엔진도 violated인 비율 | label violated 수 |
 | `verified_coverage` | label된 의무 중 엔진이 verified로 결정한 비율 | label된 의무 수 |
-| `false_verified` | verified 결정이 label과 반대인 비율 | verified 결정 수 |
+| `false_verified` | verified 확정 결정이 판정 가능한 label과 불일치한 비율 | 판정 가능한 label이 있는 verified 확정 결정 수 |
 | `appropriate_unsupported_hold` | 지원 범위 밖 사례에서 엔진이 undetermined로 멈춘 비율 | label된 의무 중 expected support=unsupported 수 |
 | `known_violation_retained` | 기대값에 known_violation으로 표시한 위반을 계속 잡는 비율 | known_violation이면서 label도 violated인 의무 수 |
 | `false_block` | label이 pass/warn인 PR을 엔진이 fail로 막은 비율 | label pass/warn PR 수 |
@@ -19,6 +19,24 @@ GPT 같은 언어 모델을 사람 검토자 대신 쓸 때의 기록 방법을 
 모든 지표는 label 출처(human·llm-proxy)별로 따로 계산한다. 비율마다 Wilson 95% 구간을 함께 낸다.
 undetermined, skipped, error는 분모에서 빼지 않는다.
 `frozen_expectation_agreement`는 동결한 기대값과 엔진의 일치이며 검토 label 지표와 별개다.
+
+현재 출력은 `holdout-metrics-v2`다. 확정 결정은 satisfied·violated·not-applicable이며,
+판정 가능한 label도 이 세 값이다. 이 두 값이 다르면 verified 확정 오판으로 집계한다.
+`undecidable` label은 맞음/틀림에 넣지 않고 `verified_without_decidable_label`과
+전체 `decision_label_matrix`에 남긴다. label이 없는 단위는 `units_unlabelled`,
+그중 verified 확정 출력은 `verified_without_label`로 표시한다. PR도 전체 수와 미라벨 사례를 기록한다.
+규칙 지표의 `engine_outcomes_total`은 label 유무와 관계없이 모든 단위의 출력을 센다.
+중복 단위·같은 출처의 중복 label은 거부하므로 마지막 행이 앞의 판단을 덮어쓰지 않는다.
+
+평가 단위는 기대값 목록이 아니라 **정책의 모든 규칙**으로 생성한다(`unit_basis: all-policy-rules-v1`).
+기대값이 없는 규칙도 실행 결과·검토 packet에 포함하고 기대·지원 분류는 null로 남긴다.
+`frozen_expectation_agreement`의 분모는 기대값이 선언된 단위뿐이고 빠진 수는
+`units_without_frozen_expectation`에 표시한다. 따라서 기대값 누락을 정답이나 성공으로 취급하지 않는다.
+이전 결과 파일은 다시 쓰지 않으며, unit_basis가 없는 과거 결과는 `legacy-expectation-selected-rules`로 표시한다.
+v1·v2의 지표를 같은 정의로 직접 비교하지 않는다.
+
+Wilson 구간은 비율별 계산 참고값이다. 같은 PR의 규칙들이 독립 표본이라는 뜻은 아니므로,
+실제 성능 평가에는 PR·저장소별 분포와 원시 분모를 함께 보고한다.
 
 ## 사례 준비
 
@@ -30,6 +48,7 @@ undetermined, skipped, error는 분모에서 빼지 않는다.
 - `changed_files`: `path`, `status`, `patch`, `before_source`, `after_source` 등 `ChangedFile` 필드. 알 수 없는 필드는 split·freeze에서 거부된다.
 - `expected`: `gate`(pass/warn/fail)와 규칙별 `rules.<rule_id>` = `{decision, support, known_violation?}`.
   decision은 satisfied·violated·undetermined·not-applicable·waived·error·skipped, support는 supported/unsupported다.
+  rules는 정책 규칙의 일부만 선언할 수 있지만, 정책에 없는 ID는 거부한다. 생략한 규칙도 평가·검토 대상에서 빠지지 않는다.
 - 선택: `drift_ignores`, `evaluated_on`(ISO 날짜, 없으면 2026-01-01).
 
 저장소의 고정 합성 사례(`adapters/eval`)와 개발 중 본 사례는 holdout이 아니다. 그런 출처는

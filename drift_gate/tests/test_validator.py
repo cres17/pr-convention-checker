@@ -375,7 +375,7 @@ class TestGitAdapter:
             return b"diff --git a/src/routes/users.ts b/src/routes/users.ts\n@@ -1 +1 @@\n-old\n+new\n"
 
         monkeypatch.setattr("drift_gate.adapters.git.client._git", fake_git)
-        files = GitAdapter(tmp_path).get_changed_files("main")
+        files = GitAdapter(tmp_path).get_changed_files("main", comparison_mode="commit")
         assert len(files) == 1 and files[0].path == "src/routes/users.ts"
         assert files[0].patch.startswith("diff --git")
         assert files[0].before_source == 'old\n' and files[0].after_source == 'new\n'

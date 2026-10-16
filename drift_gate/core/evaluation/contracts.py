@@ -109,11 +109,18 @@ def content_requirement(group, triggers, changed_files, session=None):
         # all_changed requires each named document to contain all keys;
         # any_changed permits any one complete document, not fragments combined.
         reason = "Required environment keys: " + ", ".join(sorted(required))
+        def check_document(file):
+            if file.document_input_state == 'missing':
+                return checked(False, f'{file.path} is missing; required keys: ' + ', '.join(sorted(required)), 'env-keys')
+            if file.documented_env_keys is None:
+                return unknown(f'{file.path}: document input unavailable', 'env-keys')
+            missing = required - set(file.documented_env_keys)
+            detail = (f'{file.path}: missing environment keys: ' + ', '.join(sorted(missing)) if missing
+                      else f'{file.path}: all required environment keys are documented')
+            return checked(not missing, detail, 'env-keys')
         results = []
         for pattern in patterns:
-            checks = [unknown("Document input unavailable", "env-keys") if f.documented_env_keys is None
-                      else checked(required <= set(f.documented_env_keys), reason, "env-keys")
-                      for f in docs if matches_any(f.path, [pattern])]
+            checks = [check_document(f) for f in docs if matches_any(f.path, [pattern])]
             results.append(combine(checks, require_all=False, mode="env-keys"))
         result = combine(results, require_all=bool(group.all_changed), mode="env-keys")
         if facts.uncertain:

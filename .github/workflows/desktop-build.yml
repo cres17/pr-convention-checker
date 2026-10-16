@@ -95,6 +95,7 @@ jobs:
           drift_gate/tests/test_multi_review_adapters.py
           drift_gate/tests/test_multi_review_cli.py
           drift_gate/tests/test_logical_contracts.py
+          drift_gate/tests/test_focused_logic.py
           drift_gate/tests/test_logical_entrypoints.py
           drift_gate/tests/test_auto_development.py
           drift_gate/tests/test_enterprise_correctness.py

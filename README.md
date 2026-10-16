@@ -40,6 +40,10 @@ Drift Gate는 이런 변경을 코드 리뷰 전에 확인하도록 만들었습
 
 **통과·실패는 정책 엔진이 결정합니다.** Claude API는 선택 기능으로, 검사가 끝난 뒤 체크리스트와 설명을 보완합니다. API 키 없이도 기본 검사와 보고서 생성이 동작합니다.
 
+Python 설정·API 경로의 내용 검사부터 시작하려면 [focused-python 안내](docs/focused-python.md)를 사용하세요.
+`init --preset focused-python`은 두 검사를 명시적으로 연결하며, 누락은 지적하고 확정할 수 없는 입력은 검토 대상으로 남깁니다.
+기존 정책·기본 프리셋은 바뀌지 않습니다. 이 안내는 현재 소스 기준이며 공개 설치 파일의 포함 여부는 릴리스별로 확인해야 합니다.
+
 데스크톱 앱에서는 [구독 계정으로 LLM 추가 판정](docs/subscription-llm-review.md)도 받을 수 있습니다. 사용자가 로그인한 공식 Codex·Claude Code를 호출하며, LLM의 결론과 수정 제안을 규칙 판정 옆에서 확인합니다.
 
 ## 기술 스택
@@ -196,7 +200,7 @@ drift-gate init --preset api
 drift-gate check --base HEAD --explain
 ```
 
-`HEAD`와 현재 작업 트리를 비교하므로 커밋 전 확인에 사용할 수 있습니다. 이미 커밋한 변경을 비교하려면 `--base main`처럼 실제 기준 브랜치를 지정합니다.
+`HEAD`와 현재 작업 트리를 비교하므로 커밋 전 확인에 사용할 수 있습니다. 이미 커밋한 브랜치 변경을 비교하려면 `--base main`처럼 기준 브랜치를 지정합니다. 이때 기본 비교 방식은 merge-base여서, 내 브랜치가 갈라진 뒤 main에 추가된 변경을 내 삭제로 잡지 않습니다. 지정한 커밋과 그대로 비교하려면 `--comparison-mode commit`을 붙입니다.
 
 | 필요한 작업 | 명령 |
 |---|---|
@@ -430,4 +434,4 @@ drift-gate-eval --recursive --compare-baseline
 
 ### 로컬 브랜치 비교와 검증 결과 해석
 
-내 브랜치가 main에서 갈라진 뒤의 변경은 `drift-gate check --base main --comparison-mode merge-base`로 검사합니다. 지정 커밋과 작업 폴더 자체를 비교하려면 기본 commit 모드를 사용합니다. 기본 정책은 Git 루트에서 탐색하며 정책 오타나 빈 규칙은 입력 오류입니다. self-audit의 related-evidence-found는 관련 파일 참조이고 행동 검증이나 AI 주장 수용을 뜻하지 않습니다.
+`drift-gate check --base main`은 내 브랜치가 main에서 갈라진 지점(merge-base)과 현재 작업 폴더를 비교합니다. 지정 커밋과 작업 폴더 자체를 비교하려면 `--comparison-mode commit`을 사용합니다. `review`, `self-audit`, 데스크톱 앱, MCP 로컬 검사도 같은 기본값을 씁니다. 공통 조상이 없거나 얕은 clone이라 찾지 못하면 다른 방식으로 바꾸지 않고 입력 오류(종료 코드 2)로 끝냅니다. `--head`로 두 커밋을 지정하는 고정 입력 검사와 `trusted-check`는 기준 커밋 OID를 증거에 묶기 때문에 기본값이 commit입니다. 기본 정책은 Git 루트에서 탐색하며 정책 오타나 빈 규칙은 입력 오류입니다. self-audit의 related-evidence-found는 관련 파일 참조이고 행동 검증이나 AI 주장 수용을 뜻하지 않습니다.

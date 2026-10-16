@@ -137,7 +137,14 @@ def route_document_requirement(group, files, added, removed, session=None):
                     checks.append(checked(False, 'API documentation is missing', mode))
                 else:
                     routes = document_routes(file, session)
-                    checks.append(checked(added <= routes and not (removed & routes), 'Complete document route coverage', mode))
+                    missing, stale = added - routes, removed & routes
+                    labels = []
+                    if missing:
+                        labels.append('missing added routes: ' + ', '.join(f'{method} {path}' for method, path in sorted(missing)))
+                    if stale:
+                        labels.append('removed routes still documented: ' + ', '.join(f'{method} {path}' for method, path in sorted(stale)))
+                    checks.append(checked(not (missing or stale), f'{file.path}: ' +
+                        '; '.join(labels or ['all changed routes are reflected']), mode))
             except UnsupportedContract as exc:
                 checks.append(unknown(str(exc), mode))
         if not checks:

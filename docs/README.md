@@ -4,6 +4,8 @@
 
 | 목적 | 문서 |
 |---|---|
+| Python 환경 변수·API 경로 내용 검사 | [focused-python 사용법](focused-python.md) |
+| 좁은 판정 범위·현재 구현 순서 | [2026-10-13 논리 개선 계획](architecture/drift-gate-focused-logic-plan-2026-10-13.md) |
 | Windows·Mac 설치와 화면 사용 | [데스크톱 앱 안내](desktop-app.md) |
 | 구독 계정으로 선택형 LLM 검토 | [구독 LLM 연결](subscription-llm-review.md) |
 | 문서 기준의 구현 현황을 확장하려는 계획 | [프로젝트 현황 계획](../계획.md) |

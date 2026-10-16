@@ -1,0 +1,252 @@
+{
+  "enum_numeric_overlap": {
+    "old": {
+      "oneOf": [
+        {
+          "enum": [
+            1
+          ]
+        },
+        {
+          "enum": [
+            1.0
+          ]
+        }
+      ]
+    },
+    "new": {
+      "enum": [
+        1
+      ]
+    },
+    "witness": 1,
+    "old_accepts": false,
+    "new_accepts": true,
+    "comparison": {
+      "schema": "api-compatibility-v1",
+      "direction": "response",
+      "truth": "F",
+      "breaking": [
+        {
+          "operation": "GET /x",
+          "location": "responses.200.application/json",
+          "check": "enum",
+          "detail": ""
+        }
+      ],
+      "unknown": [],
+      "semantics": "strict-json-schema-inclusion"
+    },
+    "gate": "fail"
+  },
+  "integer_float_enum": {
+    "old": {
+      "type": "string"
+    },
+    "new": {
+      "type": "integer",
+      "enum": [
+        1.0
+      ]
+    },
+    "witness": 1.0,
+    "old_accepts": false,
+    "new_accepts": true,
+    "comparison": {
+      "schema": "api-compatibility-v1",
+      "direction": "response",
+      "truth": "F",
+      "breaking": [
+        {
+          "operation": "GET /x",
+          "location": "responses.200.application/json",
+          "check": "enum",
+          "detail": ""
+        }
+      ],
+      "unknown": [],
+      "semantics": "strict-json-schema-inclusion"
+    },
+    "gate": "fail"
+  },
+  "object_singleton_false_break": {
+    "old": {
+      "enum": [
+        {}
+      ]
+    },
+    "new": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "witness": {},
+    "old_accepts": true,
+    "new_accepts": true,
+    "comparison": {
+      "schema": "api-compatibility-v1",
+      "direction": "response",
+      "truth": "T",
+      "breaking": [],
+      "unknown": [],
+      "semantics": "strict-json-schema-inclusion"
+    },
+    "gate": "pass"
+  },
+  "verified_vs_inapplicable": {
+    "definitions_version": 2,
+    "label_source": "human",
+    "units_total": 1,
+    "units_labelled": 1,
+    "units_assessable": 1,
+    "units_unlabelled": [],
+    "decision_label_matrix": {
+      "satisfied": {
+        "satisfied": 0,
+        "violated": 0,
+        "not-applicable": 0,
+        "undecidable": 0
+      },
+      "violated": {
+        "satisfied": 0,
+        "violated": 0,
+        "not-applicable": 1,
+        "undecidable": 0
+      },
+      "undetermined": {
+        "satisfied": 0,
+        "violated": 0,
+        "not-applicable": 0,
+        "undecidable": 0
+      },
+      "not-applicable": {
+        "satisfied": 0,
+        "violated": 0,
+        "not-applicable": 0,
+        "undecidable": 0
+      },
+      "waived": {
+        "satisfied": 0,
+        "violated": 0,
+        "not-applicable": 0,
+        "undecidable": 0
+      },
+      "error": {
+        "satisfied": 0,
+        "violated": 0,
+        "not-applicable": 0,
+        "undecidable": 0
+      },
+      "skipped": {
+        "satisfied": 0,
+        "violated": 0,
+        "not-applicable": 0,
+        "undecidable": 0
+      }
+    },
+    "engine_outcomes_total": {
+      "violated": 1
+    },
+    "engine_outcomes_in_denominator": {
+      "violated": 1
+    },
+    "confirmed_violation_precision": {
+      "numerator": 0,
+      "denominator": 1,
+      "value": 0.0,
+      "wilson95": [
+        0.0,
+        0.7935
+      ]
+    },
+    "confirmed_violation_recall": {
+      "numerator": 0,
+      "denominator": 0,
+      "value": null,
+      "wilson95": [
+        null,
+        null
+      ]
+    },
+    "recall_misses_by_engine_outcome": {},
+    "verified_coverage": {
+      "numerator": 1,
+      "denominator": 1,
+      "value": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ]
+    },
+    "false_verified": {
+      "numerator": 1,
+      "denominator": 1,
+      "value": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ]
+    },
+    "verified_without_decidable_label": 0,
+    "verified_without_label": 0,
+    "appropriate_unsupported_hold": {
+      "numerator": 0,
+      "denominator": 0,
+      "value": null,
+      "wilson95": [
+        null,
+        null
+      ]
+    },
+    "known_violation_retained": {
+      "numerator": 0,
+      "denominator": 0,
+      "value": null,
+      "wilson95": [
+        null,
+        null
+      ]
+    },
+    "note": "appropriate-unsupported-hold is not coverage; U/skip/error stay in denominators; false-verified compares every definite decision with a decidable label; undecidable labels are reported separately, never counted as right or wrong"
+  },
+  "omitted_rule_denominator": {
+    "policy_rules": [
+      "visible",
+      "omitted"
+    ],
+    "units": [
+      {
+        "unit_id": "one::omitted",
+        "case_id": "one",
+        "rule_id": "omitted",
+        "decision": "violated",
+        "verification": "unverified",
+        "expected_decision": null,
+        "expected_support": null,
+        "known_violation": false
+      },
+      {
+        "unit_id": "one::visible",
+        "case_id": "one",
+        "rule_id": "visible",
+        "decision": "satisfied",
+        "verification": "unverified",
+        "expected_decision": "satisfied",
+        "expected_support": "supported",
+        "known_violation": false
+      }
+    ],
+    "cases": [
+      {
+        "case_id": "one",
+        "gate": "fail",
+        "expected_gate": "fail",
+        "error": "",
+        "evaluation_context": {
+          "evaluated_on": "2026-01-01",
+          "date_basis": "UTC"
+        },
+        "input_sha256": "c6c4ae6ecccba921eea61c6701f1558c72418df6eb94da37749e75452a2797d5"
+      }
+    ]
+  }
+}

@@ -24,12 +24,14 @@ is U, never a silent pass. Real consumers may tolerate more than strict
 inclusion.
 """
 from dataclasses import dataclass
-import json
+from itertools import product
 
 from drift_gate.core.contracts.planner import Truth
+from drift_gate.core.evaluation import json_values
 
 PRIMITIVES = ('string', 'integer', 'number', 'boolean', 'object', 'array', 'null')
 MAX_DEPTH = 16
+MAX_FINITE_VALUES = 128
 METHODS = ('get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace')
 
 
@@ -55,7 +57,10 @@ NEVER = Node(frozenset())         # admits no value (a key an allOf branch forbi
 
 
 def _canonical(value):
-    return json.dumps(value, sort_keys=True, separators=(',', ':'))
+    try:
+        return json_values.canonical(value)
+    except ValueError as exc:
+        raise Unsupported(str(exc)) from exc
 
 
 def _resolve(ref, components):
@@ -73,6 +78,8 @@ def normalize(schema, components, *, depth=0, stack=()):
         raise Unsupported('schema depth limit')
     if schema is True or schema == {}:
         return ANY
+    if schema is False:
+        return NEVER
     if not isinstance(schema, dict):
         raise Unsupported('schema must be an object')
     if '$ref' in schema:
@@ -116,7 +123,7 @@ def normalize(schema, components, *, depth=0, stack=()):
         types = set(PRIMITIVES)
     elif isinstance(declared, str):
         types = {declared}
-    elif isinstance(declared, list) and declared:
+    elif isinstance(declared, list) and declared and all(isinstance(item, str) for item in declared):
         types = set(declared)
     else:
         raise Unsupported('invalid type')
@@ -132,13 +139,19 @@ def normalize(schema, components, *, depth=0, stack=()):
             raise Unsupported('enum must be a nonempty list')
         enum = tuple(sorted({_canonical(value) for value in schema['enum']}))
     properties = {}
-    for name, sub in (schema.get('properties') or {}).items():
+    raw_properties = schema.get('properties', {})
+    if not isinstance(raw_properties, dict) or not all(isinstance(name, str) for name in raw_properties):
+        raise Unsupported('properties must be an object with string keys')
+    for name, sub in raw_properties.items():
         properties[name] = normalize(sub, components, depth=depth + 1, stack=stack)
-    required = frozenset(schema.get('required') or ())
+    raw_required = schema.get('required', [])
+    if not isinstance(raw_required, list) or not all(isinstance(name, str) for name in raw_required):
+        raise Unsupported('required must be a list of property names')
+    required = frozenset(raw_required)
     additional = schema.get('additionalProperties', True)
     if isinstance(additional, dict):
         additional = normalize(additional, components, depth=depth + 1, stack=stack)
-    elif additional not in (True, False):
+    elif type(additional) is not bool:
         raise Unsupported('additionalProperties must be a boolean or schema')
     items = normalize(schema['items'], components, depth=depth + 1, stack=stack) if 'items' in schema else None
     return Node(frozenset(types), enum, tuple(sorted(properties.items())), required, additional, items)
@@ -175,7 +188,7 @@ def _merge(parts):
     for part in parts:
         if part.alternatives or part.recursive:
             raise Unsupported('allOf over unions or recursive references')
-        types &= part.types
+        types &= _expanded(part.types)
         required |= part.required
         if part.enum is not None:
             enum = part.enum if enum is None else tuple(sorted(set(enum) & set(part.enum)))
@@ -209,7 +222,7 @@ def _disjoint(x, y):
     for finite, other in ((x, y), (y, x)):
         if finite.enum is not None:
             plain = Node(finite.types, None, finite.properties, finite.required, finite.additional, finite.items)
-            values = [json.loads(v) for v in finite.enum]
+            values = [json_values.decode(v) for v in finite.enum]
             if all(admits(plain, v) == Truth.FALSE or admits(other, v) == Truth.FALSE for v in values):
                 return True
     return False
@@ -235,6 +248,12 @@ def subset(a, b, path, witnesses):
         return Truth.UNKNOWN
     if b == ANY:
         return Truth.TRUE
+    finite = _finite_values(a)
+    if finite is not None:
+        results = [admits(b, value) for value in finite]
+        if Truth.FALSE in results:
+            return _fail(witnesses, path, 'enum' if a.enum is not None or b.enum is not None else 'finite-values')
+        return _and(results)
     if a.alternatives:
         local = []
         verdict = _and(subset(member, b, path, local) for member in a.alternatives)
@@ -250,21 +269,14 @@ def subset(a, b, path, witnesses):
         results = [subset(a, member, path, local) for member in b.alternatives]
         return Truth.TRUE if Truth.TRUE in results else Truth.UNKNOWN
     if a.enum is not None:
-        # Finite left side: decide value by value.
-        values = [json.loads(v) for v in a.enum if admits(Node(a.types, None, a.properties, a.required, a.additional,
-                                                                 a.items), json.loads(v)) == Truth.TRUE]
-        results = [admits(b, value) for value in values]
-        if Truth.FALSE in results:
-            return _fail(witnesses, path, 'enum')
-        return Truth.UNKNOWN if Truth.UNKNOWN in results else Truth.TRUE
+        # Unknown enum membership is not proof that the left side is empty.
+        return Truth.UNKNOWN
     if b.enum is not None:
-        if a.types & {'string', 'integer', 'number', 'object', 'array'}:
+        if a.types & {'string', 'integer', 'number'}:
             return _fail(witnesses, path, 'enum')  # infinitely many values cannot fit a finite enum
-        finite = ([True, False] if 'boolean' in a.types else []) + ([None] if 'null' in a.types else [])
-        results = [admits(b, value) for value in finite]
-        if Truth.FALSE in results:
-            return _fail(witnesses, path, 'enum')
-        return Truth.UNKNOWN if Truth.UNKNOWN in results else Truth.TRUE
+        # Objects/arrays can be empty or finite; the type name is no proof of
+        # non-emptiness or an infinite language.
+        return Truth.UNKNOWN
     if not _type_subset(a.types, b.types):
         check = 'nullable' if a.types - set(b.types) == {'null'} else 'type'
         return _fail(witnesses, path, check)
@@ -292,7 +304,7 @@ def admits(node, value):
         return Truth.TRUE if Truth.TRUE in results else Truth.UNKNOWN if Truth.UNKNOWN in results else Truth.FALSE
     if node.enum is not None and _canonical(value) not in node.enum:
         return Truth.FALSE
-    kind = _value_type(_canonical(value))
+    kind = json_values.value_type(value)
     if not (kind in node.types or kind == 'integer' and 'number' in node.types):
         return Truth.FALSE
     if kind == 'object':
@@ -311,15 +323,65 @@ def admits(node, value):
     return Truth.TRUE
 
 
-def _value_type(canonical):
-    value = json.loads(canonical)
-    if value is None:
-        return 'null'
-    if isinstance(value, bool):
-        return 'boolean'
-    if isinstance(value, int):
-        return 'integer'
-    return {float: 'number', str: 'string', list: 'array', dict: 'object'}[type(value)]
+def _finite_values(node, depth=0):
+    """All members of a proven bounded finite language; None otherwise.
+
+    Exact enumeration of a supported schema, not sampling. Exceeding the cap
+    loses the certificate; it never manufactures an empty language.
+    """
+    if depth > MAX_DEPTH or node.recursive:
+        return None
+    if node.enum is not None:
+        candidates = [json_values.decode(value) for value in node.enum]
+    elif node.alternatives:
+        parts = [_finite_values(member, depth + 1) for member in node.alternatives]
+        if any(part is None for part in parts):
+            return None
+        candidates = [value for part in parts for value in part]
+    else:
+        if node.types & {'string', 'integer', 'number'}:
+            return None
+        candidates = ([True, False] if 'boolean' in node.types else []) + ([None] if 'null' in node.types else [])
+        if 'array' in node.types:
+            items = _finite_values(node.items, depth + 1) if isinstance(node.items, Node) else None
+            if items != ():
+                return None  # nonempty items allow unbounded lengths
+            candidates.append([])
+        if 'object' in node.types:
+            properties = dict(node.properties)
+            if any(_finite_values(_key_schema(node, name), depth + 1) == () for name in node.required):
+                object_values = []  # a required property cannot admit any value
+            else:
+                additional_empty = (node.additional is False or isinstance(node.additional, Node)
+                                    and _finite_values(node.additional, depth + 1) == ())
+                if not additional_empty:
+                    return None
+                choices = []
+                size = 1
+                for name, child in sorted(properties.items()):
+                    values = _finite_values(child, depth + 1)
+                    if values is None:
+                        return None
+                    options = [(name, value) for value in values]
+                    if name not in node.required:
+                        options.append(None)
+                    size *= len(options)
+                    if size > MAX_FINITE_VALUES:
+                        return None
+                    choices.append(options)
+                object_values = [{name: value for item in combination if item is not None for name, value in [item]}
+                                 for combination in product(*choices)]
+            candidates.extend(object_values)
+    unique = {}
+    for value in candidates:
+        membership = admits(node, value)
+        if membership == Truth.UNKNOWN:
+            return None
+        if membership == Truth.TRUE:
+            unique[_canonical(value)] = value
+        if len(unique) > MAX_FINITE_VALUES:
+            return None
+    return tuple(unique.values())
 
 
 def _fail(witnesses, path, check):
@@ -336,14 +398,15 @@ def _object_subset(a, b, path, witnesses):
     for name in sorted(set(a_props) | set(b_props)):
         left = a_props.get(name, a.additional if isinstance(a.additional, Node) else ANY if a.additional else None)
         right = b_props.get(name, b.additional if isinstance(b.additional, Node) else ANY if b.additional else None)
-        if left is None:
+        if left is None or _finite_values(left) == ():
             continue  # a never admits this property
         if right is None:
             witnesses.append((f'{path}.{name}', 'additional-properties'))
             results.append(Truth.FALSE)
             continue
         results.append(subset(left, right, f'{path}.{name}', witnesses))
-    if a.additional is not False and b.additional is not True:
+    additional_empty = (a.additional is False or isinstance(a.additional, Node) and _finite_values(a.additional) == ())
+    if not additional_empty and b.additional is not True:
         # a admits unlisted properties that b restricts or forbids.
         if b.additional is False:
             witnesses.append((path, 'additional-properties'))
@@ -586,7 +649,7 @@ def compatibility_requirement(group, triggers, changed_files, session=None):
             checks.append(open_check('before and after documents are both required', 'api-compatibility'))
             continue
         try:
-            old_doc, new_doc = json.loads(file.before_source), json.loads(file.after_source)
+            old_doc, new_doc = json_values.decode(file.before_source), json_values.decode(file.after_source)
         except ValueError:
             checks.append(open_check('document is not valid JSON', 'api-compatibility'))
             continue

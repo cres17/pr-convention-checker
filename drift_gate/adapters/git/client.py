@@ -67,6 +67,9 @@ def _sanitize_path(raw: str) -> Optional[str]:
     return clean
 
 
+# Local working-tree comparisons default to the fork point of the base (like a PR diff).
+DEFAULT_COMPARISON_MODE = 'merge-base'
+
 class GitInputError(ValueError):
     """Git input could not be collected; this is never an empty successful diff."""
 
@@ -75,13 +78,25 @@ class GitAdapter:
     def __init__(self, repo_root: str | Path | None = None):
         self.repo_root = Path(repo_root) if repo_root is not None else None
 
-    def get_changed_files(self, base: str = "HEAD~1", *, comparison_mode: str = 'commit') -> List[ChangedFile]:
+    def get_changed_files(self, base: str = "HEAD~1", *,
+                          comparison_mode: str = DEFAULT_COMPARISON_MODE) -> List[ChangedFile]:
+        """Collect the working-tree change against ``base``.
+
+        ``merge-base`` (default) compares against the common ancestor of ``base`` and ``HEAD``, so
+        commits the base branch gained after this branch forked are not reported as this branch's
+        deletions. ``commit`` compares against ``base`` itself.
+        """
         self.repo_root = repository_root(self.repo_root)
         if not base or base.startswith("-"):
             raise GitInputError("비교 기준이 올바르지 않습니다.")
         commit = _git(["rev-parse", "--verify", "--end-of-options", f"{base}^{{commit}}"], self.repo_root).decode('ascii').strip()
         if comparison_mode == 'merge-base':
-            commit = _git(['merge-base', commit, 'HEAD'], self.repo_root).decode('ascii').strip()
+            try:
+                commit = _git(['merge-base', commit, 'HEAD'], self.repo_root).decode('ascii').strip()
+            except GitInputError as exc:
+                raise GitInputError(
+                    f"비교 기준 '{base}'과 현재 HEAD의 공통 조상을 찾지 못했습니다. 얕은 clone이면 전체 이력을 받고, "
+                    "지정한 커밋과 그대로 비교하려면 --comparison-mode commit을 사용해 주세요.") from exc
         elif comparison_mode != 'commit':
             raise GitInputError('Unknown comparison mode')
         snapshot_args = ['diff', '--no-ext-diff', '--no-textconv', '--find-renames', commit, '--']
