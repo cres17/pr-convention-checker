@@ -65,7 +65,7 @@ jobs:
             --trusted-policy-ref f7df9d8e46837fd39f4f1efd589e39ed120f086c \
             --trusted-policy-sha256 3b703eaf71d1fbb7ab3a3eea1a704e99912c70344daa1c7a6da7c4ad1f5bf2eb \
             --engine-manifest build/trusted-engine.json \
-            --engine-manifest-sha256 88f275f568282507e71a66ad6f4e414e77dc0cdbf223c211c451eb1c1c0e37e8 \
+            --engine-manifest-sha256 e351930b8e3b4e246403ff242a71de255b97275b8ee3b8e1a2beccc4bfe696dd \
             --out-json build/trusted-check.json > /dev/null
           code=$?
           set -e

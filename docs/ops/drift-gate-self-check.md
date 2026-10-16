@@ -19,7 +19,7 @@ workflow를 써야 한다. 이 저장소 파일만으로는 설정할 수 없으
 ## S2-e~S4 신뢰 엔진 대조·설치본 증거 기능·종료 진단 (2026-10-08)
 
 CI self-check job은 `engine manifest --ref f7157885f9b7992c5c981d0624747803d11eb944`로 manifest를 다시 만들고
-SHA-256 `88f275f568282507e71a66ad6f4e414e77dc0cdbf223c211c451eb1c1c0e37e8`과 일치할 때만 그 엔진으로
+SHA-256 `e351930b8e3b4e246403ff242a71de255b97275b8ee3b8e1a2beccc4bfe696dd`과 일치할 때만 그 엔진으로
 `trusted-check`를 실행한다. block(1)·오류(2·3)는 job 실패다. review(5)는 `merge_basis=trusted-engine`일 때만
 경고로 남기고 계속하며, 신뢰 판정이 없거나 attestation이 맞지 않는 review는 실패시킨다. 이 저장소의 변경은
 대부분 `drift_gate/**`를 바꾸므로 review가 일반적이다. job은 후보 코드가 설치된 runner에서 실행되므로 기록된
