@@ -46,7 +46,9 @@ def drift_gate_check_local(
     changed_files = git.get_changed_files(base)
     # Local runs cannot manufacture GitHub approval evidence.
     from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
-    changed_files = attach_env_documents(changed_files, policy, local_document_reader(git.repo_root or Path.cwd()))
+    from drift_gate.adapters.git.client import reference_grep
+    changed_files = attach_env_documents(changed_files, policy, local_document_reader(git.repo_root or Path.cwd()),
+                                         reference_grep(git.repo_root or Path.cwd()))
     result = run(changed_files=changed_files, policy=policy, execution=execution,
         policy_source=source, policy_path=policy_path,
         provenance={"source": "local-git", **getattr(git, "provenance", {})},contract_proofs=contract_proofs)
@@ -111,7 +113,9 @@ def drift_gate_get_evidence(
     git = GitAdapter()
     changed_files = git.get_changed_files(base)
     from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
-    changed_files = attach_env_documents(changed_files, policy, local_document_reader(git.repo_root or Path.cwd()))
+    from drift_gate.adapters.git.client import reference_grep
+    changed_files = attach_env_documents(changed_files, policy, local_document_reader(git.repo_root or Path.cwd()),
+                                         reference_grep(git.repo_root or Path.cwd()))
     result = run(changed_files=changed_files, policy=policy, execution=execution,
         policy_source=source, policy_path=policy_path,
         provenance={"source": "local-git", **getattr(git, "provenance", {})})

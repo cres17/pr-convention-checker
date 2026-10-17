@@ -35,6 +35,10 @@ def weakening_reasons(trusted, candidate):
                 or (group.any_changed and (not current.any_changed or
                     not set(current.any_changed).issubset(group.any_changed)))):
                 errors.append(f'{old.id}: weakened group {group.name}')
+            elif group.check_removed_keys and not current.check_removed_keys:
+                errors.append(f'{old.id}: disabled removed-key check in group {group.name}')
+            elif set(current.exclude_removed_keys) - set(group.exclude_removed_keys):
+                errors.append(f'{old.id}: excluded removed keys in group {group.name}')
         if old.require.cross_file != new.require.cross_file:
             errors.append(f'{old.id}: cross-file obligations changed; explicit migration required')
         if not old.allow_ignore and new.allow_ignore:

@@ -122,7 +122,7 @@ snapshot을 기존 방식과 proof 방식으로 평가해 그룹별 차이를 �
 
 `when.trigger: {family, predicate, scope, on_unknown, min_magnitude}`를 지원한다. family·predicate는
 `api-route`(route-added/removed/changed), `api-response`(response-shape-changed),
-`env-key`(key-added), `paths`(path-changed)다. scope는 `selected-modules`만 지원한다. 변경 identity
+`env-key`(key-added/removed/changed), `paths`(path-changed)다. scope는 `selected-modules`만 지원한다. 변경 identity
 수를 magnitude 구간으로 세어 T/F/U를 내고, U는 `on_unknown`(review·trigger·ignore-with-audit)으로만
 처리한다. U를 F로 접지 않는다. `migrate typed-trigger`는 `min_change_intensity`와의 차이를 보고한다.
 
@@ -675,3 +675,23 @@ path `stat`과 handle `fstat`의 ctime 의미가 다를 수 있어 두 API를 �
 
 `--head`를 쓰는 고정 Git 객체 검사, `trusted-check`, MCP `drift_gate_check_git`의 기본값은 `commit`으로 유지한다. 이 경로는
 명시한 commit 쌍을 증거·재실행·신뢰 판정의 subject로 묶고, `commit` 모드에서만 신뢰 엔진의 `resolved_base`를 대조한다.
+
+## 2026-10-18 삭제된 환경 변수 키와 경고(advisories)
+
+`env-keys` 그룹(그리고 환경 검사를 고른 `auto-strict`)은 `check_removed_keys`(기본 true)일 때, 변경된 코드가 더 이상 읽지 않는
+키 중 예시 문서에 남은 키를 검사한다. 후보는 `environment_delta`의 `removed`(변경 전 읽던 키 중 변경 후 어느 변경 파일도
+읽지 않는 키)에서 `exclude_removed_keys`를 뺀 것이다. adapter는 그 키가 변경 후 저장소 어디에 남는지 단어 단위로 찾고
+(`git grep -w -F`; 로컬은 추적·미추적(무시 제외) 작업 트리, `--head`는 head tree, PR API 모드는 검색 불가), 문서
+`ChangedFile`의 `env_key_references`(키 → code/config/mention 경로)와 `env_reference_scan`(complete 또는 unavailable 이유)에
+기록한다. 값은 기록하지 않는다. 키 50개, 키당 파일 200개, 읽기 20MB를 넘으면 검색 불가로 기록한다.
+
+판정: 다른 곳에 없음은 위반(규칙 심각도). 지원 코드의 실제 읽기는 사용 중. 설정·배포 파일의 환경 변수 형태, 이름만 등장,
+검색 불가, 변경 안의 동적 환경 접근은 그룹의 `advisories`로 남긴다. advisory는 그룹 decision·verification을 바꾸지 않는다.
+결과 JSON의 최상위 `advisories`는 평가된 규칙의 그룹 advisory를 모은 projection이며, pass 판정을 warn으로만 바꾸고 fail을
+만들지 않는다. `enforcement.advisory_rule_ids`가 있으면 action은 review다. 저장 묶음 재실행 비교는 `enforcement`처럼
+`advisories`를 제외한다.
+
+삭제만 있는 변경도 `min_change_intensity: config-key-added`(신호 `env-key-removed`)와 typed trigger `key-removed`·`key-changed`를
+충족한다. `key-added`는 그대로 삭제를 세지 않는다. `check_removed_keys: false`와 `exclude_removed_keys` 추가는 신뢰 정책 대비
+약화로 보고한다. 두 옵션은 `env-keys`·`auto-strict` 그룹에만 허용하며, 기본값인 정책의 identity와 캡처 payload는 바뀌지 않는다.
+

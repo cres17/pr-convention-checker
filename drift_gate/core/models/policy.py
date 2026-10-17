@@ -12,6 +12,9 @@ class Group:
     # | contract-proof (needs gate.proof_gate: v1) | api-compatibility
     content: str = "auto"
     direction: str = ""  # api-compatibility: request | response | both
+    # env-keys / auto-strict: report keys removed from code that the sample still documents.
+    check_removed_keys: bool = True
+    exclude_removed_keys: List[str] = field(default_factory=list)  # keys used outside this repository
 
     @classmethod
     def from_dict(cls, d: dict) -> "Group":
@@ -22,6 +25,8 @@ class Group:
             required=d.get("required", True),
             content=d.get("content", "auto"),
             direction=d.get("direction", ""),
+            check_removed_keys=d.get("check_removed_keys", True),
+            exclude_removed_keys=list(d.get("exclude_removed_keys", [])),
         )
 
 
@@ -258,4 +263,8 @@ def policy_identity_dict(policy):
         for group in rule["require"]["groups"]:
             if group.get("direction") == "":
                 group.pop("direction", None)
+            if group.get("check_removed_keys") is True:
+                group.pop("check_removed_keys", None)
+            if group.get("exclude_removed_keys") == []:
+                group.pop("exclude_removed_keys", None)
     return data

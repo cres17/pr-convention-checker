@@ -117,7 +117,7 @@ Set `min_change_intensity` in the `when:` clause of a rule.
 | `export-added` | New public export added | Trigger when new symbols become public |
 | `docs-only` | Only documentation files changed | Equivalent to `docs-only` change type |
 | `tests-only` | Only test files changed | Equivalent to `test-only` change type |
-| `config-key-added` | New configuration key or env variable added | Trigger when deployment config changes |
+| `config-key-added` | New configuration key or env variable added (also a removed env key when an `env-keys` group checks removed keys) | Trigger when deployment config changes |
 | `route-contract-change` | Route handler or schema changed | Trigger API contract rules |
 | `db-schema-change` | DB model or migration changed | Trigger DB runbook rules |
 | `auth-policy-change` | Auth/RBAC/permission policy changed | Trigger security docs rules |

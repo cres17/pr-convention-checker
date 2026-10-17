@@ -11,7 +11,7 @@
 | `auto` (default) | Uses endpoint evidence for literal HTTP route deltas when required paths start with `docs/api/`, `docs/spec.`, or `openapi`. Other changes retain path-based requirements. |
 | `paths` | Requires changed document paths only; use for compatibility with free-form documents. |
 | `api-routes` | Requires added and removed HTTP method/path pairs to appear on the corresponding sides of the documentation diff. If no supported literal route delta can be established, the requirement remains unsatisfied. |
-| `env-keys` | Requires newly introduced static environment-variable keys in the current sample document, even when the document is unchanged. Values are not retained by the content reader. |
+| `env-keys` | Requires newly introduced static environment-variable keys in the current sample document, even when the document is unchanged. Keys the changed code no longer reads must not stay in the sample unless something else still uses them (see [Removed keys](#removed-keys)). Values are not retained by the content reader. |
 
 All modes retain the rule's configured severity. Only `env-keys` can satisfy a
 requirement from an unchanged document. Deleted documents do not satisfy a
@@ -52,6 +52,40 @@ names, aliases, framework-specific settings models and validation constraints
 are not fully analyzed. Strings resembling accesses can trigger false positives, and refactoring an
 existing key access can incorrectly require documentation even when no new key
 is introduced. This is not a runtime configuration validator.
+
+## Removed keys
+
+Since 2026-10-18, `env-keys` (and `auto-strict` when it selects environment checks) also
+reports keys that the changed code no longer reads but the sample still lists. It is on by
+default. A removal-only change activates `min_change_intensity: config-key-added` rules and the
+typed predicates `key-removed` and `key-changed`; `key-added` keeps ignoring it.
+
+For each such key the checker searches the repository after the change (local working tree
+including untracked, non-ignored files; for `--head`, the head tree) and classifies each match:
+
+| Where the key still occurs | Result |
+|---|---|
+| Nowhere outside the sample documents | Violation with the rule's severity |
+| Python `os` access or JS `process.env` / `import.meta.env` | Still used; nothing reported |
+| An environment-variable form in configuration: `.env*`, Dockerfile `ENV`/`ARG`, shell `export`/`$KEY`, compose `environment`/`${KEY}`, workflow `${{ secrets.KEY }}`, Kubernetes `name:`/`key:` | Warning |
+| Only the name (comments, other languages, prose, unreadable files) | Warning |
+| The search could not run (PR API mode, limits, Git error) | Warning |
+| The change also contains dynamic environment access | Warning |
+
+Warnings are listed in `advisories`. They never fail a run: a passing gate becomes `warn`
+and `enforcement.action` becomes `review`. Each message says how to stop the check:
+
+```yaml
+        - name: Sample environment keys
+          all_changed: [".env.example"]
+          content: env-keys
+          exclude_removed_keys: [LEGACY_TOKEN]   # used outside this repository
+          # check_removed_keys: false            # stop the removed-key check for this group
+```
+
+Both options are policy weakenings for trusted-policy comparison. A configuration form can
+still belong to another service, and keys consumed only outside this repository (deployment
+platforms, other repositories) look unused; exclude those explicitly.
 
 ## HTTP route example
 

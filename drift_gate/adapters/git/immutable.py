@@ -62,6 +62,28 @@ def _git(root, args, *, env=None):
     return output
 
 
+def _grep_tree(root, revision, key):
+    """Paths in ``revision`` whose text contains ``key`` as a word (no working tree or caller config)."""
+    budget = ACTIVE_BUDGET.get()
+    if budget is not None:
+        budget.consume('git_calls', 1, stage='git-collection')
+    try:
+        completed = subprocess.run(['git', '--no-replace-objects', '-c', 'core.quotepath=off', 'grep', '-l', '-z',
+                                    '-I', '-w', '-F', '-e', key, revision, '--'],
+                                   cwd=root, env=_git_environment(), capture_output=True, timeout=30)
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise GitInputError('Could not search immutable Git objects') from exc
+    if completed.returncode == 1 and not completed.stderr.strip():
+        return []
+    if completed.returncode != 0:
+        raise GitInputError('Could not search immutable Git objects')
+    if budget is not None:
+        budget.consume('bytes', len(completed.stdout), stage='git-collection')
+    prefix = revision + ':'
+    return [entry.decode('utf-8', errors='strict')[len(prefix):] for entry in completed.stdout.split(b'\0')
+            if entry and entry.decode('utf-8', errors='strict').startswith(prefix)]
+
+
 @contextmanager
 def _raw_diff(root, object_format):
     """Read objects through a private bare repository with no caller attributes.
@@ -228,7 +250,8 @@ def _collect_git_snapshot(*, root, base, head, trusted_policy_ref, trusted_polic
                 after_text = reader.text(head_oid, file.path)
             files.append(ChangedFile(file.path, file.status, previous_path=file.previous_path,
                 patch=patch, before_source=before_text, after_source=after_text))
-    files = attach_env_documents(files, trusted, lambda path: reader.text(head_oid, path))
+    files = attach_env_documents(files, trusted, lambda path: reader.text(head_oid, path),
+                                 lambda key: _grep_tree(reader.root, head_oid, key))
     # Document-only unchanged observations need a before record for replay binding.
     for file in files:
         if file.before_source is not None:

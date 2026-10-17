@@ -38,6 +38,8 @@ def _threshold_candidates(files, rule, session=None):
     schema_contract = any(g.content == "api-schema" for g in rule.require.groups)
     strict = next((g for g in rule.require.groups if g.content == 'auto-strict' and g.required), None)
     env_contract = any(g.content == 'env-keys' and g.required for g in rule.require.groups)
+    env_removal = any(g.content in {'env-keys', 'auto-strict'} and g.required and g.check_removed_keys
+                      for g in rule.require.groups)
     route_contract = any(g.content in {'auto', 'api-routes', 'auto-strict'} and g.required for g in rule.require.groups)
     accepted, uncertain = [], set()
     for file in files:
@@ -45,18 +47,24 @@ def _threshold_candidates(files, rule, session=None):
         meets = meets_min_intensity(classify_file_intensity(file), minimum)
         if strict:
             content = content_requirement(strict, [file], [], session)
-            if content.verification == 'not-applicable':
+            # Removing a key the sample may still document is an environment change for this rule.
+            removed_env = env_removal and bool(environment_delta([file]).removed)
+            if content.verification == 'not-applicable' and not removed_env:
                 meets, unavailable = False, False
-            elif content.decision == 'undetermined':
+            elif content.decision == 'undetermined' and not removed_env:
                 unavailable = True
             else:
-                intensity = ('config-key-added' if environment_delta([file]).keys else 'route-contract-change')
+                intensity = ('config-key-added' if environment_delta([file]).keys or removed_env
+                             else 'route-contract-change')
                 meets = meets_min_intensity(intensity, minimum)
                 unavailable = False
         elif env_contract:
             facts = environment_delta([file])
             if facts.keys:
                 file = replace(file, semantic_signals=sorted(set(file.semantic_signals) | {'env-key-added'}))
+                meets = meets_min_intensity(classify_file_intensity(file), minimum)
+            if facts.removed and env_removal:
+                file = replace(file, semantic_signals=sorted(set(file.semantic_signals) | {'env-key-removed'}))
                 meets = meets_min_intensity(classify_file_intensity(file), minimum)
             if facts.uncertain and not (facts.keys and meets):
                 unavailable = True
@@ -322,6 +330,7 @@ def _evaluate_groups(
                 type=group_type,
                 evidence=content.reason, decision=decision,
                 verification=content.verification, content_mode=content.mode,
+                advisories=list(content.advisories),
             ))
         else:
             unsatisfied.append(UnsatisfiedGroup(
@@ -330,6 +339,7 @@ def _evaluate_groups(
                 type=group_type,
                 evidence=content.reason, decision=decision,
                 verification=content.verification, content_mode=content.mode,
+                advisories=list(content.advisories),
             ))
     return satisfied, unsatisfied
 

@@ -40,7 +40,8 @@ def validate_schema(data):
 
     strings = array(string)
     group = lambda v, p: mapping(v, {'name': string, 'any_changed': strings,
-        'all_changed': strings, 'required': boolean, 'content': string, 'direction': string}, p)
+        'all_changed': strings, 'required': boolean, 'content': string, 'direction': string,
+        'check_removed_keys': boolean, 'exclude_removed_keys': strings}, p)
     trigger = lambda v, p: mapping(v, {'family': string, 'predicate': string, 'scope': string,
         'on_unknown': string, 'min_magnitude': positive}, p)
     service = lambda v, p: mapping(v, {'id': string, 'paths': strings, 'entrypoints': strings}, p)

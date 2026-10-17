@@ -206,6 +206,7 @@ class HtmlReporter:
   {walkthrough}
   {diagnostics}
   {self._temporal_warnings(result)}
+  {self._advisories(result)}
   {rule_table}
 
   <section class="layout">
@@ -320,6 +321,20 @@ class HtmlReporter:
   <ul>{skipped}</ul>
   <h3>Rejected Ignores</h3>
   <ul>{rejected}</ul>
+</section>"""
+
+    def _advisories(self, result: EvaluationResult) -> str:
+        if not result.advisories:
+            return ""
+        items = "".join(
+            f"<li><code>{html.escape(item['rule_id'])}</code> ({html.escape(item['group'])}): "
+            f"{html.escape(item['message'])}</li>"
+            for item in result.advisories
+        )
+        return f"""<section class="card notice">
+  <h2>Warnings</h2>
+  <p>These do not block the PR. Check each one; the guidance shows how to stop a check.</p>
+  <ul>{items}</ul>
 </section>"""
 
     def _temporal_warnings(self, result: EvaluationResult) -> str:

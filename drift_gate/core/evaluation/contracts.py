@@ -72,6 +72,43 @@ def route_delta(files):
     return added - removed, removed - added
 
 
+def removed_keys_check(group, file, keys, *, dynamic=False):
+    """A key no changed file reads any more must not stay in the sample unless something still uses it.
+
+    Only a confirmed absence anywhere else in the repository is a violation. A use in configuration,
+    a bare mention, an unchecked repository or dynamic access in the change is a warning.
+    """
+    from drift_gate.core.evaluation.env_references import reference_outcome
+    scan = file.env_reference_scan
+    references = file.env_key_references or {}
+    stale, advisories = [], []
+    for key in sorted(keys):
+        stop = (f"Stop checking {key}? Add exclude_removed_keys: [{key}] to group '{group.name}' "
+                f"(or check_removed_keys: false to stop the check)")
+        prefix = f'{file.path}: {key} is no longer read by the changed code but is still documented'
+        outcome = reference_outcome(references.get(key)) if scan == 'complete' else None
+        if outcome is None:
+            advisories.append(f"{prefix}; other uses could not be checked ({scan or 'repository references not collected'}). {stop}")
+        elif outcome == 'code':
+            continue
+        elif outcome in ('config', 'mention'):
+            paths = ', '.join(references[key][outcome][:5])
+            what = 'used in configuration' if outcome == 'config' else 'named without a recognised use'
+            advisories.append(f'{prefix}; {what}: {paths}. Remove it from the sample if that use is gone. {stop}')
+        elif dynamic:
+            advisories.append(f'{prefix}; dynamic environment access in the change prevents a definite result. {stop}')
+        else:
+            stale.append(key)
+    if stale:
+        names = ', '.join(stale)
+        return ContentCheck('violated', 'verified',
+            f"{file.path}: removed environment keys still documented: {names} (no other use in the repository). "
+            f"Remove them from the sample, or add exclude_removed_keys: [{names}] to group '{group.name}' "
+            f"if they are used outside this repository", 'env-keys', tuple(advisories))
+    return ContentCheck('satisfied', 'verified', f'{file.path}: no removed environment key is documented without a use',
+                        'env-keys', tuple(advisories))
+
+
 def content_requirement(group, triggers, changed_files, session=None):
     """Return explicit evidence; legacy auto fallback is labelled, never verified."""
     patterns = group.any_changed or group.all_changed
@@ -101,15 +138,18 @@ def content_requirement(group, triggers, changed_files, session=None):
     if group.content == "env-keys":
         facts = environment_delta(triggers)
         required = facts.keys
-        if not required:
+        removed = facts.removed - set(group.exclude_removed_keys) if group.check_removed_keys else set()
+        stale = {f.path: removed & set(f.documented_env_keys) for f in docs if f.documented_env_keys}
+        if not required and not any(stale.values()):
             if not facts.uncertain and all((f.status == 'added' or f.before_source is not None)
                                           and (f.status == 'deleted' or f.after_source is not None) for f in triggers):
                 return ContentCheck('satisfied', 'not-applicable', 'Complete source establishes no new environment key', 'env-keys')
             return unknown("No static new environment keys could be established from this change", "env-keys")
         # all_changed requires each named document to contain all keys;
         # any_changed permits any one complete document, not fragments combined.
-        reason = "Required environment keys: " + ", ".join(sorted(required))
-        def check_document(file):
+        reason = ("Required environment keys: " + ", ".join(sorted(required)) if required
+                  else "Removed environment keys: " + ", ".join(sorted(removed)))
+        def check_required(file):
             if file.document_input_state == 'missing':
                 return checked(False, f'{file.path} is missing; required keys: ' + ', '.join(sorted(required)), 'env-keys')
             if file.documented_env_keys is None:
@@ -118,15 +158,22 @@ def content_requirement(group, triggers, changed_files, session=None):
             detail = (f'{file.path}: missing environment keys: ' + ', '.join(sorted(missing)) if missing
                       else f'{file.path}: all required environment keys are documented')
             return checked(not missing, detail, 'env-keys')
+        def check_document(file):
+            parts = [check_required(file)] if required else []
+            if stale.get(file.path):
+                parts.append(removed_keys_check(group, file, stale[file.path], dynamic=facts.uncertain))
+            return combine(parts, require_all=True, mode="env-keys") if parts else checked(
+                True, f'{file.path}: no removed environment key remains documented', 'env-keys')
         results = []
         for pattern in patterns:
             checks = [check_document(f) for f in docs if matches_any(f.path, [pattern])]
             results.append(combine(checks, require_all=False, mode="env-keys"))
         result = combine(results, require_all=bool(group.all_changed), mode="env-keys")
-        if facts.uncertain:
+        if facts.uncertain and required:
             result = combine([result, unknown('Environment access scope/key is unresolved', 'env-keys')],
                              require_all=True, mode='env-keys')
-        return ContentCheck(result.decision, result.verification, reason + "; " + result.reason, "env-keys")
+        return ContentCheck(result.decision, result.verification, reason + "; " + result.reason, "env-keys",
+                            result.advisories)
     added, removed = route_delta(triggers)
     auto_api = any(p.startswith(("docs/api/", "docs/spec.", "openapi")) for p in patterns)
     if group.content == "auto" and (not auto_api or not (added or removed)):

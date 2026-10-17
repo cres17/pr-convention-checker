@@ -36,6 +36,8 @@ def analysis_unavailable(file: ChangedFile) -> bool:
 
 SEMANTIC_SIGNAL_INTENSITY = {
     "env-key-added": "config-key-added",
+    # A key removed from code is the same level of configuration-contract change.
+    "env-key-removed": "config-key-added",
     "db-schema-change": "db-schema-change",
     "auth-policy-change": "auth-policy-change",
     "ci-secret-change": "ci-secret-change",

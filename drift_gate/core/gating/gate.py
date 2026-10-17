@@ -35,5 +35,10 @@ def decide_gate(result: EvaluationResult) -> str:
         elif decision == "pass":
             decision = "warn"
 
+    # Warn-level findings (e.g. a removed key that may still be used outside supported code)
+    # never block; they only keep a clean gate from reading as pass.
+    if decision == "pass" and result.advisories:
+        decision = "warn"
+
     result.result = decision
     return decision

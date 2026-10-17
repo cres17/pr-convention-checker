@@ -141,13 +141,15 @@ reason: <이유>
   "skipped_rules": [{"rule_id": "...", "severity": "...", "reason": "...", "message": "..."}],
   "rejected_ignores": [{"rule_id": "...", "severity": "...", "message": "..."}],
   "gate": {"fail_on_blocker": true, "fail_on_major_count": 2},
+  "advisories": [{"rule_id": "...", "group": "...", "message": "..."}],
   "enforcement": {"action": "allow | review | block", "basis": "...",
                   "confirmed_violation_rule_ids": [], "unresolved_rule_ids": [],
-                  "partially_verified_rule_ids": [], "waived_rule_ids": []}
+                  "partially_verified_rule_ids": [], "waived_rule_ids": [], "advisory_rule_ids": []}
 }
 ```
 
-`enforcement`는 규칙 판정의 projection이며 `result`·종료 코드를 바꾸지 않는다(gate fail→block, 남은 위반·미결정·부분 검증→review).
+`enforcement`는 규칙 판정의 projection이며 `result`·종료 코드를 바꾸지 않는다(gate fail→block, 남은 위반·미결정·부분 검증·경고→review).
+`advisories`는 판정을 바꾸지 않는 경고(예: 삭제된 환경 변수 키가 설정 파일에서만 쓰임)이며 pass를 warn으로만 바꾼다.
 
 ---
 
@@ -158,6 +160,7 @@ docs-only / test-only PR        → pass (평가 생략)
 BLOCKER ≥ 1 + fail_on_blocker   → fail
 MAJOR ≥ fail_on_major_count     → fail
 MAJOR ≥ 1 또는 MINOR ≥ 1       → warn
+위반 없음 + advisories ≥ 1      → warn
 위반 없음                       → pass
 ```
 

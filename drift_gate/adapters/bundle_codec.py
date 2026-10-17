@@ -104,5 +104,7 @@ def semantic_result(data):
     # ``enforcement`` is a pure projection of the fields compared here; results recorded before it
     # existed must still replay, so it is left out of the comparison.
     value.pop('enforcement', None)
+    # ``advisories`` is the same kind of projection (of rule_decisions groups).
+    value.pop('advisories', None)
     value.get('scan_metrics', {}).pop('runtime_seconds', None)
     return value

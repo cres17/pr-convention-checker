@@ -128,6 +128,25 @@ def repository_root(cwd=None):
     return Path(_git(['rev-parse', '--show-toplevel'], cwd).decode('utf-8').strip())
 
 
+def reference_grep(root):
+    """``grep(key)``: tracked and untracked (not ignored) working-tree paths containing ``key`` as a word."""
+    root = Path(root)
+
+    def grep(key: str) -> list[str]:
+        try:
+            completed = subprocess.run(['git', '-c', 'core.quotepath=off', 'grep', '-l', '-z', '-I', '-w', '-F',
+                                        '--untracked', '--full-name', '-e', key, '--', '.'],
+                                       cwd=root, capture_output=True, timeout=30)
+        except (subprocess.TimeoutExpired, OSError) as exc:
+            raise GitInputError('Git reference search failed') from exc
+        if completed.returncode == 1 and not completed.stderr.strip():
+            return []
+        if completed.returncode != 0:
+            raise GitInputError('Git reference search failed')
+        return [p.decode('utf-8', errors='strict') for p in completed.stdout.split(b'\0') if p]
+    return grep
+
+
 def _git(args: list[str], cwd: Path | None) -> bytes:
     try:
         return subprocess.check_output(["git", "--literal-pathspecs", *args], cwd=cwd,

@@ -59,3 +59,6 @@ full 출력은 원본 artifact 해시와 subject OID를 포함하고 compact는 
 artifact 개수·생략 표시를 유지한다. 원문 bytes는 응답에 넣지 않는다.
 
 2026-10-16부터 로컬 검사·근거 조회 도구는 `--base`와 `HEAD`의 merge-base를 기준으로 변경을 수집한다. 공통 조상이 없으면 오류를 반환한다. `drift_gate_check_git`은 명시한 commit 쌍을 쓰며 기본 `comparison_mode`는 `commit`이다.
+
+2026-10-18부터 로컬 검사·근거 조회 도구는 삭제된 환경 변수 키가 예시 문서에 남으면 작업 트리에서 그 키의 다른 사용을 찾는다. 결과의 `advisories`는 경고이며 실패를 만들지 않는다. PR 도구는 저장소 트리를 검색하지 않으므로 해당 키를 검색 불가 경고로 보고한다.
+

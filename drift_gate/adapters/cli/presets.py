@@ -272,14 +272,14 @@ rules:
   - id: env-sample-content
     when:
       any_changed: ["src/config/**"]
-      trigger: {family: env-key, predicate: key-added, scope: selected-modules, on_unknown: review}
+      trigger: {family: env-key, predicate: key-changed, scope: selected-modules, on_unknown: review}
     require:
       groups:
         - name: Environment sample keys
           all_changed: [".env.example"]
           content: env-keys
     severity: blocker
-    message: "새 환경 변수 키를 .env.example에 반영한 뒤 다시 검사하세요."
+    message: "추가한 환경 변수 키는 .env.example에 넣고, 코드에서 지운 키는 .env.example에서도 정리한 뒤 다시 검사하세요."
   - id: api-route-content
     when:
       any_changed: ["src/api/**"]

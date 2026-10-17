@@ -205,11 +205,13 @@ class UnsatisfiedGroup:
     content_mode: str = "paths"
     source_files: List[str] = field(default_factory=list)
     relation: str = ""
+    advisories: List[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {"name": self.name, "required": self.required, "type": self.type, "evidence": self.evidence,
                 "decision": self.decision, "verification": self.verification, "content_mode": self.content_mode,
-                **({"source_files": self.source_files, "relation": self.relation} if self.relation else {})}
+                **({"source_files": self.source_files, "relation": self.relation} if self.relation else {}),
+                **({"advisories": self.advisories} if self.advisories else {})}
 
 
 @dataclass
@@ -223,11 +225,13 @@ class SatisfiedGroup:
     content_mode: str = "paths"
     source_files: List[str] = field(default_factory=list)
     relation: str = ""
+    advisories: List[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {"name": self.name, "required": self.required, "type": self.type, "evidence": self.evidence,
                 "decision": self.decision, "verification": self.verification, "content_mode": self.content_mode,
-                **({"source_files": self.source_files, "relation": self.relation} if self.relation else {})}
+                **({"source_files": self.source_files, "relation": self.relation} if self.relation else {}),
+                **({"advisories": self.advisories} if self.advisories else {})}
 
 
 @dataclass
@@ -471,6 +475,16 @@ class EvaluationResult:
         from drift_gate.core.compat.legacy_result import project_legacy_result
         return project_legacy_result(self)
 
+    @property
+    def advisories(self) -> List[dict]:
+        """Warn-level findings of evaluated rules; they never change a rule decision.
+
+        A pass gate becomes warn when any exist (decide_gate); they never cause fail.
+        """
+        return [{"rule_id": d.rule_id, "group": g.name, "message": message}
+                for d in self.rule_decisions if d.status not in {"skipped", "unmatched"}
+                for g in d.satisfied_groups + d.unsatisfied_groups for message in g.advisories]
+
     def _legacy_dict(self) -> dict:
         d = {
             "schema_version": 3,
@@ -498,6 +512,7 @@ class EvaluationResult:
             "temporal_warnings": [
                 warning.to_dict() for warning in self.temporal_warnings
             ],
+            "advisories": self.advisories,
             "gate": self.gate.to_dict(),
         }
         if self.enrichment_metrics is not None:

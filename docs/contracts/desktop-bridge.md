@@ -78,3 +78,6 @@ policy, index attributes, info attributes, diff config를 실제로 변형하고
 진단 JSON은 UTF-8로 읽고 쓴다. 플랫폼 기본 인코딩으로 결과를 해석하지 않는다.
 원본 정책·문서 대조 fixture는 LF/CRLF bytes를 명시하며, Windows의 텍스트 쓰기 변환이
 예상 해시를 바꾸지 않도록 한다. 진단 검증 조건을 플랫폼별로 완화하지 않는다.
+
+2026-10-18부터 데스크톱 검사도 삭제된 환경 변수 키의 다른 사용을 저장소 작업 트리에서 찾는다(`reference_grep`). 화면 계약은 바꾸지 않았다. 경고(`advisories`)는 보고서 Markdown·HTML에 표시되며, 검사를 끄는 화면 동작은 아직 없다.
+

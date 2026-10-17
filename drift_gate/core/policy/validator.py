@@ -4,6 +4,7 @@ PolicyValidationError: 즉시 중단해야 할 오류
 PolicyWarning: 계속 진행하되 운영자에게 알릴 사항
 I/O 없음.
 """
+import re
 from dataclasses import dataclass, field
 from typing import List
 
@@ -147,6 +148,11 @@ def validate(policy: Policy) -> ValidationResult:
                 result.errors.append(f"rule '{rule_id}': api-compatibility requires direction request|response|both")
             if group.direction and group.content != "api-compatibility":
                 result.errors.append(f"rule '{rule_id}': direction applies only to api-compatibility groups")
+            if (not group.check_removed_keys or group.exclude_removed_keys) and group.content not in {"env-keys", "auto-strict"}:
+                result.errors.append(f"rule '{rule_id}': check_removed_keys/exclude_removed_keys apply only to env-keys or auto-strict groups")
+            bad_keys = [key for key in group.exclude_removed_keys if not re.fullmatch(r"[A-Z][A-Z0-9_]*", str(key))]
+            if bad_keys:
+                result.errors.append(f"rule '{rule_id}': exclude_removed_keys must be environment key names: {bad_keys}")
             if group.content in {"env-keys", "api-schema", "auto-strict", "contract-proof", "api-compatibility"} and any(
                 any(c in p for c in "*?[]") or p.startswith("/") or ".." in p.split("/")
                 for p in (group.any_changed or group.all_changed)

@@ -13,7 +13,7 @@ from drift_gate.core.contracts.planner import Truth
 PREDICATES = {
     'api-route': ('route-added', 'route-removed', 'route-changed'),
     'api-response': ('response-shape-changed',),
-    'env-key': ('key-added',),
+    'env-key': ('key-added', 'key-removed', 'key-changed'),
     'paths': ('path-changed',),
 }
 ON_UNKNOWN = ('review', 'trigger', 'ignore-with-audit')
@@ -80,7 +80,9 @@ def evaluate_trigger(trigger, files, session=None):
     if trigger.family == 'env-key':
         from drift_gate.core.evaluation.environment import environment_delta
         facts = environment_delta(files)
-        return _threshold(len(facts.keys), None if facts.uncertain else len(facts.keys), trigger.min_magnitude,
+        count = {'key-added': len(facts.keys), 'key-removed': len(facts.removed),
+                 'key-changed': len(facts.keys) + len(facts.removed)}[trigger.predicate]
+        return _threshold(count, None if facts.uncertain else count, trigger.min_magnitude,
                           ('binding-uncertain',) if facts.uncertain else ())
     from drift_gate.core.evaluation.api_schema import UnknownResponse, UnsupportedContract, response_changes
     try:

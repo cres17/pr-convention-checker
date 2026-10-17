@@ -14,6 +14,8 @@ from drift_gate.core.models.facts import (
 class EnvironmentFacts:
     keys: set[str] = field(default_factory=set)
     uncertain: bool = False
+    # environment_delta only: keys read before the change and no longer read by any changed file.
+    removed: set[str] = field(default_factory=set)
 
 
 def environment_fact_outcome(source, *, scope_id, evidence_ref, fragment=False):
@@ -138,7 +140,7 @@ def environment_facts(source, *, fragment=False):
 
 
 def environment_delta(files):
-    added, removed = set(), set()
+    added, removed, after = set(), set(), set()
     uncertain = False
     from drift_gate.core.patch_lines import changed_lines
     for file in files:
@@ -163,15 +165,18 @@ def environment_delta(files):
             if not old.uncertain:
                 added.update(new.keys)
             removed.update(old.keys)
+            after.update(new.keys)
             uncertain |= old.uncertain or new.uncertain
         else:
             # Preserve the existing bounded process.env literal contract.
             # Dynamic JS keys and other languages cannot establish absence.
             from drift_gate.core.evaluation.contracts import env_keys_in_code
             lines = changed_lines(file)
-            added.update(env_keys_in_code([text for marker, text in lines if marker == '+'], file.path))
+            new_keys = env_keys_in_code([text for marker, text in lines if marker == '+'], file.path)
+            added.update(new_keys)
+            after.update(new_keys)
             removed.update(env_keys_in_code([text for marker, text in lines if marker == '-'], file.path))
             uncertain |= not file.path.endswith(('.js', '.jsx', '.ts', '.tsx')) or any(
                 'process.env[' in text and not re.search(r"process\.env\[\s*['\"][A-Z][A-Z0-9_]*['\"]\s*\]", text)
                 for _, text in lines if not text.lstrip().startswith(('//', '/*', '*')))
-    return EnvironmentFacts(added - removed, uncertain)
+    return EnvironmentFacts(added - removed, uncertain, removed - after)

@@ -5,7 +5,7 @@ rule: confirmed violations, unresolved obligations and waivers are read from the
 decisions, and the action follows from them and the existing gate:
 
   block   the policy gate failed
-  review  otherwise, when any rule is violated, undetermined or only partially verified
+  review  otherwise, when any rule is violated, undetermined, only partially verified or carries a warning
   allow   otherwise
 
 ``allow`` therefore means "no confirmed violation and nothing left unresolved by this
@@ -23,17 +23,18 @@ def enforcement_outcome(result):
     partial = sorted({d.rule_id for d in decisions
                       if d.decision == 'satisfied' and d.verification == 'partial'})
     waived = sorted({d.rule_id for d in decisions if d.decision == 'waived'})
+    advised = sorted({item['rule_id'] for item in result.advisories})
     if result.skip:
         action, basis = 'allow', 'evaluation-skipped:' + (result.skip_reason or 'skip')
     elif result.result == 'fail':
         action, basis = 'block', 'gate-failed'
-    elif confirmed or unresolved or partial:
+    elif confirmed or unresolved or partial or advised:
         action, basis = 'review', 'gate-passed-with-open-items'
     else:
         action, basis = 'allow', 'no-violation-and-nothing-unresolved'
     return {'schema': 'enforcement-outcome-v1', 'action': action, 'basis': basis, 'gate_result': result.result,
             'confirmed_violation_rule_ids': confirmed, 'unresolved_rule_ids': unresolved,
-            'partially_verified_rule_ids': partial, 'waived_rule_ids': waived,
+            'partially_verified_rule_ids': partial, 'waived_rule_ids': waived, 'advisory_rule_ids': advised,
             'policy_ref': 'execution.policy_sha256',
             'semantics': 'projection of rule decisions; the policy gate is unchanged'}
 
