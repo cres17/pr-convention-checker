@@ -13,7 +13,7 @@ from drift_gate.adapters.history.store import append_result
 from drift_gate.adapters.inspection import inspect as run
 from drift_gate.core.policy.loader import PolicyLoadError
 from drift_gate.reporters.html import HtmlReporter
-from drift_gate.reporters.markdown import MarkdownReporter
+from drift_gate.reporters.markdown import COMMENT_MAX_CHARS, MarkdownReporter
 
 
 def main() -> None:
@@ -130,6 +130,8 @@ def _main(controller, execution, *, token, repo, pr_number, runner_temp, contrac
     md_base  = MarkdownReporter().render(result)
     artifact_footer = _artifact_footer(repo, run_id, artifact_name)
     md       = md_base + artifact_footer
+    # The comment may be shortened to fit GitHub's body limit; the files, the job summary and the artifact keep the full report.
+    comment_body = MarkdownReporter().render(result, max_chars=COMMENT_MAX_CHARS - len(artifact_footer)) + artifact_footer
     html_report = HtmlReporter().render(
         result,
         policy_source=policy_source,
@@ -184,7 +186,7 @@ def _main(controller, execution, *, token, repo, pr_number, runner_temp, contrac
     )
 
     if post_comment:
-        record = _publish_comment(controller, token=token, repo=repo, pr_number=pr_number, body=md,
+        record = _publish_comment(controller, token=token, repo=repo, pr_number=pr_number, body=comment_body,
                                   head_oid=head_oid, result_sha256=base_result_sha256, runner_temp=runner_temp)
         if record.get('url') and record.get('published'):
             _log(f"PR comment 게시: {record['url']} ({record['state']})")
