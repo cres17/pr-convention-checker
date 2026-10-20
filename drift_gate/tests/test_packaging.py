@@ -1,9 +1,9 @@
 """Regression checks for package paths and a smoke check that must really scan."""
-import importlib.util
 import hashlib
+import importlib.util
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -227,14 +227,18 @@ def test_candidate_collection_never_extracts_unsafe_archive_entries(tmp_path, mo
     module = packaging_module('collect_parser_hashes', monkeypatch)
     archive = io.BytesIO()
     name = resources.grammar_library_name('python')
-    with tarfile.open(fileobj=archive, mode='w') as bundle:
-        entry = tarfile.TarInfo('../' + name if damage == 'path-escape' else name)
-        if damage == 'symlink':
-            entry.type = tarfile.SYMTYPE
-            entry.linkname = str(tmp_path / 'escape')
-        elif damage == 'oversized':
-            entry.size = 32 * 1024 * 1024 + 1
-        bundle.addfile(entry)
+    entry = tarfile.TarInfo('../' + name if damage == 'path-escape' else name)
+    if damage == 'symlink':
+        entry.type = tarfile.SYMTYPE
+        entry.linkname = str(tmp_path / 'escape')
+    if damage == 'oversized':
+        # Python 3.13 의 addfile 은 크기만 있고 본문이 없는 항목을 거부한다.
+        # 헤더만 직접 쓰고 종료 블록을 붙여, 크기 선언만 큰 아카이브를 만든다.
+        entry.size = 32 * 1024 * 1024 + 1
+        archive.write(entry.tobuf(tarfile.GNU_FORMAT) + b'\0' * 1024)
+    else:
+        with tarfile.open(fileobj=archive, mode='w') as bundle:
+            bundle.addfile(entry)
     compressed = zstandard.ZstdCompressor().compress(archive.getvalue())
     monkeypatch.setattr(module, 'cache_dir', lambda: str(tmp_path / 'cache'))
     monkeypatch.setattr(module.urllib.request, 'urlopen', lambda *args, **kwargs: io.BytesIO(compressed))
