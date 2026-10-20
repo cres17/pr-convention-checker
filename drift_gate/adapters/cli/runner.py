@@ -20,6 +20,18 @@ from pathlib import Path
 
 from drift_gate.adapters.bundle_codec import BundleError
 from drift_gate.adapters.claude.enricher import ClaudeEnricher
+from drift_gate.adapters.cli.common import (  # noqa: F401
+    CLIInputError,
+    _parse_days,
+    _read_json_file,
+)
+from drift_gate.adapters.cli.doctor_command import (  # noqa: F401
+    _broad_glob_warnings,
+    _console_entrypoints_ok,
+    _dead_rule_warnings,
+    _git_ok,
+    _run_doctor,
+)
 from drift_gate.adapters.cli.holdout_command import run as _run_holdout
 from drift_gate.adapters.cli.org_command import run as _run_org
 from drift_gate.adapters.cli.output import write_stdout as _write_stdout
@@ -27,6 +39,33 @@ from drift_gate.adapters.cli.parser import build_parser as _build_parser
 from drift_gate.adapters.cli.presets import (  # noqa: F401 -- public compatibility import
     POLICY_PRESETS,
     POLICY_TEMPLATE,
+)
+from drift_gate.adapters.cli.review_command import (  # noqa: F401
+    _collect_python_files,
+    _review_reporter_field_gaps,
+    _run_docs_check,
+    _run_explain,
+    _run_history,
+    _run_review,
+)
+from drift_gate.adapters.cli.self_audit_command import (  # noqa: F401
+    _format_self_audit_markdown,
+    _render_self_audit_html,
+    _run_self_audit,
+)
+from drift_gate.adapters.cli.setup_command import (  # noqa: F401
+    _detect_frameworks,
+    _format_recommendations,
+    _has_any,
+    _install_mcp_config,
+    _recommend_docs_paths,
+    _repo_paths,
+    _repo_recommendations,
+    _run_init,
+    _run_install,
+    _run_setup,
+    _select_init_preset,
+    recommend_preset,
 )
 from drift_gate.adapters.eval.runner import (
     EvalEngineComparison,
@@ -49,8 +88,6 @@ from drift_gate.adapters.history.store import (
     append_result,
     ignored_rule_counts,
     load_records,
-    render_history_html,
-    render_history_markdown,
 )
 from drift_gate.adapters.inspection import (
     inspect as run,  # noqa: F401 -- existing patch point; check now captures then inspects
@@ -67,11 +104,6 @@ from drift_gate.core.policy.validator import validate
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.reporters.json_reporter import JsonReporter
 from drift_gate.reporters.markdown import MarkdownReporter
-from drift_gate.utils.glob_matcher import match_glob
-
-
-class CLIInputError(ValueError):
-    """Invalid CLI input handled by the command boundary."""
 
 
 def run_cli(argv=None):
@@ -719,570 +751,10 @@ def _run_eval(args) -> None:
     sys.exit(1 if failed or gate_failures else 0)
 
 
-def _run_init(args) -> None:
-    recommendations = _repo_recommendations(Path.cwd())
-    if args.recommend:
-        _write_stdout(_format_recommendations(recommendations))
-        sys.exit(0)
-
-    path = Path(args.policy)
-    if path.exists() and not args.force:
-        _write_stdout(f"Policy already exists: {path}")
-        _write_stdout("Use --force to overwrite it.")
-        sys.exit(1)
-
-    preset = _select_init_preset(args.preset, recommendations)
-    path.write_text(POLICY_PRESETS[preset], encoding="utf-8")
-    _write_stdout(f"Created starter policy: {path}")
-    _write_stdout(f"Preset: {preset}")
-    _write_stdout("")
-    _write_stdout(_format_recommendations(recommendations))
-    _write_stdout("")
-    _write_stdout("Next steps:")
-    _write_stdout("  py main.py doctor")
-    _write_stdout("  py main.py check --explain")
-    sys.exit(0)
-
-
-def _run_install(args) -> None:
-    repo = Path(args.repo).expanduser().resolve()
-    if not repo.exists() or not repo.is_dir():
-        print(f"ERROR: repo path not found: {repo}", file=sys.stderr)
-        sys.exit(2)
-
-    outcome = _install_mcp_config(
-        repo=repo,
-        platform=args.platform,
-        config_path=Path(args.config) if args.config else None,
-        force=args.force,
-    )
-    if outcome["kind"] == "file":
-        _write_stdout(f"Installed Drift Gate MCP config: {outcome['path']}")
-        _write_stdout("Restart your AI tool, then ask it to run Drift Gate on this repo.")
-    else:
-        _write_stdout("Add this MCP server entry to your Claude Code config:")
-        _write_stdout(json.dumps(outcome["entry"], ensure_ascii=False, indent=2))
-    sys.exit(0)
-
-
-def _run_setup(args) -> None:
-    repo = Path(args.repo).expanduser().resolve()
-    if not repo.exists() or not repo.is_dir():
-        print(f"ERROR: repo path not found: {repo}", file=sys.stderr)
-        sys.exit(2)
-
-    policy_path = Path(args.policy)
-    if not policy_path.is_absolute():
-        policy_path = repo / policy_path
-
-    created_policy = False
-    if not policy_path.exists():
-        recommendations = _repo_recommendations(repo)
-        preset = _select_init_preset(args.preset, recommendations)
-        policy_path.write_text(POLICY_PRESETS[preset], encoding="utf-8")
-        created_policy = True
-    else:
-        preset = "existing"
-
-    outcome = _install_mcp_config(
-        repo=repo,
-        platform=args.platform,
-        config_path=Path(args.config) if args.config else None,
-        force=True,
-    )
-
-    lines = [
-        "Drift Gate setup complete.",
-        f"Policy: {policy_path} ({'created ' + preset if created_policy else 'kept existing'})",
-    ]
-    if outcome["kind"] == "file":
-        lines.append(f"MCP config: {outcome['path']}")
-        lines.append("Restart your AI tool so it reloads the MCP server.")
-    else:
-        lines.append("Claude Code MCP entry:")
-        lines.append(json.dumps(outcome["entry"], ensure_ascii=False, indent=2))
-    lines += [
-        "",
-        "Daily commands:",
-        "  py -m drift_gate          # local pre-push contract check",
-        "  py -m drift_gate review   # deterministic code-quality preflight",
-    ]
-    _write_stdout("\n".join(lines))
-    sys.exit(0)
-
-
-def _install_mcp_config(
-    *,
-    repo: Path,
-    platform: str,
-    config_path: Path | None,
-    force: bool,
-) -> dict:
-    entry = {
-        "command": sys.executable,
-        "args": ["-m", "drift_gate", "serve", "--repo", str(repo)],
-        "env": {"PYTHONUTF8": "1"},
-    }
-
-    if platform in ("codex", "local"):
-        config_path = config_path or repo / ".mcp.json"
-        config = _read_json_file(config_path)
-        servers = config.setdefault("mcpServers", {})
-        if "drift-gate" in servers and not force:
-            _write_stdout(f"Drift Gate MCP entry already exists: {config_path}")
-            _write_stdout("Use --force to replace it.")
-            sys.exit(1)
-        servers["drift-gate"] = entry
-        config_path.write_text(
-            json.dumps(config, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
-        return {"kind": "file", "path": config_path, "entry": entry}
-
-    if platform == "claude-code":
-        return {"kind": "snippet", "entry": {"drift-gate": entry}}
-
-    print(f"ERROR: unsupported platform: {platform}", file=sys.stderr)
-    sys.exit(2)
-
-
 def _run_serve(args) -> None:
     from drift_gate.adapters.mcp.server import main as serve_main
 
     serve_main(["--repo", args.repo])
-
-
-def _run_history(args) -> None:
-    days = _parse_days(args.last)
-    records = load_records(args.path, days=days, rule_id=args.rule)
-    markdown = render_history_markdown(records, days=days, rule_id=args.rule)
-    if args.html:
-        Path(args.html).write_text(
-            render_history_html(records, days=days, rule_id=args.rule),
-            encoding="utf-8",
-        )
-    _write_stdout(markdown)
-    sys.exit(0)
-
-
-def _run_explain(args) -> None:
-    try:
-        policy = load_policy(args.policy)
-        for w in policy.load_warnings:
-            print(f"[drift-gate] WARNING: {w}", file=sys.stderr)
-    except FileNotFoundError:
-        print(f"ERROR: policy file missing: {args.policy}", file=sys.stderr)
-        sys.exit(1)
-    except PolicyLoadError as exc:
-        print(f"ERROR: policy failed to load: {exc}", file=sys.stderr)
-        sys.exit(1)
-
-    for rule in policy.rules:
-        if rule.id != args.rule_id:
-            continue
-        lines = [
-            f"# Drift Gate Rule: {rule.id}",
-            "",
-            f"- Severity: `{rule.severity.upper()}`",
-            f"- Message: {rule.message or '-'}",
-            f"- Min change intensity: `{rule.when.min_change_intensity}`",
-            "",
-            "## Triggers",
-            "",
-        ]
-        lines.extend(f"- `{pattern}`" for pattern in rule.when.any_changed)
-        lines += ["", "## Required Groups", ""]
-        for group in rule.require.groups:
-            group_type = "any_changed" if group.any_changed else "all_changed"
-            required = group.any_changed or group.all_changed
-            lines.append(f"- **{group.name}** (`{group_type}`):")
-            lines.extend(f"  - `{pattern}`" for pattern in required)
-        lines += [
-            "",
-            "## Gate Meaning",
-            "",
-            "This rule triggers when a changed file matches the trigger glob and passes the minimum change intensity.",
-            "It fails only when one or more required groups are missing from the same change set.",
-        ]
-        _write_stdout("\n".join(lines))
-        sys.exit(0)
-
-    print(f"ERROR: rule not found: {args.rule_id}", file=sys.stderr)
-    sys.exit(1)
-
-
-def _run_review(args) -> None:
-    from drift_gate.adapters.git.client import GitAdapter, repository_root
-    from drift_gate.core.review.heuristics import (
-        SEVERITY_ORDER,
-        find_reporter_field_gaps,
-        find_test_gaps,
-        review_files,
-    )
-    root = repository_root()
-    patch_text = ""
-    # Collect files to review
-    if args.all_files:
-        file_paths = [str(Path(p).relative_to(root)) for p in _collect_python_files(root)]
-    else:
-        changed_objs = GitAdapter().get_changed_files(args.base, comparison_mode=args.comparison_mode)
-        file_paths = [f.path for f in changed_objs if f.path.endswith(".py") and f.status != "deleted"]
-        patch_text = "\n".join(f.patch for f in changed_objs)
-
-    def _read_file(path: str) -> str:
-        try:
-            return (root / path).read_text(encoding="utf-8", errors="replace")
-        except OSError as exc:
-            raise GitInputError(f"검사할 파일을 읽지 못했습니다: {path}") from exc
-
-    # The core review helper tolerates unavailable files; CLI automation must
-    # distinguish incomplete input from a successfully reviewed empty set.
-    contents = {path: _read_file(path) for path in file_paths}
-    result = review_files(file_paths, contents.__getitem__)
-
-    if patch_text and not args.all_files:
-        result.test_gaps = find_test_gaps(patch_text, file_paths)
-        result.test_gaps.extend(_review_reporter_field_gaps(file_paths, find_reporter_field_gaps))
-
-    if args.format == "json":
-        _write_stdout(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))
-    else:
-        _write_stdout(result.format_markdown())
-
-    # Exit code logic
-    if args.fail_on:
-        severity_idx = SEVERITY_ORDER.index(args.fail_on)
-        for finding in result.findings:
-            if SEVERITY_ORDER.index(finding.severity) <= severity_idx:
-                sys.exit(1)
-    sys.exit(0)
-
-
-def _collect_python_files(root) -> list[str]:
-    """Collect all Python files under root, excluding common non-source dirs."""
-    ignored = {
-        ".git", "__pycache__", ".pytest_cache", ".venv", "venv",
-        "node_modules", "dist", "build", ".mypy_cache",
-        "tests",
-    }
-    paths = []
-    for path in root.rglob("*.py"):
-        if any(part in ignored for part in path.parts):
-            continue
-        paths.append(path.as_posix())
-    return paths
-
-
-def _review_reporter_field_gaps(file_paths: list[str], find_reporter_field_gaps):
-    normalized = {path.replace("\\", "/") for path in file_paths}
-    relevant = normalized & {
-        "drift_gate/core/models/result.py",
-        "drift_gate/reporters/markdown.py",
-        "drift_gate/reporters/html.py",
-        "drift_gate/reporters/json_reporter.py",
-    }
-    if not relevant:
-        return []
-
-    from drift_gate.core.models.policy import Gate
-    from drift_gate.core.models.result import EvaluationResult
-    from drift_gate.reporters.html import HtmlReporter
-    from drift_gate.reporters.markdown import MarkdownReporter
-
-    sample = EvaluationResult(
-        change_types=["api-surface"],
-        violations=[],
-        skipped_rules=[],
-        rejected_ignores=[],
-        gate=Gate(),
-    )
-    html = HtmlReporter().render(sample)
-    raw_json_idx = html.find("<summary>Raw JSON</summary>")
-    human_html = html[:raw_json_idx] if raw_json_idx != -1 else html
-    return find_reporter_field_gaps(
-        sample.to_dict(),
-        {
-            "markdown": MarkdownReporter().render(sample),
-            "html": human_html,
-        },
-    )
-
-
-def _run_docs_check(args) -> None:
-    from pathlib import Path as _Path
-
-    from drift_gate.adapters.docs.readme_contract import check_docs
-
-    selected_docs = args.docs_positional or args.docs
-    doc_paths = [_Path(p) for p in selected_docs]
-    result = check_docs(doc_paths)
-
-    if args.json_output:
-        _write_stdout(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))
-    else:
-        _write_stdout(result.format_report())
-        if result.warnings:
-            _write_stdout(f"\n{len(result.warnings)} warning(s) found.")
-        else:
-            _write_stdout("\nNo docs-consistency issues found.")
-
-    if args.fail_on_warn and result.warnings:
-        sys.exit(1)
-    sys.exit(0)
-
-
-def _run_self_audit(args) -> None:
-    from pathlib import Path as _Path
-
-    from drift_gate.adapters.docs.checklist import parse_checklist
-    from drift_gate.adapters.git.client import GitAdapter
-    from drift_gate.core.self_audit.matcher import DiffEvidence, match_checklist
-
-    checklist_path = _Path(args.checklist)
-    if not checklist_path.exists():
-        raise GitInputError(f'checklist file not found: {checklist_path}')
-
-    items = parse_checklist(checklist_path)
-
-    # Collect git diff evidence
-    changed_files_objs = GitAdapter().get_changed_files(args.base, comparison_mode=args.comparison_mode)
-    changed_file_paths = [f.path for f in changed_files_objs]
-    patch_text = "\n".join(f.patch for f in changed_files_objs)
-
-    evidence = DiffEvidence.from_raw(
-        changed_files=changed_file_paths,
-        patch_text=patch_text,
-    )
-    audit_result = match_checklist(items, evidence)
-
-    output_dict = audit_result.to_dict()
-
-    if args.json_output or args.out:
-        json_str = json.dumps(output_dict, ensure_ascii=False, indent=2)
-        if args.out:
-            _Path(args.out).write_text(json_str, encoding="utf-8")
-        if args.json_output:
-            _write_stdout(json_str)
-        else:
-            _write_stdout(_format_self_audit_markdown(audit_result))
-    else:
-        _write_stdout(_format_self_audit_markdown(audit_result))
-
-    if getattr(args, "out_html", None):
-        _Path(args.out_html).write_text(
-            _render_self_audit_html(audit_result), encoding="utf-8"
-        )
-
-    warnings = audit_result.warnings
-    mismatch_count = sum(1 for w in warnings if w.kind == "checklist-code-mismatch")
-    missing_count = sum(1 for w in warnings if w.kind == "missing-progress-entry")
-    supported = sum(1 for i in audit_result.checklist_items if i.status == "related-evidence-found")
-    checked = sum(1 for i in audit_result.checklist_items if i.checked)
-
-    if not args.json_output:
-        _write_stdout("")
-        _write_stdout(
-            f"Self-audit: {supported}/{checked} checked items with related diff references (behavior not verified)"
-        )
-        if warnings:
-            _write_stdout(
-                f"Warnings: {mismatch_count} checklist-code-mismatch, "
-                f"{missing_count} missing-progress-entry"
-            )
-
-    sys.exit(0)
-
-
-def _format_self_audit_markdown(audit_result) -> str:
-    lines = ["# Self-Audit Report", ""]
-    supported = [i for i in audit_result.checklist_items if i.status == "related-evidence-found"]
-    unsupported = [i for i in audit_result.checklist_items if i.status == "no-related-evidence"]
-    unchecked = [i for i in audit_result.checklist_items if i.status == "unchecked"]
-
-    lines.append(
-        f"**{len(supported)} with related evidence** / **{len(supported)+len(unsupported)} checked** "
-        f"/ {len(unchecked)} unchecked"
-    )
-    lines.append("")
-
-    if unsupported:
-        lines.append("## Unsupported Checked Items")
-        lines.append("")
-        for item in unsupported:
-            lines.append(f"- [x] {item.text} *(line {item.line_number})*")
-        lines.append("")
-
-    if audit_result.warnings:
-        lines.append("## Warnings")
-        lines.append("")
-        for w in audit_result.warnings:
-            lines.append(f"- **{w.kind}**: {w.message}")
-            if w.details:
-                lines.append(f"  - {w.details}")
-        lines.append("")
-
-    return "\n".join(lines)
-
-
-def _render_self_audit_html(audit_result) -> str:
-    import html as _html
-    supported = [i for i in audit_result.checklist_items if i.status == "related-evidence-found"]
-    unsupported = [i for i in audit_result.checklist_items if i.status == "no-related-evidence"]
-    unchecked = [i for i in audit_result.checklist_items if i.status == "unchecked"]
-
-    def _item_rows(items, badge_class, badge_label):
-        if not items:
-            return "<tr><td colspan='3'><em>None</em></td></tr>"
-        rows = ""
-        for item in items:
-            ev = ", ".join(_html.escape(e) for e in item.evidence) or "—"
-            rows += (
-                f"<tr>"
-                f"<td><span class='badge {badge_class}'>{badge_label}</span></td>"
-                f"<td>{_html.escape(item.text)}</td>"
-                f"<td class='ev'>{ev}</td>"
-                f"</tr>"
-            )
-        return rows
-
-    warnings_html = ""
-    if audit_result.warnings:
-        wrows = "".join(
-            f"<tr><td><code>{_html.escape(w.kind)}</code></td>"
-            f"<td>{_html.escape(w.message)}</td>"
-            f"<td>{_html.escape(w.details)}</td></tr>"
-            for w in audit_result.warnings
-        )
-        warnings_html = f"""
-  <div class="card">
-    <h2 style="margin-top:0">Warnings ({len(audit_result.warnings)})</h2>
-    <table>
-      <thead><tr><th>Kind</th><th>Message</th><th>Details</th></tr></thead>
-      <tbody>{wrows}</tbody>
-    </table>
-  </div>"""
-
-    all_rows = (
-        _item_rows(supported, "green", "related reference")
-        + _item_rows(unsupported, "red", "unsupported")
-        + _item_rows(unchecked, "gray", "unchecked")
-    )
-
-    return f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Drift Gate — Self-Audit Report</title>
-  <style>
-    body {{ font: 14px/1.5 system-ui, sans-serif; margin: 32px; background: #f8fafc; color: #172033; }}
-    h1 {{ margin-bottom: 4px; }}
-    .card {{ background: #fff; border: 1px solid #d8dee8; border-radius: 8px; padding: 24px; margin-bottom: 24px; }}
-    table {{ border-collapse: collapse; width: 100%; }}
-    th, td {{ border-bottom: 1px solid #d8dee8; padding: 8px 10px; text-align: left; vertical-align: top; }}
-    th {{ background: #f5f7fb; font-weight: 600; }}
-    .badge {{ display: inline-block; border-radius: 4px; padding: 1px 7px; font-size: 12px; font-weight: 600; }}
-    .green {{ background: #c6f6d5; color: #276749; }}
-    .red {{ background: #fed7d7; color: #9b2c2c; }}
-    .gray {{ background: #e2e8f0; color: #4a5568; }}
-    .ev {{ font-size: 12px; color: #555; word-break: break-all; }}
-    .summary {{ font-size: 1.1em; margin-bottom: 8px; }}
-  </style>
-</head>
-<body>
-  <h1>Drift Gate — Self-Audit Report</h1>
-  <div class="card">
-    <p class="summary">
-      <strong>{len(supported)}</strong> related references &nbsp;/&nbsp;
-      <strong>{len(supported) + len(unsupported)}</strong> checked &nbsp;/&nbsp;
-      {len(unchecked)} unchecked
-    </p>
-    <table>
-      <thead><tr><th>Status</th><th>Item</th><th>Evidence</th></tr></thead>
-      <tbody>{all_rows}</tbody>
-    </table>
-  </div>
-  {warnings_html}
-</body>
-</html>"""
-
-
-def _run_doctor(args) -> None:
-    checks = []
-    errors = []
-    warnings = []
-
-    policy_path = Path(args.policy)
-    if policy_path.exists():
-        checks.append(f"OK policy file found: {policy_path}")
-        try:
-            policy = load_policy(policy_path)
-            # load_warnings are already a subset of validation.warnings — avoid duplication
-            validation = validate(policy)
-            if validation.ok:
-                checks.append(f"OK policy has {len(policy.rules)} rule(s)")
-            warnings.extend(validation.warnings)
-            errors.extend(validation.errors)
-            warnings.extend(_broad_glob_warnings(policy))
-            warnings.extend(_dead_rule_warnings(policy, Path.cwd()))
-        except PolicyLoadError as exc:
-            errors.append(f"policy failed to load: {exc}")
-    else:
-        errors.append(f"policy file missing: {policy_path}")
-
-    if _git_ok(["git", "rev-parse", "--is-inside-work-tree"]):
-        checks.append("OK git repository detected")
-        if _git_ok(["git", "rev-parse", "--verify", "--quiet", args.base]):
-            checks.append(f"OK git base exists: {args.base}")
-        else:
-            warnings.append(f"git base was not found locally: {args.base}")
-        try:
-            changed_files = GitAdapter().get_changed_files(args.base)
-            checks.append(f"OK local diff collected: {len(changed_files)} file(s)")
-        except Exception as exc:
-            errors.append(f"local diff collection failed: {exc}")
-    else:
-        errors.append("not inside a git repository")
-
-    if Path("action.yml").exists():
-        checks.append("OK action.yml found")
-    else:
-        warnings.append("action.yml not found")
-
-    if Path(".github/workflows").exists():
-        checks.append("OK GitHub workflow directory found")
-    else:
-        warnings.append("GitHub workflow directory not found")
-
-    if _console_entrypoints_ok():
-        checks.append("OK console entrypoints import")
-    else:
-        warnings.append("console entrypoint import failed")
-
-    if Path("drift_gate/tests/fixtures").exists():
-        checks.append("OK benchmark fixtures found")
-    else:
-        warnings.append("benchmark fixtures not found")
-
-    lines = ["# Drift Gate Doctor", ""]
-    if checks:
-        lines += ["## Checks", ""]
-        lines.extend(f"- {item}" for item in checks)
-        lines.append("")
-    if warnings:
-        lines += ["## Warnings", ""]
-        lines.extend(f"- {item}" for item in warnings)
-        lines.append("")
-    if errors:
-        lines += ["## Errors", ""]
-        lines.extend(f"- {item}" for item in errors)
-        lines.append("")
-        lines.append("Doctor result: FAIL")
-    else:
-        lines.append("Doctor result: PASS")
-
-    _write_stdout("\n".join(lines))
-    sys.exit(1 if errors else 0)
 
 
 def _render_demo_html(comparison) -> str:
@@ -1300,20 +772,6 @@ def _read_policy_source(path: str) -> str:
     return policy_path.read_text(encoding="utf-8")
 
 
-def _read_json_file(path: Path) -> dict:
-    if not path.exists():
-        return {}
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        print(f"ERROR: invalid JSON config {path}: {exc}", file=sys.stderr)
-        sys.exit(1)
-    if not isinstance(data, dict):
-        print(f"ERROR: JSON config root must be an object: {path}", file=sys.stderr)
-        sys.exit(1)
-    return data
-
-
 def _load_policy_optional(path: str):
     try:
         policy = load_policy(path)
@@ -1322,17 +780,6 @@ def _load_policy_optional(path: str):
         return policy
     except Exception:
         return None
-
-
-def _parse_days(value: str, *, option: str = "--last") -> int:
-    normalized = value.strip().lower()
-    if normalized.endswith("d"):
-        normalized = normalized[:-1]
-    try:
-        days = int(normalized)
-    except ValueError as exc:
-        raise CLIInputError(f"invalid {option} value: {value}") from exc
-    return max(days, 1)
 
 
 def _collect_inputs(args) -> tuple[list, list]:
@@ -1360,16 +807,6 @@ def _collect_inputs(args) -> tuple[list, list]:
     return files, []
 
 
-def _git_ok(args: list[str]) -> bool:
-    import subprocess
-
-    try:
-        subprocess.check_output(args, stderr=subprocess.DEVNULL)
-        return True
-    except subprocess.CalledProcessError:
-        return False
-
-
 def _git_commit_sha() -> str:
     import subprocess
 
@@ -1381,169 +818,6 @@ def _git_commit_sha() -> str:
         ).strip()
     except Exception:
         return ""
-
-
-def _broad_glob_warnings(policy) -> list[str]:
-    warnings = []
-    broad = {"**", "**/*", "src/**", "app/**", "*"}
-    for rule in policy.rules:
-        for pattern in rule.when.any_changed:
-            if pattern in broad:
-                warnings.append(
-                    f"rule '{rule.id}' uses broad trigger glob '{pattern}'; "
-                    "consider a narrower contract boundary"
-                )
-    return warnings
-
-
-def _dead_rule_warnings(policy, repo_root: Path) -> list[str]:
-    repo_paths = _repo_paths(repo_root)
-    if not repo_paths:
-        return []
-
-    warnings = []
-    for rule in policy.rules:
-        matched = any(
-            match_glob(path, pattern)
-            for path in repo_paths
-            for pattern in rule.when.any_changed
-        )
-        if not matched:
-            warnings.append(
-                f"rule '{rule.id}' appears inactive: no repository files match "
-                f"when.any_changed patterns {rule.when.any_changed}"
-            )
-    return warnings
-
-
-def _repo_recommendations(repo_root: Path) -> dict:
-    paths = set(_repo_paths(repo_root))
-    frameworks = _detect_frameworks(paths, repo_root)
-    presets = []
-
-    if _has_any(paths, ["prisma/schema.prisma", "db/**", "database/migrations/**", "alembic/versions/**"]):
-        presets.append("db")
-    if _has_any(paths, ["src/routes/**", "app/api/**", "openapi/**", "proto/**"]):
-        presets.append("api")
-    if _has_any(paths, [".github/workflows/**", "Dockerfile", "Dockerfile.*", "infra/**", "terraform/**", "k8s/**", "helm/**"]):
-        presets.append("ci")
-    if _has_any(paths, [".env.example", ".env", "config/**", "src/config/**", "**/settings.py"]):
-        presets.append("env")
-    if _has_any(paths, ["src/auth/**", "**/rbac/**", "**/permissions/**", "**/policy/**"]):
-        presets.append("auth")
-
-    docs_paths = _recommend_docs_paths(paths, frameworks, presets)
-    return {
-        "presets": presets or ["fullstack"],
-        "frameworks": frameworks or ["unknown"],
-        "docs_paths": docs_paths,
-    }
-
-
-def _format_recommendations(recommendations: dict) -> str:
-    lines = [
-        "Repo recommendations:",
-        f"  presets: {', '.join(recommendations['presets'])}",
-        f"  frameworks: {', '.join(recommendations['frameworks'])}",
-        "  docs paths:",
-    ]
-    lines.extend(f"    - {path}" for path in recommendations["docs_paths"])
-    return "\n".join(lines)
-
-
-def _select_init_preset(requested: str, recommendations: dict) -> str:
-    if requested != "auto":
-        return requested
-    presets = recommendations["presets"]
-    if len(presets) == 1 and presets[0] in POLICY_PRESETS:
-        return presets[0]
-    return "fullstack"
-
-
-def recommend_preset(repo_root: Path, requested: str = "auto") -> dict:
-    """Starter-policy choice and repository recommendations for ``repo_root``.
-
-    Independent of the working directory, so GUIs can preview what ``init`` would write.
-    """
-    recommendations = _repo_recommendations(repo_root)
-    return {
-        "preset": _select_init_preset(requested, recommendations),
-        "recommendations": recommendations,
-    }
-
-
-def _detect_frameworks(paths: set[str], repo_root: Path | None = None) -> list[str]:
-    frameworks = []
-    base = repo_root if repo_root is not None else Path(".")
-    package_json = base / "package.json"
-    pyproject = base / "pyproject.toml"
-    requirements = base / "requirements.txt"
-
-    package_text = package_json.read_text(encoding="utf-8") if package_json.exists() else ""
-    pyproject_text = pyproject.read_text(encoding="utf-8") if pyproject.exists() else ""
-    requirements_text = requirements.read_text(encoding="utf-8") if requirements.exists() else ""
-    python_deps = f"{pyproject_text}\n{requirements_text}".lower()
-
-    if "fastapi" in python_deps or _has_any(paths, ["**/main.py", "**/api.py"]) and "fastapi" in python_deps:
-        frameworks.append("FastAPI")
-    if "django" in python_deps or _has_any(paths, ["manage.py", "**/settings.py"]):
-        frameworks.append("Django")
-    if "express" in package_text:
-        frameworks.append("Express")
-    if "next" in package_text or _has_any(paths, ["next.config.js", "next.config.mjs", "app/**", "pages/**"]):
-        frameworks.append("Next.js")
-    if "rails" in paths or _has_any(paths, ["Gemfile", "config/routes.rb", "app/controllers/**"]):
-        frameworks.append("Rails")
-    return sorted(set(frameworks))
-
-
-def _recommend_docs_paths(
-    paths: set[str],
-    frameworks: list[str],
-    presets: list[str],
-) -> list[str]:
-    docs = []
-    if "api" in presets or any(f in frameworks for f in ("FastAPI", "Express", "Next.js", "Django", "Rails")):
-        docs.extend(["docs/api/**", "docs/spec.md", "openapi/**"])
-    if "db" in presets:
-        docs.extend(["docs/database/**", "docs/runbook/**"])
-    if "env" in presets:
-        docs.extend([".env.example", "docs/deployment/**"])
-    if "ci" in presets:
-        docs.extend(["docs/ops/**", "docs/runbook/**"])
-    if "auth" in presets:
-        docs.extend(["docs/security/**", "SECURITY.md"])
-    if _has_any(paths, ["README.md"]):
-        docs.append("README.md")
-    return sorted(set(docs)) or ["docs/**", "README.md"]
-
-
-def _has_any(paths: set[str], patterns: list[str]) -> bool:
-    return any(match_glob(path, pattern) for path in paths for pattern in patterns)
-
-
-def _repo_paths(repo_root: Path) -> list[str]:
-    ignored_dirs = {
-        ".git", ".hg", ".svn", "__pycache__", ".pytest_cache",
-        ".mypy_cache", ".ruff_cache", "node_modules", "dist", "build",
-        ".venv", "venv",
-    }
-    paths = []
-    for path in repo_root.rglob("*"):
-        if any(part in ignored_dirs for part in path.parts):
-            continue
-        if path.is_file():
-            paths.append(path.relative_to(repo_root).as_posix())
-    return paths
-
-
-def _console_entrypoints_ok() -> bool:
-    try:
-        from drift_gate.adapters.cli.runner import run_cli as _cli
-        from drift_gate.adapters.eval.runner import run_eval as _eval
-    except Exception:
-        return False
-    return callable(_cli) and callable(_eval)
 
 
 if __name__ == "__main__":

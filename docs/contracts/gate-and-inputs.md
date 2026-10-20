@@ -686,3 +686,17 @@ path `stat`과 handle `fstat`의 ctime 의미가 다를 수 있어 두 API를 �
 ## 2026-10-20 타입 표기·import 정렬
 
 ruff 자동 수정(`I`, `UP` 규칙)으로 판정·분석·CLI 코드의 import 순서와 타입 표기(`List[X]` → `list[X]`, `Optional[X]` → `X | None`)만 바꿨다. 입력 형식, 출력 JSON, 종료 코드는 그대로다. 동작과 계약은 바뀌지 않는다. 전체 테스트(2148개)와 `mypy drift_gate/core`로 확인했다.
+
+## 2026-10-20 CLI 실행 모듈 분리
+
+`adapters/cli/runner.py`(1,535행)에서 서로 독립된 명령을 모듈로 옮겨 824행으로 줄였다. 함수 본문은 그대로이고 명령 이름, 옵션, 출력, 종료 코드는 바뀌지 않는다.
+
+| 모듈 | 내용 |
+|---|---|
+| `common.py` | `CLIInputError`, 기간(`--last`) 해석, JSON 파일 읽기 |
+| `self_audit_command.py` | `self-audit` |
+| `doctor_command.py` | `doctor`와 정책 경고 |
+| `review_command.py` | `review`, `explain`, `history`, `docs-check` |
+| `setup_command.py` | `init`, `install`, `setup`, 저장소 기반 정책 추천 |
+
+`runner`는 옮긴 이름을 다시 가져오므로 `from drift_gate.adapters.cli.runner import …` 경로는 유지된다. 분리 전후에 같은 저장소 사본에서 `doctor`·`review`·`explain`·`history`·`self-audit`·`docs-check`·`demo`·`init`·`setup`·`install`의 출력과 모든 하위 명령의 `--help`를 비교했고, `demo`의 처리량 숫자(실행 시간 의존)를 빼고 같았다.
