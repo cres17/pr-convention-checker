@@ -700,3 +700,19 @@ ruff 자동 수정(`I`, `UP` 규칙)으로 판정·분석·CLI 코드의 import 
 | `setup_command.py` | `init`, `install`, `setup`, 저장소 기반 정책 추천 |
 
 `runner`는 옮긴 이름을 다시 가져오므로 `from drift_gate.adapters.cli.runner import …` 경로는 유지된다. 분리 전후에 같은 저장소 사본에서 `doctor`·`review`·`explain`·`history`·`self-audit`·`docs-check`·`demo`·`init`·`setup`·`install`의 출력과 모든 하위 명령의 `--help`를 비교했고, `demo`의 처리량 숫자(실행 시간 의존)를 빼고 같았다.
+
+## 2026-10-21 Action 정책 출처와 PR 파일 수집 검사
+
+GitHub Action은 기본으로 PR 기준(base) 커밋의 `.drift-gate.yml`을 읽어 판정한다(`adapters/github_action/policy_source.py`). 같은 PR에서 규칙을 지우거나 약화해도 그 PR의 판정은 바뀌지 않는다. 입력 `policy_source`는 `base`(기본값) 또는 `workspace`이고, `workspace`는 체크아웃한 PR의 정책을 그대로 쓴다(이전 동작).
+
+| 상황 | 사용하는 정책 | `policy_origin` 출력 |
+|---|---|---|
+| `base`, 기준 커밋에 정책 있음 | 기준 커밋의 정책 | `base` |
+| `base`, 기준 커밋에 정책 없음(처음 도입하는 PR) | PR의 정책. 이 PR의 규칙은 보호받지 못한다는 경고를 남긴다 | `workspace-no-base-policy` |
+| `workspace` | PR의 정책. 경고를 남긴다 | `workspace` |
+
+기준 정책이 YAML로 읽히지 않으면 평가하지 않고 실패한다. PR이 정책을 바꾼 경우 `core/policy/guard.py::weakening_reasons`의 사유를 경고로 보여 준다(판정에는 기준 정책만 쓴다). 정책 파일이 워크스페이스 밖이면 거부한다.
+
+`GITHUB_OUTPUT`에는 값에 줄바꿈이 있으면 `key<<구분자` 형식으로 기록한다. 이전에는 줄바꿈이 있는 값(정책 오류 메시지 등)이 다른 출력 이름을 끼워 넣을 수 있었다.
+
+GitHub 클라이언트는 PR 객체의 `changed_files`와 파일 API로 받은 수가 다르면 입력 오류로 처리한다. GitHub 파일 API는 최대 3,000개만 나열하므로, 그 이상이면 변경 전체를 보지 못한 채 통과시키지 않는다.

@@ -239,3 +239,5 @@ workflow 변경은 실행 준비다. 새 commit의 원격 실행 결과·artifac
 2026-10-20부터 `mypy drift_gate/core --ignore-missing-imports`도 필수 단계다. 이전에는 실패해도 통과했다(`|| true`). 남아 있던 오류 7건(실행 단계 전이표의 타입 표기, 사실 delta의 생성자 인자, 정책 로더의 None 처리)을 동작 변경 없이 정리했다.
 
 mypy가 `yaml` import를 확인할 수 있도록 lint 작업에 `types-PyYAML==6.0.12.20260906`을 함께 설치한다. 스텁이 없으면 `import-untyped` 오류로 필수 단계가 실패한다.
+
+2026-10-21에 `action.yml`에 입력 `policy_source`(기본값 `base`)와 출력 `policy_origin`을 추가했다. 이 저장소의 CI는 Action이 아니라 `scripts/check_self.py`를 쓰므로 자체 점검 동작은 바뀌지 않는다. 다른 저장소에서 Action을 쓰는 경우 기본값이 PR 작업 트리의 정책에서 기준 커밋의 정책으로 바뀐다.
