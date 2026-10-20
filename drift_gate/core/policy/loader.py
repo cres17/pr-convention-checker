@@ -19,6 +19,8 @@ def load_policy_from_dict(data: dict[str, Any] | None) -> Policy:
         validate_schema(data)
     except ValueError as exc:
         raise PolicyLoadError(str(exc)) from exc
+    if data is None:  # validate_schema rejects None; this narrows the type for callers below
+        raise PolicyLoadError('policy: must be a mapping')
     policy = Policy.from_dict(data)
 
     from drift_gate.core.policy.validator import PolicyValidationError, validate

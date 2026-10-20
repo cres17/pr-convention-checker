@@ -15,7 +15,9 @@ def compare_facts(before: FactOutcome, after: FactOutcome):
         raise ValueError('before/after must be typed fact outcomes')
     if before.basis.domain != after.basis.domain:
         raise ValueError('cannot compare different scopes, families or profiles')
-    basis = FactBasis(*before.basis.domain, before.basis.evidence_refs + after.basis.evidence_refs)
+    source = before.basis
+    basis = FactBasis(source.scope_id, source.family, source.profile_id, source.profile_version,
+                      source.evidence_refs + after.basis.evidence_refs)
     if isinstance(before, ExactFacts) and isinstance(after, ExactFacts):
         return ExactDelta(basis, after.facts - before.facts, before.facts - after.facts)
     added_must = after.must - before.may if before.may is not None else frozenset()
@@ -23,5 +25,6 @@ def compare_facts(before: FactOutcome, after: FactOutcome):
     added_may = after.may - before.must if after.may is not None else None
     removed_may = before.may - after.must if before.may is not None else None
     reasons = getattr(before, 'reasons', ()) + getattr(after, 'reasons', ())
-    cls = UnknownDelta if added_may is None or removed_may is None else BoundedDelta
-    return cls(basis, added_must, added_may, removed_must, removed_may, reasons)
+    if added_may is None or removed_may is None:
+        return UnknownDelta(basis, added_must, added_may, removed_must, removed_may, reasons)
+    return BoundedDelta(basis, added_must, added_may, removed_must, removed_may, reasons)

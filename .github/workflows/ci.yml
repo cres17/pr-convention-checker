@@ -247,7 +247,7 @@ jobs:
         run: ruff check drift_gate/ --select=E9,F
 
       - name: Type check with mypy (optional)
-        run: mypy drift_gate/core --ignore-missing-imports || true
+        run: mypy drift_gate/core --ignore-missing-imports
 
       - name: Require strict types for JSON value semantics
         run: mypy --strict --follow-imports=silent drift_gate/core/evaluation/json_values.py

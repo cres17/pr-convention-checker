@@ -675,3 +675,10 @@ path `stat`과 handle `fstat`의 ctime 의미가 다를 수 있어 두 API를 �
 
 `--head`를 쓰는 고정 Git 객체 검사, `trusted-check`, MCP `drift_gate_check_git`의 기본값은 `commit`으로 유지한다. 이 경로는
 명시한 commit 쌍을 증거·재실행·신뢰 판정의 subject로 묶고, `commit` 모드에서만 신뢰 엔진의 `resolved_base`를 대조한다.
+
+## 2026-10-20 core 타입 정리
+
+`mypy drift_gate/core`를 CI 필수 검사로 바꾸면서 남아 있던 타입 오류 7건을 정리했다. 판정·입력 계약은 바뀌지 않는다.
+- 실행 단계 전이표(`core/execution/lifecycle.py`)의 타입 표기만 고쳤다. 허용 전이는 같다.
+- 사실 비교(`core/contracts/delta.py`)는 `FactBasis`를 필드별로 만들고, 어느 쪽 가능 범위라도 없으면 `UnknownDelta`, 아니면 `BoundedDelta`를 반환한다. 이전과 같은 분기다.
+- 정책 로더(`core/policy/loader.py`)는 None 입력을 `PolicyLoadError('policy: must be a mapping')`로 거부한다. 이전에도 스키마 검사에서 같은 메시지로 거부됐다.

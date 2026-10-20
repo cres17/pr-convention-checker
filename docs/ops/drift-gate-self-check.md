@@ -235,3 +235,5 @@ workflow 변경은 실행 준비다. 새 commit의 원격 실행 결과·artifac
 2026-10-20에 모든 커밋 메시지를 한국어로 다시 쓰면서 주소가 한 번 더 바뀌었다. 파일 내용은 바뀌지 않았다. CI의 신뢰 엔진·정책 참조와 엔진 manifest SHA-256(manifest의 commit 필드만 달라짐)을 새 주소로 갱신했다. 2026-10-16 표의 새 주소는 [2026-10-20 대응표](commit-ref-map-2026-10-20.json)의 왼쪽 값으로 다시 찾는다.
 
 2026-10-20에 데스크톱 패키지에 앱 아이콘을 추가했다. `desktop-build.yml`의 PyInstaller 단계를 macOS(`docs/assets/brand/DriftGate.icns`)와 Windows(`docs/assets/brand/DriftGate.ico`)로 나눴고, Inno Setup 설치 프로그램은 `SetupIconFile`로 같은 `.ico`를 쓴다. 나머지 빌드 인자는 바꾸지 않았다.
+
+2026-10-20부터 `mypy drift_gate/core --ignore-missing-imports`도 필수 단계다. 이전에는 실패해도 통과했다(`|| true`). 남아 있던 오류 7건(실행 단계 전이표의 타입 표기, 사실 delta의 생성자 인자, 정책 로더의 None 처리)을 동작 변경 없이 정리했다.

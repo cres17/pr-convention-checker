@@ -425,7 +425,7 @@ drift-gate-eval --recursive --compare-baseline
 | [Benchmark](.github/workflows/benchmark.yml) | `main` push, 릴리스 게시 | 테스트·벤치마크, 보고서 업로드 |
 | [Desktop app build](.github/workflows/desktop-build.yml) | `main`·`ver2` push(앱 관련 경로), 두 브랜치 대상 PR | React 테스트·화면 빌드, Windows·macOS(arm64·Intel) 설치 파일 생성과 실행 확인 |
 
-CI의 mypy 검사는 참고용이며 실패해도 작업을 중단하지 않습니다.
+CI는 `drift_gate/core`의 mypy 검사가 실패하면 작업을 실패 처리합니다(2026-10-20부터). strict 검사는 `json_values.py`에만 적용합니다.
 
 측정 자료는 `docs/assessment/`에 보존합니다. 새 측정은 기존 결과를 덮어쓰지 않고 다른 경로에 저장합니다. CI 벤치마크 통과는 저장소의 고정 사례 통과를 뜻하며, 별도 사후 평가에서 확인된 한계는 [검증 결과](#검증-결과)에 함께 공개합니다.
 

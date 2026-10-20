@@ -24,7 +24,7 @@ _ID = re.compile('[0-9a-f]{32}')
 
 # Failures are only meaningful before the result is durable; afterwards the
 # semantic result stands and only publication outcomes may follow.
-_NEXT = {stage: (STAGES[i + 1],) for i, stage in enumerate(STAGES[:-1])}
+_NEXT: dict[str, tuple[str, ...]] = {stage: (STAGES[i + 1],) for i, stage in enumerate(STAGES[:-1])}
 _NEXT['persisted'] = ('publish-pending', 'publication-skipped')
 _NEXT['publish-pending'] = ('published', 'publication-stale', 'publication-rejected', UNSETTLED_PUBLICATION)
 _NEXT[UNSETTLED_PUBLICATION] = ('published', 'publication-stale', 'publication-rejected')
