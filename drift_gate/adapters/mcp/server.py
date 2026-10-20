@@ -30,6 +30,12 @@ TOOL_MAP = {
 }
 
 
+# Arguments the function accepts for in-process callers but the server neither
+# lists nor accepts: a secret passed as a tool argument ends up in the model
+# context and in client logs. The function reads GITHUB_TOKEN instead.
+HIDDEN_ARGUMENTS = {"drift_gate_check_pr": frozenset({"token"})}
+
+
 TOOL_DESCRIPTIONS = {
     "drift_gate_check_git": "Evaluate immutable Git objects using an explicit pinned policy; ignores working-tree edits.",
     "drift_gate_check_local": "Evaluate the current repository diff against .drift-gate.yml.",
@@ -119,6 +125,9 @@ def _jsonrpc_error(request_id, code: int, message: str) -> dict:
 
 def _call_tool(name: str, arguments: dict):
     function = TOOL_MAP[name]
+    hidden = sorted(set(arguments) & HIDDEN_ARGUMENTS.get(name, frozenset()))
+    if hidden:
+        raise TypeError(f"{', '.join(hidden)} is not accepted as an argument; set GITHUB_TOKEN in the server environment")
     bound = inspect.signature(function).bind(**arguments)
     bound.apply_defaults()
     for key, value in bound.arguments.items():
@@ -143,6 +152,8 @@ def _tool_schema(name: str) -> dict:
     properties = {}
     required = []
     for key, parameter in parameters.items():
+        if key in HIDDEN_ARGUMENTS.get(name, frozenset()):
+            continue
         kind = {str: "string", int: "integer", bool: "boolean"}.get(parameter.annotation, "string")
         properties[key] = {"type": kind}
         if parameter.default is inspect.Parameter.empty:

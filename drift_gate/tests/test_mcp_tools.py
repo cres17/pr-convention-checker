@@ -235,7 +235,8 @@ def test_mcp_stdio_survives_bad_frames_and_advertises_real_arguments():
     responses = [json.loads(line) for line in value.stdout.splitlines()]
     assert len(responses) == 4 and all('error' in row for row in responses[:3])
     tool = next(row for row in responses[-1]['result']['tools'] if row['name'] == 'drift_gate_check_pr')
-    assert set(tool['inputSchema']['required']) == {'pr_number', 'repo', 'token'}
+    assert set(tool['inputSchema']['required']) == {'pr_number', 'repo'}
+    assert 'token' not in tool['inputSchema']['properties']
     assert tool['inputSchema']['properties']['pr_number']['type'] == 'integer'
     assert not tool['inputSchema']['additionalProperties']
 
@@ -298,3 +299,33 @@ def test_mcp_limit_counts_utf8_bytes_and_recovers_at_boundary(extra_byte):
     assert len(rows) == 2
     assert ('error' in rows[0]) == extra_byte
     assert rows[1]['id'] == 7 and 'result' in rows[1]
+
+
+def test_check_pr_token_comes_from_the_environment_not_from_arguments(monkeypatch, tmp_path):
+    from drift_gate.adapters.mcp import server, tools
+    policy = tmp_path / '.drift-gate.yml'
+    policy.write_text('rules:\n  - id: r\n    when: {any_changed: ["src/**"]}\n'
+                      '    require: {groups: [{name: d, any_changed: ["docs/r.md"]}]}\n'
+                      '    severity: major\n    message: m\n', encoding='utf-8')
+    seen = {}
+
+    class FakeAdapter:
+        def __init__(self, token, repo):
+            seen['token'] = token
+
+        def get_pr_files_and_body(self, pr_number):
+            return [], ''
+
+        def attach_env_documents(self, pr_number, files, policy):
+            return files
+
+    monkeypatch.setattr(tools, 'GitHubAdapter', FakeAdapter)
+    monkeypatch.delenv('GITHUB_TOKEN', raising=False)
+    monkeypatch.delenv('GH_TOKEN', raising=False)
+    with pytest.raises(ValueError, match='GITHUB_TOKEN'):
+        tools.drift_gate_check_pr(1, repo='o/r', policy_path=str(policy))
+    monkeypatch.setenv('GITHUB_TOKEN', 'from-env')
+    tools.drift_gate_check_pr(1, repo='o/r', policy_path=str(policy))
+    assert seen['token'] == 'from-env'
+    with pytest.raises(TypeError, match='not accepted as an argument'):
+        server._call_tool('drift_gate_check_pr', {'pr_number': 1, 'repo': 'o/r', 'token': 'leaked'})

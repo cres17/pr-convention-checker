@@ -1,4 +1,5 @@
 """Small callable helpers for future MCP servers or agent connectors."""
+import os
 from pathlib import Path
 
 from drift_gate.adapters.execution import identity
@@ -70,15 +71,22 @@ def drift_gate_check_pr(
     pr_number: int,
     *,
     repo: str,
-    token: str,
+    token: str | None = None,
     policy_path: str = ".drift-gate.yml",
     mode: str = "compact",
     token_budget: int = DEFAULT_TOKEN_BUDGET,
     contract_proofs: bool = False,
 ) -> dict:
+    """The MCP server never takes the token as a tool argument: it comes from GITHUB_TOKEN.
+
+    ``token`` stays for in-process callers; the server rejects it (see server.HIDDEN_ARGUMENTS).
+    """
     execution = identity()
     source, policy = read_policy(policy_path)
     require_check_policy(policy)
+    token = token or os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    if not token:
+        raise ValueError("set GITHUB_TOKEN (or GH_TOKEN) in the MCP server environment; the token is not a tool argument")
     github = GitHubAdapter(token=token, repo=repo)
     changed_files, pr_body = github.get_pr_files_and_body(pr_number)
     from drift_gate.adapters.execution import digest

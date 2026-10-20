@@ -275,7 +275,8 @@ class MarkdownReporter:
         return [
             "**Override**",
             "",
-            "Only if this drift is intentional, add this to the PR description:",
+            "Only if this drift is intentional, add these two lines to the PR description as plain text "
+            "(directives inside a code block or an HTML comment are ignored):",
             "",
             fenced(f"drift-ignore: {violation.rule_id}\nreason: <why this is safe>", "md"),
             "",

@@ -376,6 +376,43 @@ class TestParseDriftIgnores:
         assert len(ignores) == 1
         assert ignores[0].reason == "spec updated in separate PR"
 
+    def test_directive_inside_html_comment_is_not_a_request(self):
+        body = (
+            "## Summary\n"
+            "<!--\ndrift-ignore: api-contract-sync\nreason: why this is safe\n-->\n"
+        )
+        assert parse_drift_ignores(body) == []
+
+    def test_directive_inside_code_block_is_not_a_request(self):
+        for fence in ("```", "~~~", "````"):
+            body = f"Docs for the syntax:\n{fence}md\ndrift-ignore: api-contract-sync\nreason: example\n{fence}\n"
+            assert parse_drift_ignores(body) == [], fence
+
+    def test_unterminated_comment_or_fence_hides_the_rest(self):
+        assert parse_drift_ignores("<!-- note\ndrift-ignore: rule-a\nreason: x\n") == []
+        assert parse_drift_ignores("```\ndrift-ignore: rule-a\nreason: x\n") == []
+
+    def test_directive_after_a_closed_block_is_still_read(self):
+        body = (
+            "<!-- drift-ignore: hidden\nreason: hidden -->\n"
+            "```\ndrift-ignore: quoted\nreason: quoted\n```\n"
+            "drift-ignore: real-rule\nreason: intentional\n"
+        )
+        ignores = parse_drift_ignores(body)
+        assert [(i.rule_id, i.reason) for i in ignores] == [("real-rule", "intentional")]
+
+    def test_reason_cannot_be_borrowed_from_a_masked_block(self):
+        body = "drift-ignore: rule-a\n<!-- reason: from a comment -->\n```\nreason: from code\n```\n"
+        ignores = parse_drift_ignores(body)
+        assert len(ignores) == 1 and ignores[0].reason is None
+
+    def test_inline_backticks_do_not_open_a_block(self):
+        body = "Use ```drift-ignore``` carefully.\ndrift-ignore: rule-a\nreason: ok\n"
+        assert [i.rule_id for i in parse_drift_ignores(body)] == ["rule-a"]
+
+    def test_none_body_is_empty(self):
+        assert parse_drift_ignores(None) == []
+
 
 # ── PR file count must match the PR's own count ──────────────────────────────
 

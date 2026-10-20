@@ -233,7 +233,11 @@ def parse_drift_ignores(pr_body: str) -> list[DriftIgnoreDirective]:
     reason: <이유>   (선택)
     expires: <YYYY-MM-DD>   (선택)
     approved-by: <CODEOWNER>   (선택)
+
+    HTML 주석과 코드 블록 안의 지시문은 작성자의 요청이 아니므로 무시한다.
     """
+    from drift_gate.adapters.github.pr_text import mask_inactive_markup
+    pr_body = mask_inactive_markup(pr_body or "")
     ignores: list[DriftIgnoreDirective] = []
     matches = list(re.finditer(r"(?m)^\s*drift-ignore:[ \t]*(\S+)[ \t]*$", pr_body))
     for index, m in enumerate(matches):

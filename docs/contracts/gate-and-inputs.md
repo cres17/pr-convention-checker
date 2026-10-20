@@ -737,3 +737,9 @@ GitHub Action은 댓글 본문을 60,000자 이내로 맞춘다(`COMMENT_MAX_CHA
 3. 마지막으로 판정과 건수만 남긴다.
 
 파일(`drift_gate_report.md`), 잡 요약, artifact에는 줄이지 않은 전체 보고서가 남는다.
+
+## 2026-10-21 drift-ignore 지시문 인식 범위
+
+PR 본문에서 `drift-ignore:`와 `reason:`을 읽을 때 HTML 주석(`<!-- … -->`)과 펜스 코드 블록(``` 또는 ~~~) 안의 줄은 무시한다. PR 템플릿의 주석 속 예시나 문법을 인용한 코드 블록이 면제 요청으로 읽히지 않게 하기 위해서다. 닫히지 않은 주석·펜스는 본문 끝까지 이어진 것으로 본다(Markdown 렌더링과 같다). 따라서 지시문은 코드 블록 밖의 일반 줄로 써야 하고, PR 댓글의 안내 문구도 같은 내용을 알린다. 인라인 백틱은 영향이 없다.
+
+면제의 신뢰 수준은 이 변경으로 달라지지 않는다. `suppression.require_codeowners_approval`의 기본값은 `false`라서, 기본 설정에서는 PR 작성자가 아무 `reason`만 적어도 BLOCKER·MAJOR 규칙이 생략된다. 중요한 규칙은 규칙에 `allow_ignore: false`를 쓰거나 정책에 `suppression.require_codeowners_approval: true`를 켜서 승인 envelope를 요구한다. 기본값을 바꾸는 것은 `CLAUDE.md`의 drift-ignore 표와 기존 사용자 동작을 바꾸므로 이번에는 하지 않았다.
