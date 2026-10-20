@@ -241,7 +241,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]" ruff mypy==1.18.2
+          pip install -e ".[dev]" ruff mypy==1.18.2 types-PyYAML==6.0.12.20260906
 
       - name: Lint Python errors and unused code with ruff
         run: ruff check drift_gate/ --select=E9,F

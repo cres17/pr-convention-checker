@@ -237,3 +237,5 @@ workflow 변경은 실행 준비다. 새 commit의 원격 실행 결과·artifac
 2026-10-20에 데스크톱 패키지에 앱 아이콘을 추가했다. `desktop-build.yml`의 PyInstaller 단계를 macOS(`docs/assets/brand/DriftGate.icns`)와 Windows(`docs/assets/brand/DriftGate.ico`)로 나눴고, Inno Setup 설치 프로그램은 `SetupIconFile`로 같은 `.ico`를 쓴다. 나머지 빌드 인자는 바꾸지 않았다.
 
 2026-10-20부터 `mypy drift_gate/core --ignore-missing-imports`도 필수 단계다. 이전에는 실패해도 통과했다(`|| true`). 남아 있던 오류 7건(실행 단계 전이표의 타입 표기, 사실 delta의 생성자 인자, 정책 로더의 None 처리)을 동작 변경 없이 정리했다.
+
+mypy가 `yaml` import를 확인할 수 있도록 lint 작업에 `types-PyYAML==6.0.12.20260906`을 함께 설치한다. 스텁이 없으면 `import-untyped` 오류로 필수 단계가 실패한다.
