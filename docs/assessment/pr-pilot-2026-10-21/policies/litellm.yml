@@ -1,0 +1,18 @@
+# PR 파일럿 정책 — BerriAI/litellm (main). PR을 보기 전에 기본 브랜치 파일 구조만 보고 작성했다. 실행 후 수정하지 않는다.
+rules:
+  - id: env-sample-content
+    when:
+      any_changed: ["litellm/constants.py", "litellm/proxy/**"]
+      trigger: {family: env-key, predicate: key-added, scope: selected-modules, on_unknown: review}
+    require:
+      groups:
+        - name: Environment sample keys
+          all_changed: [".env.example"]
+          content: env-keys
+    severity: blocker
+    message: "새 환경 변수 키를 .env.example에 반영한 뒤 다시 검사하세요."
+gate:
+  fail_on_blocker: true
+  fail_on_major_count: 2
+  on_unverified: warn
+ignore_paths: ["**/__pycache__/**", "**/*.pyc"]
