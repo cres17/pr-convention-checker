@@ -14,8 +14,8 @@ from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "docs/assessment/v1-ver2-controlled-2026-09-23/cases.json"
-V1_COMMIT = "e300a7d510456f3f77a2d5d209d2f34f80b189b8"
-V2_COMMIT = "0e0f4dee1a30d82000ea85aa59f20b477fbfde3f"
+V1_COMMIT = "917e82b75cb32721f94e058a0516e57300d057fc"
+V2_COMMIT = "0b93a13481c7cab4a9519c4e06e3171e46dcc016"
 FAKE_CURL = '''#!/usr/bin/env python3
 import json, os, pathlib, sys
 args = sys.argv[1:]

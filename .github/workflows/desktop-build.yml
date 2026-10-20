@@ -2,7 +2,7 @@ name: Desktop app build
 
 on:
   push:
-    branches: [ver2]
+    branches: [main, ver2]
     paths:
       - .github/workflows/desktop-build.yml
       - drift_gate/**
@@ -10,7 +10,7 @@ on:
       - pyproject.toml
       - packaging/**
   pull_request:
-    branches: [ver2]
+    branches: [main, ver2]
     paths:
       - .github/workflows/desktop-build.yml
       - drift_gate/**
