@@ -7,7 +7,7 @@
 API 명세, 설정 예제, 운영 문서의 누락을 PR에서 점검하는 개발 도구입니다.<br>
 팀의 규칙을 YAML로 정의하고, 로컬 CLI와 GitHub Actions에서 같은 정책으로 검사합니다.
 
-[![CI](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml/badge.svg?branch=ver2)](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml?query=branch%3Aver2)
+[![CI](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml?query=branch%3Amain)
 [![License: MIT](https://img.shields.io/badge/License-MIT-8B5CF6)](LICENSE)
 
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](pyproject.toml)
@@ -22,7 +22,7 @@ API 명세, 설정 예제, 운영 문서의 누락을 PR에서 점검하는 개�
 
 ---
 
-> **`ver2` 개발 브랜치** — API·환경변수의 내용 검사와 승인 검증을 확장하고, 로컬 결과를 읽기 쉬운 [데스크톱 앱](docs/desktop-app.md)을 추가했습니다. 확인된 오탐·미탐은 [검증 결과](#검증-결과)에 공개합니다.
+> API·환경변수 내용 검사, 승인 검증, 로컬 [데스크톱 앱](docs/desktop-app.md)을 포함한 현재 버전이 `main`에 있습니다. 확인된 오탐·미탐과 알려진 문제는 [검증 결과](#검증-결과)와 [지원 범위와 한계](#지원-범위와-한계)에 공개합니다.
 
 ## 서비스 개요
 
@@ -48,7 +48,7 @@ Python 설정·API 경로의 내용 검사부터 시작하려면 [focused-python
 
 ## 기술 스택
 
-`main`과 `ver2` 모두 **Python · YAML 정책 · Tree-sitter · GitHub Actions · pytest**를 사용합니다. `ver2`에서는 이 구성을 유지하고 분석 로직과 의존성 버전 조건을 수정했습니다.
+**Python · YAML 정책 · Tree-sitter · GitHub Actions · pytest**를 기반으로 합니다.
 
 | 영역 | 기술 | 역할 |
 |---|---|---|
@@ -64,7 +64,7 @@ Python 설정·API 경로의 내용 검사부터 시작하려면 [focused-python
 | 선택 기능 | **PySide6 · Qt WebEngine · React · TypeScript · tool-ui** | Windows·macOS용 로컬 검사 화면 |
 | 선택 기능 | **Codex CLI · Claude Code CLI** | 사용자 구독 로그인으로 LLM 추가 검토 |
 
-실행 의존성은 [pyproject.toml](pyproject.toml), 테스트와 코드 검사 설정은 [CI 설정](.github/workflows/ci.yml)에 있습니다. MCP와 Claude 연동은 `main`에도 있던 기능입니다.
+실행 의존성은 [pyproject.toml](pyproject.toml), 테스트와 코드 검사 설정은 [CI 설정](.github/workflows/ci.yml)에 있습니다.
 
 <details>
 <summary>코드 구조와 역할</summary>
@@ -144,7 +144,7 @@ Python 3.10 이상과 Git이 필요합니다. 아래는 macOS·Linux 기준입�
 
 **[Windows 설치 EXE 다운로드](https://github.com/cres17/pr-convention-checker/releases/download/desktop-v1.0.2-preview.20261001/DriftGate-Windows-Setup.exe)** · **[Mac DMG 다운로드](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.2-preview.20261001)**
 
-공개 1.0.2 미리보기에는 화면 파일 경로와 오프라인 파서 포함 문제가 확인됐습니다. 수정본은 `ver2`의 새 빌드부터 적용되며, 기존 공개 설치 파일은 아직 교체하지 않았습니다. [설치본 수정·검증](docs/review/offline-packaged-analysis-2026-10-01.md)을 확인하세요.
+공개 1.0.2 미리보기(2026-10-01)에는 화면 파일 경로와 오프라인 파서 포함 문제가 확인됐습니다. 수정은 이후 소스에 들어갔지만 공개 설치 파일은 아직 교체하지 않았습니다. 그 뒤에 추가한 기능(삭제된 환경 변수 키 검사 등)도 공개 설치 파일에는 없습니다. 최신 소스로 만든 설치 파일은 [데스크톱 빌드 워크플로](https://github.com/cres17/pr-convention-checker/actions/workflows/desktop-build.yml)의 실행 결과에 산출물로 올라갑니다.
 
 설치 파일은 Python·Node.js를 따로 설치하지 않고 사용합니다. Windows는 설치 후 시작 메뉴의 **Cross Agent**에서 실행하고, Mac은 DMG 안의 앱을 **Applications** 폴더로 드래그합니다. 현재는 공식 코드 서명·Apple 공증 전 미리보기이며 보안 경고가 표시될 수 있습니다. Git 설치 등 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다.
 
@@ -157,7 +157,7 @@ python -m pip install -e '.[desktop]'
 drift-gate-desktop
 ```
 
-`.drift-gate.yml`이 있는 Git 저장소를 고른 뒤 `HEAD` 또는 `main` 등을 비교 기준으로 입력합니다. [Windows·macOS 앱 빌드 및 다운로드](https://github.com/cres17/pr-convention-checker/actions/runs/36804667492)와 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다. 로컬 규칙 검사 후 구독 계정으로 LLM 의견을 추가할 수 있습니다.
+`.drift-gate.yml`이 있는 Git 저장소를 고른 뒤 `HEAD` 또는 `main` 등을 비교 기준으로 입력합니다. [Windows·macOS 앱 빌드](https://github.com/cres17/pr-convention-checker/actions/workflows/desktop-build.yml)와 실행 조건은 [데스크톱 앱 안내](docs/desktop-app.md)에 있습니다. 로컬 규칙 검사 후 구독 계정으로 LLM 의견을 추가할 수 있습니다.
 
 ![데스크톱 앱의 합성 검사 예시 화면](docs/assets/cross-agent-desktop.png)
 
@@ -167,16 +167,16 @@ drift-gate-desktop
 
 데스크톱 앱의 **프로젝트 현황**에서 Markdown을 **현재 목표·향후 계획·과거 결과·참고**로 구분합니다. 현재 목표에서만 기능 후보와 완료 조건을 추출하고 현황을 집계합니다. 기능의 코드 위치와 검증 기록을 연결하면 구현·완료·근거 없음·재확인 항목을 볼 수 있습니다. 이 화면은 `.drift-gate.yml` 없이도 사용할 수 있습니다.
 
-![계획.md의 개발 단계 다섯 개를 기능 후보로 저장한 프로젝트 현황 화면](docs/assets/project-progress.png)
+![현황 기능 설계 문서의 개발 단계 다섯 개를 기능 후보로 저장한 프로젝트 현황 화면](docs/assets/project-progress.png)
 
-*위 0/5는 자동으로 개발 진척이 0%라고 판정한 결과가 아닙니다. 아직 이 기준에 코드 근거와 검증 기록을 입력하지 않은 상태입니다.* 자동 의미 판정과 테스트 실행은 아직 제공하지 않습니다. 판정 범위와 사용법은 [데스크톱 앱 안내](docs/desktop-app.md), 다음 구현 단계는 [계획](계획.md)에 적었습니다.
+*위 0/5는 자동으로 개발 진척이 0%라고 판정한 결과가 아닙니다. 아직 이 기준에 코드 근거와 검증 기록을 입력하지 않은 상태입니다.* 자동 의미 판정과 테스트 실행은 아직 제공하지 않습니다. 판정 범위와 사용법은 [데스크톱 앱 안내](docs/desktop-app.md), 현황 기능의 설계와 단계는 [현황 기능 설계](docs/design/project-progress-plan-2026-09-29.md)에 적었습니다.
 
-현재 `ver2` 소스에서는 근거가 모두 비어 있으면 **첫 기능의 코드 근거 연결**을 안내합니다. 요약 카드의 **완료 확인·구현 확인·근거 없음·재확인**을 누르면 해당 목록으로 이동합니다. 리뷰의 경고는 **주의**로 구분했습니다. [변경과 검증 기록](docs/review/document-kinds-v5-v7-2026-10-01.md)에 비교표와 실제 앱 캡처를 정리했습니다. 위 다운로드의 기존 미리보기 설치 파일에는 이 후속 변경이 포함되지 않습니다.
+현재 소스에서는 근거가 모두 비어 있으면 **첫 기능의 코드 근거 연결**을 안내합니다. 요약 카드의 **완료 확인·구현 확인·근거 없음·재확인**을 누르면 해당 목록으로 이동합니다. 리뷰의 경고는 **주의**로 구분했습니다. 위 다운로드의 기존 미리보기 설치 파일에는 이 후속 변경이 포함되지 않습니다.
 
 ### 먼저 예제 보고서 보기
 
 ```bash
-git clone --branch ver2 https://github.com/cres17/pr-convention-checker.git
+git clone https://github.com/cres17/pr-convention-checker.git
 cd pr-convention-checker
 python3 -m venv .venv
 source .venv/bin/activate
@@ -200,7 +200,7 @@ drift-gate init --preset api
 drift-gate check --base HEAD --explain
 ```
 
-`HEAD`와 현재 작업 트리를 비교하므로 커밋 전 확인에 사용할 수 있습니다. 이미 커밋한 브랜치 변경을 비교하려면 `--base main`처럼 기준 브랜치를 지정합니다. 이때 기본 비교 방식은 merge-base여서, 내 브랜치가 갈라진 뒤 main에 추가된 변경을 내 삭제로 잡지 않습니다. 지정한 커밋과 그대로 비교하려면 `--comparison-mode commit`을 붙입니다.
+`HEAD`와 현재 작업 트리를 비교하므로 커밋 전 확인에 사용할 수 있습니다. 이미 커밋한 브랜치 변경을 비교하려면 `--base main`처럼 기준 브랜치를 지정합니다. 이때 기본 비교 방식은 merge-base여서, 내 브랜치가 갈라진 뒤 main에 추가된 변경을 내 삭제로 잡지 않습니다. 지정한 커밋과 그대로 비교하려면 `--comparison-mode commit`을 붙입니다. `review`, `self-audit`, 데스크톱 앱, MCP 로컬 검사도 같은 기본값을 씁니다. 공통 조상이 없거나 얕은 clone이라 찾지 못하면 다른 방식으로 바꾸지 않고 입력 오류(종료 코드 2)로 끝냅니다. `--head`로 두 커밋을 지정하는 고정 입력 검사와 `trusted-check`는 기준 커밋을 증거에 묶기 때문에 기본값이 commit입니다.
 
 | 필요한 작업 | 명령 |
 |---|---|
@@ -293,10 +293,10 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - uses: cres17/pr-convention-checker@ver2
+      - uses: cres17/pr-convention-checker@main
 ```
 
-기본 설정은 PR 댓글과 보고서 파일을 남기고, 정책 결과가 `fail`이면 작업을 실패 처리합니다. `ver2`는 변경될 수 있는 개발 브랜치입니다. 검증을 마친 버전을 계속 사용하려면 해당 커밋 SHA를 지정하세요.
+기본 설정은 PR 댓글과 보고서 파일을 남기고, 정책 결과가 `fail`이면 작업을 실패 처리합니다. `main`은 계속 갱신됩니다. 검증을 마친 버전을 계속 사용하려면 해당 커밋 SHA를 지정하세요.
 
 <details>
 <summary>주요 설정과 선택 기능</summary>
@@ -315,15 +315,15 @@ Claude 연결은 필수가 아닙니다. API 키를 설정하지 않아도 정�
 
 ## 버전별 변경
 
-아래 표의 기준은 **기존 `main`의 `bffc655` → `ver2`**입니다. 실제 [`v1` 태그와 `ver2`의 통제 비교](docs/v1-ver2-controlled-comparison-2026-09-23.md)는 별도 문서에서 다룹니다. `v1` 태그는 Claude 중심 PR 규칙 검사기였고, `main`의 `bffc655`는 이미 Python 정책 엔진을 포함합니다. `ver2`는 브랜치명이며, `v2.0.0` 정식 릴리스를 의미하지 않습니다.
+아래 표의 기준은 **2026-09 개편 전 `main`(`3163f0d`) → 현재 `main`**입니다. 개편은 `ver2` 브랜치에서 진행한 뒤 2026-10-20에 `main`으로 합쳤습니다. 실제 [`v1` 태그와 개편 버전의 통제 비교](docs/v1-ver2-controlled-comparison-2026-09-23.md)는 별도 문서에서 다룹니다. `v1` 태그는 Claude Code 플러그인 형태의 PR 규칙 검사기였고, 개편 전 `main`은 이미 Python 정책 엔진을 포함합니다. `v2.0.0` 같은 정식 릴리스는 아직 없습니다.
 
-| 항목 | 기존 main | ver2에서 업데이트한 내용 |
+| 항목 | 개편 전 main | 현재 main |
 |---|---|---|
 | 기본 구성 | Python, YAML, Tree-sitter, CLI·Action·MCP, 보고서 | 기존 구성 유지 |
 | 문법 분석 | Tree-sitter와 휴리스틱 사용 | 파서 입력·노드 API 호환성 수정, 분석 방법·실패 사유 표시 |
 | 변경 수집 | 변경 경로와 patch 기반 분석 | 삭제 코드와 분석 입력 누락 처리 보강 |
 | API 문서 | 문서 파일의 동반 수정 확인 | 인식 가능한 HTTP 메서드·경로 변경 내용까지 대조 |
-| 환경변수 | 설정 예제의 동반 수정 확인 | 새 정적 키가 현재 샘플에 있는지 확인. 샘플이 이미 갖춘 경우도 허용 |
+| 환경변수 | 설정 예제의 동반 수정 확인 | 새 정적 키가 현재 샘플에 있는지, 코드에서 지운 키가 샘플에 남았는지 확인. 사용 여부가 불분명하면 경고 |
 | 승인 예외 | PR 본문의 승인자 문자열 처리 | CODEOWNERS·리뷰 승인·대상 커밋 등 검증된 근거 확인 |
 | 설치 | Action에서 PyYAML 설치 | Action에서 패키지와 선언된 의존성을 함께 설치 |
 | 검증 | 기존 테스트·합성 벤치마크 | 개선 목표·새 반례 비교 자료 추가, Windows 테스트 출력 인코딩 수정 |
@@ -334,7 +334,7 @@ Claude 연결은 필수가 아닙니다. API 키를 설정하지 않아도 정�
 <details>
 <summary>실제로 바뀐 의존성 버전 조건</summary>
 
-| 패키지 | 기존 main | ver2 |
+| 패키지 | 개편 전 main | 현재 main |
 |---|---|---|
 | Python | `>=3.10` | 동일 |
 | PyYAML | `>=6.0` | `>=6.0,<7` |
@@ -342,7 +342,7 @@ Claude 연결은 필수가 아닙니다. API 키를 설정하지 않아도 정�
 | tree-sitter-language-pack | `>=1.8.1` | `==1.20.0` |
 | pytest — 개발용 | `>=7.0` | 동일 |
 
-Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니다. 기존 `v1`·`v1.0.0` 태그와 개발 브랜치 `ver2`는 서로 다른 Git 참조입니다.
+Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니다. `v1`·`v1.0.0` 태그는 첫 버전(Claude Code 플러그인)을 가리킵니다.
 
 </details>
 
@@ -350,20 +350,19 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 
 ## 검증 결과
 
-**2026-10-02 초안 관리 보완:** 삭제 시 수정 버전을 필수로 확인하고, 실행 중 사본 보호·선택 정리·저장소별 잠금·상한 초과 시 초안 내보내기 후 최신 기준 전환을 추가했습니다. Python **752개**·화면 **106개**가 통과했으며 실제 Mac Qt 화면에서 복구·선택 정리·내보내기 흐름을 확인했습니다. [검토와 검증 범위](docs/review/draft-management-2026-10-02.md)
+현재 `main`의 테스트·빌드 결과는 [CI](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml?query=branch%3Amain)와 [데스크톱 빌드](https://github.com/cres17/pr-convention-checker/actions/workflows/desktop-build.yml)에서 확인할 수 있습니다. CI는 Ubuntu·Windows·macOS × Python 3.10·3.11·3.12의 9개 조합으로 실행합니다.
 
-**2026-10-02 편집 안전성 보완:** 충돌 저장을 버전 검사와 앱 간 잠금으로 막고, 저장소 전환 후 완료 응답·초안 보존·사용자 선택에 따른 합치기를 보완했습니다. Python **742개**·화면 **100개**가 통과했고 실제 Qt 화면에서 충돌 선택과 두 편집의 저장 보존을 확인했습니다. 고정 합성 평가도 통제 **12/12**, 지원 **21/24**·경계 **1/8**로 유지됐습니다. 실제 PR 정확도 향상을 주장하지 않습니다. [최종 검토와 검증 범위](docs/review/editor-concurrency-2026-10-02.md)
-
-**2026-10-01 데스크톱 1.0.2 미리보기:** 재시작 후 초안 복구, 재추출 근거 보존, 요약 카드 분리, 범위·응답 처리와 화면 구조를 보완했습니다. Python **693개**·화면 **77개**, 전체 Ruff `F` 검사가 통과했습니다. 세 플랫폼 릴리스 빌드에서 앱 실행·설치 검증을 마치고 네 설치 파일의 크기·해시를 대조했습니다. [초안 복구와 릴리스 검증](docs/review/progress-draft-recovery-2026-10-01.md)
-
-**2026-10-01 데스크톱 1.0.1 검증:** Python **668개**, 화면 **27개**가 통과했습니다. 새 화면 흐름 6개와 패키지 평가 6개는 각각 같은 입력에서 **0/6 → 6/6**으로 개선됐습니다. 기존 12개 계약 변경은 **12/12**, 32개 반례는 지원 **21/24**·경계 **1/8**로 유지됐습니다. 세 플랫폼의 앱 빌드·실행 시작, DMG 마운트와 Windows 설치·실행 시작·제거도 확인했습니다. [구조 보완과 검증 보고서](docs/review/release-readiness-2026-10-01.md) · [다음 작업 인계](docs/handoff-2026-10-01.md)
-
+| 검증 기록 | 내용 |
+|---|---|
+| [문서의 동작 설명 12개 재현 검증](docs/review/drift-gate-claim-verification-2026-10-06.md) | 문서에 적힌 설명을 실제 실행으로 확인해 수용 6·부분 수용 3·거부 3으로 판정. 주석 오판 결함은 같은 날 토크나이저 기반 판별로 수정 ([원자료](docs/assessment/ai-claim-rejection-2026-10-06), [재현 기록](docs/assessment/hardening-audit-2026-10-06)) |
+| [삭제된 환경 변수 키 검사 검증](docs/assessment/removed-keys-2026-10-16/validation.md) | 통제 사례로 위반·경고·통과 구분, 설치본 CLI·MCP·데스크톱 출력 일치 확인 |
+| [데스크톱 확인창 점검](docs/assessment/desktop-confirm-2026-10-20/record.md) | 삭제 키 예외·끄기 확인창에서 취소가 저장을 막지 못하는 문제 확인. 수정 전 |
 
 **기존 테스트 통과와 새 사례에 대한 탐지 성능을 나눠 확인했습니다.** 기존 커밋과 개선본을 같은 환경·입력으로 실행했습니다. 아래 수치는 각각의 평가셋에만 해당하며, 서로 합산하지 않습니다.
 
-**2026-09-29 공개본 재검증:** `5d6fb01`을 별도로 추출해 지원 범위 **21/24**, 경계 **1/8**, 전체 테스트 **542개 통과**를 다시 확인했습니다. [시점별 비교와 남은 실패 10개](docs/published-recheck-2026-09-29.md)를 함께 공개합니다. 알려진 사례를 수정한 뒤의 회귀 결과이며 새로운 독립 평가가 아닙니다.
+**2026-09-29 공개본 재검증:** 당시 공개본(`917846e`)을 별도로 추출해 지원 범위 **21/24**, 경계 **1/8**, 전체 테스트 **542개 통과**를 다시 확인했습니다. [시점별 비교와 남은 실패 10개](docs/published-recheck-2026-09-29.md)를 함께 공개합니다. 알려진 사례를 수정한 뒤의 회귀 결과이며 새로운 독립 평가가 아닙니다.
 
-| 검증 항목 | 개선 전 | ver2 개선본 | 읽는 방법 |
+| 검증 항목 | 개선 전 | 개선본 | 읽는 방법 |
 |---|---:|---:|---|
 | 기존 합성 사례 | 22/22 | 22/22 | 기존 기대 동작 유지 |
 | 개발 목표 사례 | 4/8 | 8/8 | 구현에 사용한 인수 기준 충족 |
@@ -377,7 +376,7 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 
 새 반례는 처음에 제품 코드를 바꾸지 않은 채 두 버전에 적용했고, 이후 알려진 오류 세 가지를 수정해 같은 입력에 재검증했습니다. 작성자가 만든 합성 데이터이므로 독립·블라인드 검증은 아닙니다. **8/8이나 21/24를 실제 PR의 정확도로 해석할 수 없습니다.**
 
-[기능 커밋 CI (`88da119`)](https://github.com/cres17/pr-convention-checker/actions/runs/36540953593)에서 Ubuntu·Windows·macOS × Python 3.10·3.11·3.12의 9개 조합과 코드 검사·벤치마크가 통과했습니다. [데스크톱 빌드](https://github.com/cres17/pr-convention-checker/actions/runs/36804667492)에서는 React UI 검사 후 Windows·macOS 패키지를 각각 생성·업로드했습니다.
+당시 [기능 커밋 CI](https://github.com/cres17/pr-convention-checker/actions/runs/36540953593)에서 Ubuntu·Windows·macOS × Python 3.10·3.11·3.12의 9개 조합과 코드 검사·벤치마크가 통과했습니다. 당시 [데스크톱 빌드](https://github.com/cres17/pr-convention-checker/actions/runs/36804667492)에서는 React UI 검사 후 Windows·macOS 패키지를 각각 생성·업로드했습니다.
 
 실행 환경과 첫 평가 원본은 [과적합 점검](docs/generalization-audit-2026-09-22.md), 수정 뒤 사례별 판정과 해시는 [재검증 보고서](docs/v1-ver2-contract-fix-results-2026-09-23.md)에 있습니다. 전체 테스트 통과와 실제 GitHub 권한 환경의 정상 동작 여부는 별개의 검증입니다.
 
@@ -388,23 +387,25 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 - **문서 형식 제약:** 두 열 Markdown 표는 일부 지원하지만 중첩 OpenAPI YAML의 올바른 수정도 차단할 수 있습니다.
 - **설정 검사 제약:** 정적 키 위주이며, 별칭·동적 키를 충분히 다루지 못합니다. 기존 키 사용 코드만 정리했는데 차단되는 반례도 있습니다.
 - **실사용 검증 부족:** 실제 PR 표본 평가, 리뷰 시간 절감, 조직 권한을 사용한 승인 검증은 아직 측정하지 않았습니다.
+- **데스크톱 확인창:** 2026-10-20 macOS 설치본 점검에서 삭제 키 예외·끄기 확인창의 취소(No·Esc)가 정책 저장을 막지 못했습니다. 원인을 조사 중입니다.
 
-다음 개선은 이 문제들을 재현하는 테스트를 유지하면서, 전체 파일의 변경 전후 구조 비교와 별도의 실제 PR 평가셋을 추가하는 데 초점을 둡니다. [우선순위와 완료 기준](docs/generalization-audit-2026-09-22.md#다음-개선-순서)을 확인할 수 있습니다.
+다음 개선은 이 문제들을 재현하는 테스트를 유지하면서, 전체 파일의 변경 전후 구조 비교와 별도의 실제 PR 평가셋을 추가하는 데 초점을 둡니다. 남은 작업과 완료 기준은 [계획](계획.md)에 있습니다.
 
 ## 문서 모음
 
 | 목적 | 문서 |
 |---|---|
-| 최신 기능·구조·릴리스 검증과 다음 작업 | [문서 안내](docs/README.md) · [작업 인계](docs/handoff-2026-10-01.md) |
-| 실제 `v1` 태그와 `ver2`의 설계·실행 경로를 비교하고 싶을 때 | [통제 실험과 사례별 결과](docs/v1-ver2-controlled-comparison-2026-09-23.md) |
+| 최신 기능·구조 안내 | [문서 안내](docs/README.md) |
+| 실제 `v1` 태그와 개편 버전의 설계·실행 경로를 비교하고 싶을 때 | [통제 실험과 사례별 결과](docs/v1-ver2-controlled-comparison-2026-09-23.md) |
 | 개선 전후 결과를 검토하고 싶을 때 | [세 오류 수정 후 재검증](docs/v1-ver2-contract-fix-results-2026-09-23.md) · [첫 사후 검증](docs/generalization-audit-2026-09-22.md) |
 | 로컬 변경을 화면에서 검사하고 싶을 때 | [데스크톱 앱 사용·빌드 안내](docs/desktop-app.md) |
 | API 키 없이 구독 계정으로 LLM 검토를 받고 싶을 때 | [구독 연결과 실제 응답 기록](docs/subscription-llm-review.md) |
-| 다음 개발 범위를 확인할 때 | [개선 계획과 기준값](docs/development-roadmap.md) |
+| 다음 개발 범위를 확인할 때 | [계획](계획.md) |
 | 내용 검사와 예외 승인을 설정할 때 | [내용 검증 안내](docs/content-verification.md) |
 | 탐지 규칙·기존 설정을 이해할 때 | [탐지기 안내](docs/detector-guide.md) · [마이그레이션](docs/migration-guide.md) |
 | 프레임워크별로 적용할 때 | [FastAPI](examples/fastapi/README.md) · [Express](examples/express-api/README.md) · [Next.js](examples/nextjs/README.md) · [Django](examples/django/README.md) · [Prisma](examples/prisma/README.md) |
 | 실행 문제를 해결할 때 | [문제 해결](docs/troubleshooting.md) |
+| 데스크톱 화면 구성을 볼 때 | [UI 개편 기록](docs/design/tool-ui-integration-2026-09-29.md) |
 
 ## 개발과 테스트
 
@@ -417,10 +418,11 @@ drift-gate-eval --recursive --compare-baseline
 
 | 저장소 워크플로 | 실행 조건 | 검사 내용 |
 |---|---|---|
-| [CI](.github/workflows/ci.yml) | `main`·`develop`·`ver2` push, `main`·`develop` 대상 PR, 릴리스 게시 | 9개 OS·Python 조합, 필수 Ruff 검사, 기존 사례·다중 엔진 벤치마크 |
+| [CI](.github/workflows/ci.yml) | `main`·`develop`·`ver2` push, `main`·`develop` 대상 PR, 릴리스 게시 | 9개 OS·Python 조합, 필수 Ruff 검사, 자체 정책 검사, 고정 엔진 검사, 벤치마크 |
 | [Benchmark](.github/workflows/benchmark.yml) | `main` push, 릴리스 게시 | 테스트·벤치마크, 보고서 업로드 |
+| [Desktop app build](.github/workflows/desktop-build.yml) | `main`·`ver2` push(앱 관련 경로), 두 브랜치 대상 PR | React 테스트·화면 빌드, Windows·macOS(arm64·Intel) 설치 파일 생성과 실행 확인 |
 
-`ver2`의 벤치마크는 **CI 안의 `benchmark` 작업**에서 실행됩니다. 별도 `Benchmark` 워크플로는 `ver2` push에 실행되지 않아 상단 상태 배지는 해당 브랜치의 CI를 표시합니다. CI의 mypy 검사는 참고용이며 실패해도 작업을 중단하지 않습니다.
+CI의 mypy 검사는 참고용이며 실패해도 작업을 중단하지 않습니다.
 
 측정 자료는 `docs/assessment/`에 보존합니다. 새 측정은 기존 결과를 덮어쓰지 않고 다른 경로에 저장합니다. CI 벤치마크 통과는 저장소의 고정 사례 통과를 뜻하며, 별도 사후 평가에서 확인된 한계는 [검증 결과](#검증-결과)에 함께 공개합니다.
 
@@ -429,9 +431,3 @@ drift-gate-eval --recursive --compare-baseline
 개인 프로젝트입니다. 코드와 재현 가능한 검증 자료를 공개하며, 실제 PR 정확도와 리뷰 시간 절감 효과는 후속 평가 대상으로 남겨 두었습니다.
 
 [MIT License](LICENSE)
-
-새 화면의 컴포넌트 사용·검증 범위는 [UI 개편 기록](docs/design/tool-ui-integration-2026-09-29.md)에 정리했습니다.
-
-### 로컬 브랜치 비교와 검증 결과 해석
-
-`drift-gate check --base main`은 내 브랜치가 main에서 갈라진 지점(merge-base)과 현재 작업 폴더를 비교합니다. 지정 커밋과 작업 폴더 자체를 비교하려면 `--comparison-mode commit`을 사용합니다. `review`, `self-audit`, 데스크톱 앱, MCP 로컬 검사도 같은 기본값을 씁니다. 공통 조상이 없거나 얕은 clone이라 찾지 못하면 다른 방식으로 바꾸지 않고 입력 오류(종료 코드 2)로 끝냅니다. `--head`로 두 커밋을 지정하는 고정 입력 검사와 `trusted-check`는 기준 커밋 OID를 증거에 묶기 때문에 기본값이 commit입니다. 기본 정책은 Git 루트에서 탐색하며 정책 오타나 빈 규칙은 입력 오류입니다. self-audit의 related-evidence-found는 관련 파일 참조이고 행동 검증이나 AI 주장 수용을 뜻하지 않습니다.
