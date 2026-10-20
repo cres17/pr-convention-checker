@@ -10,7 +10,6 @@ from drift_gate.adapters.mcp import tools
 from drift_gate.adapters.policy_loader import load_policy, require_check_policy
 from drift_gate.core.policy.loader import PolicyLoadError
 
-
 POLICY = """rules:
   - id: docs-required
     when:

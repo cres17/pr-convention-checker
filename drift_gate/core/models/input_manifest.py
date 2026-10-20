@@ -1,10 +1,9 @@
 """Pure immutable observations. Digests bind inputs, never authenticate them."""
+import json
 from dataclasses import dataclass, field
 from enum import Enum
 from hashlib import sha256
-import json
 from pathlib import PurePosixPath
-
 
 DIGEST_PROTOCOL = 'python-json-observation-v1'
 

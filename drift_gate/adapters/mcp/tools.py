@@ -1,6 +1,7 @@
 """Small callable helpers for future MCP servers or agent connectors."""
 from pathlib import Path
 
+from drift_gate.adapters.execution import identity
 from drift_gate.adapters.git.client import GitAdapter
 from drift_gate.adapters.github.client import GitHubAdapter, parse_drift_ignores
 from drift_gate.adapters.history.store import (
@@ -9,10 +10,12 @@ from drift_gate.adapters.history.store import (
     summarize_records,
 )
 from drift_gate.adapters.inspection import inspect as run
-from drift_gate.adapters.policy_loader import load_policy, read_policy, require_check_policy
-from drift_gate.adapters.execution import identity
+from drift_gate.adapters.policy_loader import (
+    load_policy,
+    read_policy,
+    require_check_policy,
+)
 from drift_gate.reporters.json_reporter import JsonReporter
-
 
 DEFAULT_TOKEN_BUDGET = 1200
 
@@ -45,7 +48,10 @@ def drift_gate_check_local(
     git = GitAdapter()
     changed_files = git.get_changed_files(base)
     # Local runs cannot manufacture GitHub approval evidence.
-    from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+    from drift_gate.adapters.docs.content import (
+        attach_env_documents,
+        local_document_reader,
+    )
     changed_files = attach_env_documents(changed_files, policy, local_document_reader(git.repo_root or Path.cwd()))
     from drift_gate.adapters.removed_key_usage import attach_local_usage
     changed_files = attach_local_usage(changed_files, policy, git.repo_root or Path.cwd())
@@ -75,8 +81,8 @@ def drift_gate_check_pr(
     require_check_policy(policy)
     github = GitHubAdapter(token=token, repo=repo)
     changed_files, pr_body = github.get_pr_files_and_body(pr_number)
-    from drift_gate.adapters.github.approvals import verify_ignores
     from drift_gate.adapters.execution import digest
+    from drift_gate.adapters.github.approvals import verify_ignores
     from drift_gate.adapters.github_action.runner import _approval_context
     directives = verify_ignores(github, pr_number, parse_drift_ignores(pr_body), policy, changed_files,
                                 policy_sha256=digest(source))
@@ -112,7 +118,10 @@ def drift_gate_get_evidence(
     require_check_policy(policy)
     git = GitAdapter()
     changed_files = git.get_changed_files(base)
-    from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+    from drift_gate.adapters.docs.content import (
+        attach_env_documents,
+        local_document_reader,
+    )
     changed_files = attach_env_documents(changed_files, policy, local_document_reader(git.repo_root or Path.cwd()))
     from drift_gate.adapters.removed_key_usage import attach_local_usage
     changed_files = attach_local_usage(changed_files, policy, git.repo_root or Path.cwd())

@@ -1,19 +1,25 @@
 """Real local entrypoints and mocked GitHub transport share policy semantics."""
-from copy import deepcopy
 import json
 import subprocess
+from copy import deepcopy
 
 import pytest
 import yaml
 
 from drift_gate.adapters.cli.runner import run_cli
-from drift_gate.adapters.git.client import GitAdapter
 from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+from drift_gate.adapters.git.client import GitAdapter
 from drift_gate.adapters.github.client import GitHubAdapter
 from drift_gate.adapters.github_action import runner as action
 from drift_gate.adapters.mcp import tools
 from drift_gate.desktop.service import scan_repository
-from drift_gate.tests.test_logical_contracts import raw_policy, source, openapi, changed, policy
+from drift_gate.tests.test_logical_contracts import (
+    changed,
+    openapi,
+    policy,
+    raw_policy,
+    source,
+)
 
 
 def git(root, *args):

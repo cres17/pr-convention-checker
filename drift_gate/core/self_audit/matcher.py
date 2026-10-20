@@ -7,26 +7,25 @@ function/class names, test names, rule IDs) and produces structured results.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List
 
 
 @dataclass
 class DiffEvidence:
     """All evidence extracted from a git diff."""
 
-    changed_files: List[str] = field(default_factory=list)
-    added_functions: List[str] = field(default_factory=list)
-    added_classes: List[str] = field(default_factory=list)
-    added_test_names: List[str] = field(default_factory=list)
-    rule_ids_mentioned: List[str] = field(default_factory=list)
+    changed_files: list[str] = field(default_factory=list)
+    added_functions: list[str] = field(default_factory=list)
+    added_classes: list[str] = field(default_factory=list)
+    added_test_names: list[str] = field(default_factory=list)
+    rule_ids_mentioned: list[str] = field(default_factory=list)
 
     @classmethod
     def from_raw(
         cls,
         *,
-        changed_files: List[str],
+        changed_files: list[str],
         patch_text: str = "",
-    ) -> "DiffEvidence":
+    ) -> DiffEvidence:
         """Build DiffEvidence from a list of file paths and an optional unified diff."""
         import re
 
@@ -51,7 +50,7 @@ class AuditedItem:
     checked: bool
     line_number: int
     section: str
-    evidence: List[str]
+    evidence: list[str]
     status: str  # related-evidence-found | no-related-evidence | unchecked
 
     def to_dict(self) -> dict:
@@ -83,8 +82,8 @@ class SelfAuditWarning:
 
 @dataclass
 class SelfAuditResult:
-    checklist_items: List[AuditedItem]
-    warnings: List[SelfAuditWarning]
+    checklist_items: list[AuditedItem]
+    warnings: list[SelfAuditWarning]
 
     def to_dict(self) -> dict:
         return {
@@ -109,8 +108,8 @@ def match_checklist(
     - Unchecked items → "unchecked" (no warning)
     - Changed files in evidence that match NO checked item → missing-progress-entry warning
     """
-    audited: List[AuditedItem] = []
-    warnings: List[SelfAuditWarning] = []
+    audited: list[AuditedItem] = []
+    warnings: list[SelfAuditWarning] = []
 
     # Track which evidence files are matched by some checked item
     matched_evidence_files: set[str] = set()
@@ -158,9 +157,9 @@ def match_checklist(
     return SelfAuditResult(checklist_items=audited, warnings=warnings)
 
 
-def _find_evidence(item, evidence: DiffEvidence) -> List[str]:
+def _find_evidence(item, evidence: DiffEvidence) -> list[str]:
     """Return a list of evidence strings that match the checklist item."""
-    found: List[str] = []
+    found: list[str] = []
 
     item_text_lower = item.text.lower()
 

@@ -5,7 +5,6 @@ No network or subprocess calls.
 """
 from __future__ import annotations
 
-
 from drift_gate.adapters.docs.checklist import (
     ChecklistItem,
     parse_checklist_text,
@@ -14,7 +13,6 @@ from drift_gate.core.self_audit.matcher import (
     DiffEvidence,
     match_checklist,
 )
-
 
 # ── checklist parser ───────────────────────────────────────────────────────────
 

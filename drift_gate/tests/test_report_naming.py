@@ -3,7 +3,11 @@ import subprocess
 from datetime import datetime
 
 from drift_gate.adapters.report_naming import (
-    ProjectIdentity, default_report_path, detect_project, report_filename, template_from_policy,
+    ProjectIdentity,
+    default_report_path,
+    detect_project,
+    report_filename,
+    template_from_policy,
 )
 
 NOW = datetime(2026, 9, 29, 17, 30, 12)

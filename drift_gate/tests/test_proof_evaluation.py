@@ -1,21 +1,39 @@
 """Logical consistency controls, independent truth oracle and adversarial IR."""
+import json
 from dataclasses import asdict, replace
 from itertools import product
-import json
 
 import pytest
 
 from drift_gate.core.contracts.discovery import discover_contracts
-from drift_gate.core.contracts.planner import DocumentBindings, PlanRequest, Truth, plan_contracts
+from drift_gate.core.contracts.planner import (
+    DocumentBindings,
+    PlanRequest,
+    Truth,
+    plan_contracts,
+)
 from drift_gate.core.evaluation.contract_proof import inspect_contract_proof
-from drift_gate.core.evaluation.obligations import evaluate_contract_plan, inspect_contract_plan
+from drift_gate.core.evaluation.obligations import (
+    evaluate_contract_plan,
+    inspect_contract_plan,
+)
 from drift_gate.core.evaluation.propositions import build_proof
-from drift_gate.core.evaluation.result_guard import ResultValidationError, validate_proof_evaluation, validate_proof_payload
-from drift_gate.core.models.proof import (
-    CoverageDomain, EvidenceClaim, NodeSpec, Operator, ProofContext, Proposition, ScopeCoverage,
+from drift_gate.core.evaluation.result_guard import (
+    ResultValidationError,
+    validate_proof_evaluation,
+    validate_proof_payload,
 )
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.facts import ContractFamily
+from drift_gate.core.models.proof import (
+    CoverageDomain,
+    EvidenceClaim,
+    NodeSpec,
+    Operator,
+    ProofContext,
+    Proposition,
+    ScopeCoverage,
+)
 from drift_gate.tests.test_obligation_planner import code, documents, request, source
 
 

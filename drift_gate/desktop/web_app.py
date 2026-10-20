@@ -7,32 +7,65 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-from PySide6.QtCore import QObject, QRunnable, QSettings, QStandardPaths, QThread, QThreadPool, QUrl, Signal, Slot
+from PySide6.QtCore import (
+    QObject,
+    QRunnable,
+    QSettings,
+    QStandardPaths,
+    QThread,
+    QThreadPool,
+    QUrl,
+    Signal,
+    Slot,
+)
 from PySide6.QtGui import QDesktopServices, QIcon
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineUrlRequestInterceptor
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 
-from drift_gate.desktop.app import ScanWorker
-from drift_gate.desktop.resources import WEB_ROOT
-from drift_gate.desktop.policy_setup import create_policy, preview_policy, update_removed_key_policy
-from drift_gate.desktop.service import resolve_document
-from drift_gate.desktop.review_dialog import ReviewWorker, review_html
-from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
 from drift_gate.adapters.report_naming import default_report_path, detect_project
-from drift_gate.desktop.progress_report import render_markdown
+from drift_gate.desktop.app import ScanWorker
+from drift_gate.desktop.policy_setup import (
+    create_policy,
+    preview_policy,
+    update_removed_key_policy,
+)
 from drift_gate.desktop.progress_context import inspection_context
-from drift_gate.desktop.progress_limits import MAX_DRAFT_BYTES
 from drift_gate.desktop.progress_drafts import (
-    DraftSession, cache_draft, recovery_copy, discard_draft, discard_recovery, discard_recoveries, export_draft, import_draft,
+    DraftSession,
+    cache_draft,
+    discard_draft,
+    discard_recoveries,
+    discard_recovery,
+    export_draft,
+    import_draft,
+    recovery_copy,
 )
-from drift_gate.reporters.html import HtmlReporter
+from drift_gate.desktop.progress_limits import MAX_DRAFT_BYTES
+from drift_gate.desktop.progress_report import render_markdown
 from drift_gate.desktop.progress_service import (
-    BaselineConflict, BaselineError, check_references, evidence_candidates, extract_requirements, inspect_progress,
-    link_test_results, list_documents, load_baseline, progress_history_view, capture_progress_history, record_snapshot, repository_root,
-    save_baseline, scan_impact,
+    BaselineConflict,
+    BaselineError,
+    capture_progress_history,
+    check_references,
+    evidence_candidates,
+    extract_requirements,
+    inspect_progress,
+    link_test_results,
+    list_documents,
+    load_baseline,
+    progress_history_view,
+    record_snapshot,
+    repository_root,
+    save_baseline,
+    scan_impact,
 )
+from drift_gate.desktop.resources import WEB_ROOT
+from drift_gate.desktop.review_dialog import ReviewWorker, review_html
+from drift_gate.desktop.service import resolve_document
+from drift_gate.desktop.subscription_review import build_review_prompt, find_cli
+from drift_gate.reporters.html import HtmlReporter
 
 
 def scan_payload(scan):

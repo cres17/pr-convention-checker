@@ -16,9 +16,6 @@ Restrictions and their actual strength:
 - Timeout and cancellation kill the whole process group (POSIX) so spawned
   grandchildren end too; on Windows only the child process is terminated.
 """
-from base64 import b64encode
-from dataclasses import dataclass
-from hashlib import sha256
 import json
 import os
 import signal
@@ -27,6 +24,9 @@ import sys
 import tempfile
 import threading
 import time
+from base64 import b64encode
+from dataclasses import dataclass
+from hashlib import sha256
 
 OPS = {'python-routes': ('python-fastapi-routes', '1'), 'python-env': ('python-env-literals', '1'),
        'tree-sitter-nodes': ('tree-sitter-node-count', '1')}

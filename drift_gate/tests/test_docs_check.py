@@ -4,7 +4,6 @@ No network, no subprocess. All I/O is mocked via string content.
 """
 from __future__ import annotations
 
-
 from drift_gate.adapters.docs.readme_contract import (
     check_docs,
     extract_cli_commands_from_docs,
@@ -15,7 +14,6 @@ from drift_gate.adapters.docs.readme_contract import (
     get_evaluation_result_keys,
     get_policy_top_level_fields,
 )
-
 
 # ── CLI command extraction ─────────────────────────────────────────────────────
 

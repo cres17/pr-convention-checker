@@ -3,16 +3,17 @@ Core engine 통합 테스트 — fixtures 기반.
 외부 I/O 없음.
 """
 import json
+import os
+import tempfile
 from datetime import date
 from pathlib import Path
-import tempfile
-import os
+
 import pytest
 
 from drift_gate.core.engine import run
 from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.models.policy import Policy
 from drift_gate.core.models.evaluation_context import EvaluationContext
+from drift_gate.core.models.policy import Policy
 from drift_gate.core.models.result import DriftIgnoreDirective
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -347,6 +348,7 @@ class TestDriftIgnorePolicy:
         assert len(run(changed_files=files, drift_ignores=flag_only, policy=policy).violations) == 1
 
         from datetime import date
+
         from drift_gate.core.models.evaluation_context import EvaluationContext
         from drift_gate.core.trust.approvals import ApprovalEnvelope
         envelope = ApprovalEnvelope("test-rule", ("src/routes/users.ts",), "a" * 40, "b" * 64, "temporary",
@@ -469,6 +471,7 @@ class TestCrossFileRelations:
 class TestPolicyLoader:
     def test_load_valid(self):
         import yaml
+
         from drift_gate.adapters.policy_loader import load_policy
         data = {
             "rules": [{
@@ -492,6 +495,7 @@ class TestPolicyLoader:
 
     def test_missing_require_groups(self):
         import yaml
+
         from drift_gate.adapters.policy_loader import load_policy
         from drift_gate.core.policy.loader import PolicyLoadError
         data = {
@@ -598,10 +602,14 @@ class TestReporters:
         assert "api-contract-sync" in html
 
     def test_html_report_renders_semantic_evidence(self):
-        from drift_gate.reporters.html import HtmlReporter
         from drift_gate.core.models.changed_file import ChangedFile
         from drift_gate.core.models.policy import Gate
-        from drift_gate.core.models.result import EvaluationResult, Violation, UnsatisfiedGroup
+        from drift_gate.core.models.result import (
+            EvaluationResult,
+            UnsatisfiedGroup,
+            Violation,
+        )
+        from drift_gate.reporters.html import HtmlReporter
 
         result = EvaluationResult(
             change_types=["api-surface"],
@@ -652,9 +660,9 @@ class TestReporters:
         assert "[`api-contract-sync`](#rule-api-contract-sync)" in md
 
     def test_markdown_no_policy(self):
-        from drift_gate.reporters.markdown import MarkdownReporter
         from drift_gate.core.models.policy import Gate
         from drift_gate.core.models.result import EvaluationResult
+        from drift_gate.reporters.markdown import MarkdownReporter
         result = EvaluationResult(
             change_types=[], violations=[], skipped_rules=[],
             rejected_ignores=[], gate=Gate(), no_policy=True,
@@ -668,10 +676,14 @@ class TestReporters:
         The reporter includes one legitimate <script> tag for the copyText helper.
         Any additional <script> tags indicate un-escaped user content.
         """
-        from drift_gate.reporters.html import HtmlReporter
         from drift_gate.core.models.changed_file import ChangedFile
         from drift_gate.core.models.policy import Gate
-        from drift_gate.core.models.result import EvaluationResult, Violation, UnsatisfiedGroup
+        from drift_gate.core.models.result import (
+            EvaluationResult,
+            UnsatisfiedGroup,
+            Violation,
+        )
+        from drift_gate.reporters.html import HtmlReporter
 
         xss_payload = "<script>alert('xss')</script>"
         result = EvaluationResult(
@@ -702,9 +714,9 @@ class TestReporters:
 
     def test_html_enrichment_metrics_panel(self):
         """HTML reporter renders token efficiency panel when enrichment_metrics present."""
-        from drift_gate.reporters.html import HtmlReporter
         from drift_gate.core.models.policy import Gate
-        from drift_gate.core.models.result import EvaluationResult, EnrichmentMetrics
+        from drift_gate.core.models.result import EnrichmentMetrics, EvaluationResult
+        from drift_gate.reporters.html import HtmlReporter
 
         result = EvaluationResult(
             change_types=[], violations=[], skipped_rules=[],

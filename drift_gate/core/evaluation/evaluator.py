@@ -1,33 +1,43 @@
 """
 규칙 평가 엔진 — 순수 함수. I/O 없음.
 """
-from datetime import date
 from dataclasses import replace
-from typing import List, Tuple
+from datetime import date
 
-from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.change_paths import is_ignored, triggers
-from drift_gate.utils.glob_matcher import matches_any
-from drift_gate.core.models.policy import Policy, Group, CrossFileRelation
-from drift_gate.core.models.evaluation_context import EvaluationContext
-from drift_gate.core.models.result import (
-    Violation, UnsatisfiedGroup, SatisfiedGroup, RuleDecision,
-    SkippedRule, RejectedIgnore, IgnoreAuditEntry,
-    DriftIgnoreDirective,
-)
 from drift_gate.core.classification.classifier import get_file_change_types
 from drift_gate.core.classification.intensity import (
+    analysis_unavailable,
     classify_file_intensity,
     max_intensity,
     meets_min_intensity,
-    analysis_unavailable,
+)
+from drift_gate.core.evaluation.analysis_session import AnalysisSession
+from drift_gate.core.evaluation.api_schema import (
+    UnknownResponse,
+    UnsupportedContract,
+    response_changes,
+)
+from drift_gate.core.evaluation.contracts import (
+    content_requirement,
+    possible_route_change,
+)
+from drift_gate.core.evaluation.environment import environment_delta
+from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.models.evaluation_context import EvaluationContext
+from drift_gate.core.models.policy import CrossFileRelation, Group, Policy
+from drift_gate.core.models.result import (
+    DriftIgnoreDirective,
+    IgnoreAuditEntry,
+    RejectedIgnore,
+    RuleDecision,
+    SatisfiedGroup,
+    SkippedRule,
+    UnsatisfiedGroup,
+    Violation,
 )
 from drift_gate.core.reasoning.checklist import build_fallback_checklist
-from drift_gate.utils.glob_matcher import match_glob, pattern_confidence
-from drift_gate.core.evaluation.contracts import content_requirement, possible_route_change
-from drift_gate.core.evaluation.environment import environment_delta
-from drift_gate.core.evaluation.api_schema import response_changes, UnknownResponse, UnsupportedContract
-from drift_gate.core.evaluation.analysis_session import AnalysisSession
+from drift_gate.utils.glob_matcher import match_glob, matches_any, pattern_confidence
 
 
 def _threshold_candidates(files, rule, session=None):
@@ -54,7 +64,9 @@ def _threshold_candidates(files, rule, session=None):
                 meets = meets_min_intensity(intensity, minimum)
                 unavailable = False
         elif env_contract:
-            from drift_gate.core.evaluation.removed_environment import removed_environment_keys
+            from drift_gate.core.evaluation.removed_environment import (
+                removed_environment_keys,
+            )
             removed = (getattr(getattr(session, 'policy', None), 'check_removed_keys', True)
                        and bool(removed_environment_keys([file])))
             if removed:
@@ -93,11 +105,11 @@ def _threshold_candidates(files, rule, session=None):
 
 def evaluate(
     policy: Policy,
-    changed_files: List[ChangedFile],
-    drift_ignores: List[DriftIgnoreDirective],
+    changed_files: list[ChangedFile],
+    drift_ignores: list[DriftIgnoreDirective],
     context: EvaluationContext | None = None,
     session: AnalysisSession | None = None,
-) -> Tuple[List[Violation], List[SkippedRule], List[RejectedIgnore], List[RuleDecision], List[IgnoreAuditEntry]]:
+) -> tuple[list[Violation], list[SkippedRule], list[RejectedIgnore], list[RuleDecision], list[IgnoreAuditEntry]]:
     """
     모든 정책 규칙을 평가.
     반환: (violations, skipped_rules, rejected_ignores)
@@ -112,11 +124,11 @@ def evaluate(
         if not is_ignored(f, policy.ignore_paths)
     ]
 
-    violations: List[Violation] = []
-    skipped_rules: List[SkippedRule] = []
-    rejected_ignores: List[RejectedIgnore] = []
-    rule_decisions: List[RuleDecision] = []
-    ignore_audit: List[IgnoreAuditEntry] = []
+    violations: list[Violation] = []
+    skipped_rules: list[SkippedRule] = []
+    rejected_ignores: list[RejectedIgnore] = []
+    rule_decisions: list[RuleDecision] = []
+    ignore_audit: list[IgnoreAuditEntry] = []
 
     for rule in policy.rules:
         rule_id = rule.id
@@ -181,7 +193,10 @@ def evaluate(
         trigger_files, uncertain_thresholds = _threshold_candidates(trigger_files, rule, session)
         typed_open, typed_note = False, ""
         if rule.when.trigger is not None and trigger_files:
-            from drift_gate.core.classification.triggers import evaluate_trigger, resolve_unknown
+            from drift_gate.core.classification.triggers import (
+                evaluate_trigger,
+                resolve_unknown,
+            )
             from drift_gate.core.contracts.planner import Truth
             outcome = evaluate_trigger(rule.when.trigger, trigger_files, session)
             applicability, typed_note = resolve_unknown(outcome, rule.when.trigger.on_unknown)
@@ -310,13 +325,13 @@ def evaluate(
 
 
 def _evaluate_groups(
-    groups: List[Group],
-    changed_files: List[ChangedFile],
-    trigger_files: Tuple[ChangedFile, ...] | List[ChangedFile] = (),
+    groups: list[Group],
+    changed_files: list[ChangedFile],
+    trigger_files: tuple[ChangedFile, ...] | list[ChangedFile] = (),
     session=None,
-) -> Tuple[List[SatisfiedGroup], List[UnsatisfiedGroup]]:
-    satisfied: List[SatisfiedGroup] = []
-    unsatisfied: List[UnsatisfiedGroup] = []
+) -> tuple[list[SatisfiedGroup], list[UnsatisfiedGroup]]:
+    satisfied: list[SatisfiedGroup] = []
+    unsatisfied: list[UnsatisfiedGroup] = []
     for group in groups:
         required = group.any_changed or group.all_changed
         group_type = "any_changed" if group.any_changed else "all_changed"
@@ -347,7 +362,7 @@ def _evaluate_groups(
     return satisfied, unsatisfied
 
 
-def _evaluate_group(group: Group, changed_files: List[ChangedFile]) -> bool:
+def _evaluate_group(group: Group, changed_files: list[ChangedFile]) -> bool:
     """그룹 요구 조건 평가. deleted 상태 파일은 충족으로 보지 않음."""
     path_status = {}
     for f in changed_files:
@@ -367,15 +382,15 @@ def _evaluate_group(group: Group, changed_files: List[ChangedFile]) -> bool:
 
 
 def _evaluate_cross_file_relations(
-    relations: List[CrossFileRelation],
-    groups: List[Group],
-    changed_files: List[ChangedFile],
+    relations: list[CrossFileRelation],
+    groups: list[Group],
+    changed_files: list[ChangedFile],
     session=None,
-) -> Tuple[List[SatisfiedGroup], List[UnsatisfiedGroup], List[str]]:
+) -> tuple[list[SatisfiedGroup], list[UnsatisfiedGroup], list[str]]:
     group_by_name = {group.name: group for group in groups}
-    satisfied: List[SatisfiedGroup] = []
-    unsatisfied: List[UnsatisfiedGroup] = []
-    triggered_names: List[str] = []
+    satisfied: list[SatisfiedGroup] = []
+    unsatisfied: list[UnsatisfiedGroup] = []
+    triggered_names: list[str] = []
 
     for relation in relations:
         if not relation.when_any_changed:
@@ -404,8 +419,8 @@ def _evaluate_cross_file_relations(
 
 
 def _compute_confidence(
-    trigger_files: List[ChangedFile],
-    when_patterns: List[str],
+    trigger_files: list[ChangedFile],
+    when_patterns: list[str],
 ) -> str:
     change_types_set = set(
         ct for f in trigger_files for ct in get_file_change_types(f.path)
@@ -425,9 +440,9 @@ def _compute_confidence(
 
 
 def _matched_patterns(
-    trigger_files: List[ChangedFile],
-    when_patterns: List[str],
-) -> List[str]:
+    trigger_files: list[ChangedFile],
+    when_patterns: list[str],
+) -> list[str]:
     matches = set()
     for file in trigger_files:
         paths = [file.path]
@@ -441,10 +456,10 @@ def _matched_patterns(
 
 
 def _blast_radius(
-    change_types: List[str],
-    change_intensities: List[str],
-    unsatisfied: List[UnsatisfiedGroup],
-) -> List[str]:
+    change_types: list[str],
+    change_intensities: list[str],
+    unsatisfied: list[UnsatisfiedGroup],
+) -> list[str]:
     """Human-readable impact areas derived from deterministic signals."""
     radius = set()
     types = set(change_types)

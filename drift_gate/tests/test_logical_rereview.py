@@ -1,13 +1,22 @@
 """Adversarial logical boundaries; expectations are independent of gate defaults."""
-from itertools import permutations, product
 import json
+from itertools import permutations, product
 from pathlib import Path
 
 import pytest
 
 from drift_gate.core.engine import run
-from drift_gate.core.evaluation.api_schema import _document_check, extract_responses, UnsupportedContract
-from drift_gate.core.evaluation.content_result import combine, checked, unknown, ContentCheck
+from drift_gate.core.evaluation.api_schema import (
+    UnsupportedContract,
+    _document_check,
+    extract_responses,
+)
+from drift_gate.core.evaluation.content_result import (
+    ContentCheck,
+    checked,
+    combine,
+    unknown,
+)
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.policy.loader import load_policy_from_dict
 

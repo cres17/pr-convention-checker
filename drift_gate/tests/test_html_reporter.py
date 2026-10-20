@@ -4,8 +4,6 @@ No network, no subprocess. All I/O is pure string assertions.
 """
 from __future__ import annotations
 
-
-
 from drift_gate.adapters.history.store import render_history_html
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.policy import Gate
@@ -18,7 +16,6 @@ from drift_gate.core.models.result import (
     Violation,
 )
 from drift_gate.reporters.html import HtmlReporter
-
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -461,6 +458,7 @@ class TestTokenNotLogged:
     def test_enricher_call_api_doesnt_log_key(self):
         """_call_api must not print or log the api_key value."""
         import inspect
+
         from drift_gate.adapters.claude import enricher
         src = inspect.getsource(enricher)
         # Must not have f"... {self._api_key}" or print(... api_key ...) patterns
@@ -471,6 +469,7 @@ class TestTokenNotLogged:
     def test_github_client_doesnt_log_token(self):
         """GitHubAdapter._get must not print token value."""
         import inspect
+
         from drift_gate.adapters.github import client
         src = inspect.getsource(client)
         # Token is used as Bearer header, not printed

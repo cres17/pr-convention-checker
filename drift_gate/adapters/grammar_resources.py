@@ -1,13 +1,12 @@
 """Use the shipped grammars before a frozen app probes tree-sitter availability."""
-from functools import lru_cache
 import hashlib
 import json
 import os
-from pathlib import Path
-import sys
 import platform as host_platform
+import sys
+from functools import lru_cache
+from pathlib import Path
 from threading import RLock
-
 
 SUPPORTED_GRAMMARS = ("python", "typescript", "tsx", "javascript", "go", "java", "kotlin", "ruby")
 _load_lock = RLock()

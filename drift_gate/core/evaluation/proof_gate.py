@@ -19,11 +19,19 @@ LEGACY_MODES = ('auto', 'auto-strict', 'api-routes', 'env-keys', 'api-schema')
 
 def contract_proof_requirement(group, triggers, changed_files, session=None):
     from drift_gate.core.contracts.discovery import discover_contracts
-    from drift_gate.core.contracts.planner import DocumentBinding, DocumentBindings, PlanRequest, Truth
+    from drift_gate.core.contracts.planner import (
+        DocumentBinding,
+        DocumentBindings,
+        PlanRequest,
+        Truth,
+        plan_contracts,
+    )
     from drift_gate.core.evaluation.analysis_session import AnalysisSession
-    from drift_gate.core.evaluation.obligations import assess_contracts, evaluate_contract_plan
-    from drift_gate.core.contracts.planner import plan_contracts
     from drift_gate.core.evaluation.contract_proof import prove_contract_evaluation
+    from drift_gate.core.evaluation.obligations import (
+        assess_contracts,
+        evaluate_contract_plan,
+    )
     from drift_gate.utils.glob_matcher import matches_any
     triggers = tuple(triggers)
     if not triggers:

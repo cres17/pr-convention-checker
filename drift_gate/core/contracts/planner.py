@@ -3,14 +3,17 @@
 This is an internal versioned migration API. It neither reinterprets legacy
 YAML nor certifies service closure, source authenticity, or proof witnesses.
 """
+import json
 from dataclasses import dataclass
 from enum import Enum
 from hashlib import sha256
-import json
 
 from drift_gate.core.contracts.discovery import DiscoveryDomain, DiscoveryResult
 from drift_gate.core.models.facts import (
-    BoundedDelta, ContractFamily, ExactDelta, UnknownDelta,
+    BoundedDelta,
+    ContractFamily,
+    ExactDelta,
+    UnknownDelta,
 )
 
 

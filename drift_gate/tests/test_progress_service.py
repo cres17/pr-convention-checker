@@ -13,9 +13,9 @@ from drift_gate.desktop.progress_service import (
     inspect_progress,
     list_documents,
     load_baseline,
+    normalize_remote,
     progress_history_view,
     record_snapshot,
-    normalize_remote,
     save_baseline,
     scan_impact,
 )

@@ -3,8 +3,8 @@
 Default ESM import, direct const app/router declarations, literal routes and
 same-module mounts only. All protected references must have an explicit role.
 """
-from dataclasses import replace
 import re
+from dataclasses import replace
 
 from drift_gate.adapters.grammar_resources import get_parser
 from drift_gate.core.evaluation.static_routers import UnsupportedContract

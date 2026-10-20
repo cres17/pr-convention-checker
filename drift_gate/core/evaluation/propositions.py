@@ -1,6 +1,11 @@
 """Strong Kleene evaluation and deterministic sufficient witnesses."""
 from drift_gate.core.contracts.planner import Truth
-from drift_gate.core.models.proof import Operator, ProofEvaluation, ProofNode, ScopeCoverage
+from drift_gate.core.models.proof import (
+    Operator,
+    ProofEvaluation,
+    ProofNode,
+    ScopeCoverage,
+)
 
 
 def negate(value):
@@ -36,7 +41,10 @@ def witnesses(operator, children, truth):
 
 def build_proof(context, specs, root_ref, *, max_nodes=4096, max_depth=128, max_edges=16384):
     """Bounded construction. The independent guard validates the finished IR."""
-    from drift_gate.core.evaluation.result_guard import ResultValidationError, validate_context
+    from drift_gate.core.evaluation.result_guard import (
+        ResultValidationError,
+        validate_context,
+    )
     validate_context(context)
     specs = tuple(specs)
     if (type(max_nodes) is not int or max_nodes < 1 or type(max_depth) is not int or not 1 <= max_depth <= 128 or

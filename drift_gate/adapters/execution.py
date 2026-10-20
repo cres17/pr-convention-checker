@@ -1,11 +1,11 @@
 """Execution identity and atomic outputs shared by CLI and self-check."""
-from datetime import datetime, timezone
 import hashlib
 import json
 import os
-from pathlib import Path
 import tempfile
 import uuid
+from datetime import datetime, timezone
+from pathlib import Path
 
 
 def identity():

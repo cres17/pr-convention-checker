@@ -4,9 +4,9 @@
 envelopes. They are serialized only when present, so captures without
 approvals keep their previous identity.
 """
+import re
 from dataclasses import dataclass
 from datetime import date
-import re
 
 
 @dataclass(frozen=True)

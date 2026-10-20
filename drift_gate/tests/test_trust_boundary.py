@@ -1,14 +1,14 @@
 """W09: trusted verifier vs candidate, approval envelopes, pinned-engine attestation and replay."""
-from hashlib import sha256
 import json
-from pathlib import Path
 import shutil
 import subprocess
+from hashlib import sha256
+from pathlib import Path
 
 import pytest
 
-from drift_gate.adapters import engine_artifact as engines
 from drift_gate.adapters import approval_signing
+from drift_gate.adapters import engine_artifact as engines
 from drift_gate.adapters.bundle_codec import BundleError, require_replayable
 from drift_gate.adapters.trusted_validation import certified_replay, trusted_check
 from drift_gate.core.trust.validation import EngineRun, decide
@@ -246,11 +246,12 @@ def test_certified_replay_uses_the_producing_engine(engine_repo, tmp_path, monke
 # -- signed approval envelopes ------------------------------------------------------
 def test_stored_waiver_is_admitted_only_with_a_verifiable_signature(monkeypatch):
     import base64
+    from datetime import date
+
     from drift_gate.adapters.snapshot import capture_inspection
     from drift_gate.core.models.evaluation_context import EvaluationContext
     from drift_gate.core.models.result import DriftIgnoreDirective
     from drift_gate.core.policy.loader import load_policy_from_text
-    from datetime import date
     key = base64.b64encode(b'k' * 32).decode()
     envelope = {'schema': 'approval-envelope-v1', 'rule_id': 'r', 'scope_paths': ['src/api.py'],
                 'subject_head_oid': 'a' * 40, 'policy_sha256': POLICY_SHA, 'reason': 'x', 'valid_from': '2026-01-01',

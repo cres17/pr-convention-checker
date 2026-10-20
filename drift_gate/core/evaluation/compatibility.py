@@ -635,7 +635,8 @@ def _parameters(operation):
 
 def compatibility_requirement(group, triggers, changed_files, session=None):
     """Policy adapter: every selected OpenAPI JSON document must stay compatible in the group's direction."""
-    from drift_gate.core.evaluation.content_result import ContentCheck, combine, unknown as open_check
+    from drift_gate.core.evaluation.content_result import ContentCheck, combine
+    from drift_gate.core.evaluation.content_result import unknown as open_check
     from drift_gate.utils.glob_matcher import matches_any
     directions = ('request', 'response') if group.direction == 'both' else (group.direction,)
     checks = []

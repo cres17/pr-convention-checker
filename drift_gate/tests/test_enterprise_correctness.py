@@ -3,9 +3,9 @@ import json
 import subprocess
 import sys
 from copy import deepcopy
+from dataclasses import replace
 from datetime import date, datetime
 from pathlib import Path
-from dataclasses import replace
 
 import pytest
 
@@ -13,10 +13,10 @@ from drift_gate.adapters.ast.express_routes import extract_express_routes
 from drift_gate.adapters.docs.content import attach_env_documents
 from drift_gate.adapters.inspection import inspect
 from drift_gate.core.engine import run
-from drift_gate.core.models.evaluation_context import EvaluationContext
-from drift_gate.core.models.result import DriftIgnoreDirective
 from drift_gate.core.evaluation.openapi_document import load_openapi
 from drift_gate.core.evaluation.static_routers import UnsupportedContract
+from drift_gate.core.models.evaluation_context import EvaluationContext
+from drift_gate.core.models.result import DriftIgnoreDirective
 from drift_gate.core.policy.loader import load_policy_from_dict
 from drift_gate.tests.test_express_contracts import fixture
 from drift_gate.tests.test_logical_contracts import changed, document, policy, source

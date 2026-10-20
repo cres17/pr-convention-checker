@@ -6,10 +6,10 @@ the process exits, and its reply is then discarded by the closed journal.
 Stages outside ``call`` (argument checks, persistence) check the deadline only
 at their boundaries. This is not process isolation (design W12 worker).
 """
-from hashlib import sha256
 import threading
 import time
 import uuid
+from hashlib import sha256
 
 from drift_gate.adapters.run_store import RunJournal, RunStoreError
 from drift_gate.core.execution import lifecycle

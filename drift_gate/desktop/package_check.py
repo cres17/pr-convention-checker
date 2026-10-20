@@ -4,16 +4,16 @@ from __future__ import annotations
 import json
 import os
 import re
-from pathlib import Path
 import socket
-import sys
 import subprocess
+import sys
+from pathlib import Path
 
 from PySide6.QtCore import QObject, QSettings, QTimer
 
 from drift_gate.adapters.grammar_resources import bundled_grammar_directory
-from drift_gate.desktop.resources import WEB_ROOT
 from drift_gate.desktop.package_check_contract import validate_phase, validate_phases
+from drift_gate.desktop.resources import WEB_ROOT
 
 
 def prepare_check(directory):
@@ -139,7 +139,10 @@ class PackageCheck(QObject):
         result['verification'] = self.identity
         result['hardening_checks'] = self.hardening
         try:
-            from drift_gate.desktop.package_git_check import run_git_controls, validate_git_controls
+            from drift_gate.desktop.package_git_check import (
+                run_git_controls,
+                validate_git_controls,
+            )
             result['git_object_checks'] = run_git_controls()
             validate_git_controls(result['git_object_checks'])
         except Exception as exc:

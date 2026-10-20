@@ -3,23 +3,27 @@
 The selected store is private local storage, not an authenticated evidence
 service. No latest pointer, automatic pruning or external publication is used.
 """
-from dataclasses import dataclass
-from hashlib import sha256
-from importlib import metadata
 import os
-from pathlib import Path
 import re
 import shutil
 import stat
 import sys
 import tempfile
+from dataclasses import dataclass
+from hashlib import sha256
+from importlib import metadata
+from pathlib import Path
 
 from drift_gate.adapters.bundle_codec import (
-    BundleError, decode_json, decode_snapshot, encode_snapshot, object_path, semantic_result,
+    BundleError,
+    decode_json,
+    decode_snapshot,
+    encode_snapshot,
+    object_path,
+    semantic_result,
 )
 from drift_gate.core.models.input_manifest import canonical_bytes
 from drift_gate.core.models.result import EvaluationResult
-
 
 RECEIPT = 'receipt.json'
 COMMIT = 'COMMITTED.json'

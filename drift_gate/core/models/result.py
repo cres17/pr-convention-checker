@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
 
 from .changed_file import ChangedFile
 from .policy import Gate
@@ -152,17 +151,17 @@ class EnrichmentMetrics:
 @dataclass
 class DriftIgnoreDirective:
     rule_id: str
-    reason: Optional[str] = None
-    expires: Optional[str] = None
-    approved_by: Optional[str] = None
+    reason: str | None = None
+    expires: str | None = None
+    approved_by: str | None = None
     # Adapter-owned evidence. Never deserialize trust from user-controlled JSON.
     approval_verified: bool = False
     approval_commit: str = ""
     approval_error: str = ""
     # Adapter-owned approval envelope (approval-envelope-v1 dict) and, when an
     # organization key signed it, its keyed signature. Never read from from_dict.
-    approval_envelope: Optional[dict] = None
-    approval_signature: Optional[dict] = None
+    approval_envelope: dict | None = None
+    approval_signature: dict | None = None
 
     @classmethod
     def from_dict(cls, d: dict) -> "DriftIgnoreDirective":
@@ -197,15 +196,15 @@ def _envelope_digest(envelope):
 @dataclass
 class UnsatisfiedGroup:
     name: str
-    required: List[str]
+    required: list[str]
     type: str  # any_changed | all_changed
     evidence: str = ""
     decision: str = "violated"
     verification: str = "verified"
     content_mode: str = "paths"
-    source_files: List[str] = field(default_factory=list)
+    source_files: list[str] = field(default_factory=list)
     relation: str = ""
-    removed_env_keys: List[str] = field(default_factory=list)
+    removed_env_keys: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {"name": self.name, "required": self.required, "type": self.type, "evidence": self.evidence,
@@ -217,15 +216,15 @@ class UnsatisfiedGroup:
 @dataclass
 class SatisfiedGroup:
     name: str
-    required: List[str]
+    required: list[str]
     type: str  # any_changed | all_changed
     evidence: str = ""
     decision: str = "satisfied"
     verification: str = "verified"
     content_mode: str = "paths"
-    source_files: List[str] = field(default_factory=list)
+    source_files: list[str] = field(default_factory=list)
     relation: str = ""
-    removed_env_keys: List[str] = field(default_factory=list)
+    removed_env_keys: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {"name": self.name, "required": self.required, "type": self.type, "evidence": self.evidence,
@@ -240,10 +239,10 @@ class RuleDecision:
     severity: str
     status: str  # pass | fail | skipped | rejected-ignore | unmatched
     reason: str
-    matched_patterns: List[str] = field(default_factory=list)
-    trigger_files: List[str] = field(default_factory=list)
-    satisfied_groups: List[SatisfiedGroup] = field(default_factory=list)
-    unsatisfied_groups: List[UnsatisfiedGroup] = field(default_factory=list)
+    matched_patterns: list[str] = field(default_factory=list)
+    trigger_files: list[str] = field(default_factory=list)
+    satisfied_groups: list[SatisfiedGroup] = field(default_factory=list)
+    unsatisfied_groups: list[UnsatisfiedGroup] = field(default_factory=list)
 
     @property
     def decision(self):
@@ -288,19 +287,19 @@ class Violation:
     rule_id: str
     severity: str       # BLOCKER | MAJOR | MINOR | NIT
     confidence: str     # high | medium | low
-    change_types: List[str]
+    change_types: list[str]
     change_type: str    # primary type (change_types[0])
     message: str
-    trigger_files: List[ChangedFile]
-    unsatisfied_groups: List[UnsatisfiedGroup]
-    checklist: List[str]
+    trigger_files: list[ChangedFile]
+    unsatisfied_groups: list[UnsatisfiedGroup]
+    checklist: list[str]
     ignored: bool = False
     change_intensity: str = "unknown"
-    change_intensities: List[str] = field(default_factory=list)
-    trigger_patterns: List[str] = field(default_factory=list)
-    blast_radius: List[str] = field(default_factory=list)
-    satisfied_groups: List[SatisfiedGroup] = field(default_factory=list)
-    cross_file_relations: List[str] = field(default_factory=list)
+    change_intensities: list[str] = field(default_factory=list)
+    trigger_patterns: list[str] = field(default_factory=list)
+    blast_radius: list[str] = field(default_factory=list)
+    satisfied_groups: list[SatisfiedGroup] = field(default_factory=list)
+    cross_file_relations: list[str] = field(default_factory=list)
     missing_docs_explanation: str = ""
     changed_contract_summary: str = ""
     docs_update_draft: str = ""
@@ -358,7 +357,7 @@ class ScanMetrics:
     skipped_large_files: int = 0
     evaluated_rules: int = 0
     runtime_seconds: float = 0.0
-    analysis_notes: List[dict] = field(default_factory=list)
+    analysis_notes: list[dict] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -409,8 +408,8 @@ class IgnoreAuditEntry:
     rule_id: str
     action: str  # accepted | rejected
     reason: str
-    approved_by: Optional[str] = None
-    expires: Optional[str] = None
+    approved_by: str | None = None
+    expires: str | None = None
     approval_verified: bool = False
     approval_commit: str = ""
     approval_envelope_sha256: str = ""
@@ -444,24 +443,24 @@ class Advisory:
 
 @dataclass
 class EvaluationResult:
-    change_types: List[str]
-    violations: List[Violation]
-    skipped_rules: List[SkippedRule]
-    rejected_ignores: List[RejectedIgnore]
+    change_types: list[str]
+    violations: list[Violation]
+    skipped_rules: list[SkippedRule]
+    rejected_ignores: list[RejectedIgnore]
     gate: Gate
-    rule_decisions: List[RuleDecision] = field(default_factory=list)
-    ignore_audit: List[IgnoreAuditEntry] = field(default_factory=list)
-    temporal_warnings: List[TemporalWarning] = field(default_factory=list)
-    advisories: List[Advisory] = field(default_factory=list)
+    rule_decisions: list[RuleDecision] = field(default_factory=list)
+    ignore_audit: list[IgnoreAuditEntry] = field(default_factory=list)
+    temporal_warnings: list[TemporalWarning] = field(default_factory=list)
+    advisories: list[Advisory] = field(default_factory=list)
     scan_metrics: ScanMetrics = field(default_factory=ScanMetrics)
-    enrichment_metrics: Optional[EnrichmentMetrics] = None
+    enrichment_metrics: EnrichmentMetrics | None = None
     result: str = "pass"        # pass | warn | fail
     skip: bool = False
     skip_reason: str = ""
     no_policy: bool = False
     execution: dict = field(default_factory=dict)
     # Adapter inspection output, retained in memory only; never serialized.
-    inspected_files: List[ChangedFile] = field(default_factory=list, repr=False)
+    inspected_files: list[ChangedFile] = field(default_factory=list, repr=False)
     input_snapshot: object = field(default=None, repr=False)
     contract_diagnostics: object = field(default=None, repr=False)
 

@@ -1,18 +1,26 @@
 """Discovery cannot erase open domains or treat hints as policy obligations."""
-from dataclasses import FrozenInstanceError, replace
 import json
+from dataclasses import FrozenInstanceError, replace
 
 import pytest
 
 from drift_gate.adapters.ast.express_routes import attach_express_routes
 from drift_gate.core.contracts.discovery import (
-    DiscoveryDomain, DiscoveryResult, DiscoveryState, discover_contracts,
+    DiscoveryDomain,
+    DiscoveryResult,
+    DiscoveryState,
+    discover_contracts,
 )
 from drift_gate.core.contracts.profiles import DEFAULT_REGISTRY, ProfileRegistry
 from drift_gate.core.engine import run
 from drift_gate.core.evaluation.analysis_session import AnalysisSession
 from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.models.facts import ContractFamily, ExactFacts, FactBasis, ReasonCode
+from drift_gate.core.models.facts import (
+    ContractFamily,
+    ExactFacts,
+    FactBasis,
+    ReasonCode,
+)
 from drift_gate.tests.test_express_contracts import fixture
 from drift_gate.tests.test_logical_contracts import changed, document, policy, source
 

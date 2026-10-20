@@ -1,7 +1,7 @@
 """Versioned evidence encoding; integrity is not producer authentication."""
+import json
 from copy import deepcopy
 from hashlib import sha256
-import json
 
 from drift_gate.adapters.snapshot import InspectionSnapshot
 from drift_gate.core.models.git_input import GitArtifact, GitInputEvidence, GitSubject
@@ -49,7 +49,11 @@ def require_replayable(snapshot, keys=None):
     # An unsigned disk file must never resurrect an adapter-verified waiver.
     # A verified waiver is admitted only with an envelope whose keyed signature
     # verifies against the organization keyring available at load time.
-    from drift_gate.adapters.approval_signing import ApprovalSignatureError, keyring, verify
+    from drift_gate.adapters.approval_signing import (
+        ApprovalSignatureError,
+        keyring,
+        verify,
+    )
     data = decode_json(snapshot.payload)
     verified = [d for d in data['drift_ignores'] if d.get('approval_verified')]
     if not verified:

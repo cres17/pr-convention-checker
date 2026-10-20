@@ -4,25 +4,28 @@ GitHub API / CLI / LLM 호출 금지.
 
 모든 입출력은 adapters에서 처리하고 이 함수에 데이터를 전달.
 """
-from typing import List, Optional, Union
 
-from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.models.policy import Policy
-from drift_gate.core.models.evaluation_context import EvaluationContext
-from drift_gate.core.models.result import EvaluationResult, DriftIgnoreDirective, ScanMetrics
+from drift_gate.core.change_paths import is_ignored, triggers
 from drift_gate.core.classification.classifier import classify_change_types
 from drift_gate.core.evaluation.evaluator import evaluate
 from drift_gate.core.gating.gate import decide_gate
-from drift_gate.core.change_paths import is_ignored, triggers
+from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.models.evaluation_context import EvaluationContext
+from drift_gate.core.models.policy import Policy
+from drift_gate.core.models.result import (
+    DriftIgnoreDirective,
+    EvaluationResult,
+    ScanMetrics,
+)
 from drift_gate.core.policy.validator import validate
 
 
 def run(
-    changed_files: List[ChangedFile],
-    drift_ignores: Optional[List[DriftIgnoreDirective]] = None,
-    policy: Optional[Policy] = None,
-    policy_path: Optional[Union[str, object]] = None,
-    context: Optional[EvaluationContext] = None,
+    changed_files: list[ChangedFile],
+    drift_ignores: list[DriftIgnoreDirective] | None = None,
+    policy: Policy | None = None,
+    policy_path: str | object | None = None,
+    context: EvaluationContext | None = None,
     contract_proofs: bool = False,
 ) -> EvaluationResult:
     """
@@ -143,7 +146,7 @@ def _default_policy_for_metrics():
     return Policy()
 
 
-def _scan_metrics(changed_files: List[ChangedFile], policy: Policy) -> ScanMetrics:
+def _scan_metrics(changed_files: list[ChangedFile], policy: Policy) -> ScanMetrics:
     return ScanMetrics(
         scanned_files=len(changed_files),
         skipped_ignored_files=sum(

@@ -10,7 +10,12 @@ from pathlib import Path
 
 from drift_gate.desktop.json_store import write_json
 from drift_gate.desktop.progress_documents import archived_documents
-from drift_gate.desktop.progress_limits import MAX_BACKUP_BYTES, MAX_DRAFT_BYTES, MAX_RECOVERY_REQUIREMENTS, MAX_REQUIREMENTS
+from drift_gate.desktop.progress_limits import (
+    MAX_BACKUP_BYTES,
+    MAX_DRAFT_BYTES,
+    MAX_RECOVERY_REQUIREMENTS,
+    MAX_REQUIREMENTS,
+)
 from drift_gate.desktop.store_lock import store_lock
 
 

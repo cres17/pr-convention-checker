@@ -7,11 +7,11 @@ authority evidence an adapter checked. Free text such as ``approved-by:`` or a
 checks the binding; whether the authority evidence is genuine is the adapter's
 verification (provider API or a keyed signature), recorded in ``authority``.
 """
+import json
+import re
 from dataclasses import dataclass
 from datetime import date
 from hashlib import sha256
-import json
-import re
 
 AUTHORITY_KINDS = ('github-codeowners-review',)
 _OID = re.compile('[0-9a-f]{40}([0-9a-f]{24})?')

@@ -3,9 +3,9 @@
 Supports common CODEOWNERS globs and @user / @org/team owners. Unsupported
 syntax and API failures reject the exemption, never weaken the policy.
 """
-from dataclasses import replace
 import hashlib
 import re
+from dataclasses import replace
 from urllib.parse import quote
 
 from drift_gate.utils.glob_matcher import match_glob, matches_any

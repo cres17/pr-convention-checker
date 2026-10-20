@@ -8,14 +8,14 @@ grammar libraries this process has loaded, and compares them with the manifest
 and the reviewed parser pins. It does not attest the interpreter, bytecode
 caches, third-party Python packages or code loaded after the attestation.
 """
-from hashlib import sha256
 import json
 import os
-from pathlib import Path, PurePosixPath
 import shutil
 import stat
 import sys
 import tempfile
+from hashlib import sha256
+from pathlib import Path, PurePosixPath
 
 from drift_gate.core.models.input_manifest import canonical_bytes
 

@@ -4,9 +4,9 @@ Tenants are explicit IDs from a registry, never derived from a repository name.
 A principal holds roles inside exactly one tenant and a list of repository
 scopes; every action needs both the role permission and a matching scope.
 """
+import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-import re
 
 ROLES = {
     'viewer': {'results.read'},

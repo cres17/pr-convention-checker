@@ -11,22 +11,26 @@ Language-specific logic is delegated to dedicated adapter classes:
 - Ruby: drift_gate.adapters.ast.ruby_adapter.RubyAdapter
 """
 import re
+from collections.abc import Iterable
 from dataclasses import replace
-from typing import Iterable
 
-from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.patch_lines import changed_lines
 from drift_gate.adapters.ast import TREE_SITTER_AVAILABLE, TREE_SITTER_ERROR
-from drift_gate.adapters.ast.typescript_adapter import TypeScriptAdapter
-from drift_gate.adapters.ast.python_adapter import PythonAdapter
 from drift_gate.adapters.ast.go_adapter import GoAdapter
 from drift_gate.adapters.ast.java_kotlin_adapter import JavaKotlinAdapter
+from drift_gate.adapters.ast.python_adapter import PythonAdapter
 from drift_gate.adapters.ast.ruby_adapter import RubyAdapter
 from drift_gate.adapters.ast.tree_sitter_support import parse_sexp
+from drift_gate.adapters.ast.typescript_adapter import TypeScriptAdapter
+from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.patch_lines import changed_lines
 
 if TREE_SITTER_AVAILABLE:
-    from drift_gate.adapters.ast.tree_sitter_python_adapter import TreeSitterPythonAdapter
-    from drift_gate.adapters.ast.tree_sitter_typescript_adapter import TreeSitterTypeScriptAdapter
+    from drift_gate.adapters.ast.tree_sitter_python_adapter import (
+        TreeSitterPythonAdapter,
+    )
+    from drift_gate.adapters.ast.tree_sitter_typescript_adapter import (
+        TreeSitterTypeScriptAdapter,
+    )
 
 # Module-level compiled patterns for path-wide signals.
 API_SCHEMA = re.compile(r"\b(z\.object|response_model|requestBody|responses|parameters|operationId)\b")

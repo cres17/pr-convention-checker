@@ -7,13 +7,13 @@ import os
 import sys
 from pathlib import Path
 
-from drift_gate.adapters.inspection import inspect as run
-from drift_gate.adapters.github.client import GitHubAdapter, parse_drift_ignores
 from drift_gate.adapters.claude.enricher import ClaudeEnricher
+from drift_gate.adapters.github.client import GitHubAdapter, parse_drift_ignores
 from drift_gate.adapters.history.store import append_result
+from drift_gate.adapters.inspection import inspect as run
 from drift_gate.core.policy.loader import PolicyLoadError
-from drift_gate.reporters.markdown import MarkdownReporter
 from drift_gate.reporters.html import HtmlReporter
+from drift_gate.reporters.markdown import MarkdownReporter
 
 
 def main() -> None:
@@ -76,8 +76,8 @@ def _main(controller, execution, *, token, repo, pr_number, runner_temp, contrac
         from drift_gate.adapters.policy_loader import read_policy, require_check_policy
         policy_source, _policy_obj = read_policy(policy_path)
         require_check_policy(_policy_obj)
-        from drift_gate.adapters.github.approvals import verify_ignores
         from drift_gate.adapters.execution import digest
+        from drift_gate.adapters.github.approvals import verify_ignores
         policy_sha256 = digest(policy_source)
         drift_ignores = verify_ignores(gh, pr_number, drift_ignores, _policy_obj, changed_files,
                                        policy_sha256=policy_sha256)
@@ -201,8 +201,9 @@ def _approval_context(head_oid, policy_sha256, directives):
 
     Without envelopes the context stays date-only so every entrypoint keeps one input identity.
     """
-    from datetime import datetime, timezone
     import re
+    from datetime import datetime, timezone
+
     from drift_gate.core.models.evaluation_context import EvaluationContext
     today = datetime.now(timezone.utc).date()
     if not any(getattr(d, 'approval_envelope', None) is not None for d in directives or ()):

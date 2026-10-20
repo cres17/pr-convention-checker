@@ -3,13 +3,22 @@ import ast
 from dataclasses import dataclass
 from enum import Enum
 
-from drift_gate.core.contracts.profiles import DEFAULT_REGISTRY, ProfileRegistry
 from drift_gate.core.contracts.input_identity import source_identity
+from drift_gate.core.contracts.profiles import DEFAULT_REGISTRY, ProfileRegistry
 from drift_gate.core.evaluation.analysis_session import AnalysisSession
-from drift_gate.core.evaluation.api_schema import _extract_contracts, extract_routes, UnknownResponse
+from drift_gate.core.evaluation.api_schema import (
+    UnknownResponse,
+    _extract_contracts,
+    extract_routes,
+)
 from drift_gate.core.evaluation.environment import environment_facts
 from drift_gate.core.evaluation.static_routers import UnsupportedContract
-from drift_gate.core.models.facts import ContractFamily, ExactFacts, FactBasis, ReasonCode
+from drift_gate.core.models.facts import (
+    ContractFamily,
+    ExactFacts,
+    FactBasis,
+    ReasonCode,
+)
 from drift_gate.core.route_syntax import HTTP_METHODS
 
 

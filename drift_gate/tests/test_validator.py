@@ -3,16 +3,16 @@ policy validator + 엣지 케이스 테스트.
 """
 import os
 import tempfile
+
 import pytest
 import yaml
 
+from drift_gate.adapters.policy_loader import load_policy
+from drift_gate.core.engine import run
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.policy import Policy
-from drift_gate.core.engine import run
-from drift_gate.core.policy.validator import validate, PolicyValidationError
-from drift_gate.adapters.policy_loader import load_policy
 from drift_gate.core.policy.loader import PolicyLoadError
-
+from drift_gate.core.policy.validator import PolicyValidationError, validate
 
 # ─── validator unit tests ─────────────────────────────────────────────────────
 
@@ -946,10 +946,12 @@ class TestClaudeEnricherFallback:
     def test_fallback_checklist_preserved_on_api_failure(self):
         """ClaudeEnricher API 실패 시 기존 fallback checklist 유지."""
         from drift_gate.adapters.claude.enricher import ClaudeEnricher
-        from drift_gate.core.models.result import (
-            EvaluationResult, Violation, UnsatisfiedGroup,
-        )
         from drift_gate.core.models.policy import Gate
+        from drift_gate.core.models.result import (
+            EvaluationResult,
+            UnsatisfiedGroup,
+            Violation,
+        )
 
         v = Violation(
             rule_id="test",
@@ -981,10 +983,12 @@ class TestClaudeEnricherFallback:
 
     def test_enricher_parses_extended_fields(self, monkeypatch):
         from drift_gate.adapters.claude.enricher import ClaudeEnricher
-        from drift_gate.core.models.result import (
-            EvaluationResult, Violation, UnsatisfiedGroup,
-        )
         from drift_gate.core.models.policy import Gate
+        from drift_gate.core.models.result import (
+            EvaluationResult,
+            UnsatisfiedGroup,
+            Violation,
+        )
 
         v = Violation(
             rule_id="api-contract-sync",
@@ -1037,12 +1041,14 @@ class TestClaudeEnricherFallback:
 class TestMarkdownReporterEdgeCases:
 
     def test_rejected_ignores_section_present(self):
-        from drift_gate.reporters.markdown import MarkdownReporter
-        from drift_gate.core.models.result import (
-            EvaluationResult, Violation, UnsatisfiedGroup,
-            RejectedIgnore,
-        )
         from drift_gate.core.models.policy import Gate
+        from drift_gate.core.models.result import (
+            EvaluationResult,
+            RejectedIgnore,
+            UnsatisfiedGroup,
+            Violation,
+        )
+        from drift_gate.reporters.markdown import MarkdownReporter
 
         result = EvaluationResult(
             change_types=["api-surface"],
@@ -1073,11 +1079,13 @@ class TestMarkdownReporterEdgeCases:
         assert "api-contract-sync" in md
 
     def test_medium_confidence_shows_추정_label(self):
-        from drift_gate.reporters.markdown import MarkdownReporter
-        from drift_gate.core.models.result import (
-            EvaluationResult, Violation, UnsatisfiedGroup,
-        )
         from drift_gate.core.models.policy import Gate
+        from drift_gate.core.models.result import (
+            EvaluationResult,
+            UnsatisfiedGroup,
+            Violation,
+        )
+        from drift_gate.reporters.markdown import MarkdownReporter
 
         result = EvaluationResult(
             change_types=["api-surface"],
@@ -1105,9 +1113,9 @@ class TestMarkdownReporterEdgeCases:
         assert "[추정]" in md
 
     def test_skipped_rules_section_present(self):
-        from drift_gate.reporters.markdown import MarkdownReporter
-        from drift_gate.core.models.result import EvaluationResult, SkippedRule
         from drift_gate.core.models.policy import Gate
+        from drift_gate.core.models.result import EvaluationResult, SkippedRule
+        from drift_gate.reporters.markdown import MarkdownReporter
 
         result = EvaluationResult(
             change_types=[],

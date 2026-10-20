@@ -3,8 +3,8 @@ import json
 import math
 import re
 
-from drift_gate.core.evaluation.static_routers import UnsupportedContract
 from drift_gate.core.evaluation.analysis_session import AnalysisSession
+from drift_gate.core.evaluation.static_routers import UnsupportedContract
 
 
 def _unique_object(pairs):

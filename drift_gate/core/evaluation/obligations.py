@@ -2,22 +2,44 @@
 from dataclasses import replace
 
 from drift_gate.core.contracts.delta import compare_facts
-from drift_gate.core.contracts.input_identity import source_identity
 from drift_gate.core.contracts.discovery import DiscoveryState
+from drift_gate.core.contracts.input_identity import source_identity
 from drift_gate.core.contracts.planner import (
-    ContractAssessment, DocumentBindings, ObligationOutcome, ObligationPlan, PlanEvaluation,
-    PlanReason, PlanRequest, Truth, contract_scopes, delta_applicability, plan_contracts,
+    ContractAssessment,
+    DocumentBindings,
+    ObligationOutcome,
+    ObligationPlan,
+    PlanEvaluation,
+    PlanReason,
+    PlanRequest,
+    Truth,
+    contract_scopes,
+    delta_applicability,
+    plan_contracts,
 )
 from drift_gate.core.contracts.profiles import DEFAULT_REGISTRY
 from drift_gate.core.evaluation.analysis_session import AnalysisSession
 from drift_gate.core.evaluation.api_schema import (
-    UnknownResponse, api_schema_requirement, response_changes,
+    UnknownResponse,
+    api_schema_requirement,
+    response_changes,
 )
 from drift_gate.core.evaluation.environment import environment_fact_outcome
-from drift_gate.core.evaluation.membership import Bounds, delta_bounds, route_requirement
+from drift_gate.core.evaluation.membership import (
+    Bounds,
+    delta_bounds,
+    route_requirement,
+)
 from drift_gate.core.evaluation.routes import analyze_route_facts, document_routes
 from drift_gate.core.evaluation.static_routers import UnsupportedContract
-from drift_gate.core.models.facts import ContractFamily, ExactDelta, ExactFacts, FactBasis, ReasonCode, UnknownFacts
+from drift_gate.core.models.facts import (
+    ContractFamily,
+    ExactDelta,
+    ExactFacts,
+    FactBasis,
+    ReasonCode,
+    UnknownFacts,
+)
 from drift_gate.core.models.policy import Group
 from drift_gate.utils.glob_matcher import matches_any
 

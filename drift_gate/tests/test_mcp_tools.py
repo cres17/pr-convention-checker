@@ -1,5 +1,7 @@
 import pytest
 
+from drift_gate.adapters.history.store import append_result
+from drift_gate.adapters.mcp.server import handle_request
 from drift_gate.adapters.mcp.tools import (
     drift_gate_check_pr,
     drift_gate_explain_rule,
@@ -9,8 +11,6 @@ from drift_gate.adapters.mcp.tools import (
     drift_gate_prepare_fix_plan,
     drift_gate_suggest_policy,
 )
-from drift_gate.adapters.mcp.server import handle_request
-from drift_gate.adapters.history.store import append_result
 from drift_gate.core.models.policy import Gate
 from drift_gate.core.models.result import EvaluationResult
 
@@ -168,8 +168,8 @@ rules:
 
 def test_mcp_compact_local_and_bounded_evidence(monkeypatch, tmp_path):
     from drift_gate.adapters.git.client import GitAdapter
-    from drift_gate.core.models.changed_file import ChangedFile
     from drift_gate.adapters.mcp.tools import drift_gate_check_local
+    from drift_gate.core.models.changed_file import ChangedFile
 
     policy = tmp_path / ".drift-gate.yml"
     policy.write_text(
@@ -253,6 +253,7 @@ def test_mcp_oversized_frame_is_drained_without_losing_the_next_request():
     import json
     import subprocess
     import sys
+
     from drift_gate.adapters.mcp.server import MAX_REQUEST_BYTES
     valid = {'jsonrpc':'2.0', 'id':7, 'method':'tools/list'}
     result = subprocess.run([sys.executable, '-m', 'drift_gate.adapters.mcp.server'],
@@ -283,8 +284,9 @@ def test_mcp_limit_counts_utf8_bytes_and_recovers_at_boundary(extra_byte):
     import json
     import subprocess
     import sys
+
     from drift_gate.adapters.mcp.server import MAX_REQUEST_BYTES
-    prefix = '{"jsonrpc":"2.0","id":9,"method":"tools/list","padding":"'.encode()
+    prefix = b'{"jsonrpc":"2.0","id":9,"method":"tools/list","padding":"'
     suffix = b'"}\n'
     remaining = MAX_REQUEST_BYTES - len(prefix) - len(suffix)
     body = ('가' * (remaining // 3)).encode() + b' ' * (remaining % 3 + int(extra_byte))

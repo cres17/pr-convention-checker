@@ -2,11 +2,10 @@
 변경 유형 분류기 — 파일 경로 기반 규칙 우선.
 I/O 없음, 순수 함수.
 """
-from typing import List
 
-from drift_gate.utils.glob_matcher import matches_any
-from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.change_paths import change_paths
+from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.utils.glob_matcher import matches_any
 
 TYPE_PATTERNS: dict = {
     "api-surface": [
@@ -38,19 +37,19 @@ TYPE_PATTERNS: dict = {
     ],
 }
 
-DOCS_PATTERNS: List[str] = ["docs/**", "**/*.md", "**/*.rst"]
-TEST_PATTERNS: List[str] = [
+DOCS_PATTERNS: list[str] = ["docs/**", "**/*.md", "**/*.rst"]
+TEST_PATTERNS: list[str] = [
     "tests/**", "**/*.test.*", "**/*.spec.*", "test/**", "__tests__/**",
 ]
 
 
-def get_file_change_types(path: str) -> List[str]:
+def get_file_change_types(path: str) -> list[str]:
     """단일 파일 경로 → 변경 유형 목록. 해당 없으면 ['other']."""
     types = [ct for ct, patterns in TYPE_PATTERNS.items() if matches_any(path, patterns)]
     return types or ["other"]
 
 
-def classify_change_types(changed_files: List[ChangedFile]) -> List[str]:
+def classify_change_types(changed_files: list[ChangedFile]) -> list[str]:
     """
     전체 변경 파일 목록 → 대표 유형 목록.
     - 모든 파일이 docs 패턴 → ['docs-only']

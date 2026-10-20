@@ -3,7 +3,13 @@ import json
 
 import pytest
 
-from drift_gate.desktop.progress_drafts import cache_draft, discard_draft, discard_recovery, draft_file, recovery_copy
+from drift_gate.desktop.progress_drafts import (
+    cache_draft,
+    discard_draft,
+    discard_recovery,
+    draft_file,
+    recovery_copy,
+)
 from drift_gate.desktop.progress_service import extract_requirements, save_baseline
 from drift_gate.tests.test_progress_service import project
 
@@ -204,6 +210,7 @@ def test_session_lease_protects_a_copy_even_if_its_revision_has_not_changed(tmp_
 
 def test_export_preserves_incomplete_inputs_and_original_edit_ancestry(tmp_path):
     from copy import deepcopy
+
     from drift_gate.desktop.progress_drafts import export_draft
     root = project(tmp_path)
     draft = extract_requirements(root, ['README.md'])
@@ -218,6 +225,7 @@ def test_export_preserves_incomplete_inputs_and_original_edit_ancestry(tmp_path)
 
 def test_exported_file_import_is_a_separate_copy_and_preserves_baseline_and_ancestry(tmp_path):
     from copy import deepcopy
+
     from drift_gate.desktop.progress_drafts import export_draft, import_draft
     from drift_gate.desktop.progress_service import load_baseline
     root = project(tmp_path)
@@ -250,6 +258,7 @@ def test_exported_file_import_is_a_separate_copy_and_preserves_baseline_and_ance
 ])
 def test_invalid_import_keeps_all_existing_files_unchanged(tmp_path, mutation):
     from copy import deepcopy
+
     from drift_gate.desktop.progress_drafts import import_draft
     root = project(tmp_path)
     data = tmp_path / 'data'
@@ -311,8 +320,9 @@ def test_clone_backup_roundtrip_normalizes_checkout_without_sharing_drafts(tmp_p
     import shutil
     import subprocess
     from copy import deepcopy
-    from drift_gate.desktop.progress_service import load_baseline
+
     from drift_gate.desktop.progress_drafts import export_draft, import_draft
+    from drift_gate.desktop.progress_service import load_baseline
     root = project(tmp_path)
     subprocess.run(['git', '-C', str(root), 'remote', 'add', 'origin', 'https://example.invalid/a/project.git'], check=True)
     data = tmp_path / 'data'
@@ -334,6 +344,7 @@ def test_clone_backup_roundtrip_normalizes_checkout_without_sharing_drafts(tmp_p
 
 def test_recovery_can_preserve_legacy_overflow_and_large_edit_for_explicit_cleanup(tmp_path):
     from copy import deepcopy
+
     from drift_gate.desktop.progress_drafts import export_draft, import_draft
     root = project(tmp_path)
     data = tmp_path / 'data'
@@ -353,6 +364,7 @@ def test_recovery_can_preserve_legacy_overflow_and_large_edit_for_explicit_clean
 
 def test_missing_edit_base_repository_is_normalized_before_wire_delivery(tmp_path):
     from copy import deepcopy
+
     from drift_gate.desktop.progress_drafts import export_draft, import_draft
     root = project(tmp_path)
     draft = extract_requirements(root, ['README.md'])
@@ -397,6 +409,7 @@ def test_backup_at_its_exact_byte_limit_round_trips(tmp_path, monkeypatch):
 
 def test_shared_recovery_contract_and_limits(tmp_path):
     from pathlib import Path
+
     from drift_gate.desktop import progress_limits
     fixture = json.loads((Path(__file__).parent / 'contracts/progress.json').read_text(encoding='utf-8'))
     assert fixture['limits'] == {'confirmed': progress_limits.MAX_REQUIREMENTS,
@@ -412,6 +425,7 @@ def test_shared_recovery_contract_and_limits(tmp_path):
 
 def test_archived_provenance_survives_backup_and_recovery(tmp_path):
     from copy import deepcopy
+
     from drift_gate.desktop.progress_drafts import export_draft, import_draft
     root = project(tmp_path)
     data = tmp_path / 'data'

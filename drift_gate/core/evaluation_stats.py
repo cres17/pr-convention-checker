@@ -6,9 +6,9 @@ counted on their own. Labels carry their source (``human`` or ``llm-proxy``)
 and metrics are never pooled across sources: an LLM proxy review is review
 material, not a blind human ground truth.
 """
+import math
 from collections import Counter
 from hashlib import sha256
-import math
 
 DECISIONS = ('satisfied', 'violated', 'undetermined', 'not-applicable', 'waived', 'error', 'skipped')
 LABELS = ('satisfied', 'violated', 'not-applicable', 'undecidable')

@@ -7,10 +7,10 @@ the stored original the analyzer's evidence sits. It does not prove that the
 analyzer interpreted that text correctly.
 """
 import ast
-from dataclasses import dataclass
-from hashlib import sha256
 import json
 import re
+from dataclasses import dataclass
+from hashlib import sha256
 
 from drift_gate.core.route_syntax import HTTP_METHODS
 

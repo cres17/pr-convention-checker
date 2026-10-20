@@ -4,14 +4,12 @@ Local git adapter.
 This adapter is used by the CLI, so it treats the current working tree as the
 review target. That makes local preflight useful before a commit is created.
 """
-import subprocess
-import os
 import hashlib
+import os
+import subprocess
 from pathlib import Path, PurePosixPath
-from typing import List, Optional
 
 from drift_gate.core.models.changed_file import ChangedFile
-
 
 STATUS_MAP = {
     "A": "added",
@@ -27,7 +25,7 @@ BINARY_SUFFIXES = {
 }
 
 
-def _sanitize_path(raw: str) -> Optional[str]:
+def _sanitize_path(raw: str) -> str | None:
     """
     Validate and normalize a file path from git diff output.
 
@@ -79,7 +77,7 @@ class GitAdapter:
         self.repo_root = Path(repo_root) if repo_root is not None else None
 
     def get_changed_files(self, base: str = "HEAD~1", *,
-                          comparison_mode: str = DEFAULT_COMPARISON_MODE) -> List[ChangedFile]:
+                          comparison_mode: str = DEFAULT_COMPARISON_MODE) -> list[ChangedFile]:
         """Collect the working-tree change against ``base``.
 
         ``merge-base`` (default) compares against the common ancestor of ``base`` and ``HEAD``, so
@@ -136,7 +134,7 @@ def _git(args: list[str], cwd: Path | None) -> bytes:
         raise GitInputError("Git 변경을 읽지 못했습니다. 저장소와 비교 기준을 확인하고 다시 검사해 주세요.") from exc
 
 
-def _parse_name_status(output: bytes) -> List[ChangedFile]:
+def _parse_name_status(output: bytes) -> list[ChangedFile]:
     fields = output.split(b"\0")
     if fields[-1] != b"":
         raise GitInputError("Git 파일 목록이 완전하지 않습니다.")

@@ -4,10 +4,10 @@ Covers every classification branch to ensure individual pattern accuracy.
 """
 
 from drift_gate.core.classification.intensity import (
+    INTENSITY_ORDER,
     classify_file_intensity,
     max_intensity,
     meets_min_intensity,
-    INTENSITY_ORDER,
 )
 from drift_gate.core.models.changed_file import ChangedFile
 

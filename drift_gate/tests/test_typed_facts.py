@@ -5,13 +5,23 @@ from itertools import combinations, product
 import pytest
 
 from drift_gate.core.contracts.delta import compare_facts
-from drift_gate.core.evaluation.environment import environment_delta, environment_fact_outcome
+from drift_gate.core.evaluation.environment import (
+    environment_delta,
+    environment_fact_outcome,
+)
 from drift_gate.core.evaluation.routes import analyze_route_facts, complete_route_delta
 from drift_gate.core.evaluation.static_routers import UnsupportedContract
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.facts import (
-    BoundedDelta, BoundedFacts, ContractFamily, ExactDelta, ExactFacts,
-    FactBasis, ReasonCode, UnknownDelta, UnknownFacts,
+    BoundedDelta,
+    BoundedFacts,
+    ContractFamily,
+    ExactDelta,
+    ExactFacts,
+    FactBasis,
+    ReasonCode,
+    UnknownDelta,
+    UnknownFacts,
 )
 
 

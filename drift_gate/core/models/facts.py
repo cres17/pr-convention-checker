@@ -1,7 +1,7 @@
 """Immutable, profile-scoped facts; absence of facts never implies completeness."""
+import re
 from dataclasses import dataclass
 from enum import Enum
-import re
 from typing import Union
 
 
@@ -167,9 +167,9 @@ class BoundedDelta:
 class UnknownDelta:
     basis: FactBasis
     added_must: frozenset[Identity]
-    added_may: Union[frozenset[Identity], None]
+    added_may: frozenset[Identity] | None
     removed_must: frozenset[Identity]
-    removed_may: Union[frozenset[Identity], None]
+    removed_may: frozenset[Identity] | None
     reasons: tuple[ReasonCode, ...]
 
     def __post_init__(self):

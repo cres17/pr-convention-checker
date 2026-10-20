@@ -10,9 +10,9 @@ covers the same preprocessing as a real check. Review labels are self-declared
 as ``human`` or ``llm-proxy``; this tool cannot verify who produced them and
 keeps the two sources apart in every metric.
 """
+import json
 from datetime import date
 from hashlib import sha256
-import json
 from pathlib import Path
 
 from drift_gate.core import evaluation_stats as stats
@@ -155,6 +155,7 @@ def _units(case, result):
 def _changed_file(data):
     """Full observation including sources (the legacy from_dict drops raw sources)."""
     from dataclasses import fields
+
     from drift_gate.core.models.changed_file import ChangedFile
     names = {item.name for item in fields(ChangedFile)}
     unknown = set(data) - names

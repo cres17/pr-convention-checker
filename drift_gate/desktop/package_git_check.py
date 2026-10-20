@@ -1,13 +1,12 @@
 """Small offline Git-object controls executed inside the frozen product."""
-from hashlib import sha256
-from pathlib import Path
 import subprocess
 import tempfile
+from hashlib import sha256
+from pathlib import Path
 
 from drift_gate.adapters.git.immutable import collect_git_snapshot
 from drift_gate.adapters.inspection import inspect_snapshot
 from drift_gate.core.models.git_input import object_oid
-
 
 POLICY = """rules:
   - id: pinned-api

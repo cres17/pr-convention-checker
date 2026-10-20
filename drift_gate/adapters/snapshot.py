@@ -4,21 +4,25 @@ Optional Git evidence binds originals to observations. Explicit evidence bundle
 storage can retain the capsule beyond process lifetime; neither path authenticates
 the producer, organization approval, simultaneous local reads or freshness.
 """
-from dataclasses import asdict, dataclass, field
-from hashlib import sha256
 import json
 import os
-from pathlib import Path
 import stat
+from dataclasses import asdict, dataclass, field
+from hashlib import sha256
+from pathlib import Path
 
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.evaluation_context import EvaluationContext
+from drift_gate.core.models.git_input import GitInputEvidence
 from drift_gate.core.models.input_manifest import (
-    ArtifactState, InputManifest, SourceArtifact, canonical_bytes, relative_path,
+    ArtifactState,
+    InputManifest,
+    SourceArtifact,
+    canonical_bytes,
+    relative_path,
 )
 from drift_gate.core.models.policy import Policy, policy_identity_dict
 from drift_gate.core.models.result import DriftIgnoreDirective
-from drift_gate.core.models.git_input import GitInputEvidence
 from drift_gate.core.policy.loader import load_policy_from_text
 
 

@@ -9,17 +9,16 @@ import html
 import json
 import sys
 import time
+from collections.abc import Iterable
 from copy import deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, List
 
 from drift_gate.adapters.ast.analyzer import enrich_semantic_signals
 from drift_gate.core.engine import run
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.policy import Policy
 from drift_gate.core.models.result import DriftIgnoreDirective
-
 
 DEFAULT_FIXTURE_PATH = Path(__file__).resolve().parents[2] / "tests" / "fixtures"
 
@@ -35,13 +34,13 @@ class EvalCaseResult:
     false_positive_target: str
     expected_result: str
     actual_result: str
-    expected_rules: List[str]
-    actual_rules: List[str]
+    expected_rules: list[str]
+    actual_rules: list[str]
     actual_report: dict
     changed_file_count: int = 0
     runtime_seconds: float = 0.0
-    false_positive_rules: List[str] = field(default_factory=list)
-    false_negative_rules: List[str] = field(default_factory=list)
+    false_positive_rules: list[str] = field(default_factory=list)
+    false_negative_rules: list[str] = field(default_factory=list)
 
     @property
     def passed(self) -> bool:
@@ -87,7 +86,7 @@ class EvalSummary:
     f1: float
     runtime_seconds: float
     files_per_second: float
-    cases: List[EvalCaseResult]
+    cases: list[EvalCaseResult]
     category_metrics: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
@@ -162,7 +161,7 @@ def benchmark_gate_failures(
     max_fn: int | None = None,
     min_f1: float | None = None,
     min_f1_delta: float | None = None,
-) -> List[str]:
+) -> list[str]:
     """Return benchmark budget violations for CI/release gates."""
     summary = report.candidate if isinstance(report, (EvalComparison, EvalEngineComparison)) else report
     failures = []
@@ -224,7 +223,7 @@ def compare_engines(
     return EvalEngineComparison(summaries=summaries)
 
 
-def summarize_cases(cases: List[EvalCaseResult]) -> EvalSummary:
+def summarize_cases(cases: list[EvalCaseResult]) -> EvalSummary:
     metrics = _case_metrics(cases)
 
     return EvalSummary(
@@ -245,14 +244,14 @@ def summarize_cases(cases: List[EvalCaseResult]) -> EvalSummary:
     )
 
 
-def discover_fixture_paths(root: Path, *, recursive: bool = False) -> List[Path]:
+def discover_fixture_paths(root: Path, *, recursive: bool = False) -> list[Path]:
     if root.is_file():
         return [root]
     pattern = "**/*.json" if recursive else "*.json"
     return sorted(root.glob(pattern))
 
 
-def require_fixture_paths(root: Path, *, recursive: bool = False) -> List[Path]:
+def require_fixture_paths(root: Path, *, recursive: bool = False) -> list[Path]:
     """Reject empty CLI evaluations instead of reporting perfect zero-case scores."""
     paths = discover_fixture_paths(root, recursive=recursive)
     if not paths:
@@ -763,7 +762,7 @@ def _strip_intensity_thresholds(data: dict) -> dict:
     return baseline
 
 
-def _case_metrics(cases: List[EvalCaseResult]) -> dict:
+def _case_metrics(cases: list[EvalCaseResult]) -> dict:
     total = len(cases)
     passed = sum(1 for case in cases if case.passed)
     false_positive_count = sum(len(c.false_positive_rules) for c in cases)
@@ -793,7 +792,7 @@ def _case_metrics(cases: List[EvalCaseResult]) -> dict:
     }
 
 
-def _category_metrics(cases: List[EvalCaseResult]) -> dict:
+def _category_metrics(cases: list[EvalCaseResult]) -> dict:
     categories = sorted(set(case.category for case in cases))
     return {
         category: _case_metrics([case for case in cases if case.category == category])
@@ -841,7 +840,7 @@ def _engine_card(label: str, summary: EvalSummary) -> str:
     )
 
 
-def _case_intensities(case: EvalCaseResult) -> List[str]:
+def _case_intensities(case: EvalCaseResult) -> list[str]:
     values = []
     for violation in case.actual_report.get("violations", []):
         if violation.get("change_intensity"):

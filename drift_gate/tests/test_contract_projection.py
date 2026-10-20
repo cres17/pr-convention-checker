@@ -1,10 +1,10 @@
 """Versioned proof projection and real local entrypoint parity controls."""
-from copy import deepcopy
-from dataclasses import replace
 import html
 import json
 import re
 import subprocess
+from copy import deepcopy
+from dataclasses import replace
 
 import pytest
 import yaml
@@ -14,12 +14,18 @@ from drift_gate.adapters.docs.content import attach_env_documents, local_documen
 from drift_gate.adapters.git.client import GitAdapter
 from drift_gate.adapters.github_action import runner as action
 from drift_gate.adapters.mcp import tools
-from drift_gate.core.compat.legacy_result import ContractDiagnostics, project_contract_proof
-from drift_gate.core.contracts.planner import DocumentBindings, DocumentBinding
+from drift_gate.core.compat.legacy_result import (
+    ContractDiagnostics,
+    project_contract_proof,
+)
+from drift_gate.core.contracts.planner import DocumentBinding, DocumentBindings
 from drift_gate.core.engine import run
 from drift_gate.core.evaluation.analysis_session import AnalysisSession
 from drift_gate.core.evaluation.contract_proof import inspect_contract_proof
-from drift_gate.core.evaluation.result_guard import ResultValidationError, validate_proof_payload
+from drift_gate.core.evaluation.result_guard import (
+    ResultValidationError,
+    validate_proof_payload,
+)
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.desktop.service import scan_repository
 from drift_gate.reporters.html import HtmlReporter
@@ -208,7 +214,7 @@ def test_no_shadow_records_does_not_claim_any_proof_or_complete_scope(mode):
 
 
 def test_mcp_advertises_boolean_proof_optin_and_rejects_string_value():
-    from drift_gate.adapters.mcp.server import _tool_schema, _call_tool
+    from drift_gate.adapters.mcp.server import _call_tool, _tool_schema
     assert _tool_schema('drift_gate_check_local')['inputSchema']['properties']['contract_proofs']['type']=='boolean'
     with pytest.raises(TypeError,match='bool'):
         _call_tool('drift_gate_check_local',{'contract_proofs':'true'})

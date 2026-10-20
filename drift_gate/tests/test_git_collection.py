@@ -1,10 +1,11 @@
 """Actual Git inputs, not pre-decoded path mocks."""
-import os
 import json
+import os
 import subprocess
 import sys
 
 import pytest
+
 from drift_gate.adapters.git.client import GitAdapter, GitInputError, _parse_name_status
 from drift_gate.core.engine import run
 from drift_gate.core.models.policy import Policy
@@ -103,6 +104,7 @@ def test_cli_timeout_is_an_error_and_empty_input_is_structured(tmp_path, monkeyp
 
 def test_review_uses_collected_patches_and_rejects_unreadable_source(tmp_path, monkeypatch, capsys):
     from pathlib import Path
+
     from drift_gate.adapters.cli.runner import run_cli
     root = repository(tmp_path)
     source = root / 'code.py'

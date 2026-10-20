@@ -7,9 +7,9 @@ crashes when the dialog is deleted; a bound method does not.
 """
 import ast
 import os
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 

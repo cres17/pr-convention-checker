@@ -4,9 +4,9 @@ Decimal tokens are preserved before binary floating point can round them.
 Canonical numbers use coefficient/exponent notation without context rounding
 or expansion of large exponents. Booleans are not JSON numbers.
 """
-from decimal import Decimal
 import json
 import math
+from decimal import Decimal
 from typing import NoReturn, TypeAlias, cast
 
 Number: TypeAlias = int | float | Decimal

@@ -1,11 +1,11 @@
 """Immutable capture, input identity, source binding and replay counterexamples."""
-from copy import deepcopy
-from dataclasses import FrozenInstanceError, replace
-from datetime import date
 import hashlib
 import json
 import os
 import subprocess
+from copy import deepcopy
+from dataclasses import FrozenInstanceError, replace
+from datetime import date
 
 import pytest
 import yaml
@@ -13,13 +13,21 @@ import yaml
 from drift_gate.adapters import inspection
 from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
 from drift_gate.adapters.policy_loader import read_policy
-from drift_gate.adapters.snapshot import InspectionSnapshot, capture_inspection, read_bounded_text
+from drift_gate.adapters.snapshot import (
+    InspectionSnapshot,
+    capture_inspection,
+    read_bounded_text,
+)
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.evaluation_context import EvaluationContext
-from drift_gate.core.models.input_manifest import ArtifactState, InputManifest, SourceArtifact, canonical_bytes
+from drift_gate.core.models.input_manifest import (
+    ArtifactState,
+    InputManifest,
+    SourceArtifact,
+    canonical_bytes,
+)
 from drift_gate.core.models.result import DriftIgnoreDirective
 from drift_gate.core.policy.loader import load_policy_from_text
-
 
 POLICY_DATA = {'rules': [{'id': 'api', 'when': {'any_changed': ['src/**']},
     'require': {'groups': [{'name': 'contract', 'any_changed': ['docs/api.md'],
@@ -293,6 +301,7 @@ def test_file_replaced_between_read_and_final_observation_is_rejected(tmp_path, 
 
 def test_stable_read_does_not_compare_path_ctime_to_handle_ctime(tmp_path, monkeypatch):
     from types import SimpleNamespace
+
     import drift_gate.adapters.snapshot as module
     path = tmp_path / 'input'; path.write_bytes(b'stable\r\n')
     real = module.Path.stat
@@ -307,6 +316,7 @@ def test_stable_read_does_not_compare_path_ctime_to_handle_ctime(tmp_path, monke
 @pytest.mark.parametrize('field', ['st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns'])
 def test_observed_handle_identity_and_metadata_change_remain_rejected(tmp_path, monkeypatch, field):
     from types import SimpleNamespace
+
     import drift_gate.adapters.snapshot as module
     path = tmp_path / 'input'; path.write_bytes(b'stable\r\n')
     real = module.os.fstat

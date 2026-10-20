@@ -1,7 +1,13 @@
 """Sound identity-set delta bounds; no parser, clock or I/O dependencies."""
 from drift_gate.core.models.facts import (
-    BoundedDelta, BoundedFacts, ExactDelta, ExactFacts,
-    FactBasis, FactOutcome, UnknownDelta, UnknownFacts,
+    BoundedDelta,
+    BoundedFacts,
+    ExactDelta,
+    ExactFacts,
+    FactBasis,
+    FactOutcome,
+    UnknownDelta,
+    UnknownFacts,
 )
 
 

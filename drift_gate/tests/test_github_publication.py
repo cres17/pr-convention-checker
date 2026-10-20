@@ -1,6 +1,6 @@
 """PR comment freshness checks and lost-response recovery against a fake provider."""
-from copy import deepcopy
 import json
+from copy import deepcopy
 
 import pytest
 
@@ -205,7 +205,10 @@ def test_action_journal_records_publication_outcome(tmp_path, monkeypatch):
 
 
 def test_action_main_journals_every_stage_through_comment_publication(tmp_path, monkeypatch):
-    from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+    from drift_gate.adapters.docs.content import (
+        attach_env_documents,
+        local_document_reader,
+    )
     from drift_gate.adapters.git.client import GitAdapter
     from drift_gate.adapters.github_action import runner as action
     from drift_gate.adapters.run_store import RunJournal

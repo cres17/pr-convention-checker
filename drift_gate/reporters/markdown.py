@@ -4,9 +4,9 @@ Markdown report renderer.
 The report is optimized for PR comments: short summary first, then concrete
 fix guidance for every violation.
 """
-from drift_gate.core.models.result import EvaluationResult, Violation
 import re
 
+from drift_gate.core.models.result import EvaluationResult, Violation
 
 SEVERITY_ICON = {
     "BLOCKER": "[blocker]",
@@ -48,8 +48,9 @@ class MarkdownReporter:
         lines += [f"**No policy:** `{result.no_policy}`",
                   f"**Schema version:** `{result.to_dict()['schema_version']}`",
                   f"**Skip reason:** `{result.skip_reason or 'none'}`", ""]
-        from drift_gate.core.compat.legacy_result import diagnostic_lines
         import html
+
+        from drift_gate.core.compat.legacy_result import diagnostic_lines
         lines.extend(re.sub(r'([\\`*_\[\]()])', r'\\\1', html.escape(line)) + '\n'
                      for line in diagnostic_lines(result))
         if result.execution:

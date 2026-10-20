@@ -6,14 +6,14 @@ This is a single-host filesystem guarantee, not a distributed lock or a
 provider-side compare-and-set. A deleted journal tail is not detectable
 without an external anchor; gaps, reordering and edits in the middle are.
 """
-from datetime import datetime, timezone
-from hashlib import sha256
 import os
-from pathlib import Path
 import re
 import stat
 import tempfile
 import time
+from datetime import datetime, timezone
+from hashlib import sha256
+from pathlib import Path
 
 from drift_gate.adapters.bundle_codec import decode_json
 from drift_gate.core.execution import latest as latest_core

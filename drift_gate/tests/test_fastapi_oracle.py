@@ -11,8 +11,8 @@ from fastapi import FastAPI
 
 from drift_gate.core.engine import run
 from drift_gate.core.evaluation.api_schema import extract_responses
-from drift_gate.tests.test_logical_contracts import changed, document, policy, source
 from drift_gate.tests.test_contract_followup import router_source
+from drift_gate.tests.test_logical_contracts import changed, document, policy, source
 
 
 def controlled_app(text):

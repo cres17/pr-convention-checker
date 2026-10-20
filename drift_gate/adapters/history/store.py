@@ -7,7 +7,6 @@ from pathlib import Path
 
 from drift_gate.core.models.result import EvaluationResult
 
-
 DEFAULT_HISTORY_PATH = ".drift-gate-history.jsonl"
 
 

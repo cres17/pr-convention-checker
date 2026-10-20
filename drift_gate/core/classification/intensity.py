@@ -5,12 +5,12 @@ This is intentionally heuristic. It reduces obvious false positives now while
 leaving room for Tree-sitter based semantic analysis later.
 """
 import re
-from typing import Iterable, List
+from collections.abc import Iterable
 
 from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.route_syntax import METHOD_PATTERN, route_registration_method
-from drift_gate.core.python_syntax import environment_keys, without_literals
 from drift_gate.core.patch_lines import changed_lines as patch_changed_lines
+from drift_gate.core.python_syntax import environment_keys, without_literals
+from drift_gate.core.route_syntax import METHOD_PATTERN, route_registration_method
 
 INTENSITY_ORDER = {
     "any": -1,
@@ -213,11 +213,11 @@ def meets_min_intensity(actual: str, minimum: str) -> bool:
     return INTENSITY_ORDER.get(actual, 2) >= INTENSITY_ORDER.get(minimum, 2)
 
 
-def _matches_any(line: str, patterns: List[re.Pattern]) -> bool:
+def _matches_any(line: str, patterns: list[re.Pattern]) -> bool:
     return any(pattern.search(line) for pattern in patterns)
 
 
-def _semantic_intensity(signals: List[str]) -> str:
+def _semantic_intensity(signals: list[str]) -> str:
     strongest = ""
     for signal in signals:
         intensity = SEMANTIC_SIGNAL_INTENSITY.get(signal)
@@ -228,13 +228,13 @@ def _semantic_intensity(signals: List[str]) -> str:
     return strongest
 
 
-def _adds_config_key(added_lines: List[str], removed_lines: List[str], path: str = '') -> bool:
+def _adds_config_key(added_lines: list[str], removed_lines: list[str], path: str = '') -> bool:
     added_keys = _extract_config_keys(added_lines, path)
     removed_keys = _extract_config_keys(removed_lines, path)
     return bool(added_keys - removed_keys)
 
 
-def _extract_config_keys(lines: List[str], path: str = '') -> set[str]:
+def _extract_config_keys(lines: list[str], path: str = '') -> set[str]:
     if path.endswith('.py'):
         parsed = environment_keys(lines)
         if parsed is not None:

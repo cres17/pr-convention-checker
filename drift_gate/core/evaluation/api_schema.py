@@ -10,11 +10,15 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 
-from drift_gate.core.evaluation.static_routers import StaticRouters, UnsupportedContract
 from drift_gate.core.evaluation.analysis_session import AnalysisSession
+from drift_gate.core.evaluation.content_result import (
+    ContentCheck,
+    checked,
+    combine,
+    unknown,
+)
 from drift_gate.core.evaluation.openapi_document import load_openapi
-
-from drift_gate.core.evaluation.content_result import ContentCheck, checked, unknown, combine
+from drift_gate.core.evaluation.static_routers import StaticRouters, UnsupportedContract
 from drift_gate.utils.glob_matcher import matches_any
 
 METHODS = {"get", "post", "put", "patch", "delete", "head", "options", "trace"}

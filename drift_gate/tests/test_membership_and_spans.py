@@ -1,15 +1,23 @@
 """W08 interval membership soundness and W07/W08 byte-range evidence."""
+import json
 from hashlib import sha256
 from itertools import chain, combinations, product
-import json
 
 import pytest
 
 from drift_gate.core.contracts.planner import Truth
 from drift_gate.core.evaluation.evidence_spans import (
-    EvidenceSpan, document_route_spans, env_key_spans, python_route_spans, verify_span,
+    EvidenceSpan,
+    document_route_spans,
+    env_key_spans,
+    python_route_spans,
+    verify_span,
 )
-from drift_gate.core.evaluation.membership import Bounds, env_requirement, route_requirement
+from drift_gate.core.evaluation.membership import (
+    Bounds,
+    env_requirement,
+    route_requirement,
+)
 
 UNIVERSE = ('a', 'b', 'c')
 
@@ -128,7 +136,7 @@ def test_ambiguous_route_literal_is_left_unresolved():
 
 
 def test_document_spans_for_markdown_and_openapi():
-    markdown = '| GET | /health |\nPOST /v1/items creates an item\n'.encode()
+    markdown = b'| GET | /health |\nPOST /v1/items creates an item\n'
     spans, unresolved = document_route_spans(markdown, {('GET', '/health'), ('POST', '/v1/items'), ('GET', '/gone')},
                                              artifact=artifact(markdown, 'docs/api.md'))
     assert unresolved == [('GET', '/gone')] and all(verify_span(markdown, s) for s in spans)
@@ -141,7 +149,8 @@ def test_cli_bundle_spans_over_stored_git_objects(tmp_path, monkeypatch, capsys)
     from drift_gate.adapters.cli.runner import run_cli
     from drift_gate.adapters.evidence_bundle import save_bundle
     from drift_gate.adapters.inspection import inspect_snapshot
-    from drift_gate.tests.test_git_immutable import capture, repo as repository_fixture
+    from drift_gate.tests.test_git_immutable import capture
+    from drift_gate.tests.test_git_immutable import repo as repository_fixture
     repository = repository_fixture.__wrapped__(tmp_path)
     bundle = save_bundle(inspect_snapshot(capture(repository)), tmp_path / 'evidence')
     with pytest.raises(SystemExit) as exit:

@@ -60,6 +60,7 @@ def subject_mismatches(trusted_report, snapshot, expected):
 def trusted_check(*, root, base, head, policy, trusted_policy_ref, trusted_policy_sha256, manifest,
                   comparison_mode='commit', execution=None):
     import json
+
     from drift_gate.adapters.git.immutable import collect_git_snapshot
     from drift_gate.adapters.inspection import inspect_snapshot
     # Resolve every ref once: both engines must see the same commits even if a branch moves.
@@ -132,8 +133,8 @@ def trusted_check(*, root, base, head, policy, trusted_policy_ref, trusted_polic
 
 def certified_replay(bundle_path, *, root, manifest, expected_receipt_sha256=None):
     """Replay a stored bundle with the engine that produced it, not the current engine."""
-    from drift_gate.adapters.evidence_bundle import load_bundle
     from drift_gate.adapters.bundle_codec import semantic_result
+    from drift_gate.adapters.evidence_bundle import load_bundle
     bundle = load_bundle(bundle_path, expected_receipt_sha256=expected_receipt_sha256)
     producer = bundle.receipt['producer']
     if producer['source_files'] == 0:

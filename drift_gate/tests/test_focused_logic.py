@@ -1,7 +1,7 @@
 """Focused-plan regressions: value semantics, finite schemas and honest metrics."""
+import json
 from copy import deepcopy
 from decimal import Decimal, localcontext
-import json
 
 import pytest
 
@@ -10,7 +10,13 @@ from drift_gate.adapters.inspection import inspect
 from drift_gate.core import evaluation_stats as stats
 from drift_gate.core.contracts.planner import Truth
 from drift_gate.core.evaluation import json_values
-from drift_gate.core.evaluation.compatibility import Unsupported, admits, compare_documents, normalize, subset
+from drift_gate.core.evaluation.compatibility import (
+    Unsupported,
+    admits,
+    compare_documents,
+    normalize,
+    subset,
+)
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.policy.loader import load_policy_from_dict
 

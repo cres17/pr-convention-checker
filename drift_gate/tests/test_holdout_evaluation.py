@@ -1,6 +1,6 @@
 """W10: holdout split, frozen expectations, blind review packets, adjudication and statistics."""
-from copy import deepcopy
 import json
+from copy import deepcopy
 
 import pytest
 
@@ -156,10 +156,11 @@ EXPRESS = ('import express from "express";\nconst app=express();\nconst router=e
 
 
 def test_holdout_runs_the_product_inspection_path():
+    from datetime import date
+
     from drift_gate.adapters.inspection import inspect
     from drift_gate.core.models.evaluation_context import EvaluationContext
     from drift_gate.core.policy.loader import load_policy_from_dict
-    from datetime import date
     item = case('x1', 'fam-x', doc='GET /v1/products\n', expected_decision='satisfied', gate='pass')
     item['changed_files'][0] = {'path': 'src/api.js', 'status': 'modified',
                                 'patch': '@@\n-router.route("/catalog").get(handler);\n'

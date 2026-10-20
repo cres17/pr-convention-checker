@@ -17,11 +17,11 @@ partial edits, not a writer with access to the cache directory. Cached facts
 are an optimisation for trusted local runs; a merge decision must not rest on a
 cache an untrusted party could write (the trusted-engine path never uses one).
 """
-from hashlib import sha256
 import json
 import os
-from pathlib import Path
 import tempfile
+from hashlib import sha256
+from pathlib import Path
 
 from drift_gate.core.models.input_manifest import canonical_bytes
 

@@ -1,6 +1,6 @@
 """Validated proof projections alongside the unchanged legacy policy result."""
-from dataclasses import dataclass
 import json
+from dataclasses import dataclass
 
 from drift_gate.core.contracts.planner import Truth
 from drift_gate.core.evaluation.contract_proof import ContractProof

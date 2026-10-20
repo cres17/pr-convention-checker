@@ -1,7 +1,7 @@
 """Holdout command execution; errors are handled by the common CLI boundary."""
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 from drift_gate.adapters.cli.output import write_stdout as _write_stdout
 

@@ -1,6 +1,6 @@
 """Logical-contract counterexamples and normal controls, not PR accuracy."""
-from copy import deepcopy
 import json
+from copy import deepcopy
 
 import pytest
 
@@ -8,12 +8,12 @@ from drift_gate.adapters.docs.content import attach_env_documents, local_documen
 from drift_gate.adapters.inspection import inspect
 from drift_gate.adapters.mcp.tools import _compact_result
 from drift_gate.core.engine import run
-from drift_gate.core.evaluation.api_schema import extract_responses, UnsupportedContract
+from drift_gate.core.evaluation.api_schema import UnsupportedContract, extract_responses
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.policy.guard import weakening_reasons
-from drift_gate.core.policy.loader import load_policy_from_dict, PolicyLoadError
-from drift_gate.reporters.markdown import MarkdownReporter
+from drift_gate.core.policy.loader import PolicyLoadError, load_policy_from_dict
 from drift_gate.reporters.html import HtmlReporter
+from drift_gate.reporters.markdown import MarkdownReporter
 
 
 def raw_policy(mode="api-schema", action="fail", paths=None, all_docs=False):

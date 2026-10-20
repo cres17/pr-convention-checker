@@ -1,7 +1,7 @@
 """W11 dependency impact and service identity, W05 whole-scope no-delta certificates, W12 budget."""
-from hashlib import sha256
 import json
 import subprocess
+from hashlib import sha256
 
 import pytest
 

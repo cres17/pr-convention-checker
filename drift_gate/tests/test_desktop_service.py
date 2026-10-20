@@ -1,8 +1,8 @@
 """The desktop path must match local CLI semantics without changing cwd."""
 
 import os
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 import pytest
 

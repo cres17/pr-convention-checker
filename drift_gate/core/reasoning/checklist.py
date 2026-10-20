@@ -2,7 +2,7 @@
 불충족 묶음 → 결정론적 체크리스트 생성.
 LLM 불필요. I/O 없음.
 """
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from drift_gate.core.models.result import UnsatisfiedGroup
@@ -19,12 +19,12 @@ CHECKLIST_TEMPLATES: dict = {
 }
 
 
-def build_fallback_checklist(unsatisfied_groups: List["UnsatisfiedGroup"]) -> List[str]:
+def build_fallback_checklist(unsatisfied_groups: list["UnsatisfiedGroup"]) -> list[str]:
     """
     불충족 묶음 목록 → 체크리스트 항목.
     템플릿에 없는 이름은 '<name> 업데이트'로 폴백.
     """
-    items: List[str] = []
+    items: list[str] = []
     for group in unsatisfied_groups:
         name = group.name
         if name in CHECKLIST_TEMPLATES:

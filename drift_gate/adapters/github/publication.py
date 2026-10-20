@@ -8,12 +8,11 @@ response was lost is resolved by searching for this attempt's idempotency key
 instead of blindly posting again. A read-check-write race between concurrent
 runs remains and is reported as ``race_window`` in every record.
 """
-from hashlib import sha256
 import json
 import re
-import socket
 import urllib.error
 import urllib.request
+from hashlib import sha256
 
 from drift_gate.core.execution.publication import reconcile
 from drift_gate.core.models.input_manifest import canonical_bytes
@@ -118,7 +117,7 @@ class CommentApi:
                 # A server error does not prove the write was not applied.
                 raise LostResponse(f'GitHub {exc.code} on {method}') from exc
             raise ProviderError(f'GitHub {exc.code} on {method}', exc.code) from exc
-        except (urllib.error.URLError, socket.timeout, TimeoutError, ConnectionError, ValueError) as exc:
+        except (urllib.error.URLError, TimeoutError, ConnectionError, ValueError) as exc:
             raise LostResponse(f'{method} response lost: {exc}') from exc
 
 

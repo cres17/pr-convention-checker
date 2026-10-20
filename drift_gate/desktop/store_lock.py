@@ -1,9 +1,9 @@
 """OS locks for local read/check/write transactions, including separate apps."""
-from contextlib import contextmanager
-from pathlib import Path
 import errno
 import os
 import time
+from contextlib import contextmanager
+from pathlib import Path
 
 
 @contextmanager

@@ -1,12 +1,15 @@
 """Conflicting editors and separate processes must never silently lose edits."""
-from copy import deepcopy
 import multiprocessing
 import time
+from copy import deepcopy
 
 import pytest
 
 from drift_gate.desktop.progress_service import (
-    BaselineConflict, extract_requirements, load_baseline, save_baseline,
+    BaselineConflict,
+    extract_requirements,
+    load_baseline,
+    save_baseline,
 )
 from drift_gate.desktop.store_lock import store_lock
 from drift_gate.tests.test_progress_service import project
@@ -109,7 +112,12 @@ def _gate_holder(target, ready, finish):
 
 @pytest.mark.parametrize('saved', [False, True])
 def test_closing_lease_does_not_wait_for_another_process_transaction(tmp_path, saved):
-    from drift_gate.desktop.progress_drafts import DraftSession, cache_draft, discard_draft, recovery_copy
+    from drift_gate.desktop.progress_drafts import (
+        DraftSession,
+        cache_draft,
+        discard_draft,
+        recovery_copy,
+    )
     root = project(tmp_path)
     data = tmp_path / 'data'
     session = DraftSession(root, data, 'a' * 32)
@@ -147,7 +155,11 @@ def test_closing_lease_does_not_wait_for_another_process_transaction(tmp_path, s
 
 @pytest.mark.parametrize('crash', [False, True])
 def test_native_session_lease_is_live_across_processes_and_released_on_exit(tmp_path, crash):
-    from drift_gate.desktop.progress_drafts import discard_recovery, draft_file, recovery_copy
+    from drift_gate.desktop.progress_drafts import (
+        discard_recovery,
+        draft_file,
+        recovery_copy,
+    )
     root = project(tmp_path)
     data = tmp_path / 'data'
     draft = extract_requirements(root, ['README.md'])

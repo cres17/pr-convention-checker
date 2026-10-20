@@ -15,17 +15,20 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from drift_gate.desktop import progress_history, verification_records
+from drift_gate.desktop.doc_links import (
+    MAX_ISSUES,
+    find_broken_references,
+)
+from drift_gate.desktop.doc_links import (
+    fenced_lines as _fenced_lines,
+)
 from drift_gate.desktop.json_store import write_json
 from drift_gate.desktop.progress_context import baseline_id
 from drift_gate.desktop.progress_documents import archived_documents
 from drift_gate.desktop.progress_limits import MAX_REQUIREMENTS
+from drift_gate.desktop.progress_scope import in_current_scope as _in_current_scope
+from drift_gate.desktop.progress_scope import requirement_sources
 from drift_gate.desktop.store_lock import store_lock
-from drift_gate.desktop.progress_scope import in_current_scope as _in_current_scope, requirement_sources
-from drift_gate.desktop.doc_links import (
-    MAX_ISSUES,
-    fenced_lines as _fenced_lines,
-    find_broken_references,
-)
 
 MAX_DOC_BYTES = 256_000
 MAX_DOCS = 150

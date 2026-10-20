@@ -1,12 +1,16 @@
 """Static environment facts with explicit uncertainty; never execute source."""
 import ast
-from collections import Counter
-from dataclasses import dataclass, field
 import re
 import textwrap
+from collections import Counter
+from dataclasses import dataclass, field
 
 from drift_gate.core.models.facts import (
-    ContractFamily, ExactFacts, FactBasis, ReasonCode, UnknownFacts,
+    ContractFamily,
+    ExactFacts,
+    FactBasis,
+    ReasonCode,
+    UnknownFacts,
 )
 
 

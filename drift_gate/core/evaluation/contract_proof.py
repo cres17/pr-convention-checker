@@ -3,15 +3,24 @@
 Family checker outputs are explicit premises. This is a proof of combination
 and coverage retention, not a proof of parser correctness or document origin.
 """
+import json
 from dataclasses import asdict, dataclass
 from hashlib import sha256
-import json
 
 from drift_gate.core.contracts.planner import PlanEvaluation, Truth
 from drift_gate.core.evaluation.propositions import build_proof
-from drift_gate.core.evaluation.result_guard import ResultValidationError, validate_proof_evaluation
+from drift_gate.core.evaluation.result_guard import (
+    ResultValidationError,
+    validate_proof_evaluation,
+)
 from drift_gate.core.models.proof import (
-    CoverageDomain, EvidenceClaim, NodeSpec, Operator, ProofContext, ProofEvaluation, Proposition,
+    CoverageDomain,
+    EvidenceClaim,
+    NodeSpec,
+    Operator,
+    ProofContext,
+    ProofEvaluation,
+    Proposition,
 )
 
 

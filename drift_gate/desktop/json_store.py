@@ -1,7 +1,7 @@
 """Atomic local JSON persistence shared by baselines, history and recovery."""
 import json
-from pathlib import Path
 import tempfile
+from pathlib import Path
 
 
 def write_json(target: Path, data: dict) -> None:

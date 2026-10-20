@@ -1,11 +1,11 @@
 """W15 run lifecycle, cancellation/retry, latest fencing and publication recovery."""
-from hashlib import sha256
 import itertools
 import json
 import os
-from pathlib import Path
 import threading
 import time
+from hashlib import sha256
+from pathlib import Path
 
 import pytest
 
@@ -14,7 +14,8 @@ from drift_gate.adapters.cli.runner import run_cli
 from drift_gate.adapters.run_coordinator import RunController, RunTerminated, cancel_run
 from drift_gate.core.execution import latest, lifecycle
 from drift_gate.core.execution.publication import reconcile
-from drift_gate.tests.test_git_immutable import repo as repository_fixture, commit
+from drift_gate.tests.test_git_immutable import commit
+from drift_gate.tests.test_git_immutable import repo as repository_fixture
 
 RUN = 'a' * 32
 OWNER = 'b' * 32
@@ -511,6 +512,7 @@ run_cli(sys.argv[1:])
 def spawn_slow_check(git_repository, store):
     import subprocess
     import sys
+
     from drift_gate.desktop.package_git_check import POLICY
     root, base, head = git_repository
     process = subprocess.Popen([sys.executable, '-c', SLOW_CHILD, 'check', '--base', base, '--head', head,

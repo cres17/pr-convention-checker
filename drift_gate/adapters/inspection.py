@@ -8,12 +8,11 @@ from drift_gate.adapters.ast.analyzer import enrich_semantic_signals
 from drift_gate.adapters.ast.express_routes import attach_express_routes
 from drift_gate.adapters.execution import digest, identity
 from drift_gate.adapters.policy_loader import require_check_policy
+from drift_gate.adapters.snapshot import InspectionSnapshot, capture_inspection
 from drift_gate.core.engine import run as evaluate
 from drift_gate.core.gating.enforcement import execution_outcome
-from drift_gate.core.policy.validator import validate
 from drift_gate.core.models.evaluation_context import EvaluationContext
-from drift_gate.adapters.snapshot import capture_inspection, InspectionSnapshot
-
+from drift_gate.core.policy.validator import validate
 
 INPUT_DIGEST_VERSION = 4  # bump when the execution input digest changes shape
 

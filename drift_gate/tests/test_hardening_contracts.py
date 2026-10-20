@@ -144,6 +144,7 @@ def test_review_reads_repository_relative_paths_from_subdirectory(repo, monkeypa
 @pytest.mark.parametrize('mutation', ['remove', 'severity', 'threshold', 'ignore', 'optional', 'trigger', 'intensity', 'empty'])
 def test_trusted_obligations_reject_each_policy_weakening(mutation):
     from copy import deepcopy
+
     from drift_gate.core.policy.guard import weakening_reasons
     trusted = load_policy_from_text(POLICY)
     candidate = deepcopy(trusted)
@@ -166,6 +167,7 @@ def test_trusted_obligations_reject_each_policy_weakening(mutation):
 
 def test_policy_expansion_and_new_rule_can_preserve_old_obligations():
     from copy import deepcopy
+
     from drift_gate.core.policy.guard import weakening_reasons
     trusted = load_policy_from_text(POLICY)
     candidate = deepcopy(trusted)
@@ -178,6 +180,7 @@ def test_policy_expansion_and_new_rule_can_preserve_old_obligations():
 
 def test_any_group_cannot_shadow_a_trusted_all_group():
     from copy import deepcopy
+
     from drift_gate.core.policy.guard import weakening_reasons
     trusted = load_policy_from_text(POLICY)
     candidate = deepcopy(trusted)

@@ -18,8 +18,18 @@ import time
 import webbrowser
 from pathlib import Path
 
+from drift_gate.adapters.bundle_codec import BundleError
+from drift_gate.adapters.claude.enricher import ClaudeEnricher
+from drift_gate.adapters.cli.holdout_command import run as _run_holdout
+from drift_gate.adapters.cli.org_command import run as _run_org
+from drift_gate.adapters.cli.output import write_stdout as _write_stdout
+from drift_gate.adapters.cli.parser import build_parser as _build_parser
+from drift_gate.adapters.cli.presets import (  # noqa: F401 -- public compatibility import
+    POLICY_PRESETS,
+    POLICY_TEMPLATE,
+)
 from drift_gate.adapters.eval.runner import (
-    require_fixture_paths,
+    EvalEngineComparison,
     benchmark_gate_failures,
     compare_engines,
     compare_paths,
@@ -29,9 +39,10 @@ from drift_gate.adapters.eval.runner import (
     render_engine_comparison_html,
     render_engine_comparison_markdown,
     render_markdown,
-    EvalEngineComparison,
+    require_fixture_paths,
     write_case_reports,
 )
+from drift_gate.adapters.execution import atomic_json, atomic_text, identity
 from drift_gate.adapters.git.client import GitAdapter, GitInputError
 from drift_gate.adapters.github.client import GitHubAdapter, parse_drift_ignores
 from drift_gate.adapters.history.store import (
@@ -41,24 +52,22 @@ from drift_gate.adapters.history.store import (
     render_history_html,
     render_history_markdown,
 )
-from drift_gate.adapters.claude.enricher import ClaudeEnricher
-from drift_gate.adapters.inspection import inspect as run  # noqa: F401 -- existing patch point; check now captures then inspects
+from drift_gate.adapters.inspection import (
+    inspect as run,  # noqa: F401 -- existing patch point; check now captures then inspects
+)
+from drift_gate.adapters.policy_loader import (
+    load_policy,
+    read_policy,
+    require_check_policy,
+)
+from drift_gate.core.evaluation.result_guard import ResultValidationError
 from drift_gate.core.gating.temporal import apply_temporal_gate
 from drift_gate.core.policy.loader import PolicyLoadError
-from drift_gate.core.evaluation.result_guard import ResultValidationError
-from drift_gate.adapters.policy_loader import load_policy, read_policy, require_check_policy
 from drift_gate.core.policy.validator import validate
-from drift_gate.reporters.json_reporter import JsonReporter
 from drift_gate.reporters.html import HtmlReporter
+from drift_gate.reporters.json_reporter import JsonReporter
 from drift_gate.reporters.markdown import MarkdownReporter
 from drift_gate.utils.glob_matcher import match_glob
-from drift_gate.adapters.execution import identity, atomic_text, atomic_json
-from drift_gate.adapters.bundle_codec import BundleError
-from drift_gate.adapters.cli.parser import build_parser as _build_parser
-from drift_gate.adapters.cli.presets import POLICY_PRESETS, POLICY_TEMPLATE  # noqa: F401 -- public compatibility import
-from drift_gate.adapters.cli.output import write_stdout as _write_stdout
-from drift_gate.adapters.cli.holdout_command import run as _run_holdout
-from drift_gate.adapters.cli.org_command import run as _run_org
 
 
 class CLIInputError(ValueError):
@@ -81,11 +90,11 @@ def run_cli(argv=None):
                    "trusted-check": _run_trusted_check}
     if args.command in inspections:
         args.execution = identity()
+        from drift_gate.adapters.engine_artifact import EngineArtifactError
+        from drift_gate.adapters.holdout import HoldoutError
         from drift_gate.adapters.run_coordinator import RunTerminated
         from drift_gate.adapters.run_store import RunStoreError
-        from drift_gate.adapters.engine_artifact import EngineArtifactError
         from drift_gate.core.budget import ResourceLimit
-        from drift_gate.adapters.holdout import HoldoutError
         try:
             inspections[args.command](args)
         except (CLIInputError, GitInputError, PolicyLoadError, OSError, UnicodeError, ResultValidationError,
@@ -217,6 +226,7 @@ def lifecycle_stage_index(state):
 def _authority_digest(snapshot):
     """Policy, approvals and comparison basis that a latest result depends on."""
     from hashlib import sha256
+
     from drift_gate.adapters.bundle_codec import decode_json
     from drift_gate.core.models.input_manifest import canonical_bytes
     payload = decode_json(snapshot.payload)
@@ -276,7 +286,10 @@ def _check_body(args, controller) -> None:
         def collect():
             files, ignores = _collect_inputs(args)
             if args.loaded_policy and not (args.pr and args.repo):
-                from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
+                from drift_gate.adapters.docs.content import (
+                    attach_env_documents,
+                    local_document_reader,
+                )
                 files = attach_env_documents(files, args.loaded_policy, local_document_reader(root))
                 from drift_gate.adapters.removed_key_usage import attach_local_usage
                 files = attach_local_usage(files, args.loaded_policy, root)
@@ -285,6 +298,7 @@ def _check_body(args, controller) -> None:
         changed_files, drift_ignores = bounded('captured', collect)
         policy_for_run = args.loaded_policy
         from datetime import datetime, timezone
+
         from drift_gate.adapters.snapshot import capture_inspection
         from drift_gate.core.models.evaluation_context import EvaluationContext
         context = EvaluationContext(datetime.now(timezone.utc).date())
@@ -442,9 +456,9 @@ def RunJournalView(root, run_id):
 
 def _publish_latest(args, controller, observation, bundle, base_result):
     """Local compare-and-set of the latest pointer; never rewrites the result."""
+    from drift_gate.adapters.evidence_bundle import load_bundle
     from drift_gate.adapters.run_coordinator import result_digest
     from drift_gate.adapters.run_store import RunStoreError, TargetLedger
-    from drift_gate.adapters.evidence_bundle import load_bundle
     ledger = TargetLedger(args.run_store, args.latest_target)
     request = {**{k: observation[k] for k in ('ticket', 'generation', 'head_oid', 'authority_sha256')},
                'run_id': args.execution['run_id'], 'receipt_sha256': bundle.to_dict()['receipt_sha256'],
@@ -562,6 +576,7 @@ def _run_scope(args):
 
 def _run_engine(args):
     from hashlib import sha256
+
     from drift_gate.adapters import engine_artifact as engines
     if args.operation == 'manifest':
         if not args.ref:
@@ -897,15 +912,13 @@ def _run_explain(args) -> None:
 
 
 def _run_review(args) -> None:
-    from drift_gate.adapters.git.client import GitAdapter
+    from drift_gate.adapters.git.client import GitAdapter, repository_root
     from drift_gate.core.review.heuristics import (
+        SEVERITY_ORDER,
         find_reporter_field_gaps,
         find_test_gaps,
         review_files,
-        SEVERITY_ORDER,
     )
-
-    from drift_gate.adapters.git.client import repository_root
     root = repository_root()
     patch_text = ""
     # Collect files to review
@@ -997,6 +1010,7 @@ def _review_reporter_field_gaps(file_paths: list[str], find_reporter_field_gaps)
 
 def _run_docs_check(args) -> None:
     from pathlib import Path as _Path
+
     from drift_gate.adapters.docs.readme_contract import check_docs
 
     selected_docs = args.docs_positional or args.docs
@@ -1019,6 +1033,7 @@ def _run_docs_check(args) -> None:
 
 def _run_self_audit(args) -> None:
     from pathlib import Path as _Path
+
     from drift_gate.adapters.docs.checklist import parse_checklist
     from drift_gate.adapters.git.client import GitAdapter
     from drift_gate.core.self_audit.matcher import DiffEvidence, match_checklist

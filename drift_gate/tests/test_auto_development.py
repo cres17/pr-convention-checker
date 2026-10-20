@@ -4,14 +4,20 @@ from itertools import permutations
 
 import pytest
 
-from drift_gate.core.engine import run
-from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.policy.loader import load_policy_from_dict
-from drift_gate.tests.test_logical_contracts import changed, document, openapi, policy, source
-from drift_gate.tests.test_contract_followup import router_source
 from drift_gate.adapters.docs.content import attach_env_documents
+from drift_gate.core.engine import run
 from drift_gate.core.evaluation.environment import environment_facts
 from drift_gate.core.evaluation.routes import complete_route_delta
+from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.policy.loader import load_policy_from_dict
+from drift_gate.tests.test_contract_followup import router_source
+from drift_gate.tests.test_logical_contracts import (
+    changed,
+    document,
+    openapi,
+    policy,
+    source,
+)
 
 
 def relation_policy(*, minimum='any', ignore=None, parent='src/config.py'):
@@ -147,8 +153,9 @@ def test_strict_auto_uses_complete_python_contracts(case, doc_current):
         if case == 'unmounted':
             before = before.replace("app.include_router(router, prefix='/api')", '')
             after = before.replace('/v1', '/v2')
-        from drift_gate.core.evaluation.api_schema import _extract_contracts
         import json
+
+        from drift_gate.core.evaluation.api_schema import _extract_contracts
         paths = {}
         for method, path in _extract_contracts(after, routes_only=True):
             paths.setdefault(path, {})[method.lower()] = {'responses': {}}
@@ -186,6 +193,7 @@ def test_invalid_yaml_never_becomes_verified(text):
 @pytest.mark.parametrize('mode', ['api-schema', 'auto-strict'])
 def test_yaml_openapi_matches_json_semantics(mode):
     import json
+
     import yaml
     correct = yaml.safe_dump(json.loads(openapi()))
     p = policy(mode=mode, paths=['openapi.yaml'])
@@ -236,6 +244,7 @@ def test_possible_route_witness_excludes_comments_and_strings(patch):
 def test_git_evaluation_harness_preserves_utf8_under_non_utf8_text_defaults(tmp_path, monkeypatch):
     import json
     from pathlib import Path
+
     from scripts import audit_auto_contracts as harness
     suite = json.loads((harness.ROOT / 'drift_gate/tests/contracts/auto-contracts-v2.json').read_text(encoding='utf-8'))
     suite['cases'] = suite['cases'][:1]

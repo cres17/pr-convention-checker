@@ -5,19 +5,18 @@ path sanitization, HTTP error messages with hints, and drift-ignore parsing.
 All tests use monkeypatching — no real network calls.
 """
 import json
+import urllib.error
 from io import BytesIO
 from unittest.mock import patch
-import urllib.error
 
 import pytest
 
 from drift_gate.adapters.github.client import (
     GitHubAdapter,
-    _sanitize_path,
     _github_api_error,
+    _sanitize_path,
     parse_drift_ignores,
 )
-
 
 # ── _sanitize_path ────────────────────────────────────────────────────────────
 

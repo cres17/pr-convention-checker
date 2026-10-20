@@ -1,12 +1,11 @@
 from dataclasses import asdict, dataclass, field
-from typing import List, Optional
 
 
 @dataclass
 class Group:
     name: str
-    any_changed: List[str] = field(default_factory=list)
-    all_changed: List[str] = field(default_factory=list)
+    any_changed: list[str] = field(default_factory=list)
+    all_changed: list[str] = field(default_factory=list)
     required: bool = True
     # auto (legacy) | auto-strict | paths | api-routes | env-keys | api-schema
     # | contract-proof (needs gate.proof_gate: v1) | api-compatibility
@@ -28,8 +27,8 @@ class Group:
 @dataclass
 class CrossFileRelation:
     name: str
-    when_any_changed: List[str] = field(default_factory=list)
-    require_groups: List[str] = field(default_factory=list)
+    when_any_changed: list[str] = field(default_factory=list)
+    require_groups: list[str] = field(default_factory=list)
     message: str = ""
 
     @classmethod
@@ -44,8 +43,8 @@ class CrossFileRelation:
 
 @dataclass
 class Require:
-    groups: List[Group] = field(default_factory=list)
-    cross_file: List[CrossFileRelation] = field(default_factory=list)
+    groups: list[Group] = field(default_factory=list)
+    cross_file: list[CrossFileRelation] = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, d: dict) -> "Require":
@@ -76,9 +75,9 @@ class Trigger:
 
 @dataclass
 class When:
-    any_changed: List[str] = field(default_factory=list)
+    any_changed: list[str] = field(default_factory=list)
     min_change_intensity: str = "any"
-    trigger: Optional[Trigger] = None
+    trigger: Trigger | None = None
 
     @classmethod
     def from_dict(cls, d: dict) -> "When":
@@ -114,7 +113,7 @@ class Rule:
 class SuppressionPolicy:
     allow_ignores: bool = True
     require_codeowners_approval: bool = False
-    allowed_rules: List[str] = field(default_factory=list)
+    allowed_rules: list[str] = field(default_factory=list)
     repeated_ignore_threshold: int = 3
 
     @classmethod
@@ -189,8 +188,8 @@ class Gate:
 class ServiceSpec:
     """A declared service: module globs and its entrypoint modules (design W11)."""
     id: str
-    paths: List[str] = field(default_factory=list)
-    entrypoints: List[str] = field(default_factory=list)
+    paths: list[str] = field(default_factory=list)
+    entrypoints: list[str] = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, d: dict) -> "ServiceSpec":
@@ -200,13 +199,13 @@ class ServiceSpec:
 @dataclass
 class Budget:
     """Whole-inspection resource limits (design W12). None leaves a limit at its default."""
-    max_files: Optional[int] = None
-    max_total_bytes: Optional[int] = None
-    max_git_calls: Optional[int] = None
-    max_wall_seconds: Optional[int] = None
-    max_graph_edges: Optional[int] = None
-    max_report_bytes: Optional[int] = None
-    max_memory_bytes: Optional[int] = None
+    max_files: int | None = None
+    max_total_bytes: int | None = None
+    max_git_calls: int | None = None
+    max_wall_seconds: int | None = None
+    max_graph_edges: int | None = None
+    max_report_bytes: int | None = None
+    max_memory_bytes: int | None = None
 
     @classmethod
     def from_dict(cls, d: dict) -> "Budget":
@@ -215,18 +214,18 @@ class Budget:
 
 @dataclass
 class Policy:
-    rules: List[Rule] = field(default_factory=list)
+    rules: list[Rule] = field(default_factory=list)
     gate: Gate = field(default_factory=Gate)
-    ignore_paths: List[str] = field(default_factory=list)
+    ignore_paths: list[str] = field(default_factory=list)
     suppression: SuppressionPolicy = field(default_factory=SuppressionPolicy)
     enrichment: EnrichmentPolicy = field(default_factory=EnrichmentPolicy)
     # Populated by load_policy() — callers (adapters) should print/log these.
     # core never writes to stdout/stderr.
-    load_warnings: List[str] = field(default_factory=list)
-    services: List[ServiceSpec] = field(default_factory=list)
-    budget: Optional[Budget] = None
+    load_warnings: list[str] = field(default_factory=list)
+    services: list[ServiceSpec] = field(default_factory=list)
+    budget: Budget | None = None
     check_removed_keys: bool = True
-    exclude_removed_keys: List[str] = field(default_factory=list)
+    exclude_removed_keys: list[str] = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, d: dict) -> "Policy":

@@ -8,17 +8,27 @@ from pathlib import Path
 from PySide6.QtCore import QObject, QSettings, Qt, QThread, QUrl, Signal, Slot
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
-    QApplication, QFileDialog, QFrame, QHBoxLayout, QLabel, QLineEdit,
-    QListWidget, QListWidgetItem, QMainWindow, QPushButton, QSplitter,
-    QTextBrowser, QVBoxLayout, QWidget,
+    QApplication,
+    QFileDialog,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QListWidget,
+    QListWidgetItem,
+    QMainWindow,
+    QPushButton,
+    QSplitter,
+    QTextBrowser,
+    QVBoxLayout,
+    QWidget,
 )
 
 from drift_gate.adapters.report_naming import default_report_path
-from drift_gate.desktop.service import DesktopScan, PolicyMissingError, scan_repository
 from drift_gate.desktop.review_dialog import ReviewDialog, review_html
+from drift_gate.desktop.service import DesktopScan, PolicyMissingError, scan_repository
 from drift_gate.desktop.subscription_review import VERDICTS
 from drift_gate.reporters.html import HtmlReporter
-
 
 STYLES = """
 QWidget { background: #F5F7F9; color: #192B36; font-family: 'Apple SD Gothic Neo',

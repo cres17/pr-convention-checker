@@ -13,22 +13,21 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from drift_gate.adapters.claude.enricher import (
-    ClaudeEnricher,
     _SYSTEM_PROMPT,
+    ClaudeEnricher,
     _build_prompt,
     _fallback_draft,
 )
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.policy import Gate
 from drift_gate.core.models.result import (
+    MODEL_PRICING,
     EnrichmentMetrics,
     EvaluationResult,
-    MODEL_PRICING,
     ScanMetrics,
     UnsatisfiedGroup,
     Violation,
 )
-
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 

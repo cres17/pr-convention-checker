@@ -1,7 +1,7 @@
 """Content identity of supplied observations; no file reads or authenticity claim."""
+import json
 from dataclasses import asdict
 from hashlib import sha256
-import json
 
 
 def source_identity(files):

@@ -6,7 +6,6 @@ from drift_gate.adapters.run_coordinator import RunController
 from drift_gate.adapters.run_store import RunStoreError, recover
 from drift_gate.core.execution import lifecycle
 
-
 INVALID_DURATION = (float('nan'), float('inf'), float('-inf'), 0, -1, True, 10 ** 1000)
 RUN = 'a' * 32
 

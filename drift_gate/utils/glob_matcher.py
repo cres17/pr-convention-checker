@@ -5,7 +5,6 @@ I/O 없음, 순수 함수.
 """
 import re
 from functools import lru_cache
-from typing import List
 
 
 @lru_cache(maxsize=512)
@@ -51,7 +50,7 @@ def match_glob(path: str, pattern: str) -> bool:
         return False
 
 
-def matches_any(path: str, patterns: List[str]) -> bool:
+def matches_any(path: str, patterns: list[str]) -> bool:
     """path가 patterns 중 하나라도 매칭되면 True."""
     return any(match_glob(path, p) for p in patterns)
 

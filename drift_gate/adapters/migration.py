@@ -17,7 +17,12 @@ def _inputs(snapshot):
 def proof_gate_report(snapshot):
     from drift_gate.core.evaluation.analysis_session import AnalysisSession
     from drift_gate.core.evaluation.contracts import content_requirement
-    from drift_gate.core.evaluation.proof_gate import LEGACY_MODES, compare_decisions, contract_proof_requirement, migration_verdict
+    from drift_gate.core.evaluation.proof_gate import (
+        LEGACY_MODES,
+        compare_decisions,
+        contract_proof_requirement,
+        migration_verdict,
+    )
     policy, files = _inputs(snapshot)
     relevant = [f for f in files if not is_ignored(f, policy.ignore_paths)]
     rows = []

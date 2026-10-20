@@ -9,8 +9,6 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List
-
 
 _CHECKBOX_RE = re.compile(
     r"^(?P<indent>[ \t]*)[-*+]\s+\[(?P<mark>[xX ])\]\s+(?P<text>.+)$",
@@ -44,11 +42,11 @@ class ChecklistItem:
     section: str = ""
 
     # Extracted keyword hints used for evidence matching
-    file_hints: List[str] = field(default_factory=list)
-    rule_id_hints: List[str] = field(default_factory=list)
-    function_hints: List[str] = field(default_factory=list)
-    class_hints: List[str] = field(default_factory=list)
-    test_hints: List[str] = field(default_factory=list)
+    file_hints: list[str] = field(default_factory=list)
+    rule_id_hints: list[str] = field(default_factory=list)
+    function_hints: list[str] = field(default_factory=list)
+    class_hints: list[str] = field(default_factory=list)
+    test_hints: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -64,7 +62,7 @@ class ChecklistItem:
         }
 
 
-def parse_checklist(path: Path) -> List[ChecklistItem]:
+def parse_checklist(path: Path) -> list[ChecklistItem]:
     """Parse all `[ ]` / `[x]` checkbox items from a Markdown file.
 
     Returns a list of ChecklistItem, preserving document order.
@@ -74,9 +72,9 @@ def parse_checklist(path: Path) -> List[ChecklistItem]:
     return parse_checklist_text(content)
 
 
-def parse_checklist_text(content: str) -> List[ChecklistItem]:
+def parse_checklist_text(content: str) -> list[ChecklistItem]:
     """Parse checkbox items from a Markdown string."""
-    items: List[ChecklistItem] = []
+    items: list[ChecklistItem] = []
 
     lines = content.splitlines()
     line_starts: dict[int, int] = {}  # offset -> line_number
@@ -144,7 +142,7 @@ def parse_checklist_text(content: str) -> List[ChecklistItem]:
     return items
 
 
-def _offset_to_line(offset: int, lines: List[str]) -> int:
+def _offset_to_line(offset: int, lines: list[str]) -> int:
     pos = 0
     for i, line in enumerate(lines, start=1):
         end = pos + len(line) + 1

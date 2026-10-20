@@ -10,8 +10,8 @@ replace a newer result with an older one.
 Observations happen when a run captures its subject; this is not a provider
 webhook. A pointer can therefore be stale relative to a head no run observed.
 """
-from dataclasses import dataclass, field
 import re
+from dataclasses import dataclass, field
 
 _OID = re.compile('[0-9a-f]{40}([0-9a-f]{24})?')
 _SHA = re.compile('[0-9a-f]{64}')

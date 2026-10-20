@@ -15,6 +15,7 @@ Future upgrade path (tree-sitter):
 """
 import re
 from functools import lru_cache
+
 from drift_gate.core.route_syntax import PYTHON_DECORATOR
 
 _API_SCHEMA = re.compile(

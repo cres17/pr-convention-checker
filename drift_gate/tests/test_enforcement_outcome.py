@@ -6,7 +6,11 @@ import pytest
 
 from drift_gate.adapters.bundle_codec import semantic_result
 from drift_gate.core.engine import run
-from drift_gate.core.gating.enforcement import ACTIONS, enforcement_outcome, execution_outcome
+from drift_gate.core.gating.enforcement import (
+    ACTIONS,
+    enforcement_outcome,
+    execution_outcome,
+)
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.result import DriftIgnoreDirective
 from drift_gate.core.policy.loader import load_policy_from_dict

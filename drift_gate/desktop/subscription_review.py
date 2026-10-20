@@ -2,17 +2,16 @@
 
 Credentials remain owned by the provider CLI. LLM opinions never change the gate.
 """
-from dataclasses import asdict, dataclass
 import json
 import os
-from pathlib import Path
 import shutil
 import signal
 import subprocess
 import tempfile
 import threading
 import time
-
+from dataclasses import asdict, dataclass
+from pathlib import Path
 
 PROVIDERS = {"codex": "Codex · ChatGPT 로그인", "claude": "Claude Code · Claude 로그인"}
 VERDICTS = {"pass": "충족", "warn": "확인 필요", "fail": "누락 발견", "uncertain": "판단 유보"}

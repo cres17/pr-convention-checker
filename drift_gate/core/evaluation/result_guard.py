@@ -7,7 +7,12 @@ from collections import deque
 
 from drift_gate.core.contracts.planner import Truth
 from drift_gate.core.contracts.profiles import DEFAULT_REGISTRY
-from drift_gate.core.models.proof import Operator, ProofContext, ProofEvaluation, ScopeCoverage
+from drift_gate.core.models.proof import (
+    Operator,
+    ProofContext,
+    ProofEvaluation,
+    ScopeCoverage,
+)
 
 
 class ResultValidationError(ValueError):

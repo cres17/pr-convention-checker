@@ -2,20 +2,19 @@
 GitHub API adapter — PR 변경 파일 수집 (페이지네이션 포함).
 core에서 사용 금지.
 """
-import json
 import base64
+import json
 import re
-import urllib.request
 import urllib.error
+import urllib.request
 from pathlib import PurePosixPath
-from typing import List, Optional, Tuple
 from urllib.parse import quote
 
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.result import DriftIgnoreDirective
 
 
-def _sanitize_path(raw: str) -> Optional[str]:
+def _sanitize_path(raw: str) -> str | None:
     """
     Validate and normalize a file path from GitHub API response.
 
@@ -64,9 +63,9 @@ class GitHubAdapter:
 
     # ── Public ────────────────────────────────────────────────────────────
 
-    def get_pr_files(self, pr_number: int) -> List[ChangedFile]:
+    def get_pr_files(self, pr_number: int) -> list[ChangedFile]:
         """PR 변경 파일 전체 수집 (페이지네이션)."""
-        files: List[dict] = []
+        files: list[dict] = []
         page = 1
         while True:
             url = (
@@ -104,7 +103,7 @@ class GitHubAdapter:
 
     def get_pr_files_and_body(
         self, pr_number: int
-    ) -> Tuple[List[ChangedFile], str]:
+    ) -> tuple[list[ChangedFile], str]:
         """변경 파일 + PR description 동시 반환."""
         url = f"{self._base}/repos/{self._repo}/pulls/{pr_number}"
         before = self._get(url)
@@ -153,7 +152,7 @@ class GitHubAdapter:
 
     # ── Internal ──────────────────────────────────────────────────────────
 
-    def get_file_text(self, path: str, ref: str) -> Optional[str]:
+    def get_file_text(self, path: str, ref: str) -> str | None:
         """Read a bounded text blob at an explicit revision; never use a download URL."""
         if _sanitize_path(path) is None:
             raise ValueError("unsafe repository path")
@@ -216,7 +215,7 @@ def _github_api_error(e: "urllib.error.HTTPError", url: str) -> RuntimeError:
     return GitHubAPIError("\n".join(parts), e.code)
 
 
-def parse_drift_ignores(pr_body: str) -> List[DriftIgnoreDirective]:
+def parse_drift_ignores(pr_body: str) -> list[DriftIgnoreDirective]:
     """
     PR description에서 drift-ignore 지시문 파싱.
     drift-ignore: <rule-id>
@@ -224,7 +223,7 @@ def parse_drift_ignores(pr_body: str) -> List[DriftIgnoreDirective]:
     expires: <YYYY-MM-DD>   (선택)
     approved-by: <CODEOWNER>   (선택)
     """
-    ignores: List[DriftIgnoreDirective] = []
+    ignores: list[DriftIgnoreDirective] = []
     matches = list(re.finditer(r"(?m)^\s*drift-ignore:[ \t]*(\S+)[ \t]*$", pr_body))
     for index, m in enumerate(matches):
         rule_id = m.group(1)

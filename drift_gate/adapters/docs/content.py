@@ -2,10 +2,10 @@
 from dataclasses import replace
 from pathlib import Path
 
-from drift_gate.core.evaluation.contracts import env_keys_in_document
-from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.adapters.docs.structured import normalize_openapi_yaml
 from drift_gate.adapters.snapshot import read_bounded_text
+from drift_gate.core.evaluation.contracts import env_keys_in_document
+from drift_gate.core.models.changed_file import ChangedFile
 
 
 def attach_env_documents(files, policy, read_text):

@@ -1,3 +1,6 @@
+import pytest
+
+from drift_gate.adapters.cli.runner import run_cli
 from drift_gate.adapters.history.store import (
     append_result,
     ignored_rule_counts,
@@ -7,11 +10,14 @@ from drift_gate.adapters.history.store import (
     summarize_records,
 )
 from drift_gate.core.gating.temporal import apply_temporal_gate
-from drift_gate.adapters.cli.runner import run_cli
-from drift_gate.core.models.policy import Gate
 from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.models.result import EvaluationResult, Violation, UnsatisfiedGroup, SkippedRule
-import pytest
+from drift_gate.core.models.policy import Gate
+from drift_gate.core.models.result import (
+    EvaluationResult,
+    SkippedRule,
+    UnsatisfiedGroup,
+    Violation,
+)
 
 
 def _result(result: str = "pass") -> EvaluationResult:

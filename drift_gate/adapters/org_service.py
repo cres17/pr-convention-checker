@@ -15,21 +15,29 @@ and suitable only for a trusted operator shell. There is no network listener.
 One writer per tenant is assumed; the store is a local filesystem, not a
 replicated database.
 """
-from datetime import datetime, timezone
-from hashlib import sha256
 import json
 import os
-from pathlib import Path
 import shutil
 import tempfile
 import uuid
 import zipfile
+from datetime import datetime, timezone
+from hashlib import sha256
+from pathlib import Path
 
 from drift_gate.adapters.execution import atomic_bytes
 from drift_gate.adapters.run_store import Sequence
 from drift_gate.core.models.input_manifest import canonical_bytes
 from drift_gate.core.org.policy import (
-    Principal, Quota, authorize, delegation_decision, expired, in_scope, quota_decision, redact, valid_tenant,
+    Principal,
+    Quota,
+    authorize,
+    delegation_decision,
+    expired,
+    in_scope,
+    quota_decision,
+    redact,
+    valid_tenant,
 )
 
 BACKUP_SCHEMA = 'org-tenant-backup-v1'

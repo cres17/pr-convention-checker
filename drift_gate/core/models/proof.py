@@ -1,8 +1,8 @@
 """Immutable proof IR. Admitted premises are observations, not signed authority."""
+import json
 from dataclasses import asdict, dataclass
 from enum import Enum
 from hashlib import sha256
-import json
 
 from drift_gate.core.contracts.planner import Truth
 

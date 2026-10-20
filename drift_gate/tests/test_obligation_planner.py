@@ -1,24 +1,37 @@
 """Authored mixed-contract controls; no claims of real PR accuracy or proof completeness."""
-from dataclasses import FrozenInstanceError, replace
 import json
+from dataclasses import FrozenInstanceError, replace
 
 import pytest
 
 from drift_gate.core.contracts.discovery import discover_contracts
 from drift_gate.core.contracts.planner import (
-    ContractAssessment, ContractObligation, DocumentBinding, DocumentBindings,
-    ObligationOutcome, PlanReason, PlanRequest, Truth, conditional,
-    contract_scopes, delta_applicability, plan_contracts,
+    ContractAssessment,
+    ContractObligation,
+    DocumentBinding,
+    DocumentBindings,
+    ObligationOutcome,
+    PlanReason,
+    PlanRequest,
+    Truth,
+    conditional,
+    contract_scopes,
+    delta_applicability,
+    plan_contracts,
 )
 from drift_gate.core.evaluation.analysis_session import AnalysisSession
 from drift_gate.core.evaluation.contracts import content_requirement
+from drift_gate.core.evaluation.evaluator import _evaluate_cross_file_relations
 from drift_gate.core.evaluation.obligations import inspect_contract_plan
 from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.models.facts import ContractFamily, ExactDelta, FactBasis, ReasonCode, UnknownDelta
-from drift_gate.core.models.policy import Group
-from drift_gate.core.evaluation.evaluator import _evaluate_cross_file_relations
-from drift_gate.core.models.policy import CrossFileRelation
-
+from drift_gate.core.models.facts import (
+    ContractFamily,
+    ExactDelta,
+    FactBasis,
+    ReasonCode,
+    UnknownDelta,
+)
+from drift_gate.core.models.policy import CrossFileRelation, Group
 
 ENV = ('python-env-literals', '1')
 ROUTE = ('python-fastapi-routes', '1')

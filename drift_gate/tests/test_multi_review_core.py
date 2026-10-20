@@ -1,7 +1,7 @@
 """Independent counterexamples and controls from the multi-party review."""
+import subprocess
 from copy import deepcopy
 from itertools import product
-import subprocess
 
 import pytest
 

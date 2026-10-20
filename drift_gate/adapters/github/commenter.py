@@ -3,9 +3,8 @@ GitHub PR comment adapter — urllib 기반, gh CLI 불필요.
 기존 마커 댓글을 찾아 upsert(update or create).
 """
 import json
-import urllib.request
 import urllib.error
-from typing import Optional
+import urllib.request
 
 
 class PrCommenter:
@@ -21,7 +20,7 @@ class PrCommenter:
         self._repo = repo
         self._base = "https://api.github.com"
 
-    def upsert(self, pr_number: int, body: str) -> Optional[str]:
+    def upsert(self, pr_number: int, body: str) -> str | None:
         """
         기존 마커 댓글이 있으면 업데이트, 없으면 신규 생성.
         반환: comment HTML URL (실패 시 None)
@@ -39,7 +38,7 @@ class PrCommenter:
 
     # ── Internal ──────────────────────────────────────────────────────────
 
-    def _find_existing(self, pr_number: int) -> Optional[int]:
+    def _find_existing(self, pr_number: int) -> int | None:
         """마커가 포함된 첫 번째 댓글 ID 반환. 없으면 None."""
         page = 1
         while True:
@@ -68,7 +67,7 @@ class PrCommenter:
         data = self._request("PATCH", url, {"body": body})
         return data["html_url"]
 
-    def _request(self, method: str, url: str, payload: Optional[dict] = None):
+    def _request(self, method: str, url: str, payload: dict | None = None):
         data = json.dumps(payload).encode() if payload else None
         req = urllib.request.Request(
             url,

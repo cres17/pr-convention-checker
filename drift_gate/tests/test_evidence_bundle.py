@@ -1,14 +1,14 @@
 """Published evidence is complete, bounded, byte-exact and never approval authority."""
-from concurrent.futures import ThreadPoolExecutor
-from dataclasses import replace
-from hashlib import sha256
 import json
 import os
-from pathlib import Path
 import shutil
 import stat
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import replace
+from hashlib import sha256
+from pathlib import Path
 
 import pytest
 
@@ -19,8 +19,9 @@ from drift_gate.adapters.inspection import inspect_snapshot
 from drift_gate.core.models.input_manifest import ArtifactState, canonical_bytes
 from drift_gate.core.models.result import DriftIgnoreDirective
 from drift_gate.core.policy.loader import load_policy_from_text
-from drift_gate.tests.test_input_snapshot import capture, POLICY_TEXT
-from drift_gate.tests.test_git_immutable import repo as repository_fixture, capture as capture_git
+from drift_gate.tests.test_git_immutable import capture as capture_git
+from drift_gate.tests.test_git_immutable import repo as repository_fixture
+from drift_gate.tests.test_input_snapshot import POLICY_TEXT, capture
 
 
 @pytest.fixture

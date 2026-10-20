@@ -1,33 +1,32 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
 
 
 @dataclass
 class ChangedFile:
     path: str
     status: str  # added | modified | deleted | renamed
-    previous_path: Optional[str] = None
+    previous_path: str | None = None
     patch: str = ""
-    semantic_signals: List[str] = field(default_factory=list)
-    semantic_evidence: List[str] = field(default_factory=list)
+    semantic_signals: list[str] = field(default_factory=list)
+    semantic_evidence: list[str] = field(default_factory=list)
     analysis_method: str = "not-analyzed"
     analysis_reason: str = ""
     # Only key names are retained from document content, never values.
-    documented_env_keys: Optional[List[str]] = None
+    documented_env_keys: list[str] | None = None
     document_input_state: str = ""  # available | missing | unavailable (adapter evidence)
     # Bounded adapter snapshots; never serialized into reports or history.
-    before_source: Optional[str] = field(default=None, repr=False)
-    after_source: Optional[str] = field(default=None, repr=False)
+    before_source: str | None = field(default=None, repr=False)
+    after_source: str | None = field(default=None, repr=False)
     # Adapter-normalized YAML; original text remains in after_source so the
     # execution receipt binds both the raw input and its normalized meaning.
-    document_json: Optional[str] = field(default=None, repr=False)
+    document_json: str | None = field(default=None, repr=False)
     document_error: str = ""
-    before_routes: Optional[List[tuple[str, str]]] = field(default=None, repr=False)
-    after_routes: Optional[List[tuple[str, str]]] = field(default=None, repr=False)
+    before_routes: list[tuple[str, str]] | None = field(default=None, repr=False)
+    after_routes: list[tuple[str, str]] | None = field(default=None, repr=False)
     route_analysis_error: str = ""
     # Captured key names, classifications and paths only; no environment values.
-    env_key_usage: Optional[dict] = field(default=None, repr=False)
-    removed_env_key_candidates: Optional[List[str]] = None
+    env_key_usage: dict | None = field(default=None, repr=False)
+    removed_env_key_candidates: list[str] | None = None
 
     def to_dict(self) -> dict:
         return {

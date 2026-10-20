@@ -12,9 +12,9 @@ contract family it requires:
 An empty change in a selected file set is a different, weaker statement and is
 never promoted to this certificate.
 """
+import json
 from dataclasses import dataclass
 from hashlib import sha256
-import json
 
 REASONS = ('missing_source', 'unsupported_binding', 'open_dependency_scope', 'ambiguous_service_scope',
            'resource_limit', 'identity_delta', 'profile_mismatch', 'unsupported_language')

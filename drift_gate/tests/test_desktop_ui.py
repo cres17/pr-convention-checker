@@ -56,6 +56,7 @@ def test_llm_dialog_does_not_send_until_requested(monkeypatch):
 @pytest.mark.parametrize("suffix", ["json", "html"])
 def test_export_keeps_gate_separate_from_llm(tmp_path, monkeypatch, suffix):
     import json
+
     from drift_gate.desktop.subscription_review import parse_review
     from drift_gate.tests.test_subscription_review import response, scan
     _app = QApplication.instance() or QApplication([])

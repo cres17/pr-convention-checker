@@ -10,14 +10,13 @@ from drift_gate.adapters.eval.runner import (
     compare_paths,
     discover_fixture_paths,
     evaluate_paths,
-    render_engine_comparison_html,
-    render_engine_comparison_markdown,
     render_comparison_html,
     render_comparison_markdown,
+    render_engine_comparison_html,
+    render_engine_comparison_markdown,
     render_markdown,
     write_case_reports,
 )
-
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

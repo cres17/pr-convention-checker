@@ -13,9 +13,9 @@ consumer that lost its edge in the head is still affected. ``analysis_scope``
 adds the forward dependencies those modules need for registration and models.
 """
 import ast
+import re
 from dataclasses import dataclass, field
 from pathlib import PurePosixPath
-import re
 
 PY = ('.py',)
 JS = ('.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs')

@@ -12,6 +12,7 @@ Future upgrade path (tree-sitter):
 """
 import re
 from functools import lru_cache
+
 from drift_gate.core.route_syntax import OBJECT_CALL
 
 _API_SCHEMA = re.compile(

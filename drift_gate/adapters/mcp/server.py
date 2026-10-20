@@ -4,8 +4,8 @@ This intentionally implements the small JSON-RPC surface needed by local AI
 tools: ``initialize``, ``tools/list``, and ``tools/call``. It also accepts the
 legacy ``{"tool": "...", "args": {...}}`` JSON-line shape used by tests.
 """
-import json
 import inspect
+import json
 import os
 import sys
 from pathlib import Path

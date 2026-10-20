@@ -82,7 +82,11 @@ def evaluate_trigger(trigger, files, session=None):
         facts = environment_delta(files)
         return _threshold(len(facts.keys), None if facts.uncertain else len(facts.keys), trigger.min_magnitude,
                           ('binding-uncertain',) if facts.uncertain else ())
-    from drift_gate.core.evaluation.api_schema import UnknownResponse, UnsupportedContract, response_changes
+    from drift_gate.core.evaluation.api_schema import (
+        UnknownResponse,
+        UnsupportedContract,
+        response_changes,
+    )
     try:
         changes = response_changes([f for f in files if f.path.endswith('.py')], session)
     except UnsupportedContract as exc:

@@ -13,7 +13,6 @@ import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional
 
 
 @dataclass
@@ -22,7 +21,7 @@ class DocsWarning:
                 #      "json-schema-mismatch" | "stale-limitation"
     message: str
     file: str = ""
-    line: Optional[int] = None
+    line: int | None = None
 
     def to_dict(self) -> dict:
         d: dict = {"kind": self.kind, "message": self.message}
@@ -35,11 +34,11 @@ class DocsWarning:
 
 @dataclass
 class DocsCheckResult:
-    warnings: List[DocsWarning] = field(default_factory=list)
-    checked_commands: List[str] = field(default_factory=list)
-    checked_json_keys: List[str] = field(default_factory=list)
-    checked_policy_fields: List[str] = field(default_factory=list)
-    docs_files: List[str] = field(default_factory=list)
+    warnings: list[DocsWarning] = field(default_factory=list)
+    checked_commands: list[str] = field(default_factory=list)
+    checked_json_keys: list[str] = field(default_factory=list)
+    checked_policy_fields: list[str] = field(default_factory=list)
+    docs_files: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -76,7 +75,7 @@ _CODE_BLOCK_RE = re.compile(r"```(?:bash|sh|shell)\n(.*?)```", re.DOTALL)
 _INLINE_CODE_RE = re.compile(r"`(?:py|python3?|drift-gate)\s+(?:main\.py\s+)?([a-z][a-z-]+)[^`]*`")
 
 
-def extract_cli_commands_from_docs(content: str) -> List[str]:
+def extract_cli_commands_from_docs(content: str) -> list[str]:
     """Return unique command names mentioned in documentation."""
     commands = set()
 
@@ -111,7 +110,7 @@ def _is_plausible_command(cmd: str) -> bool:
     )
 
 
-def get_argparse_commands(parser) -> List[str]:
+def get_argparse_commands(parser) -> list[str]:
     """Introspect argparse to get all registered subcommand names."""
     commands = []
     for action in parser._subparsers._group_actions:  # type: ignore[attr-defined]
@@ -127,7 +126,7 @@ _YAML_BLOCK_RE = re.compile(r"```yaml\n(.*?)```", re.DOTALL)
 _YAML_TOP_KEY_RE = re.compile(r"^([a-zA-Z_][a-zA-Z0-9_]*):", re.MULTILINE)
 
 
-def extract_yaml_keys_from_docs(content: str) -> List[str]:
+def extract_yaml_keys_from_docs(content: str) -> list[str]:
     """Extract top-level YAML keys from fenced yaml blocks in documentation."""
     keys: set[str] = set()
     for block in _YAML_BLOCK_RE.finditer(content):
@@ -136,10 +135,11 @@ def extract_yaml_keys_from_docs(content: str) -> List[str]:
     return sorted(keys)
 
 
-def get_policy_top_level_fields() -> List[str]:
+def get_policy_top_level_fields() -> list[str]:
     """Return the top-level field names accepted by Policy.from_dict()."""
-    from drift_gate.core.models.policy import Policy
     import dataclasses
+
+    from drift_gate.core.models.policy import Policy
     return sorted(
         f.name for f in dataclasses.fields(Policy)
         if f.name != "load_warnings"  # internal field, not a YAML key
@@ -151,7 +151,7 @@ def get_policy_top_level_fields() -> List[str]:
 _JSON_BLOCK_RE = re.compile(r"```json\n(\{.*?\})\n```", re.DOTALL)
 
 
-def extract_json_keys_from_docs(content: str) -> List[str]:
+def extract_json_keys_from_docs(content: str) -> list[str]:
     """Extract top-level JSON keys from fenced json blocks in documentation."""
     keys = set()
     for block in _JSON_BLOCK_RE.finditer(content):
@@ -164,12 +164,12 @@ def extract_json_keys_from_docs(content: str) -> List[str]:
     return sorted(keys)
 
 
-def get_evaluation_result_keys() -> List[str]:
+def get_evaluation_result_keys() -> list[str]:
     """Return the top-level keys from EvaluationResult.to_dict()."""
+    from drift_gate.core.models.policy import Gate
     from drift_gate.core.models.result import (
         EvaluationResult,
     )
-    from drift_gate.core.models.policy import Gate
     result = EvaluationResult(
         change_types=[],
         violations=[],
@@ -192,7 +192,7 @@ _STALE_PATTERNS = [
 ]
 
 
-def find_stale_limitations(content: str, filename: str) -> List[DocsWarning]:
+def find_stale_limitations(content: str, filename: str) -> list[DocsWarning]:
     warnings = []
     lines = content.splitlines()
     for i, line in enumerate(lines, start=1):
@@ -210,7 +210,7 @@ def find_stale_limitations(content: str, filename: str) -> List[DocsWarning]:
 
 # ── main check function ────────────────────────────────────────────────────────
 
-def check_docs(doc_paths: List[Path], parser=None) -> DocsCheckResult:
+def check_docs(doc_paths: list[Path], parser=None) -> DocsCheckResult:
     """Run all docs-consistency checks and return a DocsCheckResult.
 
     Args:
@@ -230,8 +230,8 @@ def check_docs(doc_paths: List[Path], parser=None) -> DocsCheckResult:
     all_doc_commands: set[str] = set()
     all_doc_json_keys: set[str] = set()
     all_doc_yaml_keys: set[str] = set()
-    warnings: List[DocsWarning] = []
-    doc_files_found: List[str] = []
+    warnings: list[DocsWarning] = []
+    doc_files_found: list[str] = []
 
     for doc_path in doc_paths:
         if not doc_path.exists():

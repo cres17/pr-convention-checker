@@ -1,6 +1,6 @@
 """Static router graphs, route-local uncertainty, and request-scoped caching."""
-from copy import deepcopy
 import json
+from copy import deepcopy
 from unittest.mock import patch
 
 import pytest
@@ -8,9 +8,21 @@ import pytest
 from drift_gate.core.engine import run
 from drift_gate.core.evaluation import api_schema
 from drift_gate.core.evaluation.analysis_session import AnalysisSession
-from drift_gate.core.evaluation.api_schema import extract_responses, response_changes, UnknownResponse, UnsupportedContract
-from drift_gate.tests.test_logical_contracts import changed, document, openapi, policy, raw_policy, source
+from drift_gate.core.evaluation.api_schema import (
+    UnknownResponse,
+    UnsupportedContract,
+    extract_responses,
+    response_changes,
+)
 from drift_gate.core.policy.loader import load_policy_from_dict
+from drift_gate.tests.test_logical_contracts import (
+    changed,
+    document,
+    openapi,
+    policy,
+    raw_policy,
+    source,
+)
 
 
 def router_source(fields='id: int', prefix='/v1', nested=False, repeat=False):

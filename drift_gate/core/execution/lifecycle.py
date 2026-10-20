@@ -3,9 +3,9 @@
 The semantic result is complete at ``result-validated``. Publication outcomes
 never delete or rewrite it. A closed run is never resumed: retry is a new run.
 """
-from dataclasses import dataclass, field
 import math
 import re
+from dataclasses import dataclass, field
 
 STAGES = ('requested', 'validated', 'captured', 'planned', 'analyzing', 'evaluated',
           'result-validated', 'persisted', 'publish-pending', 'published')

@@ -5,10 +5,13 @@ then re-checked against the raw object whose SHA-256 the receipt pins.
 """
 from hashlib import sha256
 
-from drift_gate.core.evaluation.api_schema import extract_routes, UnsupportedContract
+from drift_gate.core.evaluation.api_schema import UnsupportedContract, extract_routes
 from drift_gate.core.evaluation.environment import environment_facts
 from drift_gate.core.evaluation.evidence_spans import (
-    document_route_spans, env_key_spans, python_route_spans, verify_span,
+    document_route_spans,
+    env_key_spans,
+    python_route_spans,
+    verify_span,
 )
 
 

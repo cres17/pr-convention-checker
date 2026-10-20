@@ -1,17 +1,16 @@
 """Run the existing local policy engine for a selected Git repository."""
 
-from dataclasses import dataclass
-from pathlib import Path
 import subprocess
 import time
+from dataclasses import dataclass
+from pathlib import Path
 
 from drift_gate.adapters.docs.content import attach_env_documents, local_document_reader
 from drift_gate.adapters.git.client import GitAdapter
-from drift_gate.adapters.policy_loader import read_policy, require_check_policy
 from drift_gate.adapters.inspection import inspect as run
-from drift_gate.core.models.result import EvaluationResult
+from drift_gate.adapters.policy_loader import read_policy, require_check_policy
 from drift_gate.core.models.changed_file import ChangedFile
-
+from drift_gate.core.models.result import EvaluationResult
 
 # Text documents only: opening arbitrary file types with the OS could run programs.
 OPENABLE_SUFFIXES = frozenset({".md", ".rst", ".txt", ".yml", ".yaml", ".json", ".toml"})

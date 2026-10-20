@@ -1,7 +1,7 @@
 """W17 organization service and W15 persistent analysis cache."""
-from datetime import datetime, timedelta, timezone
 import json
 import zipfile
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -65,7 +65,8 @@ def test_editing_only_the_cached_result_is_rejected(tmp_path):
 
 
 def test_scope_analysis_reuses_cached_facts_with_identical_results(tmp_path):
-    from drift_gate.tests.test_scope_analysis import commit, repo as repo_fixture, route, run
+    from drift_gate.tests.test_scope_analysis import commit, route, run
+    from drift_gate.tests.test_scope_analysis import repo as repo_fixture
     (tmp_path / 'r').mkdir()
     root, base = repo_fixture.__wrapped__(tmp_path / 'r')
     head = commit(root, {'services/billing/api.py': route('/v2')}, 'route change')

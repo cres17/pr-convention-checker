@@ -1,7 +1,7 @@
 """Controlled removed-key examples; these do not measure real PR accuracy."""
-from dataclasses import replace
 import json
 import subprocess
+from dataclasses import replace
 
 import pytest
 
@@ -11,7 +11,7 @@ from drift_gate.adapters.removed_key_usage import attach_local_usage, collect_us
 from drift_gate.core.engine import run
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.policy.guard import weakening_reasons
-from drift_gate.core.policy.loader import load_policy_from_dict, PolicyLoadError
+from drift_gate.core.policy.loader import PolicyLoadError, load_policy_from_dict
 from drift_gate.desktop.service import scan_repository
 from drift_gate.reporters.html import HtmlReporter
 from drift_gate.reporters.markdown import MarkdownReporter
@@ -208,8 +208,9 @@ def test_reports_and_compact_mcp_show_advisories_without_violations():
 
 def test_immutable_commit_search_and_bundle_replay(tmp_path):
     from hashlib import sha256
+
+    from drift_gate.adapters.evidence_bundle import load_bundle, save_bundle
     from drift_gate.adapters.git.immutable import collect_git_snapshot
-    from drift_gate.adapters.evidence_bundle import save_bundle, load_bundle
     root = repository(tmp_path)
     base = git(root, 'rev-parse', 'HEAD').decode().strip()
     git(root, 'add', '.')
@@ -227,6 +228,7 @@ def test_immutable_commit_search_and_bundle_replay(tmp_path):
 @pytest.mark.parametrize('option', ['check_removed_keys: false\n', 'exclude_removed_keys: [LEGACY_TOKEN]\n'])
 def test_trusted_policy_weakening_requires_review(tmp_path, monkeypatch, option):
     from hashlib import sha256
+
     from drift_gate.adapters import trusted_validation
     root = repository(tmp_path)
     base = git(root, 'rev-parse', 'HEAD').decode().strip()

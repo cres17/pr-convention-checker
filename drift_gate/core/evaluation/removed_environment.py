@@ -2,7 +2,7 @@
 import re
 
 from drift_gate.core.evaluation.content_result import ContentCheck, combine
-from drift_gate.core.evaluation.environment import environment_facts, environment_delta
+from drift_gate.core.evaluation.environment import environment_delta, environment_facts
 from drift_gate.core.patch_lines import changed_lines
 from drift_gate.utils.glob_matcher import matches_any
 

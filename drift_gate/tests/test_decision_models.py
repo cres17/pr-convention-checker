@@ -1,16 +1,20 @@
 """Migration-gated proof decisions (11), typed triggers (20) and API compatibility (21)."""
-from copy import deepcopy
-from hashlib import sha256
 import json
 import random
 import subprocess
+from copy import deepcopy
+from hashlib import sha256
 
 import pytest
 
 from drift_gate.core.contracts.planner import Truth
 from drift_gate.core.engine import run
 from drift_gate.core.evaluation.compatibility import (
-    Unsupported, admits, compare_documents, normalize, subset,
+    Unsupported,
+    admits,
+    compare_documents,
+    normalize,
+    subset,
 )
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.policy.loader import PolicyLoadError, load_policy_from_dict

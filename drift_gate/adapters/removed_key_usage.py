@@ -1,16 +1,19 @@
 """Bounded, captured repository search for removed environment key names."""
-from dataclasses import replace
-from pathlib import PurePosixPath
 import re
 import subprocess
 import tempfile
+from dataclasses import replace
+from pathlib import PurePosixPath
 
 import yaml
 
 from drift_gate.adapters.docs.content import local_document_reader
 from drift_gate.core.change_paths import triggers
 from drift_gate.core.evaluation.environment import environment_facts
-from drift_gate.core.evaluation.removed_environment import removed_environment_keys, js_environment_keys
+from drift_gate.core.evaluation.removed_environment import (
+    js_environment_keys,
+    removed_environment_keys,
+)
 from drift_gate.utils.glob_matcher import matches_any
 
 MAX_FILES = 2000
@@ -160,7 +163,7 @@ def attach_local_usage(files, policy, root):
     try:
         # Output is spooled and bounded before decoding. Values/source never
         # enter this output, reports or history. No shell or external diff tools.
-        from drift_gate.adapters.git.client import _working_state, _git
+        from drift_gate.adapters.git.client import _git, _working_state
         before = (_working_state(root), _git(['diff', '--no-ext-diff', '--no-textconv', 'HEAD', '--'], root))
         with tempfile.TemporaryFile() as output:
             args = ['git', '-c', 'grep.threads=1', 'grep', '--no-textconv', '-I', '-l', '-z', '-w']

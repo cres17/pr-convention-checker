@@ -1,20 +1,25 @@
 """Real Git object, policy-anchor and frozen-verifier counterexamples."""
+import json
+import subprocess
 from copy import deepcopy
 from dataclasses import replace
 from datetime import date
 from hashlib import sha256
-import json
-import subprocess
 
 import pytest
 
+from drift_gate.adapters.cli.runner import run_cli
 from drift_gate.adapters.git import immutable
 from drift_gate.adapters.inspection import inspect_snapshot
 from drift_gate.adapters.mcp import tools
-from drift_gate.adapters.cli.runner import run_cli
 from drift_gate.core.models.evaluation_context import EvaluationContext
 from drift_gate.core.models.input_manifest import ArtifactState
-from drift_gate.desktop.package_git_check import POLICY, source, run_git_controls, validate_git_controls
+from drift_gate.desktop.package_git_check import (
+    POLICY,
+    run_git_controls,
+    source,
+    validate_git_controls,
+)
 
 
 def git(root, *args):

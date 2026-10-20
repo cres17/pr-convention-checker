@@ -55,9 +55,11 @@ def update_removed_key_policy(path: str | Path, action: str, key: str, expected_
     import re
     import stat
     import tempfile
+
     import yaml
-    from drift_gate.core.policy.loader import load_policy_from_text
+
     from drift_gate.adapters.snapshot import read_bounded_text
+    from drift_gate.core.policy.loader import load_policy_from_text
     root = repository_root(path)
     target = root / POLICY_FILE
     source = read_bounded_text(target)

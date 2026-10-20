@@ -6,15 +6,22 @@ dependency graphs and the impact scope (W11), service-scoped route/env facts and
 their comparison (W11), and per-service no-delta certificates (W05 4.3).
 Service declarations come from the pinned trusted policy, never the candidate.
 """
-from hashlib import sha256
 import os
 import subprocess
 import time
+from hashlib import sha256
 
 from drift_gate.adapters.git.client import GitInputError
-from drift_gate.adapters.git.immutable import GitObjectReader, _git, _git_environment, _resolve, budget_scope
+from drift_gate.adapters.git.immutable import (
+    GitObjectReader,
+    _git,
+    _git_environment,
+    _resolve,
+    budget_scope,
+)
 from drift_gate.core.budget import InspectionBudget, ResourceLimit
-from drift_gate.core.contracts import certificates, services as service_model
+from drift_gate.core.contracts import certificates
+from drift_gate.core.contracts import services as service_model
 from drift_gate.core.contracts.dependency import JS, PY, build_graph, impact
 from drift_gate.core.evaluation.api_schema import UnsupportedContract, extract_routes
 from drift_gate.core.evaluation.environment import environment_facts

@@ -1,16 +1,27 @@
 """Complete static FastAPI routes and format-aware documentation checks."""
+import json
 from dataclasses import dataclass
 from hashlib import sha256
-import json
 
 from drift_gate.core.contracts.delta import compare_facts
-from drift_gate.core.models.facts import (
-    ContractFamily, ExactDelta, ExactFacts, FactBasis, FactOutcome, ReasonCode, UnknownFacts,
-)
-from drift_gate.core.evaluation.api_schema import extract_routes, UnsupportedContract
-from drift_gate.core.evaluation.openapi_document import load_openapi
 from drift_gate.core.evaluation.analysis_session import AnalysisSession
-from drift_gate.core.evaluation.content_result import ContentCheck, checked, unknown, combine
+from drift_gate.core.evaluation.api_schema import UnsupportedContract, extract_routes
+from drift_gate.core.evaluation.content_result import (
+    ContentCheck,
+    checked,
+    combine,
+    unknown,
+)
+from drift_gate.core.evaluation.openapi_document import load_openapi
+from drift_gate.core.models.facts import (
+    ContractFamily,
+    ExactDelta,
+    ExactFacts,
+    FactBasis,
+    FactOutcome,
+    ReasonCode,
+    UnknownFacts,
+)
 from drift_gate.core.route_syntax import HTTP_METHODS
 from drift_gate.utils.glob_matcher import matches_any
 
@@ -157,8 +168,9 @@ def route_document_requirement(group, files, added, removed, session=None):
 
 def strict_auto_requirement(group, triggers, files, session=None):
     from dataclasses import replace
-    from drift_gate.core.evaluation.obligations import shadow_legacy_plan
+
     from drift_gate.core.evaluation.contracts import content_requirement
+    from drift_gate.core.evaluation.obligations import shadow_legacy_plan
 
     triggers = tuple(triggers)
     session = session or AnalysisSession()

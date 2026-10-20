@@ -4,13 +4,26 @@ import threading
 
 from PySide6.QtCore import QThread, Signal
 from PySide6.QtWidgets import (
-    QApplication, QComboBox, QDialog, QFileDialog, QHBoxLayout, QLabel,
-    QLineEdit, QMessageBox, QPlainTextEdit, QPushButton, QTabWidget,
-    QTextBrowser, QVBoxLayout,
+    QApplication,
+    QComboBox,
+    QDialog,
+    QFileDialog,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPlainTextEdit,
+    QPushButton,
+    QTabWidget,
+    QTextBrowser,
+    QVBoxLayout,
 )
 
 from drift_gate.desktop.subscription_review import (
-    PROVIDERS, VERDICTS, build_review_prompt, review_with_subscription,
+    PROVIDERS,
+    VERDICTS,
+    build_review_prompt,
+    review_with_subscription,
 )
 
 

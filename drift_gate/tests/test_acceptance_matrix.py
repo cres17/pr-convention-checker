@@ -1,8 +1,8 @@
 """Every acceptance-matrix row (design section 18) names tests that exist, and external needs stay explicit."""
 import importlib.util
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 

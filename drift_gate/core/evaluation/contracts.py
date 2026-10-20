@@ -1,14 +1,19 @@
 """Bounded contract checks. Pure functions; no arbitrary prose understanding."""
 import re
 
-from drift_gate.utils.glob_matcher import matches_any
-from drift_gate.core.route_syntax import METHOD_PATTERN, literal_route
-from drift_gate.core.python_syntax import environment_keys
-from drift_gate.core.patch_lines import changed_lines
-from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.evaluation.content_result import ContentCheck, checked, unknown, combine
 from drift_gate.core.evaluation.api_schema import api_schema_requirement
+from drift_gate.core.evaluation.content_result import (
+    ContentCheck,
+    checked,
+    combine,
+    unknown,
+)
 from drift_gate.core.evaluation.environment import environment_delta
+from drift_gate.core.models.changed_file import ChangedFile
+from drift_gate.core.patch_lines import changed_lines
+from drift_gate.core.python_syntax import environment_keys
+from drift_gate.core.route_syntax import METHOD_PATTERN, literal_route
+from drift_gate.utils.glob_matcher import matches_any
 
 DOC_ROUTE = re.compile(rf"\b({METHOD_PATTERN})[ \t]+(/[^\s`'\"<>]+)", re.I)
 DOC_TABLE_ROUTE = re.compile(rf"^\s*\|\s*({METHOD_PATTERN})\s*\|\s*(/[^\s|`'\"<>]+)\s*\|", re.I)
@@ -91,7 +96,10 @@ def content_requirement(group, triggers, changed_files, session=None):
         return compatibility_requirement(group, triggers, changed_files, session)
     if group.content == 'api-routes' and all(
         (f.status == 'added' or f.before_source is not None) and (f.status == 'deleted' or f.after_source is not None) for f in triggers):
-        from drift_gate.core.evaluation.routes import complete_route_delta, route_document_requirement
+        from drift_gate.core.evaluation.routes import (
+            complete_route_delta,
+            route_document_requirement,
+        )
         from drift_gate.core.evaluation.static_routers import UnsupportedContract
         try:
             added, removed = complete_route_delta(triggers, session)
@@ -99,7 +107,9 @@ def content_requirement(group, triggers, changed_files, session=None):
             return unknown(str(exc), 'api-routes')
         return route_document_requirement(group, changed_files, added, removed, session)
     if group.content == "env-keys":
-        from drift_gate.core.evaluation.removed_environment import environment_requirement
+        from drift_gate.core.evaluation.removed_environment import (
+            environment_requirement,
+        )
         return environment_requirement(group, triggers, changed_files, session)
     added, removed = route_delta(triggers)
     auto_api = any(p.startswith(("docs/api/", "docs/spec.", "openapi")) for p in patterns)

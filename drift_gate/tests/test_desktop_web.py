@@ -2,14 +2,17 @@
 import json
 import os
 import re
+
 os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 import pytest
+
 pytest.importorskip('PySide6.QtWebEngineWidgets')
 from PySide6.QtWidgets import QApplication
-from drift_gate.desktop.web_app import DesktopBridge, scan_payload
-from drift_gate.tests.test_subscription_review import scan, response
+
 from drift_gate.desktop.subscription_review import parse_review
+from drift_gate.desktop.web_app import DesktopBridge, scan_payload
 from drift_gate.tests.test_progress_service import project
+from drift_gate.tests.test_subscription_review import response, scan
 
 
 def of_type(messages, kind):
@@ -33,6 +36,7 @@ def test_payload_uses_engine_result_without_reclassification():
 
 def test_package_check_can_receive_native_qt_events(tmp_path, monkeypatch):
     from PySide6.QtCore import QObject
+
     from drift_gate.desktop import package_check
     _app = QApplication.instance() or QApplication([])
     window = QObject()
@@ -123,8 +127,13 @@ def test_draft_delete_failure_does_not_misreport_a_committed_save(tmp_path, monk
 
 def test_conflicting_save_returns_latest_baseline_and_preserves_recovery(tmp_path, monkeypatch):
     from copy import deepcopy
+
     from drift_gate.desktop.progress_drafts import cache_draft, recovery_copy
-    from drift_gate.desktop.progress_service import extract_requirements, load_baseline, save_baseline
+    from drift_gate.desktop.progress_service import (
+        extract_requirements,
+        load_baseline,
+        save_baseline,
+    )
     QApplication.instance() or QApplication([])
     repo = project(tmp_path)
     data = tmp_path / 'data'
@@ -289,6 +298,7 @@ def test_scan_reports_which_progress_evidence_it_touches(tmp_path, monkeypatch):
 
 def test_missing_policy_is_previewed_and_created_only_on_request(tmp_path):
     import subprocess
+
     from drift_gate.desktop.app import ScanWorker
     QApplication.instance() or QApplication([])
     repo = tmp_path / 'fresh'
@@ -516,8 +526,13 @@ def test_draft_write_error_and_explicit_discard_have_correlated_responses(tmp_pa
 
 def test_two_app_drafts_survive_another_apps_successful_and_conflicting_save(tmp_path, monkeypatch):
     from copy import deepcopy
+
     from drift_gate.desktop.progress_drafts import draft_file, recovery_copy
-    from drift_gate.desktop.progress_service import extract_requirements, load_baseline, save_baseline
+    from drift_gate.desktop.progress_service import (
+        extract_requirements,
+        load_baseline,
+        save_baseline,
+    )
     QApplication.instance() or QApplication([])
     repo = project(tmp_path)
     data = tmp_path / 'data'
@@ -551,7 +566,9 @@ def test_two_app_drafts_survive_another_apps_successful_and_conflicting_save(tmp
 @pytest.mark.parametrize('cached', [False, True])
 def test_native_close_protects_unsaved_progress(monkeypatch, discard, cached):
     from types import SimpleNamespace
+
     from PySide6.QtWidgets import QMessageBox
+
     from drift_gate.desktop.web_app import WebDesktopWindow
     answer = QMessageBox.StandardButton.Yes if discard else QMessageBox.StandardButton.No
     prompts = []
@@ -567,7 +584,7 @@ def test_native_close_protects_unsaved_progress(monkeypatch, discard, cached):
 
 
 def test_bridge_rejects_missing_revision_and_active_copy_in_bulk_cleanup(tmp_path, monkeypatch):
-    from drift_gate.desktop.progress_drafts import recovery_copy, draft_file
+    from drift_gate.desktop.progress_drafts import draft_file, recovery_copy
     from drift_gate.desktop.progress_service import extract_requirements
     QApplication.instance() or QApplication([])
     root = project(tmp_path)
@@ -647,8 +664,13 @@ def test_export_must_succeed_and_remain_intact_before_using_latest_baseline(tmp_
 
 def test_import_bridge_cancel_failure_and_recovery_preserve_confirmed_baseline(tmp_path, monkeypatch):
     from copy import deepcopy
+
     from drift_gate.desktop.progress_drafts import export_draft, recovery_copy
-    from drift_gate.desktop.progress_service import extract_requirements, save_baseline, load_baseline
+    from drift_gate.desktop.progress_service import (
+        extract_requirements,
+        load_baseline,
+        save_baseline,
+    )
     QApplication.instance() or QApplication([])
     root = project(tmp_path)
     data = tmp_path / 'data'
@@ -741,8 +763,14 @@ def test_progress_worker_always_emits_one_terminal_failure(failure):
 
 def test_saved_inspection_uses_commit_snapshot_when_another_writer_interleaves(tmp_path, monkeypatch):
     from copy import deepcopy
+
     from drift_gate.desktop import web_app
-    from drift_gate.desktop.progress_service import extract_requirements, save_baseline, inspect_progress, load_baseline
+    from drift_gate.desktop.progress_service import (
+        extract_requirements,
+        inspect_progress,
+        load_baseline,
+        save_baseline,
+    )
     QApplication.instance() or QApplication([])
     root = project(tmp_path)
     directory = tmp_path / 'data'
@@ -791,8 +819,14 @@ def test_inspect_bridge_delivers_good_report_when_optional_history_is_bad(tmp_pa
 
 def test_inspect_bridge_freezes_history_before_another_same_version_record(tmp_path, monkeypatch):
     from copy import deepcopy
+
     from drift_gate.desktop import web_app
-    from drift_gate.desktop.progress_service import extract_requirements, save_baseline, inspect_progress, record_snapshot
+    from drift_gate.desktop.progress_service import (
+        extract_requirements,
+        inspect_progress,
+        record_snapshot,
+        save_baseline,
+    )
     QApplication.instance() or QApplication([])
     repo = project(tmp_path)
     directory = tmp_path / 'data'
@@ -818,7 +852,11 @@ def test_inspect_bridge_freezes_history_before_another_same_version_record(tmp_p
 
 
 def test_committed_save_keeps_good_report_and_original_bad_history(tmp_path, monkeypatch):
-    from drift_gate.desktop.progress_service import extract_requirements, save_baseline, load_baseline
+    from drift_gate.desktop.progress_service import (
+        extract_requirements,
+        load_baseline,
+        save_baseline,
+    )
     QApplication.instance() or QApplication([])
     repo = project(tmp_path)
     directory = tmp_path / 'data'
@@ -842,8 +880,8 @@ def test_committed_save_keeps_good_report_and_original_bad_history(tmp_path, mon
 
 @pytest.mark.parametrize('accepted', [False, True])
 def test_removed_key_policy_button_requires_confirmation(tmp_path, monkeypatch, accepted):
-    from drift_gate.tests.test_removed_environment import repository
     from drift_gate.desktop.service import scan_repository
+    from drift_gate.tests.test_removed_environment import repository
     QApplication.instance() or QApplication([])
     root = repository(tmp_path)
     bridge = DesktopBridge()
@@ -868,8 +906,8 @@ def test_removed_key_policy_button_requires_confirmation(tmp_path, monkeypatch, 
 
 
 def test_removed_key_policy_button_cannot_change_an_unreported_key(tmp_path, monkeypatch):
-    from drift_gate.tests.test_removed_environment import repository
     from drift_gate.desktop.service import scan_repository
+    from drift_gate.tests.test_removed_environment import repository
     QApplication.instance() or QApplication([])
     root = repository(tmp_path)
     bridge = DesktopBridge()
@@ -882,7 +920,7 @@ def test_removed_key_policy_button_cannot_change_an_unreported_key(tmp_path, mon
 
 def _answer_removed_key_dialog(answer):
     """Drive the real confirmation dialog once it is shown (offscreen Qt)."""
-    from PySide6.QtCore import QTimer, Qt
+    from PySide6.QtCore import Qt, QTimer
     from PySide6.QtTest import QTest
     from PySide6.QtWidgets import QMessageBox
     seen = {}
@@ -910,8 +948,8 @@ def _answer_removed_key_dialog(answer):
 
 @pytest.mark.parametrize('answer', ['cancel', 'escape', 'close', 'save'])
 def test_removed_key_dialog_saves_only_on_explicit_save(tmp_path, answer):
-    from drift_gate.tests.test_removed_environment import repository
     from drift_gate.desktop.service import scan_repository
+    from drift_gate.tests.test_removed_environment import repository
     QApplication.instance() or QApplication([])
     root = repository(tmp_path)
     bridge = DesktopBridge()
@@ -932,8 +970,8 @@ def test_removed_key_dialog_saves_only_on_explicit_save(tmp_path, answer):
 
 
 def test_second_removed_key_request_while_confirming_is_refused(tmp_path, monkeypatch):
-    from drift_gate.tests.test_removed_environment import repository
     from drift_gate.desktop.service import scan_repository
+    from drift_gate.tests.test_removed_environment import repository
     QApplication.instance() or QApplication([])
     root = repository(tmp_path)
     bridge = DesktopBridge()
@@ -956,8 +994,8 @@ def test_second_removed_key_request_while_confirming_is_refused(tmp_path, monkey
 
 
 def test_removed_key_change_is_refused_when_the_scan_changed_during_confirmation(tmp_path, monkeypatch):
-    from drift_gate.tests.test_removed_environment import repository
     from drift_gate.desktop.service import scan_repository
+    from drift_gate.tests.test_removed_environment import repository
     QApplication.instance() or QApplication([])
     root = repository(tmp_path)
     bridge = DesktopBridge()

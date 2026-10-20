@@ -1,11 +1,11 @@
 """Collect exact immutable Git objects without working-tree or replacement refs."""
-from datetime import datetime, timezone
-from contextlib import contextmanager
 import contextvars
-from hashlib import sha256
 import os
-from pathlib import Path
 import subprocess
+from contextlib import contextmanager
+from datetime import datetime, timezone
+from hashlib import sha256
+from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from drift_gate.adapters.docs.content import attach_env_documents
@@ -14,11 +14,19 @@ from drift_gate.adapters.policy_loader import require_check_policy
 from drift_gate.adapters.snapshot import capture_inspection
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.evaluation_context import EvaluationContext
-from drift_gate.core.models.git_input import GitArtifact, GitInputEvidence, GitSubject, require_oid
-from drift_gate.core.models.input_manifest import ArtifactState, canonical_bytes, relative_path
+from drift_gate.core.models.git_input import (
+    GitArtifact,
+    GitInputEvidence,
+    GitSubject,
+    require_oid,
+)
+from drift_gate.core.models.input_manifest import (
+    ArtifactState,
+    canonical_bytes,
+    relative_path,
+)
 from drift_gate.core.policy.guard import weakening_reasons
 from drift_gate.core.policy.loader import load_policy_from_text
-
 
 MAX_OBJECT_BYTES = 1_000_000
 MAX_TREE_ENTRIES = 20_000
@@ -169,6 +177,7 @@ def collect_git_snapshot(*, root, base, head, trusted_policy_ref, trusted_policy
                          context=None, contract_proofs=False, budget=None):
     """Collect under one whole-inspection budget; the trusted policy may tighten its limits."""
     import time
+
     from drift_gate.core.budget import InspectionBudget
     budget = budget if budget is not None else InspectionBudget.from_policy(None, clock=time.monotonic)
     with budget_scope(budget):

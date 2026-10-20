@@ -7,9 +7,9 @@ without PyInstaller.
 """
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -57,8 +57,8 @@ def test_teardown_trace_records_events_and_enables_faulthandler(tmp_path):
 
 @pytest.mark.skipif(os.name == 'nt', reason='the fake executable is a POSIX shell script')
 def test_teardown_diagnosis_records_every_run_with_a_relative_output(tmp_path, monkeypatch):
-    from contextlib import contextmanager
     import importlib.util
+    from contextlib import contextmanager
     spec = importlib.util.spec_from_file_location('teardown_diagnosis', ROOT / 'packaging/teardown_diagnosis.py')
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

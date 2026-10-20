@@ -1,17 +1,17 @@
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
 import threading
+from pathlib import Path
 
 import pytest
 
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.policy import Gate
 from drift_gate.core.models.result import EvaluationResult
-from drift_gate.desktop.service import DesktopScan
 from drift_gate.desktop import subscription_review as module
+from drift_gate.desktop.service import DesktopScan
 
 
 def response(verdict="warn"):

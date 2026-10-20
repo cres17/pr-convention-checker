@@ -15,8 +15,6 @@ import re
 import tokenize
 from dataclasses import dataclass, field
 from pathlib import PurePosixPath
-from typing import List, Optional
-
 
 # Severity levels (ordered from high to low)
 SEVERITY_ORDER = ["high", "medium", "low", "info"]
@@ -80,11 +78,11 @@ class UncoveredFunction:
 
 @dataclass
 class ReviewResult:
-    findings: List[ReviewFinding] = field(default_factory=list)
-    files_reviewed: List[str] = field(default_factory=list)
-    test_gaps: List[UncoveredFunction] = field(default_factory=list)
+    findings: list[ReviewFinding] = field(default_factory=list)
+    files_reviewed: list[str] = field(default_factory=list)
+    test_gaps: list[UncoveredFunction] = field(default_factory=list)
 
-    def by_severity(self, severity: str) -> List[ReviewFinding]:
+    def by_severity(self, severity: str) -> list[ReviewFinding]:
         return [f for f in self.findings if f.severity == severity]
 
     @property
@@ -114,7 +112,7 @@ class ReviewResult:
         if self.findings:
             lines.append(f"**{len(self.findings)} finding(s)** across {len(self.files_reviewed)} file(s)")
             lines.append("")
-            by_sev: dict[str, List[ReviewFinding]] = {}
+            by_sev: dict[str, list[ReviewFinding]] = {}
             for f in self.findings:
                 by_sev.setdefault(f.severity, []).append(f)
             lines.append("### Findings")
@@ -236,7 +234,7 @@ _QUALITY_PATTERNS = [
 def review_file_content(
     file_path: str,
     content: str,
-) -> List[ReviewFinding]:
+) -> list[ReviewFinding]:
     """Run all heuristic checks on a single file's content.
 
     Args:
@@ -246,7 +244,7 @@ def review_file_content(
     Returns:
         List of ReviewFinding (may be empty)
     """
-    findings: List[ReviewFinding] = []
+    findings: list[ReviewFinding] = []
     is_core = _is_core_file(file_path)
     structural_content = _strip_python_strings_and_comments(content)
 
@@ -281,7 +279,7 @@ def review_file_content(
 
 
 def review_files(
-    file_paths: List[str],
+    file_paths: list[str],
     read_file,  # callable(path: str) -> str
 ) -> ReviewResult:
     """Review a list of files using the provided reader function.
@@ -310,8 +308,8 @@ _ADDED_TEST_RE = re.compile(r"^\+\s*def\s+(test[_a-zA-Z0-9]+)\s*\(", re.MULTILIN
 
 def find_test_gaps(
     patch_text: str,
-    changed_files: List[str],
-) -> List[UncoveredFunction]:
+    changed_files: list[str],
+) -> list[UncoveredFunction]:
     """Find public functions added in the diff that have no corresponding test.
 
     Only checks non-test source files. Skips private functions (starting with _).
@@ -321,7 +319,7 @@ def find_test_gaps(
     # Collect all newly added test function names from the whole diff
     added_tests: set[str] = {m.group(1).lower() for m in _ADDED_TEST_RE.finditer(patch_text)}
 
-    gaps: List[UncoveredFunction] = []
+    gaps: list[UncoveredFunction] = []
     gaps.extend(_find_validator_test_file_gaps(changed_files))
     source_files = [
         f for f in changed_files
@@ -380,7 +378,7 @@ _VALIDATOR_SOURCE_PATHS = {
 _VALIDATOR_TEST_PATH = "drift_gate/tests/test_validator.py"
 
 
-def _find_validator_test_file_gaps(changed_files: List[str]) -> List[UncoveredFunction]:
+def _find_validator_test_file_gaps(changed_files: list[str]) -> list[UncoveredFunction]:
     """Require validator-focused tests when policy validation files change."""
     normalized = {f.replace("\\", "/") for f in changed_files}
     if _VALIDATOR_TEST_PATH in normalized:
@@ -401,8 +399,8 @@ def find_reporter_field_gaps(
     result_dict: dict,
     rendered_outputs: dict[str, str],
     *,
-    ignored_fields: Optional[set[str]] = None,
-) -> List[UncoveredFunction]:
+    ignored_fields: set[str] | None = None,
+) -> list[UncoveredFunction]:
     """Find EvaluationResult fields that are absent from reporter output."""
     ignored = ignored_fields or set()
     aliases = {
@@ -417,7 +415,7 @@ def find_reporter_field_gaps(
         "temporal_warnings": {"temporal warnings", "temporal gate warnings"},
         "violations": {"violations", "contract drift"},
     }
-    gaps: List[UncoveredFunction] = []
+    gaps: list[UncoveredFunction] = []
     for field_name in sorted(result_dict):
         if field_name in ignored:
             continue

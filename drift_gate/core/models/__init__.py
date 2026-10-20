@@ -1,8 +1,12 @@
 from .changed_file import ChangedFile
-from .policy import Policy, Rule, When, Require, Group, Gate
+from .policy import Gate, Group, Policy, Require, Rule, When
 from .result import (
-    EvaluationResult, Violation, UnsatisfiedGroup,
-    SkippedRule, RejectedIgnore, DriftIgnoreDirective,
+    DriftIgnoreDirective,
+    EvaluationResult,
+    RejectedIgnore,
+    SkippedRule,
+    UnsatisfiedGroup,
+    Violation,
 )
 
 __all__ = [

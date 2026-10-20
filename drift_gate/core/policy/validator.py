@@ -5,10 +5,9 @@ PolicyWarning: 계속 진행하되 운영자에게 알릴 사항
 I/O 없음.
 """
 from dataclasses import dataclass, field
-from typing import List
 
-from drift_gate.core.models.policy import Policy
 from drift_gate.core.classification.intensity import VALID_INTENSITIES
+from drift_gate.core.models.policy import Policy
 
 VALID_SEVERITIES = {"blocker", "major", "minor", "nit"}
 
@@ -19,8 +18,8 @@ class PolicyValidationError(Exception):
 
 @dataclass
 class ValidationResult:
-    errors: List[str] = field(default_factory=list)
-    warnings: List[str] = field(default_factory=list)
+    errors: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
 
     @property
     def ok(self) -> bool:
@@ -178,7 +177,7 @@ def validate(policy: Policy) -> ValidationResult:
     return result
 
 
-def _all_covered_by_ignore(pattern: str, ignore_paths: List[str]) -> bool:
+def _all_covered_by_ignore(pattern: str, ignore_paths: list[str]) -> bool:
     """
     패턴이 나타낼 수 있는 대표 경로들이 모두 ignore_paths에 덮이는지 추정.
     정확한 판단은 불가하므로 단순 suffix/prefix 포함 체크로 근사.

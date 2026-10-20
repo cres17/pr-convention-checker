@@ -1,16 +1,16 @@
 """Repository policy controls are fixed independently of the real diff's result."""
-from pathlib import Path
 import json
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
 from drift_gate.adapters.policy_loader import load_policy
 from drift_gate.core.engine import run
 from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.tests.test_git_collection import repository, git
+from drift_gate.tests.test_git_collection import git, repository
 from scripts.check_self import inspect_repository
 
 ROOT = Path(__file__).resolve().parents[2]

@@ -3,9 +3,9 @@
 With ``git diff <base>``, files the base branch gained after this branch forked appear as this
 branch's deletions, so ``check --base main`` on a branch behind main reported a false BLOCKER.
 """
-from hashlib import sha256
 import json
 import subprocess
+from hashlib import sha256
 
 import pytest
 

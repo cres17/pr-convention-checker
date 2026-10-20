@@ -1,8 +1,8 @@
 """Regression and negative-control checks for the recorded development gaps."""
 import json
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -14,7 +14,7 @@ from drift_gate.core.engine import run
 from drift_gate.core.models.changed_file import ChangedFile
 from drift_gate.core.models.policy import Policy
 from drift_gate.core.models.result import DriftIgnoreDirective
-from drift_gate.core.policy.loader import load_policy_from_dict, PolicyLoadError
+from drift_gate.core.policy.loader import PolicyLoadError, load_policy_from_dict
 
 ROOT = Path(__file__).resolve().parents[2]
 SUITE = json.loads((ROOT / "docs/assessment/challenge-v1.json").read_text())
@@ -161,6 +161,7 @@ def review(login, state, *, commit=HEAD, index=1):
 
 def verify(fake, *, context_head=HEAD, policy_sha=POLICY_SHA, on=None, expires=None):
     from datetime import date
+
     from drift_gate.core.models.evaluation_context import EvaluationContext
     policy = api_policy(require_codeowners_approval=True)
     body = "drift-ignore: api-doc\nreason: maintenance\napproved-by: arbitrary-text"
@@ -208,6 +209,7 @@ def test_envelope_binds_head_policy_and_validity_window():
 def test_forged_envelope_and_text_approval_are_not_authority():
     from dataclasses import replace
     from datetime import date
+
     from drift_gate.core.models.evaluation_context import EvaluationContext
     policy = api_policy(require_codeowners_approval=True)
     directives = verify_ignores(FakeGitHub(), 1, parse_drift_ignores("drift-ignore: api-doc\nreason: maintenance"),

@@ -5,9 +5,8 @@ API 키 없으면 fallback checklist 유지.
 """
 import json
 import re
-import urllib.request
 import urllib.error
-from typing import List, Optional, Tuple
+import urllib.request
 
 from drift_gate.core.models.result import EnrichmentMetrics, EvaluationResult, Violation
 
@@ -129,7 +128,7 @@ class ClaudeEnricher:
 
         return drafts
 
-    def _call_api(self, prompt: str) -> Tuple[Optional[str], Optional[EnrichmentMetrics]]:
+    def _call_api(self, prompt: str) -> tuple[str | None, EnrichmentMetrics | None]:
         """Call Claude API and return (response_text, usage_metrics).
 
         Returns a tuple of (text, metrics). Either may be None on partial failure.
@@ -174,7 +173,7 @@ class ClaudeEnricher:
             return text, metrics
 
 
-def _build_summary(violations: List[Violation]) -> str:
+def _build_summary(violations: list[Violation]) -> str:
     lines = []
     for v in violations:
         lines.append(
@@ -191,7 +190,7 @@ def _build_prompt(summary: str) -> str:
     return f"## 정책 위반 목록\n\n{summary}"
 
 
-def _extract_section(content: str, rule_id: str) -> Optional[str]:
+def _extract_section(content: str, rule_id: str) -> str | None:
     m = re.search(
         r"###[^\n]*" + re.escape(rule_id) + r"[^\n]*\n(.*?)(?=###|\Z)",
         content,
@@ -200,7 +199,7 @@ def _extract_section(content: str, rule_id: str) -> Optional[str]:
     return m.group(1).strip() if m else None
 
 
-def _parse_checklist(section: str) -> List[str]:
+def _parse_checklist(section: str) -> list[str]:
     return [
         m.group(1).strip()
         for m in re.finditer(r"-\s*\[\s*\]\s*(.+)", section)
