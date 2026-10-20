@@ -711,7 +711,7 @@ GitHub Action은 기본으로 PR 기준(base) 커밋의 `.drift-gate.yml`을 읽
 | `base`, 기준 커밋에 정책 없음(처음 도입하는 PR) | PR의 정책. 이 PR의 규칙은 보호받지 못한다는 경고를 남긴다 | `workspace-no-base-policy` |
 | `workspace` | PR의 정책. 경고를 남긴다 | `workspace` |
 
-기준 정책이 YAML로 읽히지 않으면 평가하지 않고 실패한다. PR이 정책을 바꾼 경우 `core/policy/guard.py::weakening_reasons`의 사유를 경고로 보여 준다(판정에는 기준 정책만 쓴다). 정책 파일이 워크스페이스 밖이면 거부한다.
+기준 정책과 PR 정책은 줄바꿈 방식(LF/CRLF)을 맞춰 비교한다. Windows 체크아웃의 CRLF 변환이 정책 변경으로 보이지 않게 하기 위해서다. 기준 정책이 YAML로 읽히지 않으면 평가하지 않고 실패한다. PR이 정책을 바꾼 경우 `core/policy/guard.py::weakening_reasons`의 사유를 경고로 보여 준다(판정에는 기준 정책만 쓴다). 정책 파일이 워크스페이스 밖이면 거부한다.
 
 `GITHUB_OUTPUT`에는 값에 줄바꿈이 있으면 `key<<구분자` 형식으로 기록한다. 이전에는 줄바꿈이 있는 값(정책 오류 메시지 등)이 다른 출력 이름을 끼워 넣을 수 있었다.
 

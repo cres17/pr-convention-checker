@@ -50,16 +50,22 @@ def select_policy(gh, policy_path, workspace, mode, base_oid):
                                'so this run cannot protect against a policy written in the same change'])
     base_policy = load_policy_from_text(base_source)
     require_check_policy(base_policy)
+    # A checkout with CRLF conversion (Windows runners) must not look like an edit of the policy.
+    changed = workspace_source is None or _lf(workspace_source) != _lf(base_source)
     if workspace_source is None:
         reasons = ['policy file removed by this pull request']
     else:
-        reasons = weakening_reasons(base_policy, workspace_policy) if workspace_source != base_source else []
+        reasons = weakening_reasons(base_policy, workspace_policy) if changed else []
     notes = []
-    if workspace_source != base_source:
+    if changed:
         notes.append(f'{relative} is changed by this pull request; it is judged by the base policy')
     if reasons:
         notes.append('the changed policy would weaken the base policy: ' + '; '.join(reasons))
     return SelectedPolicy(base_source, base_policy, 'base', notes, reasons)
+
+
+def _lf(text):
+    return text.replace('\r\n', '\n').replace('\r', '\n')
 
 
 __all__ = ['MODES', 'PolicyLoadError', 'SelectedPolicy', 'select_policy']

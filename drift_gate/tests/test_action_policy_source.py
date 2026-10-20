@@ -52,6 +52,12 @@ def test_unchanged_policy_has_no_notes(tmp_path):
     assert selected.origin == 'base' and selected.notes == [] and selected.weakening == []
 
 
+def test_line_ending_conversion_is_not_a_policy_change(tmp_path):
+    (tmp_path / '.drift-gate.yml').write_bytes(STRICT.replace('\n', '\r\n').encode())
+    selected = select_policy(FakeGitHub({'.drift-gate.yml': STRICT}), '.drift-gate.yml', str(tmp_path), 'base', 'b' * 40)
+    assert selected.origin == 'base' and selected.notes == [] and selected.weakening == []
+
+
 def test_policy_deleted_by_the_pr_is_reported_and_base_policy_still_applies(tmp_path):
     selected = select_policy(FakeGitHub({'.drift-gate.yml': STRICT}), '.drift-gate.yml', workspace(tmp_path, None), 'base', 'b' * 40)
     assert [r.id for r in selected.policy.rules] == ['api-sync']
