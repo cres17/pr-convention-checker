@@ -682,3 +682,7 @@ path `stat`과 handle `fstat`의 ctime 의미가 다를 수 있어 두 API를 �
 - 실행 단계 전이표(`core/execution/lifecycle.py`)의 타입 표기만 고쳤다. 허용 전이는 같다.
 - 사실 비교(`core/contracts/delta.py`)는 `FactBasis`를 필드별로 만들고, 어느 쪽 가능 범위라도 없으면 `UnknownDelta`, 아니면 `BoundedDelta`를 반환한다. 이전과 같은 분기다.
 - 정책 로더(`core/policy/loader.py`)는 None 입력을 `PolicyLoadError('policy: must be a mapping')`로 거부한다. 이전에도 스키마 검사에서 같은 메시지로 거부됐다.
+
+## 2026-10-20 타입 표기·import 정렬
+
+ruff 자동 수정(`I`, `UP` 규칙)으로 판정·분석·CLI 코드의 import 순서와 타입 표기(`List[X]` → `list[X]`, `Optional[X]` → `X | None`)만 바꿨다. 입력 형식, 출력 JSON, 종료 코드는 그대로다. 동작과 계약은 바뀌지 않는다. 전체 테스트(2148개)와 `mypy drift_gate/core`로 확인했다.

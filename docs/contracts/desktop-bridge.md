@@ -93,3 +93,7 @@ policy, index attributes, info attributes, diff config를 실제로 변형하고
 - 확인창이 열려 있는 동안 들어온 설정 요청은 `error` 이벤트로 거부한다. 확인하는 사이 검사 결과가 바뀌면 저장하지 않고 재검사를 안내한다.
 - `DRIFT_GATE_TEARDOWN_TRACE`가 켜져 있으면 `removed-key-confirm accepted=… clicked=save|cancel|none`을 기록한다.
 - 자동 테스트는 오프스크린 Qt에서 실제 대화상자에 취소·Esc·닫기·저장을 보내 확인한다. macOS 기본 경고창의 동작은 오프스크린에서 재현되지 않으므로 설치본 수동 확인이 별도로 필요하다.
+
+## 2026-10-20 타입 표기·import 정렬
+
+ruff 자동 수정(`I`, `UP` 규칙)으로 데스크톱 브리지 코드의 import 순서와 타입 표기(`List[X]` → `list[X]`, `Optional[X]` → `X | None`)만 바꿨다. 이벤트·편집 계약은 그대로다. 동작과 계약은 바뀌지 않는다. 전체 테스트(2148개)와 `mypy drift_gate/core`로 확인했다.
