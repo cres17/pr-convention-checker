@@ -1,0 +1,415 @@
+{
+ "protocol": [
+  "protocol.md",
+  "protocol-v2.md"
+ ],
+ "repos": {
+  "open-webui/open-webui": {
+   "branch": "dev",
+   "window_start": "2026-07-01",
+   "window_extended_to": [],
+   "pr_commits": 1020,
+   "eligible": 952,
+   "excluded_reasons": {
+    "no-code-file": 20,
+    "too-many-lines": 45,
+    "too-many-files": 3
+   },
+   "head": "9cbd27011b1d1842f52cbf91b4b5764b5820b52b",
+   "selected": [
+    {
+     "pr": 30080,
+     "commit": "c2f11edb2f433b272bcc605c4cfb787c178b1a94",
+     "parent": "f5967aebd7f17c99e1be2b4c9c506a7083e8e536",
+     "author": "G30",
+     "committed_at": "2026-09-21T08:15:12-04:00",
+     "title": "fix: keep a workspace model's base model when cloning it from the admin Models settings and hide Clone for arena models (#30080)",
+     "files": 2,
+     "lines": 4,
+     "code_files": 2,
+     "order_key": "0064bdb64f25491341fa6392f8b501887f8e3c05fc5e4133aba73b1683abf347"
+    },
+    {
+     "pr": 27359,
+     "commit": "484fb6174381ccf0d8d7d11780166027fe7576df",
+     "parent": "9a49b271aaf5d6eeaec24ab974be38a8c68ddd76",
+     "author": "Classic298",
+     "committed_at": "2026-07-23T18:17:41-05:00",
+     "title": "perf: make streamed content accumulation genuinely linear (#27359)",
+     "files": 1,
+     "lines": 19,
+     "code_files": 1,
+     "order_key": "008905ffee254943dfe575bf3a950cc692672ca3f75b2aaa4d1f9af6cba2272f"
+    },
+    {
+     "pr": 32170,
+     "commit": "2cdf015217e32b75eca89078ebfd1e6755f5aadf",
+     "parent": "88b3f68a1f318a8f5cd4131f9cf4e2e9997daece",
+     "author": "Classic298",
+     "committed_at": "2026-10-10T19:49:05+04:00",
+     "title": "fix: Browser Notifications switch stays on after the browser denies permission (#32170)",
+     "files": 1,
+     "lines": 7,
+     "code_files": 1,
+     "order_key": "00952bfe346a72db90f3be330788499da4de218307a2ece63878430ff5749ace"
+    },
+    {
+     "pr": 32111,
+     "commit": "e1cf0810cf6e21d0d972cf034f960e0dfba4db35",
+     "parent": "b93e8a25e1132807eae0f663e0074f3c2190fb25",
+     "author": "G30",
+     "committed_at": "2026-10-09T10:47:13+04:00",
+     "title": "i18n: fill missing Azerbaijani (az-AZ) translations (#32111)",
+     "files": 1,
+     "lines": 534,
+     "code_files": 1,
+     "order_key": "0099e64f31d2b974b92924aa7e16d3b4dae07026fb95f9a1dbcddab433ed9e5b"
+    },
+    {
+     "pr": 28858,
+     "commit": "061f5e3a6d1e0ffaa6b1b396e08bb0932c111b87",
+     "parent": "d7674c51744fb5d28020bbccd88e75865880d6a3",
+     "author": "Classic298",
+     "committed_at": "2026-08-31T01:18:05-04:00",
+     "title": "perf: stop re-parsing the whole tool-argument buffer on every streamed chunk (#28858)",
+     "files": 1,
+     "lines": 6,
+     "code_files": 1,
+     "order_key": "01e0d4a50295569f98ef3f34f3d9e13e2b46903b21fb1c7063bda088bad0ae30"
+    },
+    {
+     "pr": 31577,
+     "commit": "9b45bedeaf9b7aefa91c2ce0538ba8c46410ba9e",
+     "parent": "028dab8f1fea8e6719af256adeea2df472c3a8ae",
+     "author": "Classic298",
+     "committed_at": "2026-09-30T19:02:37+04:00",
+     "title": "fix: check the Channels permission when a channel automation runs (#31577)",
+     "files": 1,
+     "lines": 7,
+     "code_files": 1,
+     "order_key": "01e37b5b0a5c270ae5cce760b7a92c057d40d77c92a761c748191e32f07cc3ed"
+    },
+    {
+     "pr": 28260,
+     "commit": "d10d552117e7f81b35e0bb76411591b6d3a3eee2",
+     "parent": "178ccb30e1253ea727fe5ccbb5cc3ca3832dc70b",
+     "author": "G30",
+     "committed_at": "2026-08-10T20:44:32-06:00",
+     "title": "fix(chats): surface the error message instead of [object Object] (#28260)",
+     "files": 1,
+     "lines": 72,
+     "code_files": 1,
+     "order_key": "020c3fdc715a1dab1547fe519c41f1c988cb45d8e803049d6ce8286f72520226"
+    },
+    {
+     "pr": 32077,
+     "commit": "798d45da01bc98ac7f471035d905f0a9839dcda2",
+     "parent": "7e309380bc076cd0d90a122547a30778f4a87f3f",
+     "author": "G30",
+     "committed_at": "2026-10-08T19:39:00+04:00",
+     "title": "i18n: fill missing Romanian (ro-RO) translations (#32077)",
+     "files": 1,
+     "lines": 180,
+     "code_files": 1,
+     "order_key": "026f1e8b873f3bfbce43333c15f6970b5cb08367ab3e5b24e0dc4df7dd2cb5a1"
+    },
+    {
+     "pr": 31881,
+     "commit": "273180a0d7927467bd99e3f7d1c086aa49369ff4",
+     "parent": "7dd9fc70765181a532f51fdbac996718fc144d50",
+     "author": "Classic298",
+     "committed_at": "2026-10-05T11:15:06+04:00",
+     "title": "fix: Read Aloud and auto-playback ignore the Speech Playback Speed setting (#31881)",
+     "files": 1,
+     "lines": 1,
+     "code_files": 1,
+     "order_key": "028081f6461970627f33e3968bdda04054d321d8cfade4122b58aab019e24146"
+    },
+    {
+     "pr": 32420,
+     "commit": "8bddf9bc62c3ffcaa3e6433bc5ac0f1d04a94421",
+     "parent": "44953df70ed758a6321f7a2e139c93aca29129f1",
+     "author": "Classic298",
+     "committed_at": "2026-10-14T23:15:25+04:00",
+     "title": "fix: memory reindex ignores the Embedding Concurrent Requests limit (#32420)",
+     "files": 1,
+     "lines": 22,
+     "code_files": 1,
+     "order_key": "02a8eb5f3f600a2ff06278f7b52e698ea3d82135e83a4a65daaa2a3887173158"
+    }
+   ]
+  },
+  "langflow-ai/langflow": {
+   "branch": "main",
+   "window_start": "2026-07-01",
+   "window_extended_to": [],
+   "pr_commits": 32,
+   "eligible": 25,
+   "excluded_reasons": {
+    "too-many-lines": 3,
+    "no-code-file": 3,
+    "too-many-files": 3
+   },
+   "head": "972d56c47d3830d17060ee85cfaad152df823041",
+   "selected": [
+    {
+     "pr": 14605,
+     "commit": "dc39e2a72409a14404b2baf9dcb6c25f01b0dd08",
+     "parent": "48aac8b7445a009132b3c5ce16412ec7d8e2c82f",
+     "author": "Eric Hare",
+     "committed_at": "2026-08-16T08:13:15-07:00",
+     "title": "ci: run backend tests for provider bundle changes (#14605)",
+     "files": 1,
+     "lines": 4,
+     "code_files": 1,
+     "order_key": "14b73ad384dbae44931549a038d492292b49fd2a35812d8da1830e5e1bad9912"
+    },
+    {
+     "pr": 14247,
+     "commit": "464f879652e8150a9853fca57f591b36bf28cae9",
+     "parent": "e550bc077e853d14a3b3b6dfc996508c60454bfd",
+     "author": "李政达",
+     "committed_at": "2026-07-27T06:44:40-07:00",
+     "title": "fix(mem0): defer client import during startup (#14247)",
+     "files": 2,
+     "lines": 55,
+     "code_files": 1,
+     "order_key": "197a1d52eac375f679bb9b4df4bd60a394f6382721546b6915dc3708959ee524"
+    },
+    {
+     "pr": 14234,
+     "commit": "42fe47d1a45d607d1bcc334837d8231723170f08",
+     "parent": "ce17f022bed0eac943a723b9b6c74a023e819b60",
+     "author": "Lucas Oliveira",
+     "committed_at": "2026-07-27T06:43:51-07:00",
+     "title": "fix: increment previous_content with content streamed (#14234)",
+     "files": 1,
+     "lines": 2,
+     "code_files": 1,
+     "order_key": "1ab1a4b4974b9c649e720a09c454514c8b537a28ffe283d5e26ec10f28488b45"
+    },
+    {
+     "pr": 14236,
+     "commit": "c4276eaa6d1aba45e4da3a2b9746521d8b3f2234",
+     "parent": "42fe47d1a45d607d1bcc334837d8231723170f08",
+     "author": "Lucas Oliveira",
+     "committed_at": "2026-07-27T06:43:51-07:00",
+     "title": "fix: add default fallback to instantiation.py and removed default ollama base url from components (#14236)",
+     "files": 16,
+     "lines": 376,
+     "code_files": 11,
+     "order_key": "1b18c0ee94e620419dcba049e7be827ea5b23209f7868682fed8981bf482a7fd"
+    },
+    {
+     "pr": 14244,
+     "commit": "20a39b8aa8c670a4b36e151f6881be44db911483",
+     "parent": "36a230ab57284cee5bae196c8c6aba6764ae6b69",
+     "author": "Cristhian Zanforlin Lousa",
+     "committed_at": "2026-07-27T06:43:51-07:00",
+     "title": "fix(settings): enable agentic experience by default (#14244)",
+     "files": 18,
+     "lines": 291,
+     "code_files": 15,
+     "order_key": "25c61f1a7cb2e544ba4b2f6b9f54297bd8ef2a738e30c6a408137fd7791f80a9"
+    },
+    {
+     "pr": 14222,
+     "commit": "0a8ef930283447d6411b71ebf3df3c627ea5e8a8",
+     "parent": "477ac1cfb4ced353e3d9fb5cfbc01652b6b684f6",
+     "author": "Eric Hare",
+     "committed_at": "2026-07-22T21:36:33-07:00",
+     "title": "fix(ci): poll PyPI before publishing nightly (#14222)",
+     "files": 2,
+     "lines": 108,
+     "code_files": 2,
+     "order_key": "2a3d1086bf76dddd1f128fbb1f1c6eb7b0cd671ff0a7bc8c085ca798d9e53200"
+    },
+    {
+     "pr": 14531,
+     "commit": "976ec789d2886a86de109c044d089d68e96c9a35",
+     "parent": "66659c4f05ab190c4dcc07ec34125abcb768e1c4",
+     "author": "Eric Hare",
+     "committed_at": "2026-08-12T15:34:27-07:00",
+     "title": "fix(docker): pin Node and npm major across all image variants (#14531)",
+     "files": 5,
+     "lines": 79,
+     "code_files": 5,
+     "order_key": "2b799e62f86879d55ff45c427f84409a3704ab9e09e0f93b2c2dc01e8681ad70"
+    },
+    {
+     "pr": 14649,
+     "commit": "7a975c596eca6b596f0c19bd1374843ddbec12e2",
+     "parent": "12b09ff4113bd1726a2ad56e96e67963312406f8",
+     "author": "Eric Hare",
+     "committed_at": "2026-08-18T17:04:37-07:00",
+     "title": "fix(ci): keep skipped package releases green and stop sending target_commitish (#14649)",
+     "files": 1,
+     "lines": 31,
+     "code_files": 1,
+     "order_key": "36960d780a4f368818228efe4622f41e3e7f82f8bd95a558e719ca1a53156bae"
+    },
+    {
+     "pr": 14352,
+     "commit": "873d5585929fdad8bddcd29b06c8a15bfc3ffc94",
+     "parent": "48aac68e99e436520e901a4e3e05e4d6d183bb9c",
+     "author": "Eric Hare",
+     "committed_at": "2026-07-30T16:54:24-07:00",
+     "title": "fix(ci): align nightly workflows with langflow-base (#14352)",
+     "files": 7,
+     "lines": 387,
+     "code_files": 6,
+     "order_key": "4566a6790f7423c9bf009ea07be6fa9a782dde1243eab830020c0bb1cae9e271"
+    },
+    {
+     "pr": 14221,
+     "commit": "477ac1cfb4ced353e3d9fb5cfbc01652b6b684f6",
+     "parent": "48dc70308b23c0fa2af29d8db899219f20a57c84",
+     "author": "Eric Hare",
+     "committed_at": "2026-07-22T21:13:33-07:00",
+     "title": "ci: fix flaky Playwright report aggregation (#14221)",
+     "files": 1,
+     "lines": 9,
+     "code_files": 1,
+     "order_key": "482d71e8dfef2d79e94542a8227de8c97db073705439a6d725c82de4430f3629"
+    }
+   ]
+  },
+  "BerriAI/litellm": {
+   "branch": "main",
+   "window_start": "2026-07-01",
+   "window_extended_to": [],
+   "pr_commits": 2637,
+   "eligible": 999,
+   "excluded_reasons": {
+    "too-many-files": 278,
+    "bot": 1191,
+    "too-many-lines": 453,
+    "no-code-file": 354,
+    "revert": 8
+   },
+   "head": "2773ef0084b85bced936d4174b10b1d70df6ae65",
+   "selected": [
+    {
+     "pr": 41339,
+     "commit": "399420bb25d53edfa9fbb67b09ebe23f5150491b",
+     "parent": "54e1b9e3dec007bb45a08239df019d2e1f35a6a4",
+     "author": "kerry-berri",
+     "committed_at": "2026-09-15T19:16:24-07:00",
+     "title": "Merge pull request #41339 from BerriAI/litellm_fix_fireworks_cost_components",
+     "files": 2,
+     "lines": 165,
+     "code_files": 1,
+     "order_key": "010384753f2333ae81fb6f6c4b00c67043377d52e72cee66bcfbed5a481a2b3c"
+    },
+    {
+     "pr": 42239,
+     "commit": "32133a329c1659908466326b2c87accfedae14d4",
+     "parent": "f008c018a324b56c18e7865f94d490bb4cb6f23c",
+     "author": "Yassin Kortam",
+     "committed_at": "2026-09-21T09:53:41-05:00",
+     "title": "Merge pull request #42239 from BerriAI/litellm_agentcore_a2a_message_stream",
+     "files": 2,
+     "lines": 34,
+     "code_files": 1,
+     "order_key": "0113384c59d2365400c649047daf5286e518c529179bea4eda2c4e27b4960a18"
+    },
+    {
+     "pr": 41583,
+     "commit": "711a1924d4873973078867c737cfab85fa08a94f",
+     "parent": "bc6b540205a6f7a0cafc436ae9b67d6a74f1a4ca",
+     "author": "yucheng-berri",
+     "committed_at": "2026-09-18T16:00:27-07:00",
+     "title": "Merge pull request #41583 from BerriAI/litellm_applied_guardrails_blocker",
+     "files": 8,
+     "lines": 481,
+     "code_files": 2,
+     "order_key": "023c6c6435a0e299b0e494109d90289f1f27f81069ba76315bd244280afbe0ef"
+    },
+    {
+     "pr": 42148,
+     "commit": "b4d9231b31cac216affb1eff052b6e1616a63642",
+     "parent": "c25601fb5fdc8f2f83a13a21131242177346224d",
+     "author": "joshua-berri",
+     "committed_at": "2026-09-20T19:36:17+00:00",
+     "title": "Merge pull request #42148 from BerriAI/litellm_mcp_public_client_7740",
+     "files": 5,
+     "lines": 76,
+     "code_files": 2,
+     "order_key": "023de852cf0eece0fb218734fefe195ec9852254e6636bf60e954f068d3695d8"
+    },
+    {
+     "pr": 41462,
+     "commit": "79fc5153d3e4cc3c20319230316ff466b8f66fc9",
+     "parent": "365c6de875f591cbc4ffb75ca180a5e267f60266",
+     "author": "Yassin Kortam",
+     "committed_at": "2026-09-16T13:23:05-07:00",
+     "title": "Merge pull request #41462 from BerriAI/litellm_otel_promote_nested_request_metadata_keys",
+     "files": 8,
+     "lines": 241,
+     "code_files": 5,
+     "order_key": "025a604796ca36984d621dc01366b8e79ff91db06df8f3091b21ce5a1f437506"
+    },
+    {
+     "pr": 41658,
+     "commit": "48c4204b43eefab05cc26c9c52bce7411e804747",
+     "parent": "444d345d690b9dec3b1200943b29146cbafb6d03",
+     "author": "Mateo Wang",
+     "committed_at": "2026-09-18T08:48:05-07:00",
+     "title": "Merge pull request #41658 from BerriAI/litellm_remove_orphaned_use_delete_project_hook",
+     "files": 3,
+     "lines": 142,
+     "code_files": 2,
+     "order_key": "026d3d4e2d337b594068b140db5114a71db3dbe8fcb6ef99eb50ab991516e078"
+    },
+    {
+     "pr": 41915,
+     "commit": "4487a9915b30b7188f254630bb0f0294800d3072",
+     "parent": "bd82d73ca124c3b7b5e67a17fcd0aa7a6412d4ec",
+     "author": "Yassin Kortam",
+     "committed_at": "2026-09-19T10:22:25-07:00",
+     "title": "Merge pull request #41915 from BerriAI/litellm_distributed_tpm_shared_redis_check",
+     "files": 2,
+     "lines": 140,
+     "code_files": 1,
+     "order_key": "028abef0977dbe382e23279f258d395cbfa098c23760d0410f0e003d876b1f03"
+    },
+    {
+     "pr": 41649,
+     "commit": "1f50923211d328a10f96f896fa8dbd7f8b974fb2",
+     "parent": "aa9a08959a1a9412407eef1f3a934e62225edac3",
+     "author": "Mateo Wang",
+     "committed_at": "2026-09-18T08:46:57-07:00",
+     "title": "Merge pull request #41649 from BerriAI/litellm_remove_dead_compareui_modelselector",
+     "files": 2,
+     "lines": 146,
+     "code_files": 1,
+     "order_key": "029223abb2e0d578386db8f24c58e02d2027fc198abddcb02ff006a5e956126d"
+    },
+    {
+     "pr": 40807,
+     "commit": "6b54238083a5e95b47b8845a0d29a7ae6b57c0f2",
+     "parent": "2edda5aec39466fb912f671df8bd1f248cd73f48",
+     "author": "ryan-crabbe-berri",
+     "committed_at": "2026-09-18T12:58:41-07:00",
+     "title": "Merge pull request #40807 from BerriAI/litellm_service_account_team_key_mgmt",
+     "files": 7,
+     "lines": 472,
+     "code_files": 4,
+     "order_key": "0295c69fd85fe9af01df04a341ba7c3bfdf52f06353900d28e2b8dc9fb12e367"
+    },
+    {
+     "pr": 43512,
+     "commit": "85dc7cb62efa52794982af90164eb19a41140b80",
+     "parent": "7b2cbf6e7f6c22d8d057858187e88c73e5025883",
+     "author": "fedaeho",
+     "committed_at": "2026-09-28T21:46:33-07:00",
+     "title": "fix(proxy): resolve model_group_alias in the zero-cost budget predicate (#43512)",
+     "files": 4,
+     "lines": 284,
+     "code_files": 1,
+     "order_key": "030e6e215e88e418c2fb4ade522f0ddd5f78fd52b37222c69404476729caee66"
+    }
+   ]
+  }
+ }
+}
