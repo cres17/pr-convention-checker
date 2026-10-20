@@ -85,3 +85,11 @@ policy, index attributes, info attributes, diff config를 실제로 변형하고
 - 사이드바 로고는 `desktop-ui/src/components/BrandMark.tsx`의 SVG 경로를 쓴다. 원본 도안은 `docs/assets/brand/drift-gate-mark.svg`다.
 - 화면 글꼴은 Pretendard 공식 subset 정적 글꼴 5종(300·400·500·600·700, `desktop-ui/fonts/`, SIL OFL 1.1)을 수정 없이 화면 빌드에 포함해 오프라인에서도 같은 고딕체로 표시한다. subset은 KS X 1001 한글 2,350자와 라틴 문자 등 3,728자를 담으며, 그 밖의 글자는 OS 기본 고딕으로 표시된다. 파일마다 1MB 아래라 고정 객체 검사의 Git 객체 한도를 넘지 않는다. 라이선스는 `desktop-ui/public/PRETENDARD-LICENSE.txt`로 함께 배포한다.
 - 브리지 명령·이벤트 형식은 바뀌지 않는다.
+
+## 2026-10-20 삭제 키 설정 확인창
+
+- `setRemovedKeyPolicy`는 `QMessageBox`에 직접 추가한 **저장**(AcceptRole)·**취소**(RejectRole) 버튼을 쓰고, `clickedButton()`이 저장 버튼일 때만 정책을 바꾼다. 기본 버튼과 Esc 버튼은 취소다.
+- macOS 기본 경고창 대신 Qt가 그리는 대화상자(`DontUseNativeDialog`)를 모든 OS에서 쓴다. 2026-10-20 macOS arm64 설치본 점검에서 기본 경고창 경로의 취소가 저장을 막지 못했기 때문이다([점검 기록](../assessment/desktop-confirm-2026-10-20/record.md)).
+- 확인창이 열려 있는 동안 들어온 설정 요청은 `error` 이벤트로 거부한다. 확인하는 사이 검사 결과가 바뀌면 저장하지 않고 재검사를 안내한다.
+- `DRIFT_GATE_TEARDOWN_TRACE`가 켜져 있으면 `removed-key-confirm accepted=… clicked=save|cancel|none`을 기록한다.
+- 자동 테스트는 오프스크린 Qt에서 실제 대화상자에 취소·Esc·닫기·저장을 보내 확인한다. macOS 기본 경고창의 동작은 오프스크린에서 재현되지 않으므로 설치본 수동 확인이 별도로 필요하다.

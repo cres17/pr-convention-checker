@@ -106,6 +106,7 @@ class DesktopBridge(QObject):
         self.scan_thread = None
         self.scan_worker = None
         self.review_worker = None
+        self.removed_key_confirming = False
         self.progress_dirty = False
         self._draft_owner = uuid.uuid4().hex
         self._draft_sessions = {}
@@ -480,6 +481,33 @@ class DesktopBridge(QObject):
     def createPolicy(self, path, preset):
         self._run_progress(path, lambda: [('policyCreated', create_policy(path, preset))], 'error')
 
+    def _confirm_removed_key_change(self, change):
+        """Ask before weakening the policy. Only an explicit click on the save button accepts.
+
+        A message box with its own buttons is compared by identity, so closing the dialog, Esc or
+        any other result counts as cancel. The Qt-drawn dialog is used on every platform: the macOS
+        native alert let a cancel through in the installed 2026-10-20 build.
+        """
+        from drift_gate.desktop.cli_entry import trace
+        box = QMessageBox(self.parent())
+        box.setIcon(QMessageBox.Icon.Question)
+        box.setWindowTitle('삭제 키 검사 설정 확인')
+        box.setText(f'{change}합니다.')
+        box.setInformativeText('.drift-gate.yml에 저장되며 정책 약화로 기록됩니다. '
+                               '신뢰 검사는 사람 검토를 요구할 수 있습니다. 계속하시겠습니까?')
+        box.setOption(QMessageBox.Option.DontUseNativeDialog, True)
+        save = box.addButton('저장', QMessageBox.ButtonRole.AcceptRole)
+        cancel = box.addButton('취소', QMessageBox.ButtonRole.RejectRole)
+        box.setDefaultButton(cancel)
+        box.setEscapeButton(cancel)
+        box.exec()
+        clicked = box.clickedButton()
+        accepted = clicked is save
+        trace('removed-key-confirm', accepted=accepted,
+              clicked=('save' if clicked is save else 'cancel' if clicked is cancel else 'none'))
+        box.deleteLater()
+        return accepted
+
     @Slot(str, str)
     def setRemovedKeyPolicy(self, action, key):
         if not self.scan or self.scan_thread or self.review_worker:
@@ -492,15 +520,23 @@ class DesktopBridge(QObject):
             self.emit('error', message='현재 탐지 결과에 없는 삭제 키입니다. 다시 검사해 주세요.')
             return
         change = f'{key} 키를 앞으로 탐지하지 않도록 설정' if action == 'exclude' else '모든 삭제 키 검사 끄기'
-        answer = QMessageBox.question(self.parent(), '삭제 키 검사 설정 확인',
-            f'{change}합니다.\n.drift-gate.yml에 저장되며 정책 약화로 기록됩니다. '
-            '신뢰 검사는 사람 검토를 요구할 수 있습니다.\n계속하시겠습니까?',
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No)
-        if answer != QMessageBox.StandardButton.Yes:
+        if self.removed_key_confirming:
+            # One confirmation at a time: a second request while the dialog is open is refused, not queued.
+            self.emit('error', message='삭제 키 설정 확인창이 이미 열려 있습니다.')
+            return
+        scan = self.scan
+        self.removed_key_confirming = True
+        try:
+            accepted = self._confirm_removed_key_change(change)
+        finally:
+            self.removed_key_confirming = False
+        if not accepted:
+            return
+        if self.scan is not scan or self.scan_thread:
+            self.emit('error', message='확인하는 동안 검사 결과가 바뀌었습니다. 다시 검사해 주세요.')
             return
         try:
-            data = update_removed_key_policy(self.scan.repository, action, key, self.scan.policy_source)
+            data = update_removed_key_policy(scan.repository, action, key, scan.policy_source)
             self.scan = None
             self.review = None
             self.emit('removedKeyPolicySaved', **data)

@@ -841,25 +841,23 @@ def test_committed_save_keeps_good_report_and_original_bad_history(tmp_path, mon
 
 
 @pytest.mark.parametrize('accepted', [False, True])
-def test_removed_key_policy_button_requires_native_confirmation(tmp_path, monkeypatch, accepted):
+def test_removed_key_policy_button_requires_confirmation(tmp_path, monkeypatch, accepted):
     from drift_gate.tests.test_removed_environment import repository
     from drift_gate.desktop.service import scan_repository
-    from PySide6.QtWidgets import QMessageBox
     QApplication.instance() or QApplication([])
     root = repository(tmp_path)
     bridge = DesktopBridge()
     bridge.scan = scan_repository(root)
     before = (root / '.drift-gate.yml').read_text()
     prompts = []
-    def confirm(*args):
-        prompts.append(args)
-        return QMessageBox.StandardButton.Yes if accepted else QMessageBox.StandardButton.No
-    monkeypatch.setattr('drift_gate.desktop.web_app.QMessageBox.question', confirm)
+    def confirm(self, change):
+        prompts.append(change)
+        return accepted
+    monkeypatch.setattr(DesktopBridge, '_confirm_removed_key_change', confirm)
     events = []
     bridge.event.connect(lambda raw: events.append(json.loads(raw)))
     bridge.setRemovedKeyPolicy('exclude', 'LEGACY_TOKEN')
-    assert len(prompts) == 1
-    assert prompts[0][-1] == QMessageBox.StandardButton.No
+    assert prompts == ['LEGACY_TOKEN 키를 앞으로 탐지하지 않도록 설정']
     after = (root / '.drift-gate.yml').read_text()
     if accepted:
         assert 'exclude_removed_keys: [LEGACY_TOKEN]' in after
@@ -877,6 +875,101 @@ def test_removed_key_policy_button_cannot_change_an_unreported_key(tmp_path, mon
     bridge = DesktopBridge()
     bridge.scan = scan_repository(root)
     before = (root / '.drift-gate.yml').read_text()
-    monkeypatch.setattr('drift_gate.desktop.web_app.QMessageBox.question', lambda *args: pytest.fail('unexpected confirmation'))
+    monkeypatch.setattr(DesktopBridge, '_confirm_removed_key_change', lambda *args: pytest.fail('unexpected confirmation'))
     bridge.setRemovedKeyPolicy('disable', 'NOT_REPORTED')
     assert (root / '.drift-gate.yml').read_text() == before
+
+
+def _answer_removed_key_dialog(answer):
+    """Drive the real confirmation dialog once it is shown (offscreen Qt)."""
+    from PySide6.QtCore import QTimer, Qt
+    from PySide6.QtTest import QTest
+    from PySide6.QtWidgets import QMessageBox
+    seen = {}
+
+    def act():
+        box = QApplication.activeModalWidget()
+        if not isinstance(box, QMessageBox):
+            QTimer.singleShot(10, act)
+            return
+        buttons = {button.text(): button for button in box.buttons()}
+        seen['buttons'] = sorted(buttons)
+        seen['default'] = box.defaultButton().text() if box.defaultButton() else None
+        if answer == 'save':
+            buttons['저장'].click()
+        elif answer == 'cancel':
+            buttons['취소'].click()
+        elif answer == 'escape':
+            QTest.keyClick(box, Qt.Key.Key_Escape)
+        else:
+            box.close()
+
+    QTimer.singleShot(0, act)
+    return seen
+
+
+@pytest.mark.parametrize('answer', ['cancel', 'escape', 'close', 'save'])
+def test_removed_key_dialog_saves_only_on_explicit_save(tmp_path, answer):
+    from drift_gate.tests.test_removed_environment import repository
+    from drift_gate.desktop.service import scan_repository
+    QApplication.instance() or QApplication([])
+    root = repository(tmp_path)
+    bridge = DesktopBridge()
+    bridge.scan = scan_repository(root)
+    before = (root / '.drift-gate.yml').read_bytes()
+    events = []
+    bridge.event.connect(lambda raw: events.append(json.loads(raw)))
+    seen = _answer_removed_key_dialog(answer)
+    bridge.setRemovedKeyPolicy('exclude', 'LEGACY_TOKEN')
+    assert seen['buttons'] == ['저장', '취소'] and seen['default'] == '취소'
+    after = (root / '.drift-gate.yml').read_bytes()
+    if answer == 'save':
+        assert b'exclude_removed_keys: [LEGACY_TOKEN]' in after
+        assert events[-1]['type'] == 'removedKeyPolicySaved'
+    else:
+        assert after == before and events == []
+    assert bridge.removed_key_confirming is False
+
+
+def test_second_removed_key_request_while_confirming_is_refused(tmp_path, monkeypatch):
+    from drift_gate.tests.test_removed_environment import repository
+    from drift_gate.desktop.service import scan_repository
+    QApplication.instance() or QApplication([])
+    root = repository(tmp_path)
+    bridge = DesktopBridge()
+    bridge.scan = scan_repository(root)
+    before = (root / '.drift-gate.yml').read_bytes()
+    events = []
+    bridge.event.connect(lambda raw: events.append(json.loads(raw)))
+    calls = []
+
+    def confirm(self, change):
+        calls.append(change)
+        if len(calls) == 1:  # a re-entrant request arrives while the first dialog is open
+            self.setRemovedKeyPolicy('disable', 'LEGACY_TOKEN')
+        return False
+    monkeypatch.setattr(DesktopBridge, '_confirm_removed_key_change', confirm)
+    bridge.setRemovedKeyPolicy('exclude', 'LEGACY_TOKEN')
+    assert len(calls) == 1
+    assert [e['type'] for e in events] == ['error']
+    assert (root / '.drift-gate.yml').read_bytes() == before
+
+
+def test_removed_key_change_is_refused_when_the_scan_changed_during_confirmation(tmp_path, monkeypatch):
+    from drift_gate.tests.test_removed_environment import repository
+    from drift_gate.desktop.service import scan_repository
+    QApplication.instance() or QApplication([])
+    root = repository(tmp_path)
+    bridge = DesktopBridge()
+    bridge.scan = scan_repository(root)
+    before = (root / '.drift-gate.yml').read_bytes()
+    events = []
+    bridge.event.connect(lambda raw: events.append(json.loads(raw)))
+
+    def confirm(self, change):
+        self.scan = scan_repository(root)  # a new scan finished while the dialog was open
+        return True
+    monkeypatch.setattr(DesktopBridge, '_confirm_removed_key_change', confirm)
+    bridge.setRemovedKeyPolicy('exclude', 'LEGACY_TOKEN')
+    assert (root / '.drift-gate.yml').read_bytes() == before
+    assert events[-1]['type'] == 'error'
