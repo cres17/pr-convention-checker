@@ -79,6 +79,7 @@ class GitHubAdapter:
             if len(data) < 100:
                 break
             page += 1
+        self._raw_file_count = len(files)
 
         result = []
         for f in files:
@@ -107,10 +108,20 @@ class GitHubAdapter:
         """변경 파일 + PR description 동시 반환."""
         url = f"{self._base}/repos/{self._repo}/pulls/{pr_number}"
         before = self._get(url)
+        self._raw_file_count = None
         files = self.get_pr_files(pr_number)
         after = self._get(url)
         if before["head"]["sha"] != after["head"]["sha"] or before["base"]["sha"] != after["base"]["sha"]:
             raise RuntimeError("PR changed while collecting files; retry against a stable revision")
+        # The files endpoint lists at most 3000 files. A shorter list than the PR's own count means
+        # changed files were never seen, which must not read as "no contract file changed".
+        expected = after.get("changed_files")
+        collected = getattr(self, "_raw_file_count", None)
+        if isinstance(expected, int) and collected is not None and expected != collected:
+            raise RuntimeError(
+                f"PR reports {expected} changed files but the files API returned {collected}; "
+                "the change set is incomplete (GitHub lists at most 3000 files) and cannot be evaluated"
+            )
         self._snapshot_head = after["head"]["sha"]
         self._snapshot_base = after["base"]["sha"]
         return files, after.get("body") or ""

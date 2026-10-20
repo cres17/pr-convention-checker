@@ -307,6 +307,7 @@ jobs:
 | 입력 | 기본값 | 설명 |
 |---|---|---|
 | `policy_file` | `.drift-gate.yml` | 정책 파일 경로 |
+| `policy_source` | `base` | 판정에 쓰는 정책의 출처. `base`는 PR 기준 커밋의 정책을 읽어 PR이 규칙을 약화할 수 없게 하고, `workspace`는 체크아웃한 PR의 정책을 그대로 씁니다. 기준 커밋에 정책이 없으면(처음 도입하는 PR) PR 정책을 쓰며 `policy_origin` 출력과 경고로 표시합니다 |
 | `post_comment` | `true` | PR 댓글 게시 여부 |
 | `fail_on_blocker` | `true` | 정책 결과가 실패일 때 작업 실패 처리 |
 | `upload_report_artifact` | `true` | 생성한 보고서를 Actions 실행 결과에 보관 |

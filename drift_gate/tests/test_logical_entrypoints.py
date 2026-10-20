@@ -69,7 +69,7 @@ def test_local_cli_mcp_desktop_and_action_match(tmp_path, monkeypatch, capsys, c
     monkeypatch.setattr(action, "GitHubAdapter", Remote)
     monkeypatch.setattr("drift_gate.adapters.github.approvals.verify_ignores", lambda *args, **kwargs: [])
     for name, value in {"GITHUB_TOKEN": "fixture", "REPO": "fixture/repo", "PR_NUMBER": "1",
-                        "GITHUB_WORKSPACE": str(tmp_path), "RUNNER_TEMP": str(tmp_path),
+                        "GITHUB_WORKSPACE": str(tmp_path), "POLICY_SOURCE": "workspace", "RUNNER_TEMP": str(tmp_path),
                         "POST_COMMENT": "false", "ANTHROPIC_API_KEY": "", "GITHUB_EVENT_PATH": "",
                         "GITHUB_OUTPUT": "", "GITHUB_STEP_SUMMARY": ""}.items():
         monkeypatch.setenv(name, value)

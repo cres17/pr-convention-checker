@@ -107,22 +107,25 @@ Change intensity describes **how deeply** a file was changed. Rules can require 
 
 Set `min_change_intensity` in the `when:` clause of a rule.
 
-### Intensity Values (ordered low to high)
+### Intensity Values and Ranks
 
-| Level | Description | When to Use |
+`min_change_intensity` compares **ranks**, not kinds. A rule fires when the file's classified intensity has a rank greater than or equal to the configured value's rank. Several kinds share a rank, so a threshold also fires for every other kind with the same or a higher rank. For example `min_change_intensity: db-schema-change` (rank 3) also fires for a route, auth, CI-secret, CLI or export change. To match one exact kind, use a typed `trigger` (`api-route`, `env-key`) instead; see [content verification](content-verification.md).
+
+| Rank | Level | Description |
 |---|---|---|
-| `comment-only` | Only comments/docstrings changed | Skip evaluation entirely for docs-in-code changes |
-| `impl-only` | Implementation lines changed, no signature change | Skip for pure internal refactors |
-| `signature-change` | Function/method signature changed | Trigger on public API boundary changes |
-| `export-added` | New public export added | Trigger when new symbols become public |
-| `docs-only` | Only documentation files changed | Equivalent to `docs-only` change type |
-| `tests-only` | Only test files changed | Equivalent to `test-only` change type |
-| `config-key-added` | New configuration key or env variable added | Trigger when deployment config changes |
-| `route-contract-change` | Route handler or schema changed | Trigger API contract rules |
-| `db-schema-change` | DB model or migration changed | Trigger DB runbook rules |
-| `auth-policy-change` | Auth/RBAC/permission policy changed | Trigger security docs rules |
-| `ci-secret-change` | CI secret or deployment credential changed | Trigger ops runbook rules |
-| `public-cli-change` | CLI command or flag changed | Trigger README/help doc rules |
+| -1 | `any` | No threshold (default) |
+| 0 | `comment-only` | Only comments/docstrings changed |
+| 1 | `impl-only` | Implementation lines changed, no signature change |
+| 2 | `config-key-added` | New configuration key or env variable added |
+| 2 | `signature-change` | Function/method signature changed |
+| 3 | `auth-policy-change` | Auth/RBAC/permission policy changed |
+| 3 | `ci-secret-change` | CI secret or deployment credential changed |
+| 3 | `db-schema-change` | DB model or migration changed |
+| 3 | `public-cli-change` | CLI command or flag changed |
+| 3 | `route-contract-change` | Route handler or schema changed |
+| 3 | `export-added` | New public export added |
+
+`docs-only` and `test-only` are change types (whole-PR classification), not intensity values; `min_change_intensity` rejects them. A file whose patch is missing, binary or too large is treated as the highest rank because the engine cannot prove the change is small; the rule decision is then `undetermined` rather than a confirmed violation.
 
 ### Example Usage
 

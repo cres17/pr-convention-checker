@@ -375,3 +375,31 @@ class TestParseDriftIgnores:
         ignores = parse_drift_ignores(body)
         assert len(ignores) == 1
         assert ignores[0].reason == "spec updated in separate PR"
+
+
+# ── PR file count must match the PR's own count ──────────────────────────────
+
+class TestCollectedFileCount:
+    @staticmethod
+    def _collect(listed, reported):
+        adapter = _make_adapter()
+        pr = {"head": {"sha": "h"}, "base": {"sha": "b"}, "body": "", **({"changed_files": reported} if reported is not None else {})}
+        pages = iter([_page_of_files(listed)] if listed else [[]])
+
+        def fake_get(url):
+            return pr if url.endswith("/pulls/7") else next(pages)
+
+        with patch.object(adapter, "_get", side_effect=fake_get):
+            return adapter.get_pr_files_and_body(7)
+
+    def test_matching_count_is_accepted(self):
+        files, _ = self._collect(5, 5)
+        assert len(files) == 5
+
+    def test_truncated_listing_is_rejected_not_treated_as_no_change(self):
+        with pytest.raises(RuntimeError, match="incomplete"):
+            self._collect(5, 3500)
+
+    def test_pr_without_count_field_still_works(self):
+        files, _ = self._collect(2, None)
+        assert len(files) == 2

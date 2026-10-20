@@ -73,9 +73,15 @@ def _main(controller, execution, *, token, repo, pr_number, runner_temp, contrac
 
     _log(f"정책 평가 중 ({policy_path})...")
     try:
-        from drift_gate.adapters.policy_loader import read_policy, require_check_policy
-        policy_source, _policy_obj = read_policy(policy_path)
+        from drift_gate.adapters.github_action.policy_source import select_policy
+        from drift_gate.adapters.policy_loader import require_check_policy
+        selected = select_policy(gh, policy_file, workspace, os.environ.get("POLICY_SOURCE", "base").strip().lower() or "base",
+                                 getattr(gh, '_snapshot_base', None))
+        policy_source, _policy_obj = selected.source, selected.policy
         require_check_policy(_policy_obj)
+        _write_github_output({"policy_origin": selected.origin})
+        for _note in selected.notes:
+            print(f"::warning title=Drift Gate policy source::{_escape_workflow_command(_note)}", file=sys.stderr)
         from drift_gate.adapters.execution import digest
         from drift_gate.adapters.github.approvals import verify_ignores
         policy_sha256 = digest(policy_source)
@@ -267,9 +273,17 @@ def _write_github_output(values: dict) -> None:
     github_output = os.environ.get("GITHUB_OUTPUT", "")
     if not github_output:
         return
+    import secrets
     with open(github_output, "a", encoding="utf-8") as f:
         for k, v in values.items():
-            f.write(f"{k}={v}\n")
+            text = str(v)
+            if "\n" in text or "\r" in text:
+                # A value with a line break would start new `name=value` lines, so text that comes from the
+                # pull request (rule ids, paths in error messages) could set other outputs such as `result`.
+                delimiter = f"ghadelim_{secrets.token_hex(16)}"
+                f.write(f"{k}<<{delimiter}\n{text}\n{delimiter}\n")
+            else:
+                f.write(f"{k}={text}\n")
 
 
 def _is_fork_pr(event_path: str, repo: str) -> bool:

@@ -233,7 +233,7 @@ def test_action_main_journals_every_stage_through_comment_publication(tmp_path, 
     monkeypatch.setattr('drift_gate.adapters.github.approvals.verify_ignores', lambda *args, **kwargs: [])
     monkeypatch.setattr(pub, 'CommentApi', lambda *a, **k: fake)
     out = tmp_path / 'outputs'
-    for name, value in {'GITHUB_TOKEN': 'fixture', 'REPO': 'o/r', 'PR_NUMBER': '1', 'GITHUB_WORKSPACE': str(tmp_path),
+    for name, value in {'GITHUB_TOKEN': 'fixture', 'REPO': 'o/r', 'PR_NUMBER': '1', 'GITHUB_WORKSPACE': str(tmp_path), 'POLICY_SOURCE': 'workspace',
                         'RUNNER_TEMP': str(tmp_path), 'POST_COMMENT': 'true', 'ANTHROPIC_API_KEY': '',
                         'GITHUB_EVENT_PATH': '', 'GITHUB_OUTPUT': str(out), 'GITHUB_STEP_SUMMARY': '',
                         'GITHUB_WORKFLOW_REF': 'o/r/ci.yml@x', 'GITHUB_RUN_ID': '9', 'GITHUB_RUN_NUMBER': '2',

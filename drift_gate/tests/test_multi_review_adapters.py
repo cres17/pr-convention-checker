@@ -62,7 +62,7 @@ def test_action_rejects_empty_policy_without_success_report(monkeypatch, tmp_pat
     path = tmp_path / '.drift-gate.yml'
     path.write_text('rules: []\n', encoding='utf-8')
     for name, value in {'GITHUB_TOKEN': 'test', 'REPO': 'owner/repo', 'PR_NUMBER': '1',
-                        'POLICY_FILE': str(path), 'RUNNER_TEMP': str(tmp_path),
+                        'POLICY_FILE': str(path), 'POLICY_SOURCE': 'workspace', 'RUNNER_TEMP': str(tmp_path),
                         'POST_COMMENT': 'false', 'GITHUB_OUTPUT': str(tmp_path / 'outputs')}.items():
         monkeypatch.setenv(name, value)
     monkeypatch.setattr(runner.GitHubAdapter, 'get_pr_files_and_body', lambda *a: ([], ''))

@@ -22,6 +22,13 @@ inputs:
     description: Path to drift gate policy file
     required: false
     default: ".drift-gate.yml"
+  policy_source:
+    description: >-
+      Which copy of the policy judges the pull request. base (default) reads the policy
+      from the PR base commit, so a PR cannot weaken the rules it is judged by; workspace
+      reads the checked-out PR copy (use only when the PR author is trusted).
+    required: false
+    default: "base"
   model:
     description: Claude model ID for checklist enrichment
     required: false
@@ -52,6 +59,9 @@ outputs:
   violation_count:
     description: Total number of violations
     value: ${{ steps.check.outputs.violation_count }}
+  policy_origin:
+    description: Which policy judged the PR (base / workspace / workspace-no-base-policy)
+    value: ${{ steps.check.outputs.policy_origin }}
   comment_url:
     description: URL of the posted PR comment
     value: ${{ steps.check.outputs.comment_url }}
@@ -105,6 +115,7 @@ runs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         REPO: ${{ github.repository }}
         POLICY_FILE: ${{ inputs.policy_file }}
+        POLICY_SOURCE: ${{ inputs.policy_source }}
         MODEL: ${{ inputs.model }}
         POST_COMMENT: ${{ inputs.post_comment }}
         CONTRACT_PROOFS: ${{ inputs.contract_proofs }}
