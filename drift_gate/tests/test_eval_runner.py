@@ -412,3 +412,13 @@ def test_empty_evaluation_fails_before_writing_reports(command, tmp_path, monkey
     assert "No evaluation fixtures found" in capfd.readouterr().err
     assert not (tmp_path / "benchmark.html").exists()
     assert not (tmp_path / "benchmark-reports").exists()
+
+
+def test_benchmark_rejects_a_misspelled_policy_key_like_the_product(tmp_path):
+    from drift_gate.core.policy.loader import PolicyLoadError
+    case = json.loads((FIXTURES / "pr_api_change.json").read_text(encoding="utf-8"))
+    case["policy"]["rules"][0]["severty"] = "major"
+    path = tmp_path / "typo.json"
+    path.write_text(json.dumps(case), encoding="utf-8")
+    with pytest.raises(PolicyLoadError):
+        evaluate_paths([path])

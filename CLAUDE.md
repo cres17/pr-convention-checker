@@ -18,7 +18,7 @@ PR 변경분을 분석해 코드 변경이 팀의 계약 문서(spec/contract/ru
 
 ```
 drift_gate/
-├── core/              ← 순수 로직, I/O 없음, 외부 의존성 없음
+├── core/              ← 순수 로직, I/O 없음. 외부 의존성은 PyYAML뿐(core/policy/loader.py)
 │   ├── models/        ← ChangedFile, Policy, EvaluationResult
 │   ├── classification/ ← 파일 경로 → 변경 유형 분류
 │   ├── policy/        ← .drift-gate.yml 로더 + require.groups 검증
@@ -27,7 +27,7 @@ drift_gate/
 │   ├── gating/        ← pass/warn/fail 판정
 │   └── engine.py      ← 단일 진입점 run()
 │
-├── adapters/          ← 모든 I/O는 여기서만
+├── adapters/          ← 모든 I/O는 여기서만. 아래는 주요 하위 패키지이고, 그 밖에 inspection.py·holdout.py·run_store.py 등 단일 모듈이 많다
 │   ├── github/        ← GitHub API (페이지네이션 포함)
 │   ├── github_action/ ← GitHub Actions 전용 ($GITHUB_OUTPUT 기록)
 │   ├── git/           ← local git diff
@@ -123,6 +123,8 @@ reason: <이유>
 
 ## JSON 출력 계약
 
+실제 최상위 키는 18개(advisories, change_types, enforcement, gate, ignore_audit, no_policy, rejected_ignores, result, rule_decisions, scan_metrics, schema_version, skip, skip_reason, skipped_rules, summary, temporal_warnings, verification, violations)다. 아래는 그중 핵심 일부이며 전체 필드는 `EvaluationResult.to_dict()`(`drift_gate/core/models/result.py`)가 정의한다. 별도의 JSON Schema 파일은 없다.
+
 `EvaluationResult.to_dict()` 스키마:
 
 ```json
@@ -156,7 +158,7 @@ reason: <이유>
 ## CI 게이트 판정
 
 ```
-docs-only / test-only PR        → pass (평가 생략)
+docs-only / test-only PR        → pass (평가 생략). 단 규칙의 when.any_changed에 걸리는 파일이 있으면 평가한다(src/routes/README.md → fail 가능)
 BLOCKER ≥ 1 + fail_on_blocker   → fail
 MAJOR ≥ fail_on_major_count     → fail
 MAJOR ≥ 1 또는 MINOR ≥ 1       → warn

@@ -416,6 +416,7 @@ Python 패키지 버전은 `1.0.0`, Claude 플러그인 버전은 `0.2.0`입니�
 ```bash
 python -m pip install -e '.[dev]'
 python -m pytest -q
+python -m pytest -q --cov=drift_gate --cov-report=term   # 커버리지(선택)
 drift-gate docs-check README.md --json
 drift-gate-eval --recursive --compare-baseline
 ```
@@ -425,6 +426,8 @@ drift-gate-eval --recursive --compare-baseline
 | [CI](.github/workflows/ci.yml) | `main`·`develop`·`ver2` push, `main`·`develop` 대상 PR, 릴리스 게시 | 9개 OS·Python 조합, 필수 Ruff 검사, 자체 정책 검사, 고정 엔진 검사, 벤치마크 |
 | [Benchmark](.github/workflows/benchmark.yml) | `main` push, 릴리스 게시 | 테스트·벤치마크, 보고서 업로드 |
 | [Desktop app build](.github/workflows/desktop-build.yml) | `main`·`ver2` push(앱 관련 경로), 두 브랜치 대상 PR | React 테스트·화면 빌드, Windows·macOS(arm64·Intel) 설치 파일 생성과 실행 확인 |
+
+`[dev]`에는 테스트(pytest·pytest-cov)와 CI가 쓰는 검사 도구(ruff, mypy 1.18.2, types-PyYAML)가 들어 있습니다. 2026-10-21에 Linux·Python 3.13에서 `--cov=drift_gate`로 잰 줄 커버리지는 테스트 파일을 뺀 소스 16,078문장 중 13,989문장(87.0%)이며, 2,187개 통과·5개 건너뜀이었습니다. 이 수치는 줄 실행 여부일 뿐 판정이 맞다는 근거가 아니며, CI에는 커버리지 하한을 두지 않았습니다.
 
 CI는 `drift_gate/core`의 mypy 검사가 실패하면 작업을 실패 처리합니다(2026-10-20부터). strict 검사는 `json_values.py`에만 적용합니다.
 

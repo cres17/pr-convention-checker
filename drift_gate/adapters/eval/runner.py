@@ -17,7 +17,7 @@ from pathlib import Path
 from drift_gate.adapters.ast.analyzer import enrich_semantic_signals
 from drift_gate.core.engine import run
 from drift_gate.core.models.changed_file import ChangedFile
-from drift_gate.core.models.policy import Policy
+from drift_gate.core.policy.loader import load_policy_from_dict
 from drift_gate.core.models.result import DriftIgnoreDirective
 
 DEFAULT_FIXTURE_PATH = Path(__file__).resolve().parents[2] / "tests" / "fixtures"
@@ -699,7 +699,8 @@ def _evaluate_case(
         DriftIgnoreDirective.from_dict(d)
         for d in data.get("drift_ignores", [])
     ]
-    policy = Policy.from_dict(data["policy"])
+    # The same strict loader the product uses: a misspelled key is an error here too, not a silently ignored rule.
+    policy = load_policy_from_dict(data["policy"])
     start = time.perf_counter()
     result = run(changed_files=changed_files, drift_ignores=drift_ignores, policy=policy)
     runtime_seconds = time.perf_counter() - start

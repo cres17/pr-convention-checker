@@ -51,6 +51,13 @@ Wilson 구간은 비율별 계산 참고값이다. 같은 PR의 규칙들이 독
   rules는 정책 규칙의 일부만 선언할 수 있지만, 정책에 없는 ID는 거부한다. 생략한 규칙도 평가·검토 대상에서 빠지지 않는다.
 - 선택: `drift_ignores`, `evaluated_on`(ISO 날짜, 없으면 2026-01-01).
 
+**정책이 요구하는 문서는 사례에 들어 있어야 한다.** `holdout run`은 사례에 적힌 입력만 평가하고 저장소에서 파일을 읽지 않는다.
+`require.groups`가 `content: env-keys`·`api-routes` 등을 쓰면, PR이 바꾸지 않은 `.env.example`·`openapi.json`도 해당 커밋의 내용으로
+`changed_files`에 `status: "unchanged"`로 넣어야 한다. 제품 경로는 `attach_env_documents`가 이 일을 한다. 넣지 않으면 키가 이미
+문서에 있는 PR도 위반으로, 설정 코드와 문서를 함께 바꾼 PR은 `document input unavailable`로 판단 보류되어 엔진이 아니라 수집 코드의
+누락을 재게 된다. 수집 도구는 `adapters/docs/content.py::attach_env_documents`를 그대로 불러 같은 규칙으로 붙이는 것을 권한다
+(`docs/assessment/pr-pilot-2026-10-21/collect.py`가 예다).
+
 저장소의 고정 합성 사례(`adapters/eval`)와 개발 중 본 사례는 holdout이 아니다. 그런 출처는
 `--regression-families`로 지정해 holdout에서 제외한다. 이 저장소에는 holdout 후보 사례 파일이 들어 있지 않으며,
 다른 저장소의 실제 PR에서 직접 수집해야 한다.

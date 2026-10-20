@@ -20,10 +20,12 @@ TYPE_PATTERNS: dict = {
     ],
     "env-config": [
         ".env", ".env.*", ".env.local", ".env.production", ".env.staging",
+        "**/.env", "**/.env.*",
         "config/**", "src/config/**", "**/settings.py", "**/config.py",
     ],
     "workflow-ci": [
         ".github/workflows/**", "Dockerfile", "Dockerfile.*",
+        "**/Dockerfile", "**/Dockerfile.*",
         "infra/**", "terraform/**", "k8s/**", "helm/**",
     ],
     "auth-permission": [
