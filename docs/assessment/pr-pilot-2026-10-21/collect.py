@@ -159,6 +159,22 @@ def changed_files(repo, parent, commit):
     return files
 
 
+def with_required_documents(files, policy, repo, commit):
+    """제품 경로(CLI·Action·불변 검사)와 같은 방식으로 정책이 요구하는 문서를 PR 커밋 시점 내용으로 붙인다.
+
+    protocol-v3: v2의 사례에는 바뀌지 않은 .env.example 같은 필요 문서가 빠져 있어 내용 검사가
+    '문서 입력 없음'으로 보류됐다. 이 함수는 엔진의 attach_env_documents를 그대로 호출한다.
+    """
+    from dataclasses import asdict
+
+    from drift_gate.adapters.docs.content import attach_env_documents
+    from drift_gate.core.models.changed_file import ChangedFile
+    from drift_gate.core.policy.loader import load_policy_from_dict
+    objects = [ChangedFile(**file) for file in files]
+    attached = attach_env_documents(objects, load_policy_from_dict(policy), lambda path: read_blob(repo, commit, path))
+    return [asdict(file) for file in attached]
+
+
 def cases(repos_dir, sample_path):
     if yaml is None:
         sys.exit('PyYAML required')
@@ -170,10 +186,11 @@ def cases(repos_dir, sample_path):
         repo = Path(repos_dir) / cfg['dir']
         policy = yaml.safe_load((here / 'policies' / f"{cfg['policy']}.yml").read_text(encoding='utf-8'))
         for item in info['selected']:
+            files = changed_files(repo, item['parent'], item['commit'])
             out.append({
                 'case_id': f"{name}#{item['pr']}", 'repository': name, 'source_family': name,
                 'policy': policy, 'evaluated_on': item['committed_at'][:10],
-                'changed_files': changed_files(repo, item['parent'], item['commit']),
+                'changed_files': with_required_documents(files, policy, repo, item['commit']),
                 # 스키마가 요구하는 자리표시자다. 기대값이 아니며 정답은 별도 검토 label로 만든다.
                 'expected': {'gate': 'pass', 'rules': {}},
             })
