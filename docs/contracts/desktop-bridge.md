@@ -78,3 +78,10 @@ policy, index attributes, info attributes, diff config를 실제로 변형하고
 진단 JSON은 UTF-8로 읽고 쓴다. 플랫폼 기본 인코딩으로 결과를 해석하지 않는다.
 원본 정책·문서 대조 fixture는 LF/CRLF bytes를 명시하며, Windows의 텍스트 쓰기 변환이
 예상 해시를 바꾸지 않도록 한다. 진단 검증 조건을 플랫폼별로 완화하지 않는다.
+
+## 2026-10-20 앱 아이콘과 글꼴
+
+- 창 아이콘은 화면 빌드 결과(`drift_gate/desktop/web`)의 `driftgate-icon.png`를 `QApplication.setWindowIcon`으로 지정한다. 원본은 `desktop-ui/public/driftgate-icon.png`이며 파일이 없으면 아이콘 없이 실행한다.
+- 사이드바 로고는 `desktop-ui/src/components/BrandMark.tsx`의 SVG 경로를 쓴다. 원본 도안은 `docs/assets/brand/drift-gate-mark.svg`다.
+- 화면 글꼴은 Pretendard 공식 subset 정적 글꼴 5종(300·400·500·600·700, `desktop-ui/fonts/`, SIL OFL 1.1)을 수정 없이 화면 빌드에 포함해 오프라인에서도 같은 고딕체로 표시한다. subset은 KS X 1001 한글 2,350자와 라틴 문자 등 3,728자를 담으며, 그 밖의 글자는 OS 기본 고딕으로 표시된다. 파일마다 1MB 아래라 고정 객체 검사의 Git 객체 한도를 넘지 않는다. 라이선스는 `desktop-ui/public/PRETENDARD-LICENSE.txt`로 함께 배포한다.
+- 브리지 명령·이벤트 형식은 바뀌지 않는다.

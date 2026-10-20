@@ -1,8 +1,11 @@
 <div align="center">
 
-# Drift Gate
-
-**코드 변경에 맞춰 문서도 함께 바뀌었는지 확인합니다.**
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/brand/drift-gate-wordmark-dark.png">
+    <img src="docs/assets/brand/drift-gate-wordmark-light.png" alt="Drift Gate — 코드가 바뀌면 문서도 함께, PR에서 확인합니다" width="520">
+  </picture>
+</h1>
 
 API 명세, 설정 예제, 운영 문서의 누락을 PR에서 점검하는 개발 도구입니다.<br>
 팀의 규칙을 YAML로 정의하고, 로컬 CLI와 GitHub Actions에서 같은 정책으로 검사합니다.

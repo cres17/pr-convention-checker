@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from PySide6.QtCore import QObject, QRunnable, QSettings, QStandardPaths, QThread, QThreadPool, QUrl, Signal, Slot
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtGui import QDesktopServices, QIcon
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineUrlRequestInterceptor
 from PySide6.QtWebEngineWidgets import QWebEngineView
@@ -643,6 +643,9 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName('Cross Agent')
     app.setOrganizationName('Drift Gate')
+    icon = WEB_ROOT / 'driftgate-icon.png'
+    if icon.is_file():
+        app.setWindowIcon(QIcon(str(icon)))
     package_check = len(sys.argv) == 4 and sys.argv[1] == '--verify-package'
     if package_check:
         from drift_gate.desktop.package_check import prepare_check

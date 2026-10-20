@@ -119,8 +119,12 @@ jobs:
           path: |
             build/desktop-pytest.log
             build/desktop-pytest.xml
-      - name: Build native app
-        run: pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --collect-all tree_sitter_language_pack --add-data "drift_gate/adapters/parser_hashes.json:drift_gate/adapters" --add-data "drift_gate/desktop/web:drift_gate/desktop/web" --add-data "build/parser-libraries:drift_gate/grammars" drift_gate/desktop/web_app.py
+      - name: Build native app (macOS)
+        if: runner.os == 'macOS'
+        run: pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --icon docs/assets/brand/DriftGate.icns --collect-all tree_sitter_language_pack --add-data "drift_gate/adapters/parser_hashes.json:drift_gate/adapters" --add-data "drift_gate/desktop/web:drift_gate/desktop/web" --add-data "build/parser-libraries:drift_gate/grammars" drift_gate/desktop/web_app.py
+      - name: Build native app (Windows)
+        if: runner.os == 'Windows'
+        run: pyinstaller --noconfirm --clean --windowed --onedir --name DriftGate --icon docs/assets/brand/DriftGate.ico --collect-all tree_sitter_language_pack --add-data "drift_gate/adapters/parser_hashes.json:drift_gate/adapters" --add-data "drift_gate/desktop/web:drift_gate/desktop/web" --add-data "build/parser-libraries:drift_gate/grammars" drift_gate/desktop/web_app.py
       - name: Seal packaged grammar bytes
         shell: bash
         run: |

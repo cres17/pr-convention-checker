@@ -22,6 +22,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { isProgressEvent, type QueuedProgressEvent } from "./events";
+import BrandMark from "./components/BrandMark";
 import ProjectProgress from "./features/project-progress/ProjectProgress";
 import ViolationGuide from "./features/review/ViolationGuide";
 import ScanImpact from "./features/review/ScanImpact";
@@ -263,7 +264,7 @@ export default function App({
       <aside className="sidebar">
         <div className="brand">
           <span className="brand-mark">
-            <GitBranch size={21} />
+            <BrandMark size={collapsed ? 30 : 34} title="Drift Gate" />
           </span>
           {!collapsed && (
             <div>

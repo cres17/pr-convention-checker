@@ -233,3 +233,5 @@ workflow 변경은 실행 준비다. 새 commit의 원격 실행 결과·artifac
 커밋 이력의 메타데이터를 정리하면서 주소가 바뀌었다. CI의 신뢰 엔진·정책과 버전 비교 스크립트는 같은 파일 내용을 가진 새 커밋을 참조한다. 기존 측정 자료의 커밋 주소는 당시 기록이며, [주소 대응표](commit-ref-map-2026-10-16.json)에서 새 주소를 확인할 수 있다. 측정 결과와 정책 내용 해시는 유지한다.
 
 2026-10-20에 모든 커밋 메시지를 한국어로 다시 쓰면서 주소가 한 번 더 바뀌었다. 파일 내용은 바뀌지 않았다. CI의 신뢰 엔진·정책 참조와 엔진 manifest SHA-256(manifest의 commit 필드만 달라짐)을 새 주소로 갱신했다. 2026-10-16 표의 새 주소는 [2026-10-20 대응표](commit-ref-map-2026-10-20.json)의 왼쪽 값으로 다시 찾는다.
+
+2026-10-20에 데스크톱 패키지에 앱 아이콘을 추가했다. `desktop-build.yml`의 PyInstaller 단계를 macOS(`docs/assets/brand/DriftGate.icns`)와 Windows(`docs/assets/brand/DriftGate.ico`)로 나눴고, Inno Setup 설치 프로그램은 `SetupIconFile`로 같은 `.ico`를 쓴다. 나머지 빌드 인자는 바꾸지 않았다.

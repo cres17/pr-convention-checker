@@ -82,6 +82,13 @@ Benchmark는 수동 실행도 지원한다. Action 릴리스의 평가 보고서
 
 기존 공개 태그로 수정 워크플로를 실행한 [36805844364](https://github.com/cres17/pr-convention-checker/actions/runs/36805844364)는 사전 검사만 실행하고 앱 빌드·업로드 없이 성공했다. [Benchmark 36805846668](https://github.com/cres17/pr-convention-checker/actions/runs/36805846668)도 성공했다. Action 릴리스의 실제 보고서 업로드는 이 수동 검증에 포함되지 않는다.
 
+## 앱 아이콘
+
+- macOS: `docs/assets/brand/DriftGate.icns` (1024px 원본에서 생성, Apple 아이콘 격자에 맞춘 여백)
+- Windows: `docs/assets/brand/DriftGate.ico` (16~256px, 작은 크기에서 보이도록 여백을 줄인 판)
+- 원본: `docs/assets/brand/DriftGate.png`, 도안 `docs/assets/brand/drift-gate-mark.svg`
+- 아이콘과 글꼴(`desktop-ui/fonts/`) 같은 바이너리는 자체 정책의 감시 경로(`packaging/**`, `desktop-ui/src/**`) 밖에 둔다. 엔진이 바이너리의 변경 강도를 분석하지 못해 판정 불가가 되기 때문이다.
+
 ## 파서 버전 변경 시
 
 `Collect parser hash candidates` 워크플로는 macOS 두 CPU·Windows·Linux에서 원본 파일을 로드하지 않고 해시 후보를 만듭니다. `ver2`의 수집 스크립트 또는 워크플로 변경으로 실행합니다. 후보가 고정값을 자동 갱신하지 않으며, 기존 기록과 대조·검토 후 `drift_gate/adapters/parser_hashes.json`의 버전·플랫폼별 값을 명시적으로 변경합니다. 2026-10-02 검토 기록(2026-10-20 정리, Git 이력에 보존)에 신뢰 범위와 출처를 기록했습니다.

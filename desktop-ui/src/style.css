@@ -21,9 +21,45 @@
   --radius-md: 8px;
   --radius-lg: 12px;
 }
+@font-face {
+  font-family: "Pretendard";
+  src: url("../fonts/Pretendard-Light.subset.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("../fonts/Pretendard-Regular.subset.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("../fonts/Pretendard-Medium.subset.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("../fonts/Pretendard-SemiBold.subset.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("../fonts/Pretendard-Bold.subset.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 :root {
   font-family:
-    "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  letter-spacing: -0.01em;
   color: #1c1b19;
   background: #f6f4ef;
   font-synthesis: none;
@@ -127,9 +163,10 @@ pre {
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-size: 19px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   margin: 0 8px 32px;
 }
 .brand small {
@@ -142,11 +179,9 @@ pre {
 .brand-mark {
   display: grid;
   place-items: center;
-  border: 1px solid #555d52;
-  border-radius: 10px;
-  width: 34px;
+  width: 36px;
   height: 38px;
-  color: #a8c3af;
+  color: #f2efe8;
 }
 .project {
   display: flex;

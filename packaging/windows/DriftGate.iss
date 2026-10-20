@@ -25,6 +25,7 @@ SolidCompression=yes
 WizardStyle=modern
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
+SetupIconFile=..\..\docs\assets\brand\DriftGate.ico
 UninstallDisplayIcon={app}\DriftGate.exe
 
 [Tasks]
