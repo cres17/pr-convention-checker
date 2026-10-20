@@ -194,3 +194,15 @@ def test_labels_for_another_frozen_input_are_refused():
             h.score_all(results, labels)
     with pytest.raises(h.HoldoutError, match='bound to its frozen input'):
         h.adjudicate({'schema': h.PACKET, 'items': []}, [])
+
+
+def test_case_without_the_document_a_rule_verifies_is_rejected_before_freezing():
+    complete = case('m1', 'fam-m', doc='GET /new\n', expected_decision='satisfied', gate='pass')
+    h._validate_cases([complete])
+    missing = deepcopy(complete)
+    missing['changed_files'] = [f for f in missing['changed_files'] if f['path'] != 'docs/api.md']
+    with pytest.raises(h.HoldoutError, match=r"docs/api\.md.*status \"unchanged\""):
+        h._validate_cases([missing])
+    unchanged = deepcopy(complete)
+    unchanged['changed_files'][1]['status'] = 'unchanged'
+    h._validate_cases([unchanged])

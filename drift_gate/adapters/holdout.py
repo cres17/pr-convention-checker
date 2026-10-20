@@ -84,12 +84,26 @@ def _validate_case(case):
         policy = load_policy_from_dict(case['policy'])
     except PolicyLoadError as exc:
         raise HoldoutError(f"case {case['case_id']}: invalid policy: {exc}") from exc
+    missing = _missing_required_documents(policy, case['changed_files'])
+    if missing:
+        raise HoldoutError(
+            f"case {case['case_id']}: the policy checks the content of {missing} but the case does not carry "
+            'them; add each as a changed_files entry (status "unchanged" when the pull request did not touch it)')
     unknown = set(expected['rules']) - {rule.id for rule in policy.rules}
     if unknown:
         raise HoldoutError(f"case {case['case_id']}: expected rules not in policy: {sorted(unknown)}")
     for rule_id, row in expected['rules'].items():
         if not isinstance(row, dict) or row.get('decision') not in stats.DECISIONS or row.get('support') not in {'supported', 'unsupported'}:
             raise HoldoutError(f"case {case['case_id']} rule {rule_id}: invalid expected decision/support")
+
+
+def _missing_required_documents(policy, changed_files):
+    """Documents whose content a rule verifies must be in the case: holdout run reads no repository."""
+    carried = {data.get('path') for data in changed_files if isinstance(data, dict)}
+    needed = {path for rule in policy.rules for group in rule.require.groups
+              if group.content in {'env-keys', 'api-routes', 'api-schema'}
+              for path in (group.any_changed or group.all_changed) if not any(c in path for c in '*?[]')}
+    return sorted(needed - carried)
 
 
 def _validate_cases(cases):

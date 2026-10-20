@@ -749,3 +749,5 @@ PR 본문에서 `drift-ignore:`와 `reason:`을 읽을 때 HTML 주석(`<!-- …
 `Dockerfile`, `Dockerfile.*`, `.env`, `.env.*`는 저장소 루트뿐 아니라 하위 디렉터리(`docker/Dockerfile`, `apps/web/.env`)에서도 `workflow-ci`, `env-config`로 분류한다(`**/` 패턴 추가). `Dockerfile.*`는 `Dockerfile.md`처럼 확장자만 다른 파일에도 맞는다. 이 동작은 루트에서는 이전부터 같았다.
 
 glob의 `[`, `]`는 문자 집합이 아니라 글자 그대로 비교한다. `app/[slug]/page.tsx` 같은 프레임워크 경로를 그대로 쓰기 위한 선택이며, `[ab]` 형태의 문자 집합은 지원하지 않는다.
+
+holdout `split`·`freeze`는 `content: env-keys`·`api-routes`·`api-schema` 요건의 문서 경로가 사례의 `changed_files`에 없으면 사례를 거부한다(`HoldoutError`). 평가 단계가 저장소를 읽지 않으므로, 필요한 문서가 빠진 사례가 엔진 결과로 오해되지 않게 하기 위해서다. 이미 동결한 파일럿 v3의 30개 사례(해시 `0cbc5311…`)는 이 검사를 통과한다.
