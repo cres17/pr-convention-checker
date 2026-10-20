@@ -61,7 +61,7 @@ Python 소스가 없어 producer digest가 빈 파일 집합을 가리키므로,
 `5a7b2fa`의 Desktop run 38035946798에서 세 플랫폼 모두 같은 단계가 전부 통과 출력 뒤 `Fatal Python error: Segmentation fault`
 (Windows는 `Aborted`, Python frame 없음)로 끝났다. 컨테이너에 PySide6 6.12.0을 설치해 같은 시험 목록을 실행하면 수정 전 5회 중
 2회가 같은 방식으로 종료했고, 단독으로는 `ReviewDialog` 시험이 6회 모두 종료 시 crash했다. 원인은 signal에 연결한 `self` 캡처 lambda였고
-bound method로 바꾼 뒤 같은 목록 5회가 모두 정상 종료했다([기록](../assessment/qt-teardown-2026-10-10/desktop-regression-runs.log)).
+bound method로 바꾼 뒤 같은 목록 5회가 모두 정상 종료했다(기록(2026-10-20 정리, Git 이력에 보존)).
 `test_qt_teardown.py`를 desktop 회귀 단계 목록에 추가했다. 컨테이너 재현은 Linux에서의 결과이며 macOS·Windows 확인은 CI 실행으로 한다.
 
 ## S2-d 실행 기록과 게시 근거 (2026-10-08)

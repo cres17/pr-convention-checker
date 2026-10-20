@@ -42,8 +42,8 @@ CLI는 빈 임시 폴더에서 실행합니다. Codex는 읽기 전용 모드에
 |---|---|---|---|
 | 코드는 `GET /members`, 문서는 `GET /customers`로 변경 | `fail` · 경로 불일치 지적 | `fail` · 경로 불일치 지적 | 전후 `fail` 유지 |
 
-- [Codex 원본 응답](assessment/subscription-review-2026-09-28/codex.json): `codex-cli 0.158.0-alpha.2.1`
-- [Claude Code 원본 응답](assessment/subscription-review-2026-09-28/claude.json): `2.1.283`
+- Codex 원본 응답(2026-10-20 정리, Git 이력에 보존): `codex-cli 0.158.0-alpha.2.1`
+- Claude Code 원본 응답(2026-10-20 정리, Git 이력에 보존): `2.1.283`
 
 이는 **합성 사례 한 개의 실제 연결 시험**입니다. 탐지 정확도, 일반화 성능, 두 모델 간 우열의 근거가 아닙니다. 모델은 각 CLI의 기본 선택을 사용했고 응답은 반복 실행 시 달라질 수 있습니다. 실제 구독 호출은 macOS에서 확인했으며 Windows CI는 모의 응답·UI 테스트와 앱 빌드를 확인합니다.
 

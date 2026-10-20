@@ -28,7 +28,7 @@ W10의 입력 검증은 이미 일부 구현됐지만 독립 정답 평가와는
 
 ## 2. 현재 구현과 목표의 차이
 
-이번에 읽은 실제 경계는 다음과 같다. 이전 테스트 숫자는 [운영 반영 보고서](../review/drift-gate-enterprise-update-2026-10-07.md)의 당시 결과이며 이번 설계 작업에서 전체 테스트를 재실행한 수치가 아니다.
+이번에 읽은 실제 경계는 다음과 같다. 이전 테스트 숫자는 운영 반영 보고서(2026-10-20 정리, Git 이력에 보존)의 당시 결과이며 이번 설계 작업에서 전체 테스트를 재실행한 수치가 아니다.
 
 | 현재 코드 | 현재 책임 | 목표 계약 | 이동 원칙 |
 |---|---|---|---|
@@ -660,7 +660,7 @@ rollback은 이전 결과 보존과 profile version 고정으로 한다. 기존 
 
 ## 19. 이번 설계 모델 검증
 
-[check_design.py](../assessment/enterprise-detailed-design-2026-10-07/check_design.py)는 운영 코드를 호출하지 않는 작은 참조 모델이다. 제안한 구간·proof witness·discovery guard·게시 generation의 모순을 검사한다.
+check_design.py(2026-10-20 정리, Git 이력에 보존)는 운영 코드를 호출하지 않는 작은 참조 모델이다. 제안한 구간·proof witness·discovery guard·게시 generation의 모순을 검사한다.
 
 | 검사 | 유한 범위 | 결과 |
 |---|---|---|
@@ -701,9 +701,9 @@ rollback은 이전 결과 보존과 profile version 고정으로 한다. 기존 
 기존 출력 파일이 있으면 덮어쓰지 않고 거부한다. 재실행 경로를 바꿔 과거 증거를 유지한다.
 
 - [전체 논리 설계](drift-gate-enterprise-logical-design-2026-10-07.md)
-- [직전 운영 반영과 당시 검증](../review/drift-gate-enterprise-update-2026-10-07.md)
-- [최종 유한 모델 결과](../assessment/enterprise-detailed-design-2026-10-07/model-check-final.json)
-- [참조 모델](../assessment/enterprise-detailed-design-2026-10-07/check_design.py)
-- [이번 검증·내용 hash](../assessment/enterprise-detailed-design-2026-10-07/verification.json)
+- 직전 운영 반영과 당시 검증(2026-10-20 정리, Git 이력에 보존)
+- 최종 유한 모델 결과(2026-10-20 정리, Git 이력에 보존)
+- 참조 모델(2026-10-20 정리, Git 이력에 보존)
+- 이번 검증·내용 hash(2026-10-20 정리, Git 이력에 보존)
 
 이번 설계 작업에서는 새 원격 CI, 실제 설치본, Windows/Linux 재검증, 제삼자 blind 평가를 수행하지 않았다. commit·push도 수행하지 않았다.

@@ -68,9 +68,9 @@ Linux 컨테이너에서 `libEGL.so.1`을 찾지 못해 Qt WebEngine 테스트�
 
 ## 2026-10-01 1.0.2 미리보기
 
-이 공개본의 기존 검사는 프로세스 생존만 확인했다. 후속 확인에서 화면 파일 경로 불일치와 언어별 파서 미포함을 발견했다. 위의 강화한 검사는 다음 빌드부터 적용하며 기존 공개 설치 파일을 자동으로 교체하지 않는다. [수정과 오프라인 검증](../review/offline-packaged-analysis-2026-10-01.md)을 참고한다.
+이 공개본의 기존 검사는 프로세스 생존만 확인했다. 후속 확인에서 화면 파일 경로 불일치와 언어별 파서 미포함을 발견했다. 위의 강화한 검사는 다음 빌드부터 적용하며 기존 공개 설치 파일을 자동으로 교체하지 않는다. 수정과 오프라인 검증(2026-10-20 정리, Git 이력에 보존)을 참고한다.
 
-현재 공개본은 [desktop-v1.0.2-preview.20261001](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.2-preview.20261001), 제품 소스 `916c4ba`다. [릴리스 실행 36832261072](https://github.com/cres17/pr-convention-checker/actions/runs/36832261072)의 세 플랫폼에서 화면 77개·데스크톱 151개 검사, 앱 실행, 두 DMG 마운트와 Windows 설치·실행·제거가 성공했다. 초안에서 네 설치 파일을 전체 다운로드해 체크섬·GitHub digest와 대조하고, 게시 후 공개 주소의 HTTP 200·크기를 확인했다. [검증 원본](../assessment/progress-draft-recovery-2026-10-01/release-downloads.json)을 보존한다. 일반 CI는 9개 조합에서 각각 664개 통과·3개 건너뜀이며 Qt 포함 로컬 693개와 범위가 다르다. CI는 이제 Ruff `E9,F` 전체를 검사한다.
+현재 공개본은 [desktop-v1.0.2-preview.20261001](https://github.com/cres17/pr-convention-checker/releases/tag/desktop-v1.0.2-preview.20261001), 제품 소스 `916c4ba`다. [릴리스 실행 36832261072](https://github.com/cres17/pr-convention-checker/actions/runs/36832261072)의 세 플랫폼에서 화면 77개·데스크톱 151개 검사, 앱 실행, 두 DMG 마운트와 Windows 설치·실행·제거가 성공했다. 초안에서 네 설치 파일을 전체 다운로드해 체크섬·GitHub digest와 대조하고, 게시 후 공개 주소의 HTTP 200·크기를 확인했다. 검증 원본(2026-10-20 정리, Git 이력에 보존)을 보존한다. 일반 CI는 9개 조합에서 각각 664개 통과·3개 건너뜀이며 Qt 포함 로컬 693개와 범위가 다르다. CI는 이제 Ruff `E9,F` 전체를 검사한다.
 
 ## 2026-10-01 게시한 설치 파일
 
@@ -84,4 +84,4 @@ Benchmark는 수동 실행도 지원한다. Action 릴리스의 평가 보고서
 
 ## 파서 버전 변경 시
 
-`Collect parser hash candidates` 워크플로는 macOS 두 CPU·Windows·Linux에서 원본 파일을 로드하지 않고 해시 후보를 만듭니다. `ver2`의 수집 스크립트 또는 워크플로 변경으로 실행합니다. 후보가 고정값을 자동 갱신하지 않으며, 기존 기록과 대조·검토 후 `drift_gate/adapters/parser_hashes.json`의 버전·플랫폼별 값을 명시적으로 변경합니다. [2026-10-02 검토 기록](../review/parser-integrity-2026-10-02.md)에 신뢰 범위와 출처를 기록했습니다.
+`Collect parser hash candidates` 워크플로는 macOS 두 CPU·Windows·Linux에서 원본 파일을 로드하지 않고 해시 후보를 만듭니다. `ver2`의 수집 스크립트 또는 워크플로 변경으로 실행합니다. 후보가 고정값을 자동 갱신하지 않으며, 기존 기록과 대조·검토 후 `drift_gate/adapters/parser_hashes.json`의 버전·플랫폼별 값을 명시적으로 변경합니다. 2026-10-02 검토 기록(2026-10-20 정리, Git 이력에 보존)에 신뢰 범위와 출처를 기록했습니다.

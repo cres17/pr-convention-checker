@@ -4,7 +4,7 @@
 
 **문서 상태: 설계 및 반례 검증. 구현 완료·보안 인증·일반적 정확성 증명 문서가 아니다.**
 
-이 문서는 [기존 아키텍처 v2](target-architecture-v2-2026-10-06.md), [제품 논리 발전안](../review/drift-gate-logical-development-2026-10-07.md), [최근 구현 보고](../review/drift-gate-auto-update-2026-10-07.md)를 이어 간다. 이전 자료를 덮어쓰지 않는다. 이번 작업은 운영 코드를 수정하지 않고 설계, 통제 사례, 재현 자료를 추가했다.
+이 문서는 [기존 아키텍처 v2](target-architecture-v2-2026-10-06.md), 제품 논리 발전안(2026-10-20 정리, Git 이력에 보존), 최근 구현 보고(2026-10-20 정리, Git 이력에 보존)를 이어 간다. 이전 자료를 덮어쓰지 않는다. 이번 작업은 운영 코드를 수정하지 않고 설계, 통제 사례, 재현 자료를 추가했다.
 
 ## 초록
 
@@ -66,23 +66,23 @@ Drift Gate의 다음 과제는 지원 언어나 탐지 규칙을 많이 추가�
 
 ### 2.2 기준선 재확인
 
-이번 [원시 결과](../assessment/enterprise-logical-design-2026-10-07/results-final.json)는 이전 `verification-final.json`의 운영 소스 115개, 입력 5개, 테스트 44개, 근거 파일 38개의 SHA-256을 다시 계산했다. **202개 모두 일치**했다. 이는 해당 목록의 일치를 뜻하며, 전체 작업 트리나 모든 UI 파일이 목록에 포함됐다는 뜻은 아니다. HEAD만으로 미커밋 변경을 식별할 수 없다.
+이번 원시 결과(2026-10-20 정리, Git 이력에 보존)는 이전 `verification-final.json`의 운영 소스 115개, 입력 5개, 테스트 44개, 근거 파일 38개의 SHA-256을 다시 계산했다. **202개 모두 일치**했다. 이는 해당 목록의 일치를 뜻하며, 전체 작업 트리나 모든 UI 파일이 목록에 포함됐다는 뜻은 아니다. HEAD만으로 미커밋 변경을 식별할 수 없다.
 
 | 항목 | 이전 실행 기록 | 이번 해석 |
 |---|---|---|
-| Python | 1,228 통과, skip 0 | [최종 로그](../assessment/auto-update-2026-10-07/python-complete.log)와 영수증 재확인, 전체 재실행 아님 |
-| React | 125 통과 | [기존 로그](../assessment/auto-update-2026-10-07/react.log) 재확인 |
+| Python | 1,228 통과, skip 0 | 최종 로그(2026-10-20 정리, Git 이력에 보존)와 영수증 재확인, 전체 재실행 아님 |
+| React | 125 통과 | 기존 로그(2026-10-20 정리, Git 이력에 보존) 재확인 |
 | 원래 합성 평가 | 지원 24/24, 경계 gate 일치 5/8 | 원래 1/8 기준을 보존한 비교. 경계 중 verified이면서 gate까지 맞는 것은 2/8 |
 | 새 의미 평가 | Python/Git 14, Express/Git 8, 네 축 각각 22/22 | 작성자 통제 사례. facts·decision·verification·gate를 구분 |
 | 프레임워크 대조 | FastAPI OpenAPI 생성 64, Express HTTP 통제 4 | FastAPI 64회를 HTTP 실행으로 표현하지 않음 |
 | 자체 Drift Gate | pass / unverified | 문서 변경 의무를 확인한 결과. 이 설계의 논리적 타당성 증명이 아님 |
 | 이번 추가 검증 | 혼합 계약 3통제, import 3통제, 숫자 3통제 | 작고 목적이 정해진 반례 검사, 정확도 표본으로 계산하지 않음 |
 
-이전 보고 본문의 ‘최종 성공 파일’ 문장에는 앞선 로그명이 남아 있다. 이 문서는 [최종 영수증](../assessment/auto-update-2026-10-07/verification-final.json)이 가리키는 `python-complete.log`를 기준으로 한다. 사람의 설명과 원시 증거 인덱스의 불일치도 자동 검증 대상이어야 한다.
+이전 보고 본문의 ‘최종 성공 파일’ 문장에는 앞선 로그명이 남아 있다. 이 문서는 최종 영수증(2026-10-20 정리, Git 이력에 보존)이 가리키는 `python-complete.log`를 기준으로 한다. 사람의 설명과 원시 증거 인덱스의 불일치도 자동 검증 대상이어야 한다.
 
 ## 3. 이번에 새로 확인한 논리 결함
 
-재현 코드: [reproduce.py](../assessment/enterprise-logical-design-2026-10-07/reproduce.py). 최종 입력·결과·TypeScript 변환 결과: [results-final.json](../assessment/enterprise-logical-design-2026-10-07/results-final.json). 최초 결과 `results.json`도 보존한다. 최종 재현기의 해시는 최종 결과에 있다.
+재현 코드: reproduce.py(2026-10-20 정리, Git 이력에 보존). 최종 입력·결과·TypeScript 변환 결과: results-final.json(2026-10-20 정리, Git 이력에 보존). 최초 결과 `results.json`도 보존한다. 최종 재현기의 해시는 최종 결과에 있다.
 
 ### E01 — 혼합 계약에서 변경 없는 환경 키가 API 의무를 가림
 
@@ -762,7 +762,7 @@ gate_accuracy       = 기대 조치와 일치한 PR / 전체 평가 PR
 
 ### 18.5 이번 문서의 유한 모델 검사
 
-[check_model.py](../assessment/enterprise-logical-design-2026-10-07/check_model.py)를 실행한 [결과](../assessment/enterprise-logical-design-2026-10-07/model-check.json)는 다음과 같다.
+check_model.py(2026-10-20 정리, Git 이력에 보존)를 실행한 결과(2026-10-20 정리, Git 이력에 보존)는 다음과 같다.
 
 | 검사 | 실행 수 | 관측 |
 |---|---|---|
@@ -889,7 +889,7 @@ python docs/assessment/enterprise-logical-design-2026-10-07/check_model.py \
   --out /tmp/drift-gate-enterprise-model-new.json
 ```
 
-macOS에서 사용한 Python은 3.11.15, TypeScript는 5.9.3이다. 실제 환경 정보·원시 결과·최종 재현기 SHA는 [결과 파일](../assessment/enterprise-logical-design-2026-10-07/results-final.json)에 있다. 재현기는 파일을 수정하는 대신 임시 Git 저장소를 만들고, 작성한 TypeScript 통제를 변환하며, 현재 운영 파일과 이전 근거 해시를 읽는다. 향후 운영 코드를 수정하면 이번 결함 관측값과 달라지는 것이 정상이고, 새 결과로 개선을 비교한다.
+macOS에서 사용한 Python은 3.11.15, TypeScript는 5.9.3이다. 실제 환경 정보·원시 결과·최종 재현기 SHA는 결과 파일(2026-10-20 정리, Git 이력에 보존)에 있다. 재현기는 파일을 수정하는 대신 임시 Git 저장소를 만들고, 작성한 TypeScript 통제를 변환하며, 현재 운영 파일과 이전 근거 해시를 읽는다. 향후 운영 코드를 수정하면 이번 결함 관측값과 달라지는 것이 정상이고, 새 결과로 개선을 비교한다.
 
 ### 23.2 주장 → 코드 → 증거 → 작업
 
