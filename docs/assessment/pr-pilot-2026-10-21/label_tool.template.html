@@ -87,6 +87,19 @@ textarea { width: 100%; min-height: 84px; font: inherit; padding: 8px 10px; bord
 .hint { font-size: 12.5px; color: var(--muted); }
 table.mine { border-collapse: collapse; font-size: 13.5px; width: 100%; }
 table.mine td { border-top: 1px solid var(--line); padding: 4px 6px; }
+.opinions { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.op { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--bg); }
+.op h3 { margin: 0 0 6px; font-size: 14px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.op .lab { font-weight: 700; padding: 1px 10px; border-radius: 999px; border: 1px solid var(--line); }
+.op .lab[data-label="satisfied"], .op .lab[data-label="pass"] { border-color: var(--ok); color: var(--ok); }
+.op .lab[data-label="violated"], .op .lab[data-label="fail"] { border-color: var(--bad); color: var(--bad); }
+.op .lab[data-label="undecidable"], .op .lab[data-label="warn"] { border-color: var(--warn); color: var(--warn); }
+.op .lab[data-label="not-applicable"] { border-color: var(--na); color: var(--na); }
+.op .same { font-size: 12.5px; }
+.op .same.yes { color: var(--ok); } .op .same.no { color: var(--bad); }
+.op select { font: inherit; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); }
+.op textarea { min-height: 64px; margin-top: 6px; }
+.lock { color: var(--muted); font-size: 13.5px; }
 dialog { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--ink); max-width: 560px; }
 dialog::backdrop { background: rgba(0,0,0,.4); }
 </style>
@@ -104,6 +117,7 @@ dialog::backdrop { background: rgba(0,0,0,.4); }
   <button id="btn-link" title="Chrome·Edge에서 파일을 한 번 지정하면 답할 때마다 그 파일에 저장합니다">저장 파일 지정</button>
   <button id="btn-import">가져오기</button>
   <button id="btn-export" class="primary">JSONL 내보내기</button>
+  <button id="btn-opinions" title="Opus·Codex 의견 파일 내보내기/가져오기">의견 파일</button>
   <button id="btn-help">사용법</button>
   <input id="file-import" type="file" accept=".jsonl,.json,.txt" hidden>
 </header>
@@ -122,6 +136,15 @@ dialog::backdrop { background: rgba(0,0,0,.4); }
   <p class="hint">단축키: 숫자 1~4는 선택지, ←/→는 이전/다음 항목, Ctrl+Enter는 저장 후 다음. 입력칸에 커서가 있으면 숫자·화살표는 동작하지 않습니다.</p>
   <p class="hint">저장 위치: 브라우저 저장소(이 파일을 연 브라우저). 브라우저 데이터를 지우면 사라지니 가끔 내보내세요. <b>저장 파일 지정</b>을 쓰면(Chrome·Edge) 답할 때마다 지정한 .jsonl 파일에 덮어씁니다.</p>
   <p class="hint">Drift Gate를 실행하거나 결과를 찾아보지 마세요. 이 도구는 엔진 출력을 갖고 있지 않습니다.</p>
+  <form method="dialog"><button class="primary">닫기</button></form>
+</dialog>
+<dialog id="opinions-dialog">
+  <h3 style="margin-top:0">Opus·Codex 의견 파일</h3>
+  <p class="hint">항목마다 ⑤ 칸에 Opus 의견(채워져 있음)과 Codex 의견(빈칸)이 있습니다. 본인 label과 별개로 저장되며 내 JSONL에는 섞이지 않습니다.</p>
+  <p><button id="btn-opus-export">Opus 답 내보내기</button> <span class="hint" id="opus-info"></span></p>
+  <p><button id="btn-codex-export">Codex 답 내보내기</button> <span class="hint" id="codex-info"></span></p>
+  <p><button id="btn-codex-import">Codex 답 가져오기(JSONL)</button> <input id="file-codex" type="file" accept=".jsonl,.json,.txt" hidden></p>
+  <p class="hint">Codex 파일은 <code>reviewer_id</code>가 <code>codex</code>, <code>reviewer_kind</code>가 <code>llm-proxy</code>로 저장됩니다. Opus·Codex 답 모두 모델 출력이라 사람 label을 대신하지 않습니다.</p>
   <form method="dialog"><button class="primary">닫기</button></form>
 </dialog>
 <script id="packet-data" type="application/json">__DATA__</script>
@@ -174,7 +197,8 @@ const ITEMS = [];            // 화면 순서: 사례별로 규칙 항목 → PR
 const ORDER = [];            // 내보내기 순서(packet 항목 순서와 같은 사례 순서)
 DATA.cases.forEach((c, ci) => c.items.forEach((it, ii) => { ITEMS.push({ ...it, ci, ii }); ORDER.push(it.item_id); }));
 const BY_ID = Object.fromEntries(ITEMS.map((it, i) => [it.item_id, i]));
-let state = { reviewer_id: '', reviewer_kind: 'human', answers: {}, index: 0 };
+let state = { reviewer_id: '', reviewer_kind: 'human', answers: {}, codex: {}, peeked: {}, index: 0 };
+const OPUS = DATA.opus || {};
 let query = '';
 let handle = null;           // File System Access API 파일 핸들
 let memoryOnly = false;
@@ -302,7 +326,45 @@ function renderMain() {
     '<div class="actions"><button id="btn-prev"' + (state.index === 0 ? ' disabled' : '') + '>이전</button>' +
     '<button id="btn-next" class="primary">저장 후 다음 (Ctrl+Enter)</button><button id="btn-skip">건너뛰기</button>' +
     '<button id="btn-clear"' + (a ? '' : ' disabled') + '>이 답 지우기</button><span class="msg" id="msg"></span></div></div>';
+  html += '<div class="card"><h2><span class="n">5</span>다른 검토자 의견 <span class="hint">— 본인 판단 뒤에 비교용으로 보세요</span></h2><div id="opinions" class="opinions"></div></div>';
   $('main').innerHTML = html;
+  renderOpinions();
+}
+
+function renderOpinions() {
+  const box = $('opinions');
+  if (!box) return;
+  const it = currentItem(), id = it.item_id, mine = answerOf(id), o = OPUS[id], cx = state.codex[id] || { label: '', rationale: '' };
+  const cmp = (other) => (mine && other ? '<span class="same ' + (mine.label === other ? 'yes' : 'no') + '">내 선택과 ' + (mine.label === other ? '같음' : '다름 (내 선택: ' + esc(mine.label) + ')') + '</span>' : '');
+  let opus;
+  if (!o) opus = '<div class="hint">이 항목의 Opus 의견이 없습니다.</div>';
+  else if (!mine && !state.peeked[id]) opus = '<div class="lock">🔒 본인 label을 먼저 고르면 열립니다. 먼저 보면 이 항목의 사람 label은 독립 판단이 아니게 됩니다.</div><div class="actions"><button id="btn-peek">그래도 먼저 보기</button></div>';
+  else opus = '<div><span class="lab" data-label="' + esc(o.label) + '">' + esc(o.label) + '</span> ' + cmp(o.label) + '</div><p style="margin:6px 0 0">' + esc(o.rationale) + '</p>' + (!mine && state.peeked[id] ? '<div class="hint">먼저 본 항목으로 기록됩니다.</div>' : '');
+  const opts = '<option value="">— 비어 있음 —</option>' + it.allowed_labels.map((l) => '<option value="' + l + '"' + (cx.label === l ? ' selected' : '') + '>' + l + '</option>').join('');
+  box.innerHTML = '<div class="op"><h3>Opus <span class="hint">' + esc(DATA.meta.opus_id || 'opus') + ' · llm-proxy</span></h3>' + opus + '</div>' +
+    '<div class="op"><h3>Codex <span class="hint">llm-proxy · 직접 입력</span> ' + cmp(cx.label) + '</h3>' +
+    '<select id="codex-label">' + opts + '</select><textarea id="codex-rationale" placeholder="Codex의 답과 근거를 여기에 옮겨 적으세요. 비워 두어도 됩니다.">' + esc(cx.rationale) + '</textarea></div>';
+}
+function saveCodex() {
+  const id = currentItem().item_id;
+  const label = $('codex-label').value, rationale = $('codex-rationale').value;
+  if (!label && !rationale.trim()) delete state.codex[id]; else state.codex[id] = { label, rationale };
+  persist();
+}
+function download(name, text) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'application/x-ndjson' }));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+const oneLine = (t) => String(t || '').replace(/\s*[\r\n]+\s*/g, ' ').trim();
+function opinionRows(map, rid) {
+  return ORDER.filter((id) => map[id] && map[id].label).map((id) => JSON.stringify({ item_id: id, reviewer_id: rid, reviewer_kind: 'llm-proxy', label: map[id].label, rationale: oneLine(map[id].rationale) })).join('\n') + '\n';
+}
+function updateOpinionInfo() {
+  const o = ORDER.filter((id) => OPUS[id]).length, c = ORDER.filter((id) => state.codex[id] && state.codex[id].label).length;
+  $('opus-info').textContent = o + ' / ' + ITEMS.length + '개';
+  $('codex-info').textContent = c + ' / ' + ITEMS.length + '개 입력됨';
 }
 
 function updateProgress() {
@@ -322,6 +384,7 @@ function setLabel(label) {
   persist(); updateProgress(); renderNav();
   document.querySelectorAll('.choice').forEach((el) => el.classList.toggle('on', el.querySelector('input').value === label));
   $('btn-clear').disabled = false;
+  renderOpinions();
 }
 function saveRationale() {
   const it = currentItem(), a = answerOf(it.item_id);
@@ -341,7 +404,8 @@ function jsonl() {
   const rid = state.reviewer_id.trim();
   return ORDER.filter((id) => state.answers[id]).map((id) => JSON.stringify({
     item_id: id, reviewer_id: rid, reviewer_kind: state.reviewer_kind,
-    label: state.answers[id].label, rationale: (state.answers[id].rationale || '').replace(/\s*[\r\n]+\s*/g, ' ').trim()
+    label: state.answers[id].label, rationale: (state.answers[id].rationale || '').replace(/\s*[\r\n]+\s*/g, ' ').trim(),
+    ...(state.peeked[id] ? { peeked_opus: true } : {})
   })).join('\n') + '\n';
 }
 function exportFile() {
@@ -399,13 +463,16 @@ document.addEventListener('click', (e) => {
   else if (id === 'btn-prev') goto(state.index - 1);
   else if (id === 'btn-skip') goto(state.index + 1);
   else if (id === 'btn-clear') { delete state.answers[currentItem().item_id]; persist(); renderAll(false); }
+  else if (id === 'btn-peek') { state.peeked[currentItem().item_id] = true; persist(); renderOpinions(); }
   else if (id === 'find-clear') { query = ''; renderMain(); }
 });
 document.addEventListener('change', (e) => {
   if (e.target.name === 'label') setLabel(e.target.value);
+  else if (e.target.id === 'codex-label') { saveCodex(); renderOpinions(); }
 });
 document.addEventListener('input', (e) => {
   if (e.target.id === 'rationale') saveRationale();
+  else if (e.target.id === 'codex-rationale') saveCodex();
   else if (e.target.id === 'find') {
     query = e.target.value;
     const pos = e.target.selectionStart;
@@ -433,6 +500,19 @@ $('btn-link').addEventListener('click', linkFile);
 $('btn-import').addEventListener('click', () => $('file-import').click());
 $('file-import').addEventListener('change', async (e) => { const f = e.target.files[0]; if (f) importText(await f.text()); e.target.value = ''; });
 $('btn-help').addEventListener('click', () => $('help').showModal());
+$('btn-opinions').addEventListener('click', () => { updateOpinionInfo(); $('opinions-dialog').showModal(); });
+$('btn-opus-export').addEventListener('click', () => download('labels-' + (DATA.meta.opus_id || 'opus') + '.jsonl', opinionRows(OPUS, DATA.meta.opus_id || 'opus')));
+$('btn-codex-export').addEventListener('click', () => { if (!Object.keys(state.codex).some((k) => state.codex[k].label)) { alert('입력된 Codex label이 없습니다.'); return; } download('labels-codex.jsonl', opinionRows(state.codex, 'codex')); });
+$('btn-codex-import').addEventListener('click', () => $('file-codex').click());
+$('file-codex').addEventListener('change', async (e) => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  let ok = 0, bad = 0;
+  (await f.text()).split(/\r?\n/).forEach((line) => {
+    if (!line.trim()) return;
+    try { const r = JSON.parse(line), i = BY_ID[r.item_id]; if (i === undefined || !ITEMS[i].allowed_labels.includes(r.label)) { bad++; return; } state.codex[r.item_id] = { label: r.label, rationale: r.rationale || '' }; ok++; } catch (err) { bad++; }
+  });
+  persist(); updateOpinionInfo(); renderOpinions(); alert(ok + '개 불러옴' + (bad ? ', 오류·알 수 없는 항목 ' + bad + '줄 건너뜀' : ''));
+});
 
 load();
 $('reviewer-id').value = state.reviewer_id; $('reviewer-kind').value = state.reviewer_kind;

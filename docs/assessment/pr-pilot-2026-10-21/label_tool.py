@@ -35,6 +35,26 @@ def document_lines(file):
     return f'원문 {len(lines)}줄', lines
 
 
+def load_opinions(path, packet):
+    """모델 의견 JSONL을 읽어 {item_id: {label, rationale}}로 만든다. 항목·label이 packet과 맞지 않으면 거부한다."""
+    allowed = {i['item_id']: i['allowed_labels'] for i in packet['items']}
+    rows, reviewer = {}, set()
+    for number, line in enumerate(Path(path).read_text(encoding='utf-8').splitlines(), 1):
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        item_id, label = row.get('item_id'), row.get('label')
+        if item_id not in allowed or label not in allowed[item_id] or item_id in rows:
+            raise SystemExit(f'{path}:{number}: invalid or duplicate item/label {item_id!r} {label!r}')
+        if row.get('reviewer_kind') != 'llm-proxy':
+            raise SystemExit(f'{path}:{number}: reviewer_kind must be llm-proxy')
+        reviewer.add(row.get('reviewer_id'))
+        rows[item_id] = {'label': label, 'rationale': ' '.join(str(row.get('rationale', '')).split())}
+    if len(reviewer) > 1:
+        raise SystemExit(f'{path}: multiple reviewer_id values {sorted(reviewer)}')
+    return rows, (reviewer.pop() if reviewer else '')
+
+
 def build_data(packet, packet_sha256):
     by_case = {}
     for item in packet['items']:
@@ -78,12 +98,19 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--packet', required=True)
     ap.add_argument('--out', required=True)
+    ap.add_argument('--opus', help='Opus 의견 JSONL(reviewer_kind=llm-proxy). 있으면 항목마다 의견 칸에 채워 넣는다')
     args = ap.parse_args(argv)
     out = Path(args.out)
     if out.exists():
         raise SystemExit(f'{out} already exists; outputs are written once')
     raw = Path(args.packet).read_bytes()
-    data = build_data(json.loads(raw), sha256(raw).hexdigest())
+    packet = json.loads(raw)
+    data = build_data(packet, sha256(raw).hexdigest())
+    if args.opus:
+        data['opus'], data['meta']['opus_id'] = load_opinions(args.opus, packet)
+        missing = [i['item_id'] for i in packet['items'] if i['item_id'] not in data['opus']]
+        if missing:
+            raise SystemExit(f'{args.opus}: {len(missing)} items without an opinion, e.g. {missing[0]}')
     payload = json.dumps(data, ensure_ascii=False).replace('</', '<\\/').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
     template = (Path(__file__).with_name('label_tool.template.html')).read_text(encoding='utf-8')
     out.write_text(template.replace('__DATA__', payload), encoding='utf-8')
