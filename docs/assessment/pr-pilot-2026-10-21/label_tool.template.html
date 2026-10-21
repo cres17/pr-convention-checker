@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PR 파일럿 label 도구</title>
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --ink: #1c2330; --muted: #5d6879; --line: #d9dee6;
+  --accent: #2756c5; --accent-ink: #ffffff; --add-bg: #e6f6ea; --add-ink: #14532d; --del-bg: #fdeaea; --del-ink: #7f1d1d;
+  --hunk-bg: #eef2fb; --hit: #fff3b0; --ok: #1b7f3b; --bad: #b42318; --warn: #a15c00; --na: #55657a; --code-bg: #f1f3f7;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --panel: #1b212b; --ink: #e6eaf0; --muted: #9aa5b6; --line: #2c3544;
+    --accent: #7aa2ff; --accent-ink: #0d1424; --add-bg: #12301d; --add-ink: #a7e3b9; --del-bg: #3a1717; --del-ink: #f5b5b5;
+    --hunk-bg: #1c2740; --hit: #6b5a00; --ok: #5fd08a; --bad: #ff8b7e; --warn: #f2b45a; --na: #9fb0c8; --code-bg: #232b38;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", "Noto Sans KR", sans-serif; }
+header { position: sticky; top: 0; z-index: 5; background: var(--panel); border-bottom: 1px solid var(--line); padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+header h1 { font-size: 16px; margin: 0; }
+header label { font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+header input, header select { font: inherit; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
+#progress { font-weight: 600; }
+#saved { font-size: 12px; color: var(--muted); }
+button { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+button:disabled { opacity: .45; cursor: default; }
+.spacer { flex: 1; }
+.layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 16px; padding: 16px; max-width: 1500px; margin: 0 auto; }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+nav { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px; max-height: calc(100vh - 110px); overflow: auto; position: sticky; top: 64px; align-self: start; }
+@media (max-width: 900px) { nav { position: static; max-height: 260px; } }
+nav .case { margin: 2px 0 8px; }
+nav .case-title { font-size: 12.5px; font-weight: 600; color: var(--muted); padding: 4px 6px; word-break: break-all; }
+nav .chips { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 6px; }
+.chip { border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; font-size: 12px; cursor: pointer; background: var(--bg); color: var(--ink); }
+.chip.current { outline: 2px solid var(--accent); }
+.chip[data-label="satisfied"], .chip[data-label="pass"] { border-color: var(--ok); color: var(--ok); }
+.chip[data-label="violated"], .chip[data-label="fail"] { border-color: var(--bad); color: var(--bad); }
+.chip[data-label="undecidable"], .chip[data-label="warn"] { border-color: var(--warn); color: var(--warn); }
+.chip[data-label="not-applicable"] { border-color: var(--na); color: var(--na); }
+main { min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
+.card h2 { font-size: 13px; letter-spacing: .02em; color: var(--muted); margin: 0 0 8px; text-transform: none; }
+.card h2 .n { display: inline-block; background: var(--accent); color: var(--accent-ink); border-radius: 999px; width: 20px; height: 20px; text-align: center; line-height: 20px; font-size: 12px; margin-right: 6px; }
+.where { font-size: 12.5px; color: var(--muted); }
+.question { font-size: 18px; font-weight: 600; margin: 0; }
+.crumb { color: var(--muted); font-size: 13px; margin-bottom: 4px; word-break: break-all; }
+ol.steps { margin: 6px 0 0; padding-left: 20px; }
+ol.steps li { margin: 3px 0; }
+code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+.note { background: var(--code-bg); border-radius: 8px; padding: 8px 10px; font-size: 13.5px; margin: 8px 0; }
+.note.warn { border-left: 3px solid var(--warn); }
+.find { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.find input { flex: 1; font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
+details.file { border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; background: var(--bg); }
+details.file > summary { cursor: pointer; padding: 6px 10px; font-size: 13px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+details.file > summary .path { font-family: ui-monospace, Menlo, Consolas, monospace; word-break: break-all; }
+.tag { font-size: 11.5px; padding: 0 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.tag.hit { border-color: var(--warn); color: var(--warn); font-weight: 600; }
+.tag.doc { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+pre.diff { margin: 0; padding: 6px 0; overflow: auto; max-height: 520px; font-size: 12.5px; line-height: 1.45; border-top: 1px solid var(--line); }
+pre.diff .l { display: block; padding: 0 10px; white-space: pre; }
+pre.diff .add { background: var(--add-bg); color: var(--add-ink); }
+pre.diff .del { background: var(--del-bg); color: var(--del-ink); }
+pre.diff .hunk { background: var(--hunk-bg); color: var(--muted); }
+mark { background: var(--hit); color: inherit; border-radius: 2px; }
+.more { margin: 6px 10px 8px; }
+.doclist { max-height: 300px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); padding: 6px 10px; font-size: 12.5px; }
+.doclist div { white-space: pre-wrap; word-break: break-all; }
+.choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; }
+.choice { display: block; border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; background: var(--bg); }
+.choice:hover { border-color: var(--accent); }
+.choice input { position: absolute; opacity: 0; pointer-events: none; }
+.choice.on { border-color: var(--accent); background: var(--panel); box-shadow: 0 0 0 1px var(--accent) inset; }
+.choice .name { font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.choice .key { font-size: 11px; border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; color: var(--muted); }
+.choice .desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+textarea { width: 100%; min-height: 84px; font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); resize: vertical; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.msg { font-size: 13px; color: var(--bad); }
+.hint { font-size: 12.5px; color: var(--muted); }
+table.mine { border-collapse: collapse; font-size: 13.5px; width: 100%; }
+table.mine td { border-top: 1px solid var(--line); padding: 4px 6px; }
+dialog { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--ink); max-width: 560px; }
+dialog::backdrop { background: rgba(0,0,0,.4); }
+</style>
+</head>
+<body>
+<header>
+  <h1>PR 파일럿 label 도구</h1>
+  <span id="progress"></span>
+  <label>reviewer_id <input id="reviewer-id" size="12" placeholder="예: jun" autocomplete="off"></label>
+  <label>종류
+    <select id="reviewer-kind"><option value="human">human (사람)</option><option value="llm-proxy">llm-proxy (모델)</option></select>
+  </label>
+  <span class="spacer"></span>
+  <span id="saved"></span>
+  <button id="btn-link" title="Chrome·Edge에서 파일을 한 번 지정하면 답할 때마다 그 파일에 저장합니다">저장 파일 지정</button>
+  <button id="btn-import">가져오기</button>
+  <button id="btn-export" class="primary">JSONL 내보내기</button>
+  <button id="btn-help">사용법</button>
+  <input id="file-import" type="file" accept=".jsonl,.json,.txt" hidden>
+</header>
+<div class="layout">
+  <nav id="nav" aria-label="항목 목록"></nav>
+  <main id="main"></main>
+</div>
+<dialog id="help">
+  <h3 style="margin-top:0">사용법</h3>
+  <ol class="steps">
+    <li>맨 위에 <b>reviewer_id</b>를 적습니다(모든 답에 같은 값이 들어갑니다).</li>
+    <li>항목마다 ①문제 ②설명 ③볼 곳 ④선택을 순서대로 읽고 label을 고릅니다. 근거는 한 줄이면 됩니다.</li>
+    <li>고르는 즉시 이 브라우저에 자동 저장됩니다. <b>저장 후 다음</b>은 다음 항목으로 넘어갑니다.</li>
+    <li>끝나면 <b>JSONL 내보내기</b>로 파일을 받아 대화에 첨부합니다. 중간에도 내보낼 수 있습니다.</li>
+  </ol>
+  <p class="hint">단축키: 숫자 1~4는 선택지, ←/→는 이전/다음 항목, Ctrl+Enter는 저장 후 다음. 입력칸에 커서가 있으면 숫자·화살표는 동작하지 않습니다.</p>
+  <p class="hint">저장 위치: 브라우저 저장소(이 파일을 연 브라우저). 브라우저 데이터를 지우면 사라지니 가끔 내보내세요. <b>저장 파일 지정</b>을 쓰면(Chrome·Edge) 답할 때마다 지정한 .jsonl 파일에 덮어씁니다.</p>
+  <p class="hint">Drift Gate를 실행하거나 결과를 찾아보지 마세요. 이 도구는 엔진 출력을 갖고 있지 않습니다.</p>
+  <form method="dialog"><button class="primary">닫기</button></form>
+</dialog>
+<script id="packet-data" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const DATA = JSON.parse(document.getElementById('packet-data').textContent);
+const LABELS = {
+  'satisfied': ['규칙이 적용되는 변경이고, 요구 문서가 그 변경을 반영하고 있다'],
+  'violated': ['규칙이 적용되는 변경인데, 요구 문서가 빠졌거나 변경과 모순된다'],
+  'not-applicable': ['이 PR의 변경은 규칙이 요구하는 의무를 일으키지 않는다(예: 규칙이 다루는 변경이 아님)'],
+  'undecidable': ['주어진 파일만으로는 판단할 수 없다. 무엇이 부족한지 근거에 적는다'],
+  'pass': ['필요한 갱신이 모두 있거나, 문서 갱신이 필요한 변경이 아니다'],
+  'warn': ['빠졌는지 확정할 수 없지만 의심스럽다. 근거를 적는다'],
+  'fail': ['그대로 병합하면 저장소 관례상 필요한 문서·예시 파일 갱신이 빠진 상태다']
+};
+const RULE_HELP = {
+  'env-sample-content': {
+    question: '이 PR이 환경 변수 키를 새로 추가했다면, `.env.example`에 그 키가 적혀 있는가?',
+    what: '설정 코드에서 환경 변수를 새로 읽거나 정의하면, 사용자가 알 수 있도록 `.env.example`에도 같은 키가 있어야 합니다. 이 항목은 그 관례가 지켜졌는지 묻습니다.',
+    steps: [
+      '"규칙이 감시하는 파일"의 diff에서 새로 생긴 환경 변수 이름을 찾습니다(예: <code>os.getenv("…")</code>, 설정 클래스의 필드, 환경 변수 정의).',
+      '새 키가 없으면(주석·리팩터링·기존 키 수정뿐이면) → <b>not-applicable</b>.',
+      '새 키가 있으면 아래 "요구 문서"에서 같은 이름을 찾습니다(PR이 `.env.example`을 바꿨다면 그 diff, 안 바꿨다면 키 목록. 위 검색창에 키 이름을 넣으면 강조됩니다).',
+      '있으면 <b>satisfied</b>, 없으면 <b>violated</b>. 키가 어디서 오는지 불분명하거나 문서를 못 봤다면 <b>undecidable</b>.'
+    ]
+  },
+  'api-route-content': {
+    question: '이 PR이 API 경로나 메서드를 추가·제거·변경했다면, `docs/openapi/openapi.json`에 반영되어 있는가?',
+    what: 'API 라우트가 바뀌면 OpenAPI 문서의 경로 목록도 같이 바뀌어야 합니다. 이 항목은 그 관례가 지켜졌는지 묻습니다.',
+    steps: [
+      '"규칙이 감시하는 파일"의 diff에서 라우터 데코레이터(<code>@router.get</code> 등)나 경로 문자열, 메서드가 추가·삭제·변경되었는지 봅니다.',
+      '라우트 변경이 없으면(내부 로직·스키마 필드·주석만 바뀜) → <b>not-applicable</b>.',
+      '있으면 아래 "요구 문서"에서 해당 경로·메서드를 찾습니다(PR이 openapi.json을 바꿨다면 그 diff, 아니면 경로 목록. 검색창에 경로 일부를 넣으면 강조됩니다).',
+      '반영되어 있으면 <b>satisfied</b>, 없으면 <b>violated</b>. 판단할 자료가 부족하면 <b>undecidable</b>.'
+    ]
+  }
+};
+const PR_HELP = {
+  question: '이 PR을 그대로 병합하면, 저장소 관례상 필요한 문서·예시 파일 갱신이 빠져 있는가?',
+  what: '이 PR 전체에 대한 판정입니다. 위 규칙 항목에서 내가 고른 답을 종합하되, 정책 내부 설정이 아니라 저장소 관례 기준으로 판단합니다.',
+  steps: [
+    '아래 "내가 고른 규칙 답"을 확인합니다.',
+    '필요한 갱신이 빠져 있으면 <b>fail</b>, 빠졌는지 확정할 수 없지만 의심스러우면 <b>warn</b>, 모두 갖췄거나 문서 갱신이 필요 없는 변경이면 <b>pass</b>.',
+    '규칙 항목에 violated가 하나라도 있으면 보통 fail이고, undecidable뿐이면 warn이 자연스럽습니다(참고용 기준이며 자동으로 채우지 않습니다).'
+  ]
+};
+
+const STORAGE_KEY = 'dg-pilot-labels:' + DATA.meta.packet_sha256.slice(0, 16);
+const ITEMS = [];            // 화면 순서: 사례별로 규칙 항목 → PR 항목
+const ORDER = [];            // 내보내기 순서(packet 항목 순서와 같은 사례 순서)
+DATA.cases.forEach((c, ci) => c.items.forEach((it, ii) => { ITEMS.push({ ...it, ci, ii }); ORDER.push(it.item_id); }));
+const BY_ID = Object.fromEntries(ITEMS.map((it, i) => [it.item_id, i]));
+let state = { reviewer_id: '', reviewer_kind: 'human', answers: {}, index: 0 };
+let query = '';
+let handle = null;           // File System Access API 파일 핸들
+let memoryOnly = false;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const mdCode = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) state = { ...state, ...JSON.parse(raw) };
+  } catch (e) { memoryOnly = true; }
+}
+function persist() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch (e) { memoryOnly = true; }
+  $('saved').textContent = (memoryOnly ? '브라우저 저장 불가 — 내보내기로만 보존됩니다 · ' : '') + '저장됨 ' + new Date().toLocaleTimeString('ko-KR');
+  scheduleFileWrite();
+}
+
+function highlight(text) {
+  const safe = esc(text);
+  if (!query) return safe;
+  const re = new RegExp('(' + esc(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+  return safe.replace(re, '<mark>$1</mark>');
+}
+function renderDiff(patch, limit) {
+  if (!patch) return '<div class="more hint">(patch 없음: 바이너리이거나 비어 있음)</div>';
+  const lines = patch.replace(/\n$/, '').split('\n');
+  const shown = query ? lines : lines.slice(0, limit);
+  const rows = shown.map((line) => {
+    const cls = line.startsWith('@@') ? 'hunk' : line.startsWith('+') && !line.startsWith('+++') ? 'add' : line.startsWith('-') && !line.startsWith('---') ? 'del' : '';
+    return '<span class="l ' + cls + '">' + (highlight(line) || ' ') + '</span>';
+  }).join('');
+  const rest = lines.length - shown.length;
+  return '<pre class="diff">' + rows + '</pre>' + (rest > 0 ? '<div class="more hint">앞 ' + shown.length + '줄만 표시했습니다(전체 ' + lines.length + '줄). 검색창에 단어를 넣으면 전체에서 찾습니다.</div>' : '');
+}
+function fileBlock(f, tags, open) {
+  const adds = (f.patch.match(/^\+(?!\+\+)/gm) || []).length, dels = (f.patch.match(/^-(?!--)/gm) || []).length;
+  const prev = f.previous_path ? ' ← ' + esc(f.previous_path) : '';
+  return '<details class="file"' + (open ? ' open' : '') + '><summary>' + tags +
+    '<span class="path">' + esc(f.path) + prev + '</span><span class="tag">' + esc(f.status) + '</span>' +
+    '<span class="tag">+' + adds + ' −' + dels + '</span></summary>' + renderDiff(f.patch, 400) + '</details>';
+}
+function docBlock(doc, c) {
+  if (doc.state === 'changed') {
+    const f = c.files.find((x) => x.path === doc.path);
+    return '<div class="note"><code>' + esc(doc.path) + '</code>은 <b>이 PR에서 변경되었습니다.</b> 아래 diff를 보세요.</div>' +
+      (f ? fileBlock(f, '<span class="tag doc">요구 문서</span>', true) : '');
+  }
+  if (doc.state === 'missing') {
+    return '<div class="note warn"><code>' + esc(doc.path) + '</code>: 이 PR에서 변경되지 않았고 <b>내용을 수집하지 못했습니다.</b> 이 문서가 필요한 판단이라면 undecidable을 고려하세요.</div>';
+  }
+  const lines = query ? doc.lines.filter((l) => l.toLowerCase().includes(query.toLowerCase())) : doc.lines;
+  const body = lines.length ? lines.slice(0, 600).map((l) => '<div class="mono">' + highlight(l) + '</div>').join('') : '<div class="hint">' + (query ? '검색어와 일치하는 줄이 없습니다.' : '(표시할 줄이 없습니다)') + '</div>';
+  return '<div class="note"><code>' + esc(doc.path) + '</code>: 이 PR에서 변경되지 않았습니다. PR 커밋 시점 내용 — ' + esc(doc.note) + (query ? ' · 검색어 일치 ' + lines.length + '줄' : '') + '</div>' +
+    '<div class="doclist">' + body + (lines.length > 600 ? '<div class="hint">…이하 ' + (lines.length - 600) + '줄 생략</div>' : '') + '</div>';
+}
+
+function currentItem() { return ITEMS[state.index]; }
+function answerOf(id) { return state.answers[id] || null; }
+
+function renderNav() {
+  let html = '';
+  DATA.cases.forEach((c, ci) => {
+    const done = c.items.filter((it) => answerOf(it.item_id)).length;
+    html += '<div class="case"><div class="case-title">' + esc(c.case_id) + ' <span class="hint">(' + done + '/' + c.items.length + ')</span></div><div class="chips">';
+    c.items.forEach((it) => {
+      const a = answerOf(it.item_id), idx = BY_ID[it.item_id];
+      const name = it.kind === 'pr-action' ? 'PR' : it.rule_id === 'env-sample-content' ? '환경변수' : it.rule_id === 'api-route-content' ? 'API' : it.rule_id;
+      html += '<button class="chip' + (idx === state.index ? ' current' : '') + '" data-go="' + idx + '" data-label="' + (a ? a.label : '') + '" title="' + esc(it.item_id) + (a ? ' — ' + a.label : '') + '">' + (a ? '✓ ' : '') + name + '</button>';
+    });
+    html += '</div></div>';
+  });
+  $('nav').innerHTML = html;
+  const cur = $('nav').querySelector('.chip.current');
+  if (cur) cur.scrollIntoView({ block: 'nearest' });
+}
+
+function renderMain() {
+  const it = currentItem(), c = DATA.cases[it.ci], a = answerOf(it.item_id);
+  const help = it.kind === 'pr-action' ? PR_HELP : (RULE_HELP[it.rule_id] || {
+    question: '이 PR의 변경에 대해, 규칙이 요구하는 문서가 갱신되어 있어야 했는가, 그리고 현재 문서가 그 변경을 반영하는가?',
+    what: '규칙 ' + it.rule_id + '의 의무가 지켜졌는지 묻습니다.', steps: ['규칙이 감시하는 파일의 diff를 보고, 요구 문서가 그 변경을 반영하는지 확인합니다.']
+  });
+  let html = '<div class="crumb">' + esc(c.case_id) + ' · 항목 ' + (state.index + 1) + ' / ' + ITEMS.length + (it.kind === 'rule' ? ' · 규칙 <code>' + esc(it.rule_id) + '</code>' : ' · PR 전체') + '</div>';
+  html += '<div class="card"><h2><span class="n">1</span>문제</h2><p class="question">' + mdCode(help.question) + '</p></div>';
+  html += '<div class="card"><h2><span class="n">2</span>설명</h2><div>' + mdCode(help.what) + '</div>';
+  if (it.message) html += '<div class="note">정책이 이 규칙에 붙인 문구: ' + mdCode(it.message) + '</div>';
+  if (it.kind === 'rule') html += '<div class="note"><b>판단 기준</b> — 규칙 문구가 아니라 저장소 관례입니다: 이 PR이 건드린 변경에 대해, 저장소가 스스로 따르는 관례상 같은 PR에서 이 규칙이 요구하는 문서를 함께 갱신했어야 했는가, 그리고 현재 문서가 그 변경을 반영하는가. 이 도구는 Drift Gate의 판정을 갖고 있지 않습니다.</div>';
+  html += '<ol class="steps">' + help.steps.map((s) => '<li>' + mdCode(s).replace(/&lt;(\/?)(b|code)&gt;/g, '<$1$2>') + '</li>').join('') + '</ol></div>';
+
+  html += '<div class="card"><h2><span class="n">3</span>어디를 볼까</h2>';
+  html += '<div class="find"><input id="find" placeholder="diff와 문서에서 단어 찾기(예: 환경 변수 이름, 경로 일부)" value="' + esc(query) + '"><button id="find-clear">지우기</button></div>';
+  if (it.kind === 'rule') {
+    html += '<div class="where">규칙이 감시하는 경로: ' + it.patterns.map((p) => '<code>' + esc(p) + '</code>').join(', ') + ' (경로 비교일 뿐 판정이 아닙니다)</div>';
+    html += '<h3 style="font-size:14px;margin:12px 0 4px">A. 규칙이 감시하는 파일 — 이 PR에서 해당하는 파일 ' + it.hit.length + '개</h3>';
+    if (!it.hit.length) html += '<div class="note warn">해당 경로의 변경 파일이 없습니다. 그래도 아래 "나머지 변경 파일"에 규칙과 관련된 변경이 있는지 확인하세요.</div>';
+    it.hit.forEach((path) => { const f = c.files.find((x) => x.path === path); if (f) html += fileBlock(f, '<span class="tag hit">감시 대상</span>', true); });
+    html += '<h3 style="font-size:14px;margin:14px 0 4px">B. 규칙이 요구하는 문서</h3>' + it.docs.map((d) => docBlock(d, c)).join('');
+    const others = c.files.filter((f) => !it.hit.includes(f.path) && !it.docs.some((d) => d.path === f.path && d.state === 'changed'));
+    html += '<h3 style="font-size:14px;margin:14px 0 4px">C. 나머지 변경 파일 ' + others.length + '개</h3>' +
+      (others.length ? others.map((f) => fileBlock(f, '', false)).join('') : '<div class="hint">없음</div>');
+  } else {
+    const rules = c.items.filter((x) => x.kind === 'rule');
+    html += '<h3 style="font-size:14px;margin:6px 0 4px">내가 고른 규칙 답</h3><table class="mine">' + rules.map((r) => {
+      const ra = answerOf(r.item_id);
+      return '<tr><td><code>' + esc(r.rule_id) + '</code></td><td>' + (ra ? '<b>' + esc(ra.label) + '</b>' : '<span class="msg">아직 답하지 않음</span>') + '</td><td class="hint">' + (ra && ra.rationale ? esc(ra.rationale) : '') + '</td><td><button data-go="' + BY_ID[r.item_id] + '">이동</button></td></tr>';
+    }).join('') + '</table>';
+    const labels = rules.map((r) => (answerOf(r.item_id) || {}).label).filter(Boolean);
+    if (labels.length === rules.length) {
+      const hint = labels.includes('violated') ? '규칙 답에 violated가 있어 보통 fail입니다.' : labels.includes('undecidable') ? '규칙 답이 undecidable을 포함해 warn이 자연스럽습니다.' : 'violated·undecidable이 없어 보통 pass입니다.';
+      html += '<div class="hint" style="margin-top:6px">참고: ' + hint + ' 자동으로 채우지 않습니다.</div>';
+    }
+    html += '<h3 style="font-size:14px;margin:14px 0 4px">이 PR의 변경 파일 ' + c.files.length + '개</h3>' + c.files.map((f) => fileBlock(f, '', false)).join('');
+  }
+  html += '</div>';
+
+  html += '<div class="card"><h2><span class="n">4</span>선택</h2><div class="choices" role="radiogroup">' + it.allowed_labels.map((l, i) =>
+    '<label class="choice' + (a && a.label === l ? ' on' : '') + '"><input type="radio" name="label" value="' + l + '"' + (a && a.label === l ? ' checked' : '') + '>' +
+    '<div class="name"><span class="key">' + (i + 1) + '</span>' + l + '</div><div class="desc">' + esc(LABELS[l][0]) + '</div></label>').join('') + '</div>' +
+    '<p style="margin:12px 0 4px"><b>근거</b> <span class="hint">— 판단에 쓴 파일·줄을 한 줄로. undecidable이면 무엇이 부족한지 필수.</span></p>' +
+    '<textarea id="rationale" placeholder="예: config.py에서 NEW_KEY를 추가했고 .env.example 12행에 NEW_KEY가 있음">' + esc(a ? a.rationale : '') + '</textarea>' +
+    '<div class="actions"><button id="btn-prev"' + (state.index === 0 ? ' disabled' : '') + '>이전</button>' +
+    '<button id="btn-next" class="primary">저장 후 다음 (Ctrl+Enter)</button><button id="btn-skip">건너뛰기</button>' +
+    '<button id="btn-clear"' + (a ? '' : ' disabled') + '>이 답 지우기</button><span class="msg" id="msg"></span></div></div>';
+  $('main').innerHTML = html;
+}
+
+function updateProgress() {
+  const n = ORDER.filter((id) => state.answers[id]).length;
+  $('progress').textContent = n + ' / ' + ITEMS.length + ' 완료';
+}
+function renderAll(scroll) {
+  updateProgress(); renderNav(); renderMain();
+  if (scroll) window.scrollTo({ top: 0 });
+}
+function goto(i) { state.index = Math.max(0, Math.min(ITEMS.length - 1, i)); query = ''; persist(); renderAll(true); }
+
+function setLabel(label) {
+  const it = currentItem();
+  const prev = answerOf(it.item_id);
+  state.answers[it.item_id] = { label, rationale: ($('rationale') ? $('rationale').value : (prev ? prev.rationale : '')), ts: new Date().toISOString() };
+  persist(); updateProgress(); renderNav();
+  document.querySelectorAll('.choice').forEach((el) => el.classList.toggle('on', el.querySelector('input').value === label));
+  $('btn-clear').disabled = false;
+}
+function saveRationale() {
+  const it = currentItem(), a = answerOf(it.item_id);
+  if (!a) return;
+  a.rationale = $('rationale').value; a.ts = new Date().toISOString(); persist();
+}
+function next() {
+  const it = currentItem(), a = answerOf(it.item_id);
+  if (!a) { $('msg').textContent = 'label을 먼저 고르세요(모르겠으면 undecidable).'; return; }
+  a.rationale = $('rationale').value.trim();
+  if (a.label === 'undecidable' && !a.rationale) { $('msg').textContent = 'undecidable은 무엇이 부족한지 근거에 적어야 합니다.'; return; }
+  persist();
+  if (state.index < ITEMS.length - 1) goto(state.index + 1); else { renderAll(false); $('msg').textContent = '마지막 항목입니다. 위의 "JSONL 내보내기"로 저장하세요.'; }
+}
+
+function jsonl() {
+  const rid = state.reviewer_id.trim();
+  return ORDER.filter((id) => state.answers[id]).map((id) => JSON.stringify({
+    item_id: id, reviewer_id: rid, reviewer_kind: state.reviewer_kind,
+    label: state.answers[id].label, rationale: (state.answers[id].rationale || '').replace(/\s*[\r\n]+\s*/g, ' ').trim()
+  })).join('\n') + '\n';
+}
+function exportFile() {
+  if (!/^[A-Za-z0-9_.-]{1,40}$/.test(state.reviewer_id.trim())) { alert('reviewer_id를 영문·숫자·_ . - 로 적어 주세요(예: jun).'); $('reviewer-id').focus(); return; }
+  const n = ORDER.filter((id) => state.answers[id]).length;
+  const blob = new Blob([jsonl()], { type: 'application/x-ndjson' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'labels-' + state.reviewer_id.trim() + '.jsonl';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  $('saved').textContent = n + '개 내보냄' + (n < ITEMS.length ? ' (미응답 ' + (ITEMS.length - n) + '개 제외)' : '') + ' · ' + new Date().toLocaleTimeString('ko-KR');
+}
+let writeTimer = null;
+function scheduleFileWrite() {
+  if (!handle) return;
+  clearTimeout(writeTimer);
+  writeTimer = setTimeout(async () => {
+    try { const w = await handle.createWritable(); await w.write(jsonl()); await w.close(); $('saved').textContent += ' · 파일 저장됨'; }
+    catch (e) { $('saved').textContent = '파일 저장 실패: ' + e.message; }
+  }, 400);
+}
+async function linkFile() {
+  if (!window.showSaveFilePicker) { alert('이 브라우저는 파일 지정 저장을 지원하지 않습니다. Chrome·Edge를 쓰거나 JSONL 내보내기를 사용하세요.'); return; }
+  if (!/^[A-Za-z0-9_.-]{1,40}$/.test(state.reviewer_id.trim())) { alert('먼저 reviewer_id를 적어 주세요.'); $('reviewer-id').focus(); return; }
+  try {
+    handle = await window.showSaveFilePicker({ suggestedName: 'labels-' + state.reviewer_id.trim() + '.jsonl', types: [{ description: 'JSON Lines', accept: { 'application/x-ndjson': ['.jsonl'] } }] });
+    $('btn-link').textContent = '저장 파일: ' + handle.name;
+    scheduleFileWrite();
+  } catch (e) { if (e.name !== 'AbortError') alert('파일을 지정하지 못했습니다: ' + e.message); }
+}
+function importText(text) {
+  let ok = 0, bad = 0, unknown = 0;
+  text.split(/\r?\n/).forEach((line) => {
+    if (!line.trim()) return;
+    try {
+      const r = JSON.parse(line), i = BY_ID[r.item_id];
+      if (i === undefined) { unknown++; return; }
+      if (!ITEMS[i].allowed_labels.includes(r.label)) { bad++; return; }
+      state.answers[r.item_id] = { label: r.label, rationale: r.rationale || '', ts: new Date().toISOString() };
+      if (!state.reviewer_id && r.reviewer_id) state.reviewer_id = r.reviewer_id;
+      if (r.reviewer_kind === 'human' || r.reviewer_kind === 'llm-proxy') state.reviewer_kind = r.reviewer_kind;
+      ok++;
+    } catch (e) { bad++; }
+  });
+  persist(); $('reviewer-id').value = state.reviewer_id; $('reviewer-kind').value = state.reviewer_kind; renderAll(false);
+  alert(ok + '개 불러옴' + (bad ? ', 형식·label 오류 ' + bad + '줄 건너뜀' : '') + (unknown ? ', 알 수 없는 항목 ' + unknown + '줄 건너뜀' : ''));
+}
+
+document.addEventListener('click', (e) => {
+  const go = e.target.closest('[data-go]');
+  if (go) { goto(parseInt(go.dataset.go, 10)); return; }
+  const id = e.target.id;
+  if (id === 'btn-next') next();
+  else if (id === 'btn-prev') goto(state.index - 1);
+  else if (id === 'btn-skip') goto(state.index + 1);
+  else if (id === 'btn-clear') { delete state.answers[currentItem().item_id]; persist(); renderAll(false); }
+  else if (id === 'find-clear') { query = ''; renderMain(); }
+});
+document.addEventListener('change', (e) => {
+  if (e.target.name === 'label') setLabel(e.target.value);
+});
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'rationale') saveRationale();
+  else if (e.target.id === 'find') {
+    query = e.target.value;
+    const pos = e.target.selectionStart;
+    const keep = $('rationale') ? $('rationale').value : null;
+    renderMain();
+    if (keep !== null) $('rationale').value = keep;
+    const f = $('find'); f.focus(); f.setSelectionRange(pos, pos);
+  }
+});
+document.addEventListener('keydown', (e) => {
+  const typing = e.target.matches('input, textarea, select');
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); if ($('btn-next')) next(); return; }
+  if (typing || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.key === 'ArrowLeft') goto(state.index - 1);
+  else if (e.key === 'ArrowRight') goto(state.index + 1);
+  else if (/^[1-9]$/.test(e.key)) {
+    const l = currentItem().allowed_labels[parseInt(e.key, 10) - 1];
+    if (l) { const input = document.querySelector('input[name=label][value="' + l + '"]'); if (input) { input.checked = true; setLabel(l); } }
+  }
+});
+$('reviewer-id').addEventListener('input', (e) => { state.reviewer_id = e.target.value; persist(); });
+$('reviewer-kind').addEventListener('change', (e) => { state.reviewer_kind = e.target.value; persist(); });
+$('btn-export').addEventListener('click', exportFile);
+$('btn-link').addEventListener('click', linkFile);
+$('btn-import').addEventListener('click', () => $('file-import').click());
+$('file-import').addEventListener('change', async (e) => { const f = e.target.files[0]; if (f) importText(await f.text()); e.target.value = ''; });
+$('btn-help').addEventListener('click', () => $('help').showModal());
+
+load();
+$('reviewer-id').value = state.reviewer_id; $('reviewer-kind').value = state.reviewer_kind;
+state.index = Math.max(0, Math.min(ITEMS.length - 1, state.index || 0));
+renderAll(false);
+if (!state.reviewer_id) $('reviewer-id').focus();
+</script>
+</body>
+</html>
