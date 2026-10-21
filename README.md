@@ -13,11 +13,11 @@ API 명세, 설정 예제, 운영 문서의 누락을 PR에서 점검하는 개�
 [![CI](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/cres17/pr-convention-checker/actions/workflows/ci.yml?query=branch%3Amain)
 [![License: MIT](https://img.shields.io/badge/License-MIT-8B5CF6)](LICENSE)
 
-[![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](pyproject.toml)
-[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](action.yml)
-[![YAML Policy](https://img.shields.io/badge/YAML-Policy-CB171E?style=for-the-badge&logo=yaml&logoColor=white)](#정책-작성)
-[![Tree-sitter](https://img.shields.io/badge/Tree--sitter-Code_Analysis-4D9375?style=for-the-badge)](#분석-대상과-적용-예제)
-[![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](drift_gate/tests)
+[Python: 3.10+](pyproject.toml)
+[GitHub Actions](action.yml)
+[YAML Policy](#정책-작성)
+[Tree-sitter](#분석-대상과-적용-예제)
+[pytest](drift_gate/tests)
 
 [기술 스택](#기술-스택) · [사용 흐름](#사용-흐름) · [데스크톱 앱](#데스크톱-앱으로-검사하기) · [버전별 변경](#버전별-변경) · [검증 결과](#검증-결과)
 
@@ -27,29 +27,64 @@ API 명세, 설정 예제, 운영 문서의 누락을 PR에서 점검하는 개�
 
 > API·환경변수 내용 검사, 승인 검증, 로컬 [데스크톱 앱](docs/desktop-app.md)을 포함한 현재 버전이 `main`에 있습니다. 확인된 오탐·미탐과 알려진 문제는 [검증 결과](#검증-결과)와 [지원 범위와 한계](#지원-범위와-한계)에 공개합니다.
 
-## 서비스 개요
+## 아키텍처
 
-API 경로를 바꾸고 테스트까지 고쳤더라도 문서에는 이전 주소가 남을 수 있습니다. 새 환경변수를 사용하는 코드를 추가했는데 `.env.example`에 키가 없다면 다른 개발자는 실행에 필요한 설정을 놓치게 됩니다.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/architecture-dark.svg">
+  <img src="docs/assets/readme/architecture.svg" alt="Drift Gate 주요 구성과 데이터 흐름" width="1200">
+</picture>
 
-Drift Gate는 이런 변경을 코드 리뷰 전에 확인하도록 만들었습니다. `.drift-gate.yml`에 코드 경로와 함께 확인할 문서를 연결하면, 변경 내용에 따라 필요한 문서를 검사하고 누락된 항목과 판정 근거를 보고서로 남깁니다.
+Git 변경에서 API·설정 등의 신호를 추출하고 YAML 정책으로 문서 누락을 판정합니다. CLI·GitHub Actions·로컬 앱·MCP가 같은 검사 기능에 연결되며, AI는 선택적으로 검토 설명을 보완합니다.
 
-| 코드에서 바뀐 부분 | 함께 확인할 문서 | 현재 검사 방식 |
-|---|---|---|
-| API 메서드·경로 | API 명세 | 인식 가능한 메서드·경로의 추가·삭제를 문서 diff와 대조 |
-| 정적인 환경변수 키 | `.env.example` 등 설정 예제 | 새 키의 누락과 삭제된 키의 잔존을 확인. 사용 여부가 불명확하면 경고 |
-| DB 스키마·마이그레이션 | 운영 문서·변경 이력 | 정책에 지정한 문서의 동반 수정 확인 |
-| CI·인프라 설정 | 배포·운영 문서 | 정책에 지정한 문서의 동반 수정 확인 |
-| 인증·권한 로직 | 보안 문서 | 정책에 지정한 문서의 동반 수정 확인 |
+| 구성 | 역할 |
+|---|---|
+| 입력 계층 | 로컬 Git 또는 GitHub PR의 변경 파일·patch 수집 |
+| 검사 계층 | 문법 신호, 정책, 예외 승인, 심각도 기준 적용 |
+| 출력 계층 | 보고서 생성과 선택적 PR 댓글·artifact 연결 |
 
-**통과·실패는 정책 엔진이 결정합니다.** Claude API는 선택 기능으로, 검사가 끝난 뒤 체크리스트와 설명을 보완합니다. API 키 없이도 기본 검사와 보고서 생성이 동작합니다.
+<details>
+<summary>아키텍처 상세와 구현 경계</summary>
 
-Python 설정·API 경로의 내용 검사부터 시작하려면 [focused-python 안내](docs/focused-python.md)를 사용하세요.
-`init --preset focused-python`은 두 검사를 명시적으로 연결하며, 누락은 지적하고 확정할 수 없는 입력은 검토 대상으로 남깁니다.
-`env-keys`의 삭제 키 검사는 기본으로 켜집니다. [판정 기준과 키 예외 설정](docs/removed-environment-keys.md)을 확인하세요. 이 안내는 현재 소스 기준이며 공개 설치 파일의 포함 여부는 릴리스별로 확인해야 합니다.
+### 사용 흐름
 
-데스크톱 앱에서는 [구독 계정으로 LLM 추가 판정](docs/subscription-llm-review.md)도 받을 수 있습니다. 사용자가 로그인한 공식 Codex·Claude Code를 호출하며, LLM의 결론과 수정 제안을 규칙 판정 옆에서 확인합니다.
+```mermaid
+flowchart TD
+    A[로컬 변경 또는 PR] --> B[변경 경로와 diff 수집]
+    B --> C[변경 유형과 문법 신호 분석]
+    P[팀의 YAML 정책] --> D[필요한 문서 검사]
+    C --> D
+    D --> E[예외 승인과 심각도 기준 적용]
+    E --> F[통과 · 경고 · 실패 · 검사 대상 없음]
+    F --> G[Markdown · JSON · HTML 보고서]
+    F -. 선택 .-> H[Claude 설명 보완]
+    H --> G
+    G --> I[로컬 확인 또는 PR 댓글·보고서 보관]
+```
+
+1. **규칙을 정합니다.** 어떤 코드 변경에 어떤 문서가 필요한지 `.drift-gate.yml`에 작성합니다.
+2. **변경을 검사합니다.** 경로와 diff를 분석하고, 규칙에 따라 파일 동반 수정 또는 API·설정 항목을 확인합니다.
+3. **근거를 확인합니다.** 누락된 문서를 보완하거나 정해진 예외 절차를 따릅니다. 담당자 승인 필수 예외는 PR 본문에 이름만 적어서는 허용되지 않습니다.
+
+#### 검사 예시
+
+코드의 `@app.get('/users')`를 `@app.get('/members')`로 변경하고 API 내용 검사 규칙이 적용된 경우입니다.
+
+| 문서 변경 | 결과 |
+|---|---|
+| 문서를 수정하지 않음 | 실패 |
+| 다른 API 문서의 오타만 수정 | 실패 |
+| `GET /users`를 삭제하고 `GET /members`를 추가 | 통과 |
+
+이 예시는 한 줄 라우트와 `GET /members` 형태의 문서에 해당합니다. 두 열 Markdown 표도 일부 지원하지만, 여러 줄 라우트와 중첩 OpenAPI YAML 등은 [지원 범위와 한계](#지원-범위와-한계)를 확인하세요.
+
+</details>
 
 ## 기술 스택
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/tech-stack-dark.svg">
+  <img src="docs/assets/readme/tech-stack.svg" alt="Drift Gate 기술 스택" width="1200">
+</picture>
 
 **Python · YAML 정책 · Tree-sitter · GitHub Actions · pytest**를 기반으로 합니다.
 
@@ -82,6 +117,28 @@ Python 설정·API 경로의 내용 검사부터 시작하려면 [focused-python
 
 </details>
 
+## 서비스 개요
+
+API 경로를 바꾸고 테스트까지 고쳤더라도 문서에는 이전 주소가 남을 수 있습니다. 새 환경변수를 사용하는 코드를 추가했는데 `.env.example`에 키가 없다면 다른 개발자는 실행에 필요한 설정을 놓치게 됩니다.
+
+Drift Gate는 이런 변경을 코드 리뷰 전에 확인하도록 만들었습니다. `.drift-gate.yml`에 코드 경로와 함께 확인할 문서를 연결하면, 변경 내용에 따라 필요한 문서를 검사하고 누락된 항목과 판정 근거를 보고서로 남깁니다.
+
+| 코드에서 바뀐 부분 | 함께 확인할 문서 | 현재 검사 방식 |
+|---|---|---|
+| API 메서드·경로 | API 명세 | 인식 가능한 메서드·경로의 추가·삭제를 문서 diff와 대조 |
+| 정적인 환경변수 키 | `.env.example` 등 설정 예제 | 새 키의 누락과 삭제된 키의 잔존을 확인. 사용 여부가 불명확하면 경고 |
+| DB 스키마·마이그레이션 | 운영 문서·변경 이력 | 정책에 지정한 문서의 동반 수정 확인 |
+| CI·인프라 설정 | 배포·운영 문서 | 정책에 지정한 문서의 동반 수정 확인 |
+| 인증·권한 로직 | 보안 문서 | 정책에 지정한 문서의 동반 수정 확인 |
+
+**통과·실패는 정책 엔진이 결정합니다.** Claude API는 선택 기능으로, 검사가 끝난 뒤 체크리스트와 설명을 보완합니다. API 키 없이도 기본 검사와 보고서 생성이 동작합니다.
+
+Python 설정·API 경로의 내용 검사부터 시작하려면 [focused-python 안내](docs/focused-python.md)를 사용하세요.
+`init --preset focused-python`은 두 검사를 명시적으로 연결하며, 누락은 지적하고 확정할 수 없는 입력은 검토 대상으로 남깁니다.
+`env-keys`의 삭제 키 검사는 기본으로 켜집니다. [판정 기준과 키 예외 설정](docs/removed-environment-keys.md)을 확인하세요. 이 안내는 현재 소스 기준이며 공개 설치 파일의 포함 여부는 릴리스별로 확인해야 합니다.
+
+데스크톱 앱에서는 [구독 계정으로 LLM 추가 판정](docs/subscription-llm-review.md)도 받을 수 있습니다. 사용자가 로그인한 공식 Codex·Claude Code를 호출하며, LLM의 결론과 수정 제안을 규칙 판정 옆에서 확인합니다.
+
 ## 분석 대상과 적용 예제
 
 Drift Gate 자체는 Python으로 구현했습니다. 아래 언어는 **검사할 저장소의 코드 분석 대상**입니다. 언어별 어댑터가 존재한다는 뜻이며, 모든 문법이나 프레임워크를 완전히 분석한다는 뜻은 아닙니다.
@@ -104,38 +161,6 @@ Tree-sitter는 변경된 코드 조각을 분석합니다. 불완전한 diff나 
 | 배포 자동화 | [GitHub Actions](examples/github-actions-deploy/README.md) |
 
 FastAPI·Django·Express·Next.js·Prisma는 적용 예제를 제공하는 대상입니다. 이 프레임워크들이 Drift Gate의 실행 의존성에 포함되지는 않습니다.
-
-## 사용 흐름
-
-```mermaid
-flowchart TD
-    A[로컬 변경 또는 PR] --> B[변경 경로와 diff 수집]
-    B --> C[변경 유형과 문법 신호 분석]
-    P[팀의 YAML 정책] --> D[필요한 문서 검사]
-    C --> D
-    D --> E[예외 승인과 심각도 기준 적용]
-    E --> F[통과 · 경고 · 실패 · 검사 대상 없음]
-    F --> G[Markdown · JSON · HTML 보고서]
-    F -. 선택 .-> H[Claude 설명 보완]
-    H --> G
-    G --> I[로컬 확인 또는 PR 댓글·보고서 보관]
-```
-
-1. **규칙을 정합니다.** 어떤 코드 변경에 어떤 문서가 필요한지 `.drift-gate.yml`에 작성합니다.
-2. **변경을 검사합니다.** 경로와 diff를 분석하고, 규칙에 따라 파일 동반 수정 또는 API·설정 항목을 확인합니다.
-3. **근거를 확인합니다.** 누락된 문서를 보완하거나 정해진 예외 절차를 따릅니다. 담당자 승인 필수 예외는 PR 본문에 이름만 적어서는 허용되지 않습니다.
-
-### 검사 예시
-
-코드의 `@app.get('/users')`를 `@app.get('/members')`로 변경하고 API 내용 검사 규칙이 적용된 경우입니다.
-
-| 문서 변경 | 결과 |
-|---|---|
-| 문서를 수정하지 않음 | 실패 |
-| 다른 API 문서의 오타만 수정 | 실패 |
-| `GET /users`를 삭제하고 `GET /members`를 추가 | 통과 |
-
-이 예시는 한 줄 라우트와 `GET /members` 형태의 문서에 해당합니다. 두 열 Markdown 표도 일부 지원하지만, 여러 줄 라우트와 중첩 OpenAPI YAML 등은 [지원 범위와 한계](#지원-범위와-한계)를 확인하세요.
 
 ## 시작하기
 
