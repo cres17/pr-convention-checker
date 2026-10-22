@@ -436,6 +436,11 @@ def _check_body(args, controller) -> None:
 
     if args.json_output:
         _write_stdout(json.dumps(json_report, ensure_ascii=False, indent=2))
+        untracked = (result.execution or {}).get('untracked_skipped') or []
+        if untracked:
+            # stdout의 JSON은 그대로 두고, 판정에서 빠진 파일이 있다는 사실만 사람에게 알린다.
+            print(f"[drift-gate] WARNING: {len(untracked)} untracked file(s) were not evaluated "
+                  "(see execution.untracked_skipped); git add them to include them.", file=sys.stderr)
     else:
         _write_stdout(markdown)
         if result.enrichment_metrics is not None and not args.json_output:

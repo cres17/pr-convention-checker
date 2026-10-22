@@ -26,7 +26,7 @@ from hashlib import sha256
 from pathlib import Path
 
 from drift_gate.adapters.execution import atomic_bytes
-from drift_gate.adapters.run_store import Sequence
+from drift_gate.adapters.run_store import Conflict, Sequence
 from drift_gate.core.models.input_manifest import canonical_bytes
 from drift_gate.core.org.policy import (
     Principal,
@@ -82,7 +82,7 @@ class OrgService:
                 sequence.append({'at': self.clock().isoformat(), 'actor': actor, 'action': action, 'outcome': outcome,
                                  'details': {k: redact(v) for k, v in details.items()}}, expected_length=length)
                 return
-            except Exception:  # Conflict: retry against the new tail
+            except Conflict:  # 다른 기록자가 먼저 추가함: 새 끝을 기준으로 다시 시도. 그 밖의 오류는 그대로 올린다.
                 continue
         raise OrgError('audit-log-contended')
 

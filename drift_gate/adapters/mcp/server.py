@@ -95,7 +95,8 @@ def _handle_jsonrpc(request: dict) -> dict:
             if not isinstance(name, str) or not isinstance(args, dict):
                 return _jsonrpc_error(request_id, -32602, "name must be a string and arguments an object")
             if name not in TOOL_MAP:
-                raise KeyError(f"unknown tool: {name}")
+                # MCP 명세: 알 수 없는 도구는 invalid params(-32602)로 응답한다.
+                return _jsonrpc_error(request_id, -32602, f"unknown tool: {name}")
             try:
                 tool_result = _call_tool(name, args)
             except (TypeError, ValueError) as exc:

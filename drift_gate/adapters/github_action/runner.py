@@ -19,10 +19,13 @@ from drift_gate.reporters.markdown import COMMENT_MAX_CHARS, MarkdownReporter
 def main() -> None:
     contract_proofs = os.environ.get('CONTRACT_PROOFS','false').strip().lower()
     if contract_proofs not in {'true','false'}:
-        raise ValueError('CONTRACT_PROOFS must be true or false')
+        _config_error('CONTRACT_PROOFS must be true or false')
     token         = _require_env("GITHUB_TOKEN")
     repo          = _require_env("REPO")
-    pr_number     = int(_require_env("PR_NUMBER"))
+    pr_text       = _require_env("PR_NUMBER").strip()
+    if not pr_text.isascii() or not pr_text.isdigit() or int(pr_text) < 1:
+        _config_error('PR_NUMBER must be a positive integer; run this action on pull_request events')
+    pr_number     = int(pr_text)
     runner_temp   = os.environ.get("RUNNER_TEMP", "/tmp")
     from drift_gate.adapters.execution import identity
     from drift_gate.adapters.run_coordinator import RunController
@@ -265,6 +268,12 @@ def _require_env(name: str) -> str:
         print(f"ERROR: 환경변수 {name}이 필요합니다.", file=sys.stderr)
         sys.exit(1)
     return val
+
+
+def _config_error(message: str) -> None:
+    """Workflow 설정 오류: traceback 대신 annotation 한 줄을 남기고 종료한다."""
+    print(f"::error title=Drift Gate configuration::{_escape_workflow_command(message)}", file=sys.stderr)
+    sys.exit(1)
 
 
 def _log(msg: str) -> None:
