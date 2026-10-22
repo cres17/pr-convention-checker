@@ -1,5 +1,16 @@
 # Gate와 입력 계약
 
+## 2026-10-23 판정에서 빠진 입력의 표시와 설정 오류
+
+- 로컬 `check`/`report`는 기존대로 Git이 추적하지 않는(untracked) 파일을 평가 입력에 넣지 않는다. 판정 결과와 종료 코드는 바뀌지 않는다.
+  빠진 파일은 JSON `execution.untracked_skipped`(개수 `untracked_skipped_count`)에 더해, Markdown 보고서 `Execution` 줄 아래
+  "Untracked files not evaluated" 목록(최대 20개, 나머지는 개수만)과 `--json` 실행의 stderr 경고 한 줄로도 표시한다. stdout의 JSON은 바뀌지 않는다.
+- GitHub Action 러너는 `CONTRACT_PROOFS`가 `true|false`가 아니거나 `PR_NUMBER`가 1 이상의 ASCII 정수가 아니면
+  `::error title=Drift Gate configuration::…` 한 줄을 남기고 종료 코드 1로 끝난다(이전에는 traceback). `GITHUB_TOKEN`·`REPO` 누락 처리는 같다.
+- 조직 서비스의 감사 로그 기록은 다른 기록자와의 충돌(`Conflict`)만 최대 5번 재시도하고, 계속 충돌하면 `audit-log-contended`다.
+  저장소 손상·항목 한도 초과 같은 그 밖의 오류는 재시도하지 않고 그대로 올린다(이전에는 모두 `audit-log-contended`로 바뀌었다).
+- 참조되지 않던 `adapters/github/commenter.py`(`PrCommenter`)를 삭제했다. PR 댓글 게시는 `adapters/github/publication.py`가 담당한다.
+
 ## 좁은 내용 검사와 평가 계약 보완 (2026-10-13)
 
 `init --preset focused-python`은 선택한 Python 설정·FastAPI 모듈의 새 환경 키와 경로 변경을

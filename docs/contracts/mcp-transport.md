@@ -67,3 +67,7 @@ ruff 자동 수정(`I`, `UP` 규칙)으로 MCP 전송 코드의 import 순서와
 ## 2026-10-21 `drift_gate_check_pr`의 토큰
 
 서버는 `drift_gate_check_pr`의 `token`을 도구 인자로 받지 않는다. `tools/list` 스키마에서 빠졌고, 인자로 보내면 오류(-32602)다. 토큰은 서버 프로세스의 환경 변수 `GITHUB_TOKEN`(없으면 `GH_TOKEN`)에서 읽으며 둘 다 없으면 오류다. 인자로 넘긴 비밀은 모델 컨텍스트와 클라이언트 로그에 남기 때문이다. 프로세스 안에서 함수를 직접 부르는 호출자는 기존 `token=` 인자를 계속 쓸 수 있다.
+
+## 2026-10-23 알 수 없는 도구
+
+`tools/call`의 `name`이 `tools/list`에 없는 도구면 오류 코드 -32602, 메시지 `unknown tool: <name>`으로 응답한다. 이전에는 -32000과 따옴표로 감싼 메시지(`'unknown tool: <name>'`)였다. 레거시 `{"tool": ..., "args": ...}` 형식의 응답(`{"ok": false, "error": ...}`)은 바뀌지 않는다.
