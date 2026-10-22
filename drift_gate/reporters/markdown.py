@@ -118,6 +118,14 @@ class MarkdownReporter:
         if result.execution:
             lines += [f"**Execution:** `{result.execution.get('run_id', '')}`",
                       ""]
+            untracked = result.execution.get('untracked_skipped') or []
+            if untracked:
+                # git이 추적하지 않는 새 파일은 평가 입력이 아니다. 판정이 이 파일들을 보지 않았다는 사실을 보고서에 남긴다.
+                lines += [f"> **Untracked files not evaluated:** {len(untracked)} — `git add` them to include them in the check.", ""]
+                lines += [f"- {code(path)}" for path in untracked[:_MINIMAL_LIST_CAP]]
+                if len(untracked) > _MINIMAL_LIST_CAP:
+                    lines.append(f"- … {len(untracked) - _MINIMAL_LIST_CAP} more (see the JSON report)")
+                lines.append("")
 
         if result.advisories:
             lines += ["### 확인이 필요한 환경 변수", ""]

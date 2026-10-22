@@ -220,9 +220,11 @@ def test_mcp_advertises_boolean_proof_optin_and_rejects_string_value():
         _call_tool('drift_gate_check_local',{'contract_proofs':'true'})
 
 
-def test_public_action_rejects_invalid_optin(monkeypatch):
+def test_public_action_rejects_invalid_optin(monkeypatch, capsys):
     monkeypatch.setenv('CONTRACT_PROOFS','maybe')
-    with pytest.raises(ValueError,match='true or false'): action.main()
+    with pytest.raises(SystemExit) as exc: action.main()
+    assert exc.value.code==1
+    assert 'CONTRACT_PROOFS must be true or false' in capsys.readouterr().err
 
 
 def test_projection_labels_are_escaped_in_html_and_markdown():

@@ -23,7 +23,7 @@ python -m drift_gate init --preset focused-python --policy .drift-gate.focused.y
 python -m drift_gate check --policy .drift-gate.focused.yml --base HEAD --json --out-json focused-result.json
 ```
 
-새 코드 파일은 Git index에 추가해야 변경 수집에 들어간다. 보고서의 `untracked_skipped`도 확인한다.
+새 코드 파일은 Git index에 추가해야 변경 수집에 들어간다. 추가하지 않은 파일은 판정에서 빠지며, Markdown 보고서 상단의 "Untracked files not evaluated" 목록과 JSON의 `execution.untracked_skipped`, `--json` 실행 시 stderr 경고로 알려 준다.
 이미 커밋한 기능 브랜치 변경을 보려면 실제 기준 브랜치를 사용한다.
 
 ```sh
