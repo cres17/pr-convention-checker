@@ -1,6 +1,6 @@
 # Content verification and approved exceptions
 
-> **Known limitations (ver2):** the [post-development audit](generalization-audit-2026-09-22.md) found false positives in strings and inline comments, missed HEAD/OPTIONS changes, and rejection of valid Markdown tables and nested OpenAPI YAML. Explicit content modes only run after the rule triggers; they do not guarantee complete detection.
+> **Known limitations (ver2):** the post-development audit found false positives in strings and inline comments, missed HEAD/OPTIONS changes, and rejection of valid Markdown tables and nested OpenAPI YAML. Explicit content modes only run after the rule triggers; they do not guarantee complete detection.
 
 ## Group content modes
 
@@ -134,6 +134,3 @@ The composite Action installs the package with those dependencies, rather than
 installing only PyYAML. Grammar acquisition can require network/cache access on
 first use. The current local verification uses Python 3.11; cross-platform CI
 results must be checked after pushing the change.
-
-See [development results](development-results-2026-09-22.md) for measured
-before/after results and the remaining roadmap.

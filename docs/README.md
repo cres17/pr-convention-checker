@@ -15,10 +15,6 @@
 | 빌드·설치 프로그램·릴리스 운영 | [데스크톱 CI](ops/desktop-ci.md) |
 | 저장소 자체 정책 검사와 고정 엔진 | [자체 검사 운영](ops/drift-gate-self-check.md) |
 | 판정·입력·MCP·데스크톱 계약 | [Gate와 입력](contracts/gate-and-inputs.md) · [MCP 전송](contracts/mcp-transport.md) · [데스크톱 브리지](contracts/desktop-bridge.md) · [진행 현황 저장](contracts/progress-storage.md) |
-| 문서의 동작 설명 12개 재현 검증 | [검증 보고서](review/drift-gate-claim-verification-2026-10-06.md) · [수정 계획](review/drift-gate-hardening-plan-2026-10-06.md) |
-| 원본 버전과 개선본의 차이 | [12개 통제 사례](v1-ver2-controlled-comparison-2026-09-23.md) |
-| P06·P10·Markdown 표 오류의 실제 수정 | [수정 후 재검증](v1-ver2-contract-fix-results-2026-09-23.md) |
-| 기존 평가 밖에서 드러난 한계 | [과적합 점검](generalization-audit-2026-09-22.md) · [공개본 재검증](published-recheck-2026-09-29.md) |
 | UI에 적용한 스킬과 요소 | [디자인 작업](design/desktop-redesign-skill-workflow.md) · [tool-ui 구성](design/tool-ui-integration-2026-09-29.md) |
 
-`assessment/`는 고정 입력과 평가 원본, `review/`는 분석·재검증, `design/`은 설계 근거, `ops/`는 배포 절차, `assets/`는 문서용 캡처입니다. 2026-10-20에 근거로 쓰지 않는 중간 검증 기록을 정리했습니다. 삭제한 기록은 Git 이력에 남아 있습니다. 실행 로그·빌드 산출물·설치 파일은 GitHub Actions와 Releases에서 관리합니다.
+`assessment/`는 고정 입력과 평가 원본, `design/`은 설계 근거, `ops/`는 배포 절차, `assets/`는 문서용 캡처입니다. 2026-10-20에 근거로 쓰지 않는 중간 검증 기록을 정리했습니다. 삭제한 기록은 Git 이력에 남아 있습니다. 실행 로그·빌드 산출물·설치 파일은 GitHub Actions와 Releases에서 관리합니다.
