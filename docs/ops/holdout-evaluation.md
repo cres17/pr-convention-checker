@@ -103,14 +103,3 @@ packet의 `instructions`와 `items`를 그대로 모델에 준다. packet에는 
    `allowed_labels` 안이어야 하며, 같은 출처의 표가 있는 항목에만 적용된다. 미해결 수는 지표에 표시된다.
 5. `adjudicate` 출력의 `agreement.llm-proxy.cohen_kappa`로 두 검토의 일치도를 확인한다. 낮으면 label 자체가
    불안정하다는 뜻이며 지표를 결론으로 쓰지 않는다.
-
-## 해석의 한계
-
-- 도구는 `reviewer_kind`를 확인할 수 없다. 선언을 그대로 기록하고 출처별로 지표를 분리할 뿐이다.
-- `human` label이 없으면 결과에 `no human labels: llm-proxy metrics are review material, not blind ground truth`가 기록된다.
-  llm-proxy 지표는 독립 사람 검토를 대신하는 근거가 아니다. 모델은 같은 입력에 같은 방향으로 틀릴 수 있고,
-  두 모델 세션의 일치가 정답을 뜻하지 않는다.
-- 사례 수가 작으면 Wilson 구간이 넓다. 구간을 함께 보고하고 점추정만 인용하지 않는다.
-- 여기서 얻은 수치는 수집한 사례 분포에 대한 것이며 다른 저장소·언어·프레임워크로 일반화되지 않는다.
-
-`split`과 `freeze`는 `content: env-keys`·`api-routes`·`api-schema`를 쓰는 요건의 문서 경로가 사례의 `changed_files`에 없으면 사례를 거부한다(2026-10-21부터). 와일드카드 경로는 확인하지 않는다.
