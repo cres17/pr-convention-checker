@@ -13,23 +13,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-8B5CF6)](LICENSE)
 
 ![Python 3.10+](https://img.shields.io/badge/Python%203.10%2B-3776AB?style=flat&logoColor=white&logo=python)
-![YAML](https://img.shields.io/badge/YAML-CB171E?style=flat&logoColor=white&logo=yaml)
 ![Tree-sitter](https://img.shields.io/badge/Tree--sitter-2B3443?style=flat&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F03C2E?style=flat&logoColor=white&logo=git)
 ![GitHub REST API](https://img.shields.io/badge/GitHub%20REST%20API-181717?style=flat&logoColor=white&logo=github)
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat&logoColor=white&logo=githubactions)
 ![MCP](https://img.shields.io/badge/MCP-000000?style=flat&logoColor=white&logo=modelcontextprotocol)
 ![PySide6](https://img.shields.io/badge/PySide6-41CD52?style=flat&logoColor=black&logo=qt)
 ![React 19](https://img.shields.io/badge/React%2019-61DAFB?style=flat&logoColor=black&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logoColor=white&logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-9135FF?style=flat&logoColor=white&logo=vite)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=flat&logoColor=white&logo=tailwindcss)
-![PyInstaller](https://img.shields.io/badge/PyInstaller-2C5BB4?style=flat&logoColor=white)
 ![Claude API](https://img.shields.io/badge/Claude%20API-D97757?style=flat&logoColor=white&logo=claude)
 ![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=flat&logoColor=white&logo=pytest)
-![Ruff](https://img.shields.io/badge/Ruff-D7FF64?style=flat&logoColor=black&logo=ruff)
-![mypy](https://img.shields.io/badge/mypy-2A6DB2?style=flat&logoColor=white)
-![Vitest](https://img.shields.io/badge/Vitest-00FF74?style=flat&logoColor=black&logo=vitest)
 
 </div>
 
