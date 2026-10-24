@@ -68,13 +68,102 @@ desktop-ui/        데스크톱 화면 React 소스
 examples/          FastAPI · Django · Express · Next.js · Prisma · Actions 배포용 정책 예제
 ```
 
+## 기능 흐름
+
+### 1. PR에서 실행되는 순서 (GitHub Action)
+
+```mermaid
+sequenceDiagram
+  participant PR as Pull Request
+  participant GA as Drift Gate Action
+  participant GH as GitHub REST API
+  participant C as Claude API (선택)
+  PR->>GA: pull_request 이벤트
+  GA->>GH: 변경 파일 · patch · PR 본문 조회
+  GA->>GH: 정책 파일 조회 (기본: base 커밋)
+  opt drift-ignore 지시문이 있고 승인 요구가 켜짐
+    GA->>GH: base CODEOWNERS · 최신 리뷰 · 권한 조회
+  end
+  GA->>GA: 규칙 평가 → 판정 PASS · WARN · FAIL
+  opt API 키 있음 · fork PR 아님
+    GA->>C: 판정이 끝난 위반 목록
+    C-->>GA: 리뷰어용 체크리스트 · 설명
+  end
+  GA->>PR: 결과 댓글 갱신 (drift-gate-v1 마커, fork PR이면 생략)
+  GA->>GA: Markdown · JSON · HTML 보고서 artifact 업로드
+  GA-->>PR: FAIL이면 job 실패
+```
+
+### 2. 규칙 하나의 평가
+
+```mermaid
+flowchart TD
+  F([변경 파일 · patch]) --> D{문서 · 테스트만 바뀌었고<br/>명시적 트리거도 없음?}
+  D -- 예 --> SKIP[/평가 생략 · PASS/]
+  D -- 아니오 --> R[규칙마다 반복]
+  R --> T{when.any_changed<br/>경로가 바뀜?}
+  T -- 아니오 --> NA[규칙 적용 안 함]
+  T -- 예 --> A[patch 분석<br/>Tree-sitter, 실패 시 정규식]
+  A --> G{require.groups를<br/>모두 만족?}
+  G -- 예 --> OK[통과<br/>경로만 확인했으면 unverified 표시]
+  G -- 판단 불가 --> UD[undetermined<br/>검증 미완료로 보고]
+  G -- 아니오 --> I{PR 본문 drift-ignore<br/>유효한가?}
+  I -- 예 --> WV[예외 처리 waived]
+  I -- 아니오 --> V[위반<br/>severity 기록]
+  classDef bad fill:#fde8e4,stroke:#d9826f
+  classDef ok fill:#e6f4ea,stroke:#6fae7f
+  class V bad
+  class OK,WV ok
+  classDef und fill:#fff4dc,stroke:#d9b45f
+  class UD und
+```
+
+### 3. 판정
+
+위반의 심각도와 게이트 설정(`gate.fail_on_blocker`, `gate.fail_on_major_count`)으로 결과를 정합니다. 정책에서 `on_unverified: fail`로 두면 검증 미완료도 FAIL입니다.
+
+```mermaid
+flowchart LR
+  B{BLOCKER 위반 있고<br/>fail_on_blocker} -- 예 --> FAIL[[FAIL]]
+  B -- 아니오 --> M{MAJOR ≥<br/>fail_on_major_count<br/>기본 2}
+  M -- 예 --> FAIL
+  M -- 아니오 --> W{MAJOR · MINOR 위반<br/>또는 검증 미완료 ·<br/>advisory 있음?}
+  W -- 예 --> WARN[[WARN]]
+  W -- 아니오 --> PASS[[PASS]]
+  classDef f fill:#fde8e4,stroke:#d9826f
+  classDef w fill:#fff4dc,stroke:#d9b45f
+  classDef p fill:#e6f4ea,stroke:#6fae7f
+  class FAIL f
+  class WARN w
+  class PASS p
+```
+
+### 4. drift-ignore 예외 승인
+
+```mermaid
+flowchart TD
+  D[PR 본문<br/>drift-ignore: rule-id 사유] --> S{대상 규칙이<br/>BLOCKER · MAJOR?}
+  S -- 예 --> RS{사유 있음?}
+  RS -- 아니오 --> REJ[거부 · 위반 유지]
+  RS -- 예 --> AP
+  S -- 아니오 --> AP{정책이 CODEOWNERS<br/>승인을 요구?}
+  AP -- 아니오 --> OK[예외 인정]
+  AP -- 예 --> CO{base 브랜치 CODEOWNERS 중<br/>쓰기 권한 있는 작성자 외 사람이<br/>현재 head 커밋에 승인?}
+  CO -- 예 --> OK
+  CO -- 아니오 --> REJ
+  classDef bad fill:#fde8e4,stroke:#d9826f
+  classDef ok fill:#e6f4ea,stroke:#6fae7f
+  class REJ bad
+  class OK ok
+```
+
 ## 핵심 설계 결정
 
 | 결정 | 방식 | 위치 |
 |------|------|------|
 | 판정은 규칙 엔진, LLM은 설명만 | 통과 · 실패는 정책 평가 결과로만 정해지고, Claude는 판정이 끝난 위반 목록에 리뷰어용 체크리스트와 설명을 덧붙입니다. API 키가 없으면 건너뜁니다. | `core/gating`, `adapters/claude/enricher.py` |
 | PR이 자신을 심판하는 정책을 바꾸지 못하게 | Action의 `policy_source` 기본값은 `base`라서 PR의 base 커밋에 있는 정책으로 판정합니다. PR 작성자가 믿을 수 있을 때만 `workspace`를 씁니다. | `action.yml` |
-| 예외는 사유와 승인을 요구 | PR 본문의 `drift-ignore: <rule-id>`는 BLOCKER · MAJOR 규칙이면 사유가 있어야 받아들이고, 승인자 이름만 적은 것은 승인으로 인정하지 않습니다. 승인은 base 브랜치의 CODEOWNERS와 현재 리뷰 승인을 대조합니다. | `adapters/github/approvals.py`, `core/trust` |
+| 예외는 사유와 승인을 요구 | PR 본문의 `drift-ignore: <rule-id>`는 BLOCKER · MAJOR 규칙이면 사유가 있어야 받아들이고, 승인자 이름만 적은 것은 승인으로 인정하지 않습니다. 정책에서 승인을 요구하면 base 브랜치의 CODEOWNERS와 현재 리뷰 승인을 대조합니다. | `adapters/github/approvals.py`, `core/trust` |
 | 확인하지 못한 것은 확인했다고 하지 않음 | 파싱에 실패하거나 diff 조각이 불완전하면 정규식 휴리스틱으로 넘어가고 어떤 방법을 썼는지 보고서에 표시합니다. 경로만 확인한 PASS에는 `unverified`와 "내용을 검증한 것이 아님" 문구가 붙습니다. | `adapters/ast`, `reporters` |
 | 코어는 외부 I/O 없이 | 정책 모델 · 분류 · 판정 · 예외 신뢰 검증은 `core`에 두고 git · GitHub · AST · CLI는 `adapters`에 분리해, 같은 엔진을 CLI · Action · 데스크톱 · MCP에서 그대로 씁니다. `core`는 mypy로 검사합니다. | `drift_gate/core`, `drift_gate/adapters` |
 | 배포하는 파서 라이브러리를 해시로 확인 | Tree-sitter 파서는 `tree-sitter-language-pack`에서 불러오고, 배포본에 넣는 파서 라이브러리는 `parser_hashes.json`의 해시와 대조합니다. | `drift_gate/adapters/parser_hashes.json`, `.github/workflows/parser-hashes.yml` |
