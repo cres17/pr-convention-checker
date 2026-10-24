@@ -97,3 +97,7 @@ policy, index attributes, info attributes, diff config를 실제로 변형하고
 ## 2026-10-20 타입 표기·import 정렬
 
 ruff 자동 수정(`I`, `UP` 규칙)으로 데스크톱 브리지 코드의 import 순서와 타입 표기(`List[X]` → `list[X]`, `Optional[X]` → `X | None`)만 바꿨다. 이벤트·편집 계약은 그대로다. 동작과 계약은 바뀌지 않는다. 전체 테스트(2148개)와 `mypy drift_gate/core`로 확인했다.
+
+## 2026-10-24 화면 빌드 의존성 보안 갱신
+
+알려진 취약점이 있던 화면 빌드·테스트 의존성을 `desktop-ui/package-lock.json`에서만 갱신했다(vite 7.3.7, vitest 4.1.12, zod 4.6.7, undici·source-map-js). `package.json`의 버전 범위와 화면 코드, bridge event·편집 계약은 그대로다. `npm run build`와 vitest 129개로 확인했다.
