@@ -35,6 +35,14 @@ API 경로를 바꿨는데 명세에는 이전 주소가 남아 있거나, 새 �
 
 통과 · 실패는 규칙 엔진이 결정하고, LLM은 판정 뒤에 설명을 보태는 선택 기능입니다. 검증 기록은 [docs](docs)와 [계획](계획.md)에 공개합니다.
 
+## 화면
+
+| 검사 결과 | 적용 정책 |
+|:---------:|:---------:|
+| <img src="docs/readme/desktop-review.png" width="440"> | <img src="docs/readme/desktop-rules.png" width="440"> |
+
+데스크톱 앱(`drift-gate-desktop`)을 실행해 촬영했습니다. 아래 [빠른 시작](#빠른-시작)의 정책을 둔 예제 저장소에서 FastAPI 라우트만 추가하고 `docs/openapi.yaml`은 그대로 둔 상태로 검사한 결과입니다.
+
 ## 전체 아키텍처
 
 <p align="center">
