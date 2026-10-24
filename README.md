@@ -120,15 +120,19 @@ flowchart TD
 
 ### 3. 판정
 
-위반의 심각도와 게이트 설정(`gate.fail_on_blocker`, `gate.fail_on_major_count`)으로 결과를 정합니다. 정책에서 `on_unverified: fail`로 두면 검증 미완료도 FAIL입니다.
+위반의 심각도와 게이트 설정(`gate.fail_on_blocker`, `gate.fail_on_major_count`, `gate.on_unverified`)으로 결과를 정합니다. 경로만 확인한 통과(`unverified`)는 이 검사 대상이 아니고, 요구 조건을 판단하지 못했거나 일부만 검증한 경우만 해당합니다.
 
 ```mermaid
-flowchart LR
+flowchart TD
   B{BLOCKER 위반 있고<br/>fail_on_blocker} -- 예 --> FAIL[[FAIL]]
-  B -- 아니오 --> M{MAJOR ≥<br/>fail_on_major_count<br/>기본 2}
+  B -- 아니오 --> M{MAJOR ≥ fail_on_major_count<br/>기본 2}
   M -- 예 --> FAIL
-  M -- 아니오 --> W{MAJOR · MINOR 위반<br/>또는 검증 미완료 ·<br/>advisory 있음?}
-  W -- 예 --> WARN[[WARN]]
+  M -- 아니오 --> U{판단 불가 ·<br/>부분 검증 그룹 있음?}
+  U -- 예 --> OU{on_unverified}
+  OU -- fail 기본값 --> FAIL
+  OU -- warn --> WARN[[WARN]]
+  U -- 아니오 --> W{MAJOR · MINOR 위반<br/>또는 advisory 있음?}
+  W -- 예 --> WARN
   W -- 아니오 --> PASS[[PASS]]
   classDef f fill:#fde8e4,stroke:#d9826f
   classDef w fill:#fff4dc,stroke:#d9b45f
